@@ -1,0 +1,103 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="margin_standard">16dp</dimen>
+    <dimen name="margin_short">8dp</dimen>
+    <dimen name="margin_extra_short">4dp</dimen>
+
+    <dimen name="toolbar_elevation">4dp</dimen>
+
+    <dimen name="toolbar_margin_start">72dp</dimen>
+    <dimen name="flexible_space_height">72dp</dimen>
+    <dimen name="flexible_space_image_height">240dp</dimen>
+    <dimen name="flexible_space_show_fab_offset">120dp</dimen>
+
+    <dimen name="parallax_image_height">180dp</dimen>
+    <dimen name="tab_height">48dp</dimen>
+
+    <dimen name="header_bar_height">72dp</dimen>
+    <dimen name="intersection_height">16dp</dimen>
+
+    <dimen name="sliding_slop">32dp</dimen>
+    <dimen name="sliding_overlay_blur_size">4dp</dimen>
+
+    <dimen name="height_size_button_content">48dp</dimen>
+    <dimen name="margin_size_layout_small">8dp</dimen>
+    <dimen name="margin_size_layout_medium">10dp</dimen>
+    <dimen name="margin_size_layout_large">16dp</dimen>
+
+
+    <dimen name="padding_size_layout_small">8dp</dimen>
+    <dimen name="padding_size_layout_medium">10dp</dimen>
+    <dimen name="padding_size_layout_large">16dp</dimen>
+
+    <dimen name="text_size">15sp</dimen>
+    <dimen name="logo_size">60dp</dimen>
+    <dimen name="avatar_medium">92dp</dimen>
+
+    <dimen name="size_image">25dp</dimen>
+
+    <dimen name="size_icon">16dp</dimen>
+    <dimen name="size_text_icon">16dp</dimen>
+
+    <dimen name="size_text">3dp</dimen>
+    <dimen name="feed_image_height">400dp</dimen>
+    <dimen name="feed_thumb_height">200dp</dimen>
+    <dimen name="feed_detail_height">120dp</dimen>
+
+    <dimen name="tab_layout_height">50dp</dimen>
+
+    <dimen name="text_size_small">8sp</dimen>
+    <dimen name="text_size_medium">13sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+
+    <dimen name="image_size_vdo">20dp</dimen>
+    <dimen name="image_size_profile">45dp</dimen>
+
+    <item name="x_scale_factor" format="float" type="dimen">2.3</item>
+    <item name="y_scale_factor" format="float" type="dimen">2.3</item>
+
+    <dimen name="top_fragment_height">200dip</dimen>
+    <dimen name="top_fragment_margin">10dip</dimen>
+
+    <dimen name="publish_photo_thumbnail_size">256dp</dimen>
+    <dimen name="publish_photo_thumbnail_size_tablet">600dp</dimen>
+
+
+
+    <!-- soundcloud -->
+    <dimen name="vertical_small_margin">16dp</dimen>
+    <dimen name="vertical_large_margin">72dp</dimen>
+    <dimen name="vertical_inner_margin">56dp</dimen>
+
+    <dimen name="avatar_size">48dp</dimen>
+    <dimen name="avatar_padding">4dp</dimen>
+    <dimen name="row_height">72dp</dimen>
+    <dimen name="player_toolbar">56dp</dimen>
+
+    <!--profile details-->
+    <dimen name="movie_detail_fanart_height">224dp</dimen>
+    <dimen name="content_details_portrait_thumb_width">100dp</dimen>
+    <dimen name="content_details_portrait_thumb_height">150dp</dimen>
+    <dimen name="content_details_baseline_margin">16dp</dimen>
+    <dimen name="content_details_portrait_thumb_negative_margin">-32dp</dimen>
+    <dimen name="content_details_title_margin_top">-12dp</dimen>
+    <dimen name="content_details_title">28sp</dimen>
+    <dimen name="content_details_small_margin">4dp</dimen>
+    <dimen name="content_details_subheader">18sp</dimen>
+    <dimen name="content_details_very_small_margin">0dp</dimen>
+    <dimen name="content_details_large_margin">48dp</dimen>
+    <dimen name="content_details_area_subheader">12sp</dimen>
+    <dimen name="content_details_area_header">16sp</dimen>
+    <dimen name="content_details_body_text">16sp</dimen>
+    <dimen name="details_padding">16dp</dimen>
+
+    <!-- InstaMaterial -->
+    <dimen name="default_elevation">8dp</dimen>
+    <dimen name="comment_avatar_size">56dp</dimen>
+    <dimen name="user_profile_avatar_size">88dp</dimen>
+    <dimen name="global_menu_avatar_size">64dp</dimen>
+
+</resources>

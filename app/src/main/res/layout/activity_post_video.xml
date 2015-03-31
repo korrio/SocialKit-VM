@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true" >
+
+    <FrameLayout
+        android:id="@+id/detail_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="480dp"
+            android:layout_height="360dp"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/comment_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dip"
+        android:ems="10"
+        android:hint="ชื่อวิดีโอ" >
+
+        <requestFocus />
+    </EditText>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false" >
+
+        <EditText
+            android:id="@+id/descText"
+            android:layout_width="fill_parent"
+            android:layout_height="70dp"
+            android:layout_margin="6dip"
+            android:layout_weight="0.2"
+            android:ems="10"
+            android:gravity="top"
+            android:hint="รายละเอียดประกอบวิดีโอ" />
+
+        <Button
+            android:id="@+id/button_recent"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+
+            android:paddingTop="10dp"
+            android:text="Post"
+ />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@android:style/Widget.ProgressBar"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="0dp" >
+
+        <Button
+            android:id="@+id/button_photo"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_weight="0.5"
+
+            android:paddingTop="10dp"
+            android:text="Choose"
+
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/button_video"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_weight="0.5"
+
+            android:paddingTop="10dp"
+            android:text="Camera"
+
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>

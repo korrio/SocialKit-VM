@@ -1,0 +1,162 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/svScroll"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:background="@color/material_drawer_hint_text">
+
+    <!--
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        -->
+
+        <com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView
+
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/player_toolbar"
+        android:background="@color/material_drawer_primary_dark"
+        android:visibility="gone"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:layout_height="@dimen/player_toolbar"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            >
+            <ImageView
+                android:id="@+id/selected_thumbnail"
+                android:layout_width="@dimen/avatar_size"
+                android:layout_height="@dimen/avatar_size"/>
+            <RelativeLayout
+                android:id="@+id/player_control"
+                android:layout_alignParentRight="true"
+                android:layout_width="@dimen/avatar_size"
+                android:layout_height="@dimen/avatar_size"
+                >
+                <ImageView
+                    android:background="@drawable/oval"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    />
+                <ImageView
+                    android:id="@+id/player_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+                <ProgressBar
+                    android:id="@+id/player_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/selected_title"
+                android:text="@string/hello_world"
+                android:layout_toRightOf="@id/selected_thumbnail"
+                android:layout_toLeftOf="@id/player_control"
+                android:paddingLeft="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+        <RelativeLayout
+            android:id="@+id/layoutMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true">
+
+            <com.getbase.floatingactionbutton.FloatingActionsMenu
+                android:id="@+id/multiple_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                fab:fab_addButtonColorNormal="@color/indigo_700"
+                fab:fab_addButtonColorPressed="@color/indigo_500"
+                fab:fab_addButtonPlusIconColor="@color/white"
+                fab:fab_labelStyle="@style/menu_labels_style"
+                fab:fab_addButtonSize="normal"
+                android:layout_marginBottom="1dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginEnd="1dp">
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_youtube"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/indigo_700"
+                    fab:fab_colorPressed="@color/indigo_500"
+                    fab:fab_size="mini"
+                    fab:fab_icon="@drawable/ic_yt"
+
+
+                    android:layout_marginBottom="-15dp"
+                    fab:fab_title="Youtube" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_soundcloud"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/indigo_700"
+                    fab:fab_colorPressed="@color/indigo_500"
+                    fab:fab_size="mini"
+                    fab:fab_icon="@drawable/ic_sc"
+                    fab:fab_title="SoundCloud" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/indigo_700"
+                    fab:fab_colorPressed="@color/indigo_500"
+                    fab:fab_size="mini"
+                    fab:fab_icon="@drawable/ic_photo"
+                    android:layout_marginBottom="-15dp"
+                    fab:fab_title="Post Photo" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/indigo_700"
+                    fab:fab_colorPressed="@color/indigo_500"
+                    fab:fab_size="mini"
+                    fab:fab_icon="@drawable/ic_clip"
+                    android:layout_marginBottom="-15dp"
+                    fab:fab_title="Post Video" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/action_write_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    fab:fab_colorNormal="@color/indigo_700"
+                    fab:fab_colorPressed="@color/indigo_500"
+                    fab:fab_size="mini"
+                    fab:fab_icon="@drawable/ic_text"
+                    android:layout_marginBottom="-15dp"
+                    fab:fab_title="Write Post" />
+
+            </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+        </RelativeLayout>
+
+   <!-- </android.support.v4.widget.SwipeRefreshLayout> -->
+
+</RelativeLayout>
+

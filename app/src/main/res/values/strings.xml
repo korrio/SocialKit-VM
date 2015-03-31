@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">socialkit:vm</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Login Fragment -->
+    <string name="empty_input">Please input username/password</string>
+    <string name="drawer_item_home">Home</string>
+    <string name="drawer_item_free_play">Free Play</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome_message">Welcome to VDOMAX</string>
+    <string name="signup_success">Your sign-up has been successful</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="start_button">START NOW</string>
+    <string name="post">POSTS</string>
+    <string name="following">FOLLOWING</string>
+    <string name="follower">FOLLOWER</string>
+    <string name="friend">FRIEND</string>
+    <string name="page">PAGE</string>
+    <string name="add_attention">Follow</string>
+    <string name="user_post">POSTS</string>
+    <string name="user_book">MY BOOK</string>
+    <string name="user_name">MY NAME</string>
+    <string name="user_des">MY DESC DESC DESC</string>
+    <string name="user_recommend_tip">MY TIP</string>
+    <string name="title_activity_post_youtube">PostYoutubeActivity</string>
+    <string name="name">Cool Name</string>
+    <string name="title_activity_profile_activity_test">ProfileActivity</string>
+    <string name="title_activity_live_history">LiveHistory</string>
+
+</resources>
