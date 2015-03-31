@@ -148,7 +148,7 @@ public class MainActivity extends ActionBarActivity {
 
                         } else if (((Nameable) drawerItem).getName().equals("Live History")) {
 
-                            Intent login = new Intent(MainActivity.this, LiveHistory.class);
+                            Intent login = new Intent(MainActivity.this, LiveHistoryActivity.class);
                             startActivity(login);
 
                         } else if (((Nameable) drawerItem).getName().equals("Setting")) {

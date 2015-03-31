@@ -1,10 +1,12 @@
 package co.aquario.socialkit.activity;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.provider.SearchRecentSuggestions;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -23,22 +25,28 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.adapter.AdapterLivieHistory;
+import co.aquario.socialkit.adapter.LiveHistoryRecyclerAdapter;
 import co.aquario.socialkit.model.Live;
+import co.aquario.socialkit.util.Utils;
 
-public class LiveHistory extends ActionBarActivity {
+public class LiveHistoryActivity extends ActionBarActivity {
 
     String url = "http://api.vdomax.com/live/history";
 
     ArrayList<Live> list = new ArrayList<Live>();
-    AdapterLivieHistory activityLiveHistory;
+    LiveHistoryRecyclerAdapter activityLiveHistory;
+    private GridLayoutManager manager;
 
     public AQuery aq;
+
+    private MenuItem searchItem;
+    private SearchRecentSuggestions suggestions;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.histoy_live);
+        setContentView(R.layout.activity_live_history_recycler);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         if (getSupportActionBar() != null) {
@@ -49,18 +57,22 @@ public class LiveHistory extends ActionBarActivity {
 
         aq = new AQuery(getApplicationContext());
 
-        activityLiveHistory = new AdapterLivieHistory(getApplication(), list);
+        activityLiveHistory = new LiveHistoryRecyclerAdapter(getApplication(), list);
 
-        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
+        RecyclerView recList = (RecyclerView) findViewById(R.id.recycler_view);
         recList.setHasFixedSize(true);
-        final LinearLayoutManager llm = new LinearLayoutManager(getApplication());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(llm);
+        if(Utils.isTablet(this))
+            manager = new GridLayoutManager(this, 2);
+        else
+            manager = new GridLayoutManager(this, 1);
+        recList.setLayoutManager(manager);
+
+
 
 
         recList.setAdapter(activityLiveHistory);
 
-        activityLiveHistory.SetOnItemClickListener(new AdapterLivieHistory.OnItemClickListener() {
+        activityLiveHistory.SetOnItemClickListener(new LiveHistoryRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Toast.makeText(getApplication(),""+position,Toast.LENGTH_SHORT).show();
@@ -78,20 +90,6 @@ public class LiveHistory extends ActionBarActivity {
                 i.putExtra("desc",username);
                 i.putExtra("userId",userId);
                 startActivity(i);
-
-                /*
-                Bundle data = new Bundle();
-                VideoViewFragment oneFragment = new VideoViewFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                data.putString("urlLive", url);
-                data.putString("avatar", avatarUrl);
-                data.putString("username", username);
-                data.putString("userId", userId);
-                oneFragment.setArguments(data);
-                transaction.add(R.id.fragment_container, oneFragment);
-                transaction.commit();
-                */
-
 
             }
         });

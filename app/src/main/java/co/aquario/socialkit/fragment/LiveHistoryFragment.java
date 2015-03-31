@@ -3,13 +3,12 @@ package co.aquario.socialkit.fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -24,6 +23,7 @@ import java.util.ArrayList;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.AdapterListLiveFragment;
 import co.aquario.socialkit.model.Live;
+import co.aquario.socialkit.util.Utils;
 
 public class LiveHistoryFragment extends BaseFragment {
 
@@ -114,6 +114,8 @@ public class LiveHistoryFragment extends BaseFragment {
     }
 
 
+    GridLayoutManager manager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -123,12 +125,14 @@ public class LiveHistoryFragment extends BaseFragment {
         adapter = new AdapterListLiveFragment(getActivity(), artistList);
 
 
-        RecyclerView recList = (RecyclerView) rootView.findViewById(R.id.cardList);
-        recList.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(linearLayoutManager);
-        recList.setAdapter(adapter);
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
+        recyclerView.setHasFixedSize(true);
+        if(Utils.isTablet(getActivity()))
+            manager = new GridLayoutManager(getActivity(), 2);
+        else
+            manager = new GridLayoutManager(getActivity(), 1);
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(adapter);
 
         return rootView;
     }

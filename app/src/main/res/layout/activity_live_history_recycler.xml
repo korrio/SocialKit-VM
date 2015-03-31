@@ -15,14 +15,17 @@
     <RelativeLayout
         android:id="@+id/fragment_container"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/material_drawer_selected">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/cardList"
-            android:numColumns="@integer/grid_view_numcolumns"
-            android:background="#E9EAED"
+        <co.aquario.socialkit.view.AutofitRecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:padding="4dp"
+            android:columnWidth="140dp"
+            android:clipToPadding="false"/>
 
 
     </RelativeLayout>

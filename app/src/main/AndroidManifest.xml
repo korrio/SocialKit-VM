@@ -152,7 +152,7 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.MainPhotoViewPager" />
         <activity
-            android:name=".activity.LiveHistory"
+            android:name=".activity.LiveHistoryActivity"
             android:label="@string/title_activity_live_history" >
         </activity>
 

@@ -3,7 +3,6 @@ package co.aquario.socialkit.fragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.util.PrefManager;
 import io.vov.vitamio.LibsChecker;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.widget.MediaController;
@@ -50,15 +47,14 @@ public class VideoViewFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_video_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_video_view, container, false);
 
         mVideoView = (VideoView) rootView.findViewById(R.id.surface_view);
 
 
-        PrefManager pref = MainApplication.get(getActivity()).getPrefManager();
 
 
-        if (path == "") {
+        if (path.equals("")) {
             // Tell the user to provide a media file URL/path.
             path = "http://server-a.vdomax.com:8080/record/Nuchiko-260115_20:55:13.flv";
             //Toast.makeText(VideoViewFragment.this, "Please edit VideoViewDemo Activity, and set path" + " variable to your media file URL/path", Toast.LENGTH_LONG).show();
