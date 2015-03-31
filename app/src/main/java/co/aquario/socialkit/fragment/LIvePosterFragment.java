@@ -23,7 +23,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Fragment implementation created to show a poster inside an ImageView widget.
@@ -40,7 +39,7 @@ public class LIvePosterFragment extends Fragment implements ObservableScrollView
     TextView name;
     TextView video_title;
     TextView description;
-    CircleImageView userProfile;
+    ImageView userProfile;
     boolean isFollowing = false;
 
     //Intent
@@ -66,7 +65,7 @@ public class LIvePosterFragment extends Fragment implements ObservableScrollView
         name = (TextView) view.findViewById(R.id.name);
         video_title = (TextView) view.findViewById(R.id.video_title);
         description = (TextView) view.findViewById(R.id.view);
-        userProfile = (CircleImageView) view.findViewById(R.id.image_profile);
+        userProfile = (ImageView) view.findViewById(R.id.myavatar);
         btnFollow = (Button) view.findViewById(R.id.btn_follow);
 
         name.setText(nameTitle);

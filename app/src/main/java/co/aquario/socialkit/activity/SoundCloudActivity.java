@@ -208,7 +208,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the search; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         mSearchView = (SearchView) menu.findItem(R.id.search_view).getActionView();
         mSearchView.setOnQueryTextListener(this);

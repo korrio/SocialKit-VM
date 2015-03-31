@@ -114,7 +114,7 @@ public class PostYoutubeActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the search; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_post_youtube, menu);
         return true;
     }
@@ -232,6 +232,7 @@ public class PostYoutubeActivity extends ActionBarActivity {
             dialog.dismiss();
             Intent i = new Intent(PostYoutubeActivity.this,MainActivity.class);
             startActivity(i);
+            finish();
             //showAlert(result);
             super.onPostExecute(result);
         }

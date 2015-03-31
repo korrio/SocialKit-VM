@@ -67,10 +67,10 @@ public class AdapterListLiveFragment extends RecyclerView.Adapter<AdapterListLiv
             time = parts2[1];
         } else {
             name = parts[0]; // 004
-            date = parts[1] + "-" + parts[2] + "-" + parts[3]; // 034556
-            time = parts[4];
+            time = "";
+            //date = parts[1] + "-" + parts[2] + "-" + parts[3]; // 034556
+            //time = parts[4];
         }
-
 
         String durationStr = item.getHours() + ":" + item.getMinutes() + ":" + item.getSeconds();
 

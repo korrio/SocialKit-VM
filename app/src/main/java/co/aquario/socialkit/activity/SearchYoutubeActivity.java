@@ -1,9 +1,16 @@
 package co.aquario.socialkit.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -31,11 +38,67 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
     private ServiceTask mYtServiceTask = null;
     private ProgressDialog mLoadingDialog = null;
 
+    private Context context;
+    private SearchView mSearchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_youtube);
         initializeViews();
+        initSearchAsync();
+        context = this;
+    }
+
+    private void initSearchBar() {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.search);
+
+        mSearchView = (SearchView) toolbar.getMenu().findItem(R.id.menu_search).getActionView();
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search, menu);
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query.length() > 0) {
+                    // Service to search video
+                    mYtServiceTask.execute(query);
+                    return true;
+                } else {
+                    return false;
+                }
+
+
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                return false;
+            }
+
+        });
+
+
+
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     /**
@@ -50,6 +113,12 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
         mYtVideoLsv.setOnItemClickListener(this);
     }
 
+    private void initSearchAsync() {
+        // Service to search video
+        mYtServiceTask = new ServiceTask(SEARCH_VIDEO);
+        mYtServiceTask.setmServerResponseListener(this);
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -58,9 +127,8 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
                 final String keyWord = mYtVideoEdt.getText().toString().trim();
                 if (keyWord.length() > 0) {
 
-                    // Service to search video
-                    mYtServiceTask = new ServiceTask(SEARCH_VIDEO);
-                    mYtServiceTask.setmServerResponseListener(this);
+
+
                     //mYtServiceTask.execute(new String[]{keyWord});
                     mYtServiceTask.execute(keyWord);
                 } else {
@@ -72,12 +140,12 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Intent intent = new Intent(SearchYoutubeActivity.this,PostYoutubeActivity.class);
+        Intent intent = new Intent(SearchYoutubeActivity.this, PostYoutubeActivity.class);
         SearchResult result = mYtAdapter.getItem(i);
-        intent.putExtra("yid",result.getId().getVideoId());
-        intent.putExtra("title",result.getSnippet().getTitle());
-        intent.putExtra("desc",result.getSnippet().getDescription());
-        intent.putExtra("thumb",result.getSnippet().getThumbnails().getMedium().getUrl());
+        intent.putExtra("yid", result.getId().getVideoId());
+        intent.putExtra("title", result.getSnippet().getTitle());
+        intent.putExtra("desc", result.getSnippet().getDescription());
+        intent.putExtra("thumb", result.getSnippet().getThumbnails().getMedium().getUrl());
         startActivity(intent);
     }
 
@@ -86,11 +154,10 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
         // Parse the response based upon type of request
         Integer reqCode = (Integer) objects[0];
 
-        if(reqCode==null || reqCode == 0)
+        if (reqCode == null || reqCode == 0)
             throw new NullPointerException("Request Code's value is Invalid.");
         String dialogMsg = null;
-        switch (reqCode)
-        {
+        switch (reqCode) {
             case SEARCH_VIDEO:
                 dialogMsg = SEARCH_VIDEO_MSG;
                 break;
@@ -114,7 +181,7 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
         // Parse the response based upon type of request
         Integer reqCode = (Integer) objects[0];
 
-        if(reqCode==null || reqCode == 0)
+        if (reqCode == null || reqCode == 0)
             throw new NullPointerException("Request Code's value is Invalid.");
 
         switch (reqCode) {

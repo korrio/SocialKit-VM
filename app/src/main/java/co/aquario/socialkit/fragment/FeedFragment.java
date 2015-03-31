@@ -471,7 +471,7 @@ public class FeedFragment extends BaseFragment {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu, inflater);
 
-		inflater.inflate(R.menu.menu, menu);
+		inflater.inflate(R.menu.search, menu);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         searchView.setQueryHint("Search friends,tags,videos");
@@ -480,7 +480,7 @@ public class FeedFragment extends BaseFragment {
                 .setHintTextColor(getResources().getColor(android.R.color.white));
         searchView.setOnQueryTextListener(onQuerySearchView);
 
-		//menu.findItem(R.id.menu_add).setVisible(true);
+		//search.findItem(R.id.menu_add).setVisible(true);
 		menu.findItem(R.id.menu_search).setVisible(true);
 		mSearchCheck = false;
 

@@ -121,7 +121,7 @@ public class PostSoundCloudActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the search; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_post_youtube, menu);
         return true;
     }
