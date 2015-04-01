@@ -1,0 +1,112 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "co.aquario.socialkit"
+        minSdkVersion 16
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-DEBUG"
+            try {
+                signingConfig signingConfigs.debug
+            } catch (ex) {
+            }
+            minifyEnabled false
+        }
+        release {
+            try {
+                signingConfig signingConfigs.release
+            } catch (ex) {
+            }
+            zipAlignEnabled true
+            minifyEnabled true
+
+            proguardFile 'proguard-gson.pro'
+            proguardFile 'proguard-square-picasso.pro'
+            proguardFile 'proguard-square-retrofit.pro'
+            proguardFile 'proguard-project.pro'
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    def fileName = outputFile.name.replace(".apk", "-v" + defaultConfig.versionName + "-c" + defaultConfig.versionCode + ".apk")
+                    output.outputFile = new File(outputFile.parent, fileName)
+                }
+            }
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
+}
+
+repositories {
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+
+    maven {
+        url "https://repo.commonsware.com.s3.amazonaws.com"
+    }
+
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile('com.mikepenz.materialdrawer:library:2.6.8@aar') {
+        transitive = true
+    }
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v13:21.0.3'
+    compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:palette-v7:21.0.3'
+    compile 'com.android.support:recyclerview-v7:21.0.3'
+    compile 'com.android.support:cardview-v7:21.0.3'
+    compile 'com.squareup.retrofit:retrofit:1.6.1'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.squareup:otto:1.3.5'
+    compile 'com.squareup.picasso:picasso:2.5.0'
+    compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.nispok:snackbar:2.9.0'
+    compile 'com.rengwuxian.materialedittext:library:1.8.3'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.3'
+    compile 'com.github.talenguyen:prettysharedpreferences:1.0.2'
+    compile 'de.hdodenhof:circleimageview:1.2.2'
+    compile 'me.neavo:vitamio:4.2.2'
+    compile 'com.getbase:floatingactionbutton:1.8.0'
+    compile 'com.akexorcist:RoundCornerProgressBar:1.1.0'
+    compile 'com.github.ksoichiro:android-observablescrollview:1.5.0'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.melnykov:floatingactionbutton:1.0.7'
+    compile 'com.afollestad:material-dialogs:0.6.3.5'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.mikepenz.iconics:library:0.7.7@aar'
+    compile 'com.mikepenz.iconics:meteocons-typeface:1.1.1@aar'
+    compile 'com.desarrollodroide:fragmenttransactionextended:1'
+    compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
+    compile 'com.github.pedrovgs:draggablepanel:1.8'
+    compile 'in.srain.cube:ultra-ptr:1.0.8.3-SNAPSHOT@aar'
+    compile 'com.commonsware.cwac:camera:0.6.12'
+    compile 'com.google.apis:google-api-services-youtube:v3-rev120-1.19.0'
+    compile 'com.google.http-client:google-http-client-android:+'
+    compile 'com.google.api-client:google-api-client-android:+'
+    compile 'com.google.api-client:google-api-client-gson:+'
+    compile 'jp.wasabeef:recyclerview-animators:1.1.2@aar'
+    compile project(':layouts')
+    compile project(':lib')
+}

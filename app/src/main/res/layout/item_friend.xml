@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:minHeight="96dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="@dimen/avatar_medium"
+        android:layout_height="@dimen/avatar_medium"
+        android:src="@drawable/profile"
+        android:layout_gravity="center"
+        android:padding="2dp" />
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:padding="1dp"
+        android:textColor="#222244"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/btn_follow"
+        android:textStyle="bold"
+        android:textSize="13dp"
+        android:layout_width="96dp"
+        android:layout_height="36dp"
+        android:background="@drawable/follow_button_selector"
+        android:text="Loading" />
+
+</LinearLayout>

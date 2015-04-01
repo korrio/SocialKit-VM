@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#252525"
+    >
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/et_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email address*"
+        android:text=""
+
+        android:textCursorDrawable="@drawable/text_cursor_cyan"
+        app:baseColor="@android:color/white"
+        app:floatingLabel="highlight"
+        app:primaryColor="@color/material_drawer_primary"
+         />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/et_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username*"
+        android:text=""
+
+        android:textCursorDrawable="@drawable/text_cursor_cyan"
+        app:baseColor="@android:color/white"
+        app:floatingLabel="highlight"
+        app:maxCharacters="12"
+        app:primaryColor="@color/material_drawer_primary" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password*"
+        android:text=""
+        android:inputType="textPassword"
+        android:textCursorDrawable="@drawable/text_cursor_cyan"
+        app:baseColor="@android:color/white"
+        app:floatingLabel="highlight"
+        app:minCharacters="6"
+        app:maxCharacters="12"
+        app:primaryColor="@color/material_drawer_primary" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/et_repeat_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Repeat password*"
+        android:text=""
+        android:inputType="textPassword"
+        android:textCursorDrawable="@drawable/text_cursor_cyan"
+        app:baseColor="@android:color/white"
+        app:floatingLabel="highlight"
+        app:minCharacters="6"
+        app:maxCharacters="12"
+        app:primaryColor="@color/material_drawer_primary" />
+
+    <RadioGroup
+        android:id="@+id/et_gender"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:checkedButton="@+id/selectMale">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/male"
+            android:id="@+id/selectMale"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/female"
+            android:id="@+id/selectFemale"
+            android:layout_weight="1"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/et_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Phone number*"
+            android:text=""
+
+            android:textCursorDrawable="@drawable/text_cursor_cyan"
+            app:baseColor="@android:color/white"
+            app:floatingLabel="highlight"
+            app:minCharacters="6"
+            app:maxCharacters="12"
+            app:primaryColor="@color/material_drawer_primary"
+            android:layout_weight="1" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/et_otp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="SMS-OTP password*"
+            android:text=""
+
+            android:textCursorDrawable="@drawable/text_cursor_cyan"
+            app:baseColor="@android:color/white"
+            app:floatingLabel="highlight"
+            app:minCharacters="6"
+            app:maxCharacters="6"
+            app:primaryColor="@color/material_drawer_primary"
+            android:layout_weight="1" />
+
+        <com.dd.processbutton.FlatButton
+
+            android:id="@+id/btn_request_otp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request OTP"
+            android:textColor="@android:color/white"
+            custom:pb_colorNormal="@android:color/holo_blue_light"
+            custom:pb_colorPressed="@android:color/holo_blue_dark"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_register"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/indigo_500">
+
+        <TextView
+            android:id="@+id/tv_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Register"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="#eee"
+            android:drawablePadding="5dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginRight="42dp" />
+    </LinearLayout>
+
+
+</LinearLayout>

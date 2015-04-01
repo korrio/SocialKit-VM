@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_size_layout_medium"
+        android:paddingLeft="@dimen/padding_size_layout_medium"
+        android:paddingRight="@dimen/padding_size_layout_medium"
+        android:gravity="top"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="@dimen/logo_size"
+            android:layout_height="@dimen/logo_size"
+            android:id="@+id/profile_avatar"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size"
+                android:textStyle="bold"
+                android:text="Aung"
+                android:textColor="#000000"
+                android:id="@+id/profile_name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="11 days ago"
+                android:id="@+id/ago"
+                android:textSize="10sp"
+
+                android:gravity="center"
+                android:textColor="#9497A3" />
+        </LinearLayout>
+
+        <!--<LinearLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_weight="1"></LinearLayout>-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="3"
+            android:gravity="center"
+            android:textColor="#9497A3"
+            android:layout_marginLeft="@dimen/margin_size_layout_small"
+            android:id="@+id/number1"
+            android:textSize="@dimen/size_text_icon"
+            android:drawableRight="@drawable/ic_love"
+            android:drawablePadding="6dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="2"
+            android:textColor="#9497A3"
+            android:id="@+id/number2"
+            android:gravity="center"
+            android:layout_marginLeft="@dimen/margin_size_layout_small"
+            android:textSize="@dimen/size_text_icon"
+            android:drawableRight="@drawable/ic_comment"
+            android:drawablePadding="6dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="0"
+            android:textColor="#9497A3"
+            android:gravity="center"
+            android:id="@+id/number3"
+            android:layout_marginLeft="@dimen/margin_size_layout_small"
+            android:textSize="@dimen/size_text_icon"
+            android:drawableRight="@drawable/ic_share"
+            android:drawablePadding="6dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:paddingLeft="@dimen/padding_size_layout_medium"
+        android:paddingRight="@dimen/padding_size_layout_medium"
+        android:paddingBottom="@dimen/padding_size_layout_medium"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Hello Sunday morning :)"
+            android:textColor="#000000"
+            android:id="@+id/text"
+            android:textSize="15dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:paddingLeft="@dimen/padding_size_layout_medium"
+        android:paddingRight="@dimen/padding_size_layout_medium"
+        android:paddingBottom="@dimen/padding_size_layout_medium"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Smile"
+            android:textColor="#000000"
+            android:id="@+id/smile_icon"
+            android:textSize="15dp" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/feed_thumb_group">
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:id="@+id/thumb"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="fitCenter"
+            android:src="@color/material_drawer_dark_hint_text"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:id="@+id/media_group">
+
+            <ImageView
+                android:id="@+id/ic_type"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginBottom="20dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_yt"
+                android:layout_marginRight="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="312 views"
+                android:textColor="#FFFFFF"
+                android:layout_margin="6dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:id="@+id/view" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:id="@+id/soundcloud_group"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/row_height">
+
+                <TextView
+                    android:id="@+id/track_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                    android:text="Cool Track Title"
+                    android:textSize="18dp"
+                    android:textColor="#252525"
+                    android:drawableLeft="@drawable/ic_soundcloud_small"
+                    android:drawablePadding="6dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginTop="6dp" />
+            </RelativeLayout>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_track_play"
+                android:src="@drawable/ic_play"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    
+
+    <!-- To display picture taken -->
+
+    <ImageView
+        android:id="@+id/imgPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="460dp"
+        android:visibility="gone" 
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center_horizontal" />
+
+    <!-- Videoview to preview recorded video -->
+
+    <VideoView
+        android:id="@+id/videoPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="460dp"
+        android:visibility="gone" 
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:id="@+id/txtPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+
+        android:textSize="30dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:layout_marginBottom="35dp" 
+        android:visibility="gone"/>
+
+
+    <com.dd.CircularProgressButton
+        android:id="@+id/btnUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:layout_marginTop="30dp"
+        android:enabled="true"
+        app:cpb_textComplete="สร้างสำเร็จ !"
+        app:cpb_textError="ไม่สำเร็จ"
+        app:cpb_textIdle="อัพโหลด"
+        app:cpb_cornerRadius="8dp"
+        app:cpb_selectorComplete="@drawable/complete_state_selector"
+        app:cpb_selectorError="@drawable/error_state_selector"
+        app:cpb_selectorIdle="@drawable/idle_state_selector"
+        android:textColor="#fff"
+        android:textSize="24sp"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

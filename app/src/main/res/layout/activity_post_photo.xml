@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:id="@+id/root_view"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="480dp"
+        android:layout_height="360dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:visibility="visible" />
+
+    <include layout="@layout/edit_text"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@android:style/Widget.ProgressBar"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
+</LinearLayout>
