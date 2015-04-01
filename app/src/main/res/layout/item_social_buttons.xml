@@ -12,28 +12,33 @@ android:layout_height="match_parent">
             android:id="@+id/btn_love"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/height_size_button_content"
-            android:background="#1E88E5"
             android:layout_weight="1"
-            android:textColor="#ffffff"
-            android:text="Love" />
+            android:textColor="#252525"
+            android:text="Love"
+            android:textStyle="bold"
+            android:background="#fff"
+            android:paddingLeft="16dp"
+            android:paddingRight="24dp" />
 
         <Button
             android:id="@+id/btn_comment"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/height_size_button_content"
-            android:background="#1E88E5"
             android:layout_weight="1"
-            android:textColor="#ffffff"
-            android:text="Comments" />
+            android:text="Comments"
+            android:textStyle="bold"
+            android:textColor="#252525"
+            android:background="#fff" />
 
 
         <Button
             android:id="@+id/btn_share"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/height_size_button_content"
-            android:background="#1E88E5"
             android:layout_weight="1"
-            android:textColor="#ffffff"
-            android:text="Share" />
+            android:textColor="#252525"
+            android:text="Share"
+            android:textStyle="bold"
+            android:background="#fff" />
     </LinearLayout>
 </LinearLayout>

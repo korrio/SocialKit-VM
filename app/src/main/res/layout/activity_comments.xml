@@ -48,7 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="#555555"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                />
 
             <co.aquario.socialkit.view.SendCommentButton
                 android:id="@+id/btnSendComment"

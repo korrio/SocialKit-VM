@@ -27,7 +27,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.SlidingUpRecyclerViewActivity;
+import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.ChannelAdapter;
 import co.aquario.socialkit.fragment.BaseFragment;
 import co.aquario.socialkit.model.Channel;
@@ -35,7 +35,7 @@ import co.aquario.socialkit.widget.EndlessListOnScrollListener;
 
 
 public class ChannelFragment extends BaseFragment {
-    String channelUrl = "http://api.vdomax.com/search/channel/a?from=0&limit=20";
+    String channelUrl = "http://api.vdomax.com/search/channel/korrio?from=0&limit=20";
     String liveChannelUrl = "https://www.vdomax.com/ajax.php?t=getLiveChannel&user=";
 
     ArrayList<Channel> list = new ArrayList<Channel>();
@@ -111,7 +111,7 @@ public class ChannelFragment extends BaseFragment {
         if (getArguments() != null) {
             userId = getArguments().getString(USER_ID);
         } else {
-            userId = prefManager.userId().getOr("1301");
+            userId = prefManager.userId().getOr("3");
         }
         fragment = this;
     }
@@ -150,6 +150,18 @@ public class ChannelFragment extends BaseFragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent i = new Intent(getActivity(),VitamioActivity.class);
+                i.putExtra("id","rtmp://150.107.31.6:1935/live/"+list.get(position).username);
+                i.putExtra("name",list.get(position).name);
+                i.putExtra("avatar",list.get(position).getAvatarUrl());
+                i.putExtra("cover",list.get(position).getCoverUrl());
+                i.putExtra("title",list.get(position).name);
+                i.putExtra("desc","@"+list.get(position).username);
+                i.putExtra("userId",list.get(position).id);
+                startActivity(i);
+
+                /*
                 Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
                 i.putExtra("userId", list.get(position).id);
                 i.putExtra("avatar", list.get(position).getAvatarUrl());
@@ -157,6 +169,7 @@ public class ChannelFragment extends BaseFragment {
                 i.putExtra("name", list.get(position).name);
                 i.putExtra("username", list.get(position).username);
                 getActivity().startActivity(i);
+                */
             }
         });
         mGridView.setAdapter(channelAdapter);

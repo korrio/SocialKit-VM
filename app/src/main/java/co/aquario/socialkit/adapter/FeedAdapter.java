@@ -82,6 +82,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         PostStory item = list.get(position);
 
+        if(item.isLoved)
+            holder.btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_love_vm_red,0,0,0);
+
+        //if(item.isShared)
+            //holder.btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share,0,0,0);
+
         holder.soundCloudLayout.setVisibility(View.GONE);
         holder.trackTitle.setVisibility(View.GONE);
         holder.btnPlay.setVisibility(View.GONE);
@@ -197,6 +203,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     .fit().centerCrop()
                     .into(holder.thumb);
         }
+
+    }
+
+    public void updateBadge(int position) {
 
     }
 
@@ -370,12 +380,39 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     transaction.commit();
                     break;
                 case R.id.btn_love:
+                    int oldLoveCount = 0;
+                    if(Integer.parseInt(nLove.getText().toString()) == post.loveCount && !post.isLoved) {
+                        oldLoveCount = post.loveCount;
+                        oldLoveCount++;
+                        btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_love_vm_red,0,0,0);
 
+                    }
+                    else {
+                        oldLoveCount = Integer.parseInt(nLove.getText().toString());
+                        oldLoveCount--;
+                        btnLove.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                    }
+
+                    post.isLoved = !post.isLoved;
+
+                    nLove.setText(oldLoveCount + "");
                     if (mItemLove != null) {
                         mItemLove.onItemClick(v, getPosition());
                     }
                     break;
                 case R.id.btn_share:
+                    int oldShareCount = 0;
+                    if(Integer.parseInt(nShare.getText().toString()) == post.shareCount && !post.isShared) {
+                        oldShareCount = post.shareCount;
+                        oldShareCount++;
+                        btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share,0,0,0);
+                    }
+                    else {
+                        oldShareCount = Integer.parseInt(nShare.getText().toString());
+                        oldShareCount--;
+                        btnShare.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                    }
+                    nShare.setText(oldShareCount + "");
                     if (mItemShare != null) {
                         mItemShare.onItemClick(v, getPosition());
                     }

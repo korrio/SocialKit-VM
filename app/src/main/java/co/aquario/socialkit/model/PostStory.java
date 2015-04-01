@@ -1,9 +1,5 @@
 package co.aquario.socialkit.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.api.services.youtube.YouTube;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -13,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PostStory extends BaseModel implements Parcelable{
+public class PostStory extends BaseModel {
 
     @Expose
     public String id;
@@ -75,6 +71,15 @@ public class PostStory extends BaseModel implements Parcelable{
     public SoundCloud soundCloud;
     @Expose
     public Youtube youtube;
+    @Expose
+    @SerializedName("is_loved")
+    public boolean isLoved;
+    @Expose
+    @SerializedName("is_commented")
+    public boolean isCommented;
+    @Expose
+    @SerializedName("is_shared")
+    public boolean isShared;
 
     public String getId() {
         return id;
@@ -87,74 +92,7 @@ public class PostStory extends BaseModel implements Parcelable{
         return p.format(timeAgo);
     }
 
-    @Override
-    public boolean equals(Object obj){
-        if(obj instanceof PostStory){
-            return ((PostStory) obj).getId().equals(id);
-        }
-        return false;
-    }
 
-    @Override
-    public int hashCode(){
-        return Integer.parseInt(id);
-    }
-
-    public PostStory(Parcel in) {
-
-        id = in.readString();
-        active = in.readString();
-        author = (Author) in.readParcelable(Author.class.getClassLoader());
-
-        google_map_name = in.readString();
-        postId = in.readString();
-        recipient_id = in.readString();
-        seen = in.readString();
-
-        text = in.readString();
-        time = in.readString();
-        timeline_id = in.readString();
-        timestamp = in.readString();
-        type1 = in.readString();
-        type2 = in.readString();
-        view = in.readString();
-        followCount = in.readInt();
-        loveCount = in.readInt();
-        commentCount = in.readInt();
-        shareCount = in.readInt();
-
-        in.readList(follow, Follow.class.getClassLoader());
-        in.readList(comment, Comment.class.getClassLoader());
-        in.readList(share, Share.class.getClassLoader());
-
-        type = in.readString();
-        media = (Media) in.readParcelable(Media.class.getClassLoader());
-        clip = (Clip) in.readParcelable(Clip.class.getClassLoader());
-        soundCloud = (SoundCloud) in.readParcelable(SoundCloud.class.getClassLoader());
-        youtube = (Youtube) in.readParcelable(YouTube.class.getClassLoader());
-
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Parcelable.Creator<PostStory> CREATOR = new Parcelable.Creator<PostStory>() {
-        public PostStory createFromParcel(Parcel in) {
-            return new PostStory(in);
-        }
-
-        public PostStory[] newArray(int size) {
-            return new PostStory[size];
-        }
-    };
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-
-
-    }
 
 
 }

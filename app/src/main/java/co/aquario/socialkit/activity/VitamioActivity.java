@@ -23,12 +23,7 @@ public class VitamioActivity extends BaseActivity {
 
     private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
     private static String VIDEO_KEY = "";
-    private static final String VIDEO_POSTER_THUMBNAIL =
-            "http://4.bp.blogspot.com/-BT6IshdVsoA/UjfnTo_TkBI/AAAAAAAAMWk/JvDCYCoFRlQ/s1600/"
-                    + "xmenDOFP.wobbly.1.jpg";
-    private static final String SECOND_VIDEO_POSTER_THUMBNAIL =
-            "http://media.comicbook.com/wp-content/uploads/2013/07/x-men-days-of-future-past"
-                    + "-wolverine-poster.jpg";
+
     private static final String VIDEO_POSTER_TITLE = "X-Men: Days of Future Past";
 
 
@@ -42,6 +37,13 @@ public class VitamioActivity extends BaseActivity {
     String userProfile = "";
     String description= "";
     String userId = "";
+    String cover = "";
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 
     /**
      * Initialize the Activity with some injected data.
@@ -56,6 +58,7 @@ public class VitamioActivity extends BaseActivity {
         profileName = getIntent().getStringExtra("name");
         title = getIntent().getStringExtra("title");
         userProfile = getIntent().getStringExtra("avatar");
+        cover = getIntent().getStringExtra("cover");
         description = getIntent().getStringExtra("desc");
         userId = getIntent().getStringExtra("userId");
         initializeYoutubeFragment();
@@ -90,7 +93,7 @@ public class VitamioActivity extends BaseActivity {
         //MainFragment fragment = new MainFragment();
         Bundle data = new Bundle();
         LIvePosterFragment moviePosterFragment = new LIvePosterFragment();
-        moviePosterFragment.setPoster(VIDEO_POSTER_THUMBNAIL);
+        moviePosterFragment.setPoster(cover);
         moviePosterFragment.setPosterTitle(VIDEO_POSTER_TITLE);
         data.putString("name",profileName);
         data.putString("avatar",userProfile);
@@ -101,7 +104,7 @@ public class VitamioActivity extends BaseActivity {
         draggablePanel.setBottomFragment(moviePosterFragment);
         draggablePanel.initializeView();
         Picasso.with(this)
-                .load(SECOND_VIDEO_POSTER_THUMBNAIL)
+                .load(cover)
                 .into(thumbnailImageView);
     }
 

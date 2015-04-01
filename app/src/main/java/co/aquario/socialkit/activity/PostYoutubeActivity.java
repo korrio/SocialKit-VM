@@ -103,7 +103,7 @@ public class PostYoutubeActivity extends ActionBarActivity {
         dialog.setInverseBackgroundForced(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setTitle("Uploading");
-        dialog.setMessage("กำลังอัพโหลดรูปภาพ..");
+        dialog.setMessage("กำลังอัพโหลดวิดีโอ..");
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setIndeterminate(false);
         dialog.setMax(100);

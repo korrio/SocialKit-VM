@@ -81,12 +81,14 @@ public class LiveHistoryActivity extends ActionBarActivity {
                 String avatarUrl = list.get(position).getAvatar();
                 String username = list.get(position).getNameLive();
                 String name = list.get(position).getNameLive();
+                String cover = avatarUrl;
 
                Intent i = new Intent(getApplicationContext(),VitamioActivity.class);
                 i.putExtra("id",url);
                 i.putExtra("name",name);
                 i.putExtra("avatar",avatarUrl);
                 i.putExtra("title",name);
+                i.putExtra("cover",cover);
                 i.putExtra("desc",username);
                 i.putExtra("userId",userId);
                 startActivity(i);

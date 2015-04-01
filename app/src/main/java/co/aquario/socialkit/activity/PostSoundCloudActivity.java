@@ -237,6 +237,7 @@ public class PostSoundCloudActivity extends ActionBarActivity {
             dialog.dismiss();
             Intent i = new Intent(PostSoundCloudActivity.this,MainActivity.class);
             startActivity(i);
+            finish();
             //showAlert(result);
             super.onPostExecute(result);
         }

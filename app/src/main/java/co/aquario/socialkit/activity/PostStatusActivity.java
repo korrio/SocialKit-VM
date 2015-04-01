@@ -215,6 +215,7 @@ public class PostStatusActivity extends ActionBarActivity {
             dialog.dismiss();
             Intent i = new Intent(PostStatusActivity.this,MainActivity.class);
             startActivity(i);
+            finish();
             //showAlert(result);
             super.onPostExecute(result);
         }

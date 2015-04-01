@@ -25,11 +25,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.otto.Subscribe;
@@ -183,6 +183,10 @@ public class FeedFragment extends BaseFragment {
         }
     }
 
+    Button btnLove;
+    Button btnComment;
+    Button btnShare;
+
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -193,6 +197,9 @@ public class FeedFragment extends BaseFragment {
         userId = pref.userId().getOr("6");
 
         Log.e("userId",userId);
+
+        btnLove = (Button) rootView.findViewById(R.id.btn_love);
+        btnShare = (Button) rootView.findViewById(R.id.btn_share);
 
         layoutMenu = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
         mPlayerToolbar = (Toolbar) rootView.findViewById(R.id.player_toolbar);
@@ -302,6 +309,8 @@ public class FeedFragment extends BaseFragment {
         adapter.OnItemLoveClick(new FeedAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+
+
 
                 ApiBus.getInstance().post(new PostLoveEvent(pref.userId().getOr("6"),list.get(position).postId));
             }
@@ -435,12 +444,12 @@ public class FeedFragment extends BaseFragment {
     }
 
     @Subscribe public void onPostLoveSuccessEvent(PostLoveSuccessEvent event) {
-        Toast.makeText(getActivity(), "Loved", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Loved", Toast.LENGTH_SHORT).show();
 
     }
 
     @Subscribe public void onPostShareSuccessEvent(PostShareSuccessEvent event) {
-        Toast.makeText(getActivity(), "Shared", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Shared", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe public void onPostCommentSuccessEvent(PostCommentSuccessEvent event) {
