@@ -135,8 +135,6 @@ public class PhotoFragmentGrid extends BaseFragment {
     }
 
     @Subscribe public void onLoadTimelineSuccess(LoadTimelineSuccessEvent event) {
-        Log.e("MYTYPE",TYPE);
-
             if(refresh)
                 list.clear();
             list.addAll(event.getTimelineData().getPosts());
