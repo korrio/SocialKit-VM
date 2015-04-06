@@ -100,4 +100,13 @@
     <dimen name="user_profile_avatar_size">88dp</dimen>
     <dimen name="global_menu_avatar_size">64dp</dimen>
 
+    <!-- PCT Player -->
+    <dimen name="player_controls_margin">32dp</dimen>
+    <dimen name="player_controls_bottom_margin">32dp</dimen>
+    <dimen name="player_controls_padding">16dp</dimen>
+    <dimen name="player_controls_corners">7dp</dimen>
+    <dimen name="player_controls_distance">8dp</dimen>
+    <dimen name="player_subtitles_bottom_margin">16dp</dimen>
+    <dimen name="player_subtitles_default_text_size">16dp</dimen>
+
 </resources>

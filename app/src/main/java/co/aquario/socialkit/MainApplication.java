@@ -1,6 +1,5 @@
 package co.aquario.socialkit;
 
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -11,7 +10,12 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.squareup.okhttp.OkHttpClient;
 
+import org.videolan.vlc.VLCApplication;
+
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,6 +27,7 @@ import co.aquario.socialkit.handler.ApiHandlerVM;
 import co.aquario.socialkit.handler.ApiServiceVM;
 import co.aquario.socialkit.model.UserProfile;
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.util.StorageUtils;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
@@ -30,9 +35,7 @@ import retrofit.converter.GsonConverter;
 /**
  * Created by Mac on 3/2/15.
  */
-public class MainApplication extends Application {
-
-    //private static final String ENDPOINT = "http://wallsplash.lanora.io";
+public class MainApplication extends VLCApplication {
 
     private static final String ENDPOINT = "http://api.vdomax.com";
     
@@ -46,6 +49,7 @@ public class MainApplication extends Application {
     public static UserProfile user;
 
     private ApiHandlerVM loginApiHandler;
+    private static OkHttpClient sHttpClient;
 
     public static MainApplication get(Context context) {
         return (MainApplication) context.getApplicationContext();
@@ -59,6 +63,23 @@ public class MainApplication extends Application {
 
     public static String appName() {
         return getAppContext().getString(R.string.app_name);
+    }
+
+    public static OkHttpClient getHttpClient() {
+        if (sHttpClient == null) {
+            sHttpClient = new OkHttpClient();
+
+            int cacheSize = 10 * 1024 * 1024;
+            try {
+                File cacheLocation = new File(StorageUtils.getIdealCacheDirectory(MainApplication.getAppContext()).toString());
+                cacheLocation.mkdirs();
+                com.squareup.okhttp.Cache cache = new com.squareup.okhttp.Cache(cacheLocation, cacheSize);
+                sHttpClient.setCache(cache);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sHttpClient;
     }
 
     @Override public void onCreate() {
@@ -92,9 +113,6 @@ public class MainApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
     }
-
-
-
 
     ApiServiceVM buildLoginApi() {
 
@@ -135,28 +153,5 @@ public class MainApplication extends Application {
                 .build()
                 .create(ApiServiceVM.class);
     }
-
-    /*
-    ApiService buildRandomUnsplashImageApi() {
-
-        Log.e("HEY!","after post");
-
-        return new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setEndpoint(ENDPOINT)
-
-                .setRequestInterceptor(new RequestInterceptor() {
-                    @Override public void intercept(RequestFacade request) {
-                        //request.addQueryParam("p1", "var1");
-                        //request.addQueryParam("p2", "");
-                    }
-                })
-
-                .build()
-                .create(ApiService.class);
-    }
-    */
-
-
 
 }

@@ -3,17 +3,12 @@ package co.aquario.socialkit.fragment.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.GridView;
 
 import com.androidquery.AQuery;
@@ -35,8 +30,8 @@ import co.aquario.socialkit.widget.EndlessListOnScrollListener;
 
 
 public class ChannelFragment extends BaseFragment {
-    String channelUrl = "http://api.vdomax.com/search/channel/korrio?from=0&limit=20";
-    String liveChannelUrl = "https://www.vdomax.com/ajax.php?t=getLiveChannel&user=";
+    String channelUrl = "http://api.vdomax.com/search/channel/a?from=0&limit=20";
+    String liveChannelUrl = "http://api.vdomax.com/live/now";
 
     ArrayList<Channel> list = new ArrayList<Channel>();
     ChannelAdapter channelAdapter;
@@ -45,73 +40,29 @@ public class ChannelFragment extends BaseFragment {
     public SwipeRefreshLayout swipeLayout;
 
     private static final String USER_ID = "USER_ID";
+    private static final String TYPE = "TYPE";
     public String userId = null;
+
+    private String type;
 
     ChannelFragment fragment;
     char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-    public static ChannelFragment newInstance(String userId) {
+    public static ChannelFragment newInstance(String type) {
         ChannelFragment mFragment = new ChannelFragment();
         Bundle mBundle = new Bundle();
-        mBundle.putString(USER_ID, userId);
+        mBundle.putString(TYPE, type);
         mFragment.setArguments(mBundle);
         return mFragment;
-    }
-
-    boolean mSearchCheck = false;
-
-    private SearchView.OnQueryTextListener onQuerySearchView = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String s) {
-            isRefresh = true;
-            String searchChannelUrl = "http://api.vdomax.com/search/channel/"+s+"?from=0&limit=20";
-            aq.ajax(searchChannelUrl, JSONObject.class, fragment, "getJson");
-            Log.e("onQueryTextSubmit",s);
-            return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String s) {
-            isRefresh = true;
-            String searchChannelUrl = "http://api.vdomax.com/search/channel/"+s+"?from=0&limit=20";
-            aq.ajax(searchChannelUrl, JSONObject.class, fragment, "getJson");
-            Log.e("onQueryTextChange",s);
-
-            if (mSearchCheck){
-
-                // implement your search here
-            }
-            return false;
-        }
-    };
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Auto-generated method stub
-        super.onCreateOptionsMenu(menu, inflater);
-
-        inflater.inflate(R.menu.menu_search, menu);
-
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        searchView.setQueryHint("Search channel");
-
-        ((EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text))
-                .setHintTextColor(getResources().getColor(android.R.color.white));
-        searchView.setOnQueryTextListener(onQuerySearchView);
-
-        //search.findItem(R.id.menu_add).setVisible(true);
-        menu.findItem(R.id.action_search).setVisible(true);
-        mSearchCheck = false;
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = getArguments().getString(USER_ID);
+            type = getArguments().getString(TYPE);
         } else {
-            userId = prefManager.userId().getOr("3");
+            type = "EVERYONE";
         }
         fragment = this;
     }
@@ -139,7 +90,10 @@ public class ChannelFragment extends BaseFragment {
             public void onRefresh() {
                 isRefresh = true;
                 String loadMoreUrl = "http://api.vdomax.com/search/channel/a?from=0&limit=10";
-                aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
+                if(type.equals("EVERYONE"))
+                    aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
+                else
+                    aq.ajax(liveChannelUrl, JSONObject.class, fragment, "getJson");
                 //Log.e("5555","onRefresh");
             }
         });
@@ -187,15 +141,18 @@ public class ChannelFragment extends BaseFragment {
         });
 
         aq = new AQuery(getActivity());
-        aq.ajax(channelUrl, JSONObject.class, this, "getJson");
-        Log.e("callme", fragment.channelUrl);
+        if(type.equals("EVERYONE"))
+            aq.ajax(channelUrl, JSONObject.class, this, "getJson");
+        else
+            aq.ajax(liveChannelUrl, JSONObject.class, this, "getJson");
+        //Log.e("callme", fragment.channelUrl);
     }
 
     public void getJson(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {
         AQUtility.debug("jo", jo);
         if (jo != null) {
-            if (isRefresh)
+            if (isRefresh || type.equals("EVERYONE"))
                 list.clear();
             isRefresh = false;
 
@@ -204,7 +161,7 @@ public class ChannelFragment extends BaseFragment {
                 JSONObject obj = ja.optJSONObject(i);
 
                 String userId = obj.optString("id");
-                String name = obj.optString("name").replace("&#039;", "'");
+                String name = obj.optString("name");
                 String username = obj.optString("username");
                 String avatar = obj.optString("avatar_url");
                 String cover = obj.optString("cover_url");
@@ -212,7 +169,7 @@ public class ChannelFragment extends BaseFragment {
                 String gender = obj.optString("gender");
                 boolean liveStatus = obj.optBoolean("status");
 
-                Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, gender, liveStatus);
+                Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, "male", liveStatus);
                 list.add(channel);
             }
             channelAdapter.notifyDataSetChanged();

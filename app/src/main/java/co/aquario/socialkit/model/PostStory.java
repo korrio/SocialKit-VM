@@ -29,6 +29,9 @@ public class PostStory extends BaseModel {
     @Expose
     public String text;
     @Expose
+    @SerializedName("emoticonized")
+    public String textEmoticonized;
+    @Expose
     public String time;
     @Expose
     public String timeline_id;

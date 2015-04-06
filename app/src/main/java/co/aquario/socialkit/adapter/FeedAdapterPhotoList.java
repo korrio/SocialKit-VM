@@ -30,9 +30,6 @@ import java.util.Map;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.CommentsActivity;
 import co.aquario.socialkit.activity.PhotoActivity;
-import co.aquario.socialkit.fragment.VideoViewFragment;
-import co.aquario.socialkit.activity.VideoViewNativeActivity;
-import co.aquario.socialkit.activity.YoutubeActivity;
 import co.aquario.socialkit.event.PhotoLoadEvent;
 import co.aquario.socialkit.fragment.FeedFragment;
 import co.aquario.socialkit.fragment.ProfileDetailFragment;
@@ -127,7 +124,7 @@ public class FeedAdapterPhotoList extends RecyclerView.Adapter<FeedAdapterPhotoL
             Picasso.with(mActivity)
                     .load(item.media.getThumbUrl())
 
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
             Picasso.with(mActivity).load(R.drawable.ic_photo).into(holder.typeIcon);
@@ -139,7 +136,7 @@ public class FeedAdapterPhotoList extends RecyclerView.Adapter<FeedAdapterPhotoL
             Picasso.with(mActivity)
                     .load(item.youtube.thumbnail)
 
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
             Picasso.with(mActivity).load(R.drawable.ic_yt).into(holder.typeIcon);
@@ -148,7 +145,7 @@ public class FeedAdapterPhotoList extends RecyclerView.Adapter<FeedAdapterPhotoL
             holder.thumb.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
                     .load(item.clip.thumb)
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
             Picasso.with(mActivity).load(R.drawable.ic_clip).into(holder.typeIcon);
@@ -165,7 +162,7 @@ public class FeedAdapterPhotoList extends RecyclerView.Adapter<FeedAdapterPhotoL
                     .fit().centerCrop()
                             //.resize(128,128)
                     //.centerInside()
-                            //.error(R.drawable.offline)
+                            //.error(R.drawable.default_offline)
                     .into(holder.thumb);
 
             holder.typeIcon.setVisibility(View.GONE);
@@ -194,7 +191,7 @@ public class FeedAdapterPhotoList extends RecyclerView.Adapter<FeedAdapterPhotoL
             holder.msg.setTextSize(18);
             Picasso.with(mActivity)
                     .load(item.author.liveCover)
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
         }
@@ -290,44 +287,6 @@ public class FeedAdapterPhotoList extends RecyclerView.Adapter<FeedAdapterPhotoL
                         PhotoLoadEvent event = new PhotoLoadEvent(url);
                         ApiBus.getInstance().post(event);
 
-
-
-                    } else if (postType.equals("clip")) {
-
-                        Intent i = new Intent(mActivity, VideoViewNativeActivity.class);
-                        i.putExtra("url", post.clip.url);
-                        i.putExtra("userId", post.author.id);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("cover", post.author.getCoverPath());
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("username", post.author.username);
-                        mActivity.startActivity(i);
-
-                    } else if (postType.equals("youtube")) {
-
-                        Intent i = new Intent(mActivity, YoutubeActivity.class);
-                        i.putExtra("id", post.youtube.id);
-                        i.putExtra("title", post.youtube.title);
-                        i.putExtra("desc", post.youtube.desc);
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("ago", post.getAgoText());
-                        mActivity.startActivity(i);
-
-                    } else if (postType.equals("soundcloud")) {
-                        if (mFragment != null) {
-                            mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
-                            Log.e("heysoundcloud", post.soundCloud.streamUrl);
-                        }
-                    } else if(postType.equals("live")) {
-                        Intent i = new Intent(mActivity,VideoViewFragment.class);
-                        i.putExtra("url", post.author.liveUrl);
-                        i.putExtra("userId", post.author.id);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("cover", post.author.getCoverPath());
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("username", post.author.username);
-                        mActivity.startActivity(i);
                     }
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(v, getPosition());

@@ -80,8 +80,8 @@ public class ChannelAdapter extends BaseAdapter {
 
         Picasso.with(context)
                 .load(channel.liveCover)
-                .placeholder(R.drawable.offline)
-                .error(R.drawable.offline)
+                .placeholder(R.drawable.default_offline)
+                .error(R.drawable.default_offline)
                 .into(liveCover)
         ;
 

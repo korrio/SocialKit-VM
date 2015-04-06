@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -113,7 +112,7 @@ public class PostSoundCloudActivity extends ActionBarActivity {
 
             @Override
             public void onDismiss() {
-                changeEmojiKeyboardIcon(emojiButton, R.drawable.smiley);
+                changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_emoji);
             }
         });
 

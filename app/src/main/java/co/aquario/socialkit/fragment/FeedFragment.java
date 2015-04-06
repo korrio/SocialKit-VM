@@ -42,7 +42,6 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.activity.MainActivity;
 import co.aquario.socialkit.activity.PostStatusActivity;
-import co.aquario.socialkit.activity.PostYoutubeActivity;
 import co.aquario.socialkit.activity.SearchYoutubeActivity;
 import co.aquario.socialkit.activity.SoundCloudActivity;
 import co.aquario.socialkit.activity.TakePhotoActivity;
@@ -254,7 +253,7 @@ public class FeedFragment extends BaseFragment {
         postYoutubeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), PostYoutubeActivity.class);
+                Intent i = new Intent(getActivity(), SearchYoutubeActivity.class);
                 startActivity(i);
 
             }

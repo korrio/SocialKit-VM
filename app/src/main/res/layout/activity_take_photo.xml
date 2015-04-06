@@ -47,7 +47,6 @@
                     android:layout_height="48dp"
                     android:layout_marginLeft="24dp"
                     android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_camera_rear_white_24dp"
                     android:id="@+id/btnFrontCamera" />
             </LinearLayout>
 
@@ -63,8 +62,7 @@
                     android:id="@+id/btnBack"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_arrow_back_white_24dp" />
+                    android:background="@drawable/btn_default_light" />
 
                 <View
                     android:layout_width="0dp"
@@ -94,8 +92,7 @@
                     android:id="@+id/btnAccept"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/btn_default_light"
-                    android:src="@drawable/ic_arrow_forward_white_24dp" />
+                    android:background="@drawable/btn_default_light" />
             </LinearLayout>
 
         </ViewSwitcher>
@@ -147,7 +144,6 @@
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:background="@drawable/btn_capture_options"
-                        android:src="@drawable/ic_collections_white_24dp"
                         android:id="@+id/btnChoosePhoto" />
                 </FrameLayout>
 
@@ -174,7 +170,6 @@
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:background="@drawable/btn_capture_options"
-                        android:src="@drawable/ic_videocam_white_24dp"
                         android:id="@+id/btnRecordVideo" />
                 </FrameLayout>
             </LinearLayout>

@@ -69,6 +69,8 @@ dependencies {
     compile('com.mikepenz.materialdrawer:library:2.6.8@aar') {
         transitive = true
     }
+
+    // main libs
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v13:21.0.3'
     compile 'com.android.support:support-v4:21.0.3'
@@ -81,32 +83,52 @@ dependencies {
     compile 'com.squareup:otto:1.3.5'
     compile 'com.squareup.picasso:picasso:2.5.0'
     compile 'com.jakewharton:butterknife:6.1.0'
-    compile 'com.nispok:snackbar:2.9.0'
-    compile 'com.rengwuxian.materialedittext:library:1.8.3'
-    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.3'
+
+    // util libs
     compile 'com.github.talenguyen:prettysharedpreferences:1.0.2'
-    compile 'de.hdodenhof:circleimageview:1.2.2'
     compile 'me.neavo:vitamio:4.2.2'
-    compile 'com.getbase:floatingactionbutton:1.8.0'
-    compile 'com.akexorcist:RoundCornerProgressBar:1.1.0'
+    compile 'com.commonsware.cwac:camera:0.6.12'
+    compile 'net.the4thdimension:audio-wife:1.0.3'
+
+    // main view libs
     compile 'com.github.ksoichiro:android-observablescrollview:1.5.0'
-    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.getbase:floatingactionbutton:1.8.0'
     compile 'com.melnykov:floatingactionbutton:1.0.7'
     compile 'com.afollestad:material-dialogs:0.6.3.5'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
-    compile 'com.mikepenz.iconics:library:0.7.7@aar'
-    compile 'com.mikepenz.iconics:meteocons-typeface:1.1.1@aar'
-    compile 'com.desarrollodroide:fragmenttransactionextended:1'
-    compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
-    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
     compile 'com.github.pedrovgs:draggablepanel:1.8'
-    compile 'in.srain.cube:ultra-ptr:1.0.8.3-SNAPSHOT@aar'
-    compile 'com.commonsware.cwac:camera:0.6.12'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+
+    // alert / dialog view libs
+    compile 'com.afollestad:material-dialogs:0.6.3.5'
+    compile 'com.nispok:snackbar:2.9.0'
+
+    // misc view libs
+    compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
+    compile 'com.rengwuxian.materialedittext:library:1.8.3'
+    compile 'de.hdodenhof:circleimageview:1.2.2'
+    compile 'jp.wasabeef:recyclerview-animators:1.1.2@aar'
+
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.3'
+    compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
+
+    //google, youtube libs
     compile 'com.google.apis:google-api-services-youtube:v3-rev120-1.19.0'
     compile 'com.google.http-client:google-http-client-android:+'
     compile 'com.google.api-client:google-api-client-android:+'
     compile 'com.google.api-client:google-api-client-gson:+'
-    compile 'jp.wasabeef:recyclerview-animators:1.1.2@aar'
+    compile 'com.google.apis:google-api-services-youtube:v3-rev120-1.19.0'
+
+    //compile 'com.nineoldandroids:library:2.4.0'
+
+
+    //compile 'com.mikepenz.iconics:library:0.7.7@aar'
+    //compile 'com.mikepenz.iconics:meteocons-typeface:1.1.1@aar'
+
+    //compile 'com.desarrollodroide:fragmenttransactionextended:1'
+
+    //compile 'com.github.gabrielemariotti.changeloglib:library:1.+'
+
     compile project(':layouts')
-    compile project(':lib')
+    compile project(':emojicon')
+    compile project(':vlc')
 }

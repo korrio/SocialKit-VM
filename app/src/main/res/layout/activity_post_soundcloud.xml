@@ -29,8 +29,7 @@
             android:layout_centerVertical="true"
             android:layout_width="@dimen/avatar_size"
             android:layout_height="@dimen/avatar_size"
-            android:padding="@dimen/avatar_padding"
-            android:src="@drawable/profile" />
+            android:padding="@dimen/avatar_padding" />
 
         <TextView
             android:layout_centerVertical="true"

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +30,7 @@ import java.util.Map;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.CommentsActivity;
-import co.aquario.socialkit.fragment.VideoViewFragment;
-import co.aquario.socialkit.activity.VideoViewNativeActivity;
+import co.aquario.socialkit.activity.VideoPlayerActivity;
 import co.aquario.socialkit.activity.YoutubeActivity;
 import co.aquario.socialkit.fragment.FeedFragment;
 import co.aquario.socialkit.fragment.PhotoZoomFragment;
@@ -38,6 +38,7 @@ import co.aquario.socialkit.fragment.ProfileDetailFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import co.aquario.socialkit.widget.URLImageParser;
 
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
@@ -90,6 +91,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         holder.soundCloudLayout.setVisibility(View.GONE);
         holder.trackTitle.setVisibility(View.GONE);
+        holder.trackSubtitle.setVisibility(View.GONE);
         holder.btnPlay.setVisibility(View.GONE);
 
         holder.typeIcon.setVisibility(View.VISIBLE);
@@ -111,11 +113,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.nShare.setText(item.shareCount + "");
         holder.ago.setText(ago);
 
+        String textEmoticonized = item.textEmoticonized;
+
         if (item.text != null) {
             if (item.text.trim().length() < 200)
                 holder.msg.setText(Html.fromHtml("" + item.text + ""));
             else
                 holder.msg.setText(Html.fromHtml("" + item.text.substring(0, 200) + " ..." + ""));
+
+            URLImageParser parser = new URLImageParser(holder.msg, mActivity);
+            Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+            holder.msg.setText(htmlSpan);
         } else {
             holder.msg.setVisibility(View.GONE);
         }
@@ -127,14 +135,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 .transform(new RoundedTransformation(50, 4))
                 .into(holder.avatar);
 
+        holder.mediaLayout.setVisibility(View.VISIBLE);
+
         if (checkNull(item.media)) {
             holder.thumb.setVisibility(View.VISIBLE);
+
             Picasso.with(mActivity)
                     .load(item.media.getThumbUrl())
 
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
-                    .into(holder.thumb);
+                    .into(holder.thumb)
+                    ;
             Picasso.with(mActivity).load(R.drawable.ic_photo).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
             //holder.nView.setVisibility(View.GONE);
@@ -144,39 +156,45 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             Picasso.with(mActivity)
                     .load(item.youtube.thumbnail)
 
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
+
             Picasso.with(mActivity).load(R.drawable.ic_yt).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
         } else if (checkNull(item.clip)) {
             holder.thumb.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
                     .load(item.clip.thumb)
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
+
             Picasso.with(mActivity).load(R.drawable.ic_clip).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
+
 
 
         } else if (checkNull(item.soundCloud)) {
 
             holder.soundCloudLayout.setVisibility(View.VISIBLE);
             holder.trackTitle.setVisibility(View.VISIBLE);
+            holder.trackSubtitle.setVisibility(View.VISIBLE);
             holder.btnPlay.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
                     .load(R.drawable.ic_soundcloud)
                     .fit().centerCrop()
                             //.resize(128,128)
                     //.centerInside()
-                            //.error(R.drawable.offline)
+                            //.error(R.drawable.default_offline)
                     .into(holder.thumb);
 
             holder.typeIcon.setVisibility(View.GONE);
             holder.nView.setVisibility(View.GONE);
 
             holder.trackTitle.setText(item.soundCloud.title);
+            holder.trackSubtitle.setText(item.soundCloud.trackId);
+            holder.mediaLayout.setVisibility(View.GONE);
 
             //holder.soundCloudLayout.setVisibility(View.VISIBLE);
             //holder.mediaLayout.setVisibility(View.GONE);
@@ -199,7 +217,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.msg.setTextSize(18);
             Picasso.with(mActivity)
                     .load(item.author.liveCover)
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
         }
@@ -240,6 +258,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         RelativeLayout soundCloudLayout;
 
         TextView trackTitle;
+        TextView trackSubtitle;
         ImageButton btnPlay;
 
 
@@ -264,9 +283,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             soundCloudLayout = (RelativeLayout) view.findViewById(R.id.soundcloud_group);
 
             trackTitle = (TextView) view.findViewById(R.id.track_title);
+            trackSubtitle = (TextView) view.findViewById(R.id.track_sub_title);
             btnPlay = (ImageButton) view.findViewById(R.id.btn_track_play);
-            btnPlay.setOnClickListener(this);
 
+            btnPlay.setOnClickListener(this);
 
             thumb.setOnClickListener(this);
             avatar.setOnClickListener(this);
@@ -312,6 +332,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     } else if (postType.equals("clip")) {
 
+                        /*
                         Intent i = new Intent(mActivity, VideoViewNativeActivity.class);
                         i.putExtra("url", post.clip.url);
                         i.putExtra("userId", post.author.id);
@@ -320,8 +341,42 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         i.putExtra("name", post.author.name);
                         i.putExtra("username", post.author.username);
                         mActivity.startActivity(i);
+                        */
+
+
+
+                        /*
+                        Intent i = new Intent(mActivity,VitamioActivity.class);
+                        i.putExtra("id",post.clip.url);
+                        i.putExtra("name",post.author.name);
+                        i.putExtra("avatar",post.author.getAvatarPath());
+                        i.putExtra("cover",post.author.getCoverPath());
+                        i.putExtra("title",post.text);
+                        i.putExtra("desc","@"+post.author.username);
+                        i.putExtra("userId",post.author.id);
+                        mActivity.startActivity(i);
+
+                        */
+
+                        VideoPlayerActivity.startActivity(mActivity,post.clip.url);
 
                     } else if (postType.equals("youtube")) {
+
+                        //String location = "https://www.youtube.com/watch?v=SvDMZFfwmgo";
+                        //String location = "https://www.youtube.com/watch?v=" + post.youtube.id;
+
+                        //String location = post.youtube.id;
+                        //if (YouTubeData.isYouTubeUrl(location)) {
+                            //Intent i = new Intent(mActivity, VideoTrailerPlayerActivity.class);
+                            //i.putExtra(VideoTrailerPlayerActivity.LOCATION, post.youtube.id);
+                            //mActivity.startActivity(i);
+                        //}
+
+                        //Intent lVideoIntent = new Intent(null, Uri.parse("ytv://" + post.youtube.id), mActivity, OpenYouTubePlayerActivity.class);
+                        //mActivity.startActivity(lVideoIntent);
+
+
+
 
                         Intent i = new Intent(mActivity, YoutubeActivity.class);
                         i.putExtra("id", post.youtube.id);
@@ -332,12 +387,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         i.putExtra("ago", post.getAgoText());
                         mActivity.startActivity(i);
 
+
                     } else if (postType.equals("soundcloud")) {
                         if (mFragment != null) {
                             mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
                             Log.e("heysoundcloud", post.soundCloud.streamUrl);
                         }
                     } else if(postType.equals("live")) {
+
+                        /*
                         Intent i = new Intent(mActivity,VideoViewFragment.class);
                         i.putExtra("url", post.author.liveUrl);
                         i.putExtra("userId", post.author.id);
@@ -346,6 +404,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         i.putExtra("name", post.author.name);
                         i.putExtra("username", post.author.username);
                         mActivity.startActivity(i);
+
+                        */
+
+                        VideoPlayerActivity.startActivity(mActivity,post.author.liveUrl);
                     }
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(v, getPosition());

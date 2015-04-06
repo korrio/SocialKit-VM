@@ -1,1 +1,2 @@
-include ':app', ':layouts', ':core', ':lib'
+include ':app', ':layouts', ':core', ':vlc', ':emojicon'
+project(':emojicon').projectDir = new File('emoji')

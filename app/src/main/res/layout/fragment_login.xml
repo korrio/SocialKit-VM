@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:id="@+id/imageView"
-        android:src="@drawable/bg_login" />
+        android:src="@drawable/default_bg_login" />
 
     <RelativeLayout
         android:layout_width="match_parent"

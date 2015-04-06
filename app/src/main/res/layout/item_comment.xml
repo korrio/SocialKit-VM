@@ -42,6 +42,13 @@
                 android:text="Lorem ipsum dolor sit amet"
                 android:textColor="@color/material_drawer_secondary_text" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="a moment ago"
+                android:id="@+id/tvAgo" />
+
         </LinearLayout>
 
     </LinearLayout>

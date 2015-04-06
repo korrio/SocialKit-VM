@@ -104,7 +104,7 @@ public class PostYoutubeActivity extends ActionBarActivity {
 
             @Override
             public void onDismiss() {
-                changeEmojiKeyboardIcon(emojiButton, R.drawable.smiley);
+                changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_emoji);
             }
         });
 

@@ -20,7 +20,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 
@@ -152,7 +151,7 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
 
             @Override
             public void onDismiss() {
-                changeEmojiKeyboardIcon(emojiButton, R.drawable.smiley);
+                changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_emoji);
             }
         });
 

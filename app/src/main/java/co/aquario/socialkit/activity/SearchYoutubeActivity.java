@@ -119,6 +119,8 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
         mYtServiceTask.setmServerResponseListener(this);
     }
 
+    boolean executing = false;
+
 
     @Override
     public void onClick(View view) {
@@ -130,7 +132,13 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
 
 
                     //mYtServiceTask.execute(new String[]{keyWord});
-                    mYtServiceTask.execute(keyWord);
+                    if(!executing) {
+                        executing = true;
+                        mYtServiceTask.execute(keyWord);
+                    }
+
+
+
                 } else {
                     AppUtils.showToast("Empty field");
                 }
@@ -174,6 +182,7 @@ public class SearchYoutubeActivity extends ActionBarActivity implements View.OnC
 
     @Override
     public void completedRequest(Object... objects) {
+        executing = false;
         // Dismiss the dialog
         if (mLoadingDialog != null && mLoadingDialog.isShowing())
             mLoadingDialog.dismiss();

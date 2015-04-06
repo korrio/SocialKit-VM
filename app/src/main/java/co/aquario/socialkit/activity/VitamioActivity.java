@@ -1,13 +1,12 @@
 package co.aquario.socialkit.activity;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggablePanel;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.squareup.picasso.Picasso;
 
 import butterknife.ButterKnife;
@@ -15,20 +14,21 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.LIvePosterFragment;
+import co.aquario.socialkit.fragment.VideoPlayerFragment;
 import co.aquario.socialkit.fragment.VideoViewFragment;
+import co.aquario.socialkit.model.Live;
 
 /**
  * Sample activity created to show a video from YouTube using a YouTubePlayer.
  *
  * @author Pedro Vicente Gómez Sánchez.
  */
-public class VitamioActivity extends BaseActivity {
+public class VitamioActivity extends BaseActivity  {
 
-    private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
+    private String mLocation;
+    private VideoPlayerFragment mVideoPlayerFragment;
+
     private static String VIDEO_KEY = "";
-
-    private static final String VIDEO_POSTER_TITLE = "X-Men: Days of Future Past";
-
 
     @InjectView(R.id.iv_thumbnail)
     ImageView thumbnailImageView;
@@ -41,6 +41,24 @@ public class VitamioActivity extends BaseActivity {
     String description= "";
     String userId = "";
     String cover = "";
+
+    public final static String LOCATION = "stream_url";
+    public final static String QUALITY = "quality";
+
+    public static Intent startActivity(Activity activity, String streamUrl,Live mLive) {
+        return startActivity(activity, streamUrl, null, 0,mLive);
+    }
+
+    public static Intent startActivity(Activity activity, String streamUrl, String quality,  long resumePosition,Live mLive) {
+        Intent i = new Intent(activity, VitamioActivity.class);
+        //i.putExtra(DATA, data);
+        i.putExtra(QUALITY, quality);
+        //i.putExtra(SUBTITLES, subtitleLanguage);
+        i.putExtra(LOCATION, streamUrl);
+        //todo: resume position;
+        activity.startActivity(i);
+        return i;
+    }
 
     @Override
     public void onBackPressed() {
@@ -64,9 +82,16 @@ public class VitamioActivity extends BaseActivity {
         cover = getIntent().getStringExtra("cover");
         description = getIntent().getStringExtra("desc");
         userId = getIntent().getStringExtra("userId");
-        initializeYoutubeFragment();
+
+
+
+        initializeVideoPlayerFragment();
         initializeDraggablePanel();
         hookDraggablePanelListeners();
+
+
+
+
     }
 
     /**
@@ -82,25 +107,30 @@ public class VitamioActivity extends BaseActivity {
      * Initialize the YouTubeSupportFrament attached as top fragment to the DraggablePanel widget and
      * reproduce the YouTube video represented with a YouTube url.
      */
-    private void initializeYoutubeFragment() {
+    private void initializeVideoPlayerFragment() {
 
+        //mLocation = getIntent().getStringExtra(LOCATION);
+
+//        Log.e("location",mLocation);
+
+        //mVideoPlayerFragment = new VideoPlayerFragment();
+        //mVideoPlayerFragment.loadMediaUrl(mLocation);
 
     }
 
     private void initializeDraggablePanel() {
         Bundle data2 = new Bundle();
         VideoViewFragment oneFragment = new VideoViewFragment();
-        data2.putString("urlLive", VIDEO_KEY);
+       data2.putString("urlLive", VIDEO_KEY);
         oneFragment.setArguments(data2);
+
         draggablePanel.setFragmentManager(getSupportFragmentManager());
         draggablePanel.setTopFragment(oneFragment);
-        //MainFragment fragment = new MainFragment();
-
 
         Bundle data = new Bundle();
         LIvePosterFragment moviePosterFragment = new LIvePosterFragment();
         moviePosterFragment.setPoster(cover);
-        moviePosterFragment.setPosterTitle(VIDEO_POSTER_TITLE);
+        moviePosterFragment.setPosterTitle("DUMMY");
         data.putString("name",profileName);
         data.putString("avatar",userProfile);
         data.putString("title",title);
@@ -142,5 +172,6 @@ public class VitamioActivity extends BaseActivity {
         });
     }
 
+    String mQuality = "HQ";
 
 }

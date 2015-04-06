@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -13,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 
@@ -68,7 +69,7 @@ public class PostStatusActivity extends ActionBarActivity {
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postSoundCloud();
+                postStatus();
             }
         });
 
@@ -96,7 +97,7 @@ public class PostStatusActivity extends ActionBarActivity {
 
             @Override
             public void onDismiss() {
-                changeEmojiKeyboardIcon(emojiButton, R.drawable.smiley);
+                changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_emoji);
             }
         });
 
@@ -166,14 +167,34 @@ public class PostStatusActivity extends ActionBarActivity {
                 }
             }
         });
+
+        etStatus.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v("emojiText",s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
 
-    public void postSoundCloud() {
+    public void postStatus() {
         statusText = etStatus.getText().toString()
                 .replace("\n", "%0A");
+
+        Log.e("statusFinal",statusText);
+
         //statusText.toString().trim().replaceAll("\\s+", " ");
 
         Pattern pattern = Pattern.compile("\\s");
@@ -278,7 +299,7 @@ public class PostStatusActivity extends ActionBarActivity {
                 //File sourceFile = tempFile;
 
                 PrefManager pref = MainApplication.get(getApplicationContext()).getPrefManager();
-                String userId = pref.userId().getOr("1301");
+                String userId = pref.userId().getOr("3");
 
                 Charset chars = Charset.forName("UTF-8");
                 entity.addPart("timeline_id", new StringBody(userId));

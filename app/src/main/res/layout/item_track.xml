@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/row_height"
+                android:layout_height="136dp"
                 android:paddingLeft="@dimen/activity_vertical_margin"
                 android:paddingRight="@dimen/activity_vertical_margin">
 
     <ImageView
+        android:layout_height="@dimen/avatar_size"
         android:id="@+id/track_thumbnail"
         android:layout_centerVertical="true"
         android:layout_width="@dimen/avatar_size"
-        android:layout_height="@dimen/avatar_size"
-        android:padding="@dimen/avatar_padding"
-        android:src="@drawable/profile" />
+        android:padding="@dimen/avatar_padding"/>
 
     <TextView
         android:layout_centerVertical="true"
@@ -23,8 +22,8 @@
         android:text="Cool Track Title" />
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="90dp"
+        android:layout_height="50dp"
         android:id="@+id/btn_track_share"
         android:src="@drawable/ic_share"
         android:layout_centerVertical="true"

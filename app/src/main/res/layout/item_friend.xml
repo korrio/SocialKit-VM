@@ -13,7 +13,6 @@
         android:id="@+id/profile_image"
         android:layout_width="@dimen/avatar_medium"
         android:layout_height="@dimen/avatar_medium"
-        android:src="@drawable/profile"
         android:layout_gravity="center"
         android:padding="2dp" />
 

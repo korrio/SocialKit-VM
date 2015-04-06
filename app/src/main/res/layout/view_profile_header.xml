@@ -12,7 +12,7 @@
         android:id="@+id/cover"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:background="@drawable/cover_default" />
+        android:background="@drawable/default_cover" />
 
     <RelativeLayout
         android:id="@+id/image_poster_cardview"
@@ -29,7 +29,7 @@
             android:layout_height="match_parent"
             android:id="@+id/avatar"
             android:scaleType="centerCrop"
-            android:src="@drawable/avatar_default" />
+            android:src="@drawable/default_avatar" />
 
     </RelativeLayout>
 

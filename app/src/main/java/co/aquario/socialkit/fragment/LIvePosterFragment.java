@@ -57,8 +57,8 @@ public class LIvePosterFragment extends Fragment implements ObservableScrollView
 
         View view = inflater.inflate(R.layout.fragment_youtube_detail, container, false);
         ButterKnife.inject(this, view);
-        nameTitle = getActivity().getIntent().getExtras().getString("nameUser");
-        photoFile = getActivity().getIntent().getExtras().getString("avatarUrl");
+        nameTitle = getActivity().getIntent().getExtras().getString("name");
+        photoFile = getActivity().getIntent().getExtras().getString("avatar");
         VideoYoutubeTitleUrl = getActivity().getIntent().getExtras().getString("title");
         DescriptionUrl = getActivity().getIntent().getExtras().getString("desc");
         userId = getActivity().getIntent().getExtras().getString("userId");
@@ -85,7 +85,7 @@ public class LIvePosterFragment extends Fragment implements ObservableScrollView
         scrollView.setScrollViewCallbacks(this);
 
         //VideoListFragment fragment = new VideoListFragment();
-        LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
+        LiveHistoryListFragment fragment = LiveHistoryListFragment.newInstance(userId);
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.suggestion_container, fragment);

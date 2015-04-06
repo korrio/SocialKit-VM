@@ -45,9 +45,10 @@ import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.view.TimelinePagerAdapter;
 import co.aquario.socialkit.event.ActivityResultEvent;
+import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.MainFragment;
 import co.aquario.socialkit.fragment.ViewPagerFragment;
-import co.aquario.socialkit.fragment.main.ChannelFragment;
+import co.aquario.socialkit.fragment.main.ChannelViewPagerFragment;
 import co.aquario.socialkit.fragment.main.SocialFragment;
 import co.aquario.socialkit.fragment.main.VideoFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
@@ -115,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
 
                         if (((Nameable) drawerItem).getName().equals("Channels")) {
 
-                            ChannelFragment fragment = new ChannelFragment();
+                            ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
 
                         } else if (((Nameable) drawerItem).getName().equals("Social")) {
@@ -148,8 +149,8 @@ public class MainActivity extends ActionBarActivity {
 
                         } else if (((Nameable) drawerItem).getName().equals("Live History")) {
 
-                            Intent login = new Intent(MainActivity.this, LiveHistoryActivity.class);
-                            startActivity(login);
+                            LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "LIVE_HISTORY").addToBackStack(null).commit();
 
                         } else if (((Nameable) drawerItem).getName().equals("Setting")) {
 

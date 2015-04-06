@@ -183,7 +183,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/feed_image_height"
+            android:layout_height="60dp"
             android:id="@+id/soundcloud_group"
             android:visibility="visible">
 
@@ -204,15 +204,28 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="6dp"
                     android:layout_marginTop="6dp" />
-            </RelativeLayout>
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_track_play"
-                android:src="@drawable/ic_play"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_track_play"
+                    android:src="@drawable/ic_play"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="08.30 | Music | Soundcloud"
+                    android:id="@+id/track_sub_title"
+                    android:layout_below="@+id/track_title"
+                    android:layout_alignLeft="@+id/track_title"
+                    android:layout_alignStart="@+id/track_title"
+                    android:layout_marginLeft="28dp"
+                    android:layout_marginStart="32dp" />
+            </RelativeLayout>
 
         </RelativeLayout>
     </RelativeLayout>

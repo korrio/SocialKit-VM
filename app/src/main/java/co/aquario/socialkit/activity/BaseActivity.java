@@ -55,6 +55,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     }
 
+    /*
     @Override
     protected void onStart() {
         super.onStart();
@@ -64,6 +65,7 @@ public abstract class BaseActivity extends ActionBarActivity {
     protected void onStop() {
         super.onStop();
     }
+    */
 
     @Override
     protected void onResume() {

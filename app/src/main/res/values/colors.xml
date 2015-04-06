@@ -51,4 +51,5 @@
     <color name="fab_color_shadow">#44000000</color>
 
     <color name="transparent">#80000000</color>
+    <color name="player_overlay">#55000000</color>
 </resources>

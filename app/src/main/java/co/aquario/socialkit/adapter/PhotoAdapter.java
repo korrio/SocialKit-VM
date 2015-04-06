@@ -21,10 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.CommentsActivity;
 import co.aquario.socialkit.activity.PhotoActivity;
-import co.aquario.socialkit.activity.VideoViewNativeActivity;
-import co.aquario.socialkit.activity.YoutubeActivity;
 import co.aquario.socialkit.event.PhotoLoadEvent;
 import co.aquario.socialkit.fragment.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
@@ -114,7 +111,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
             Picasso.with(mActivity)
                     .load(item.media.getThumbUrl())
 
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
             Picasso.with(mActivity).load(R.drawable.ic_photo).into(holder.typeIcon);
@@ -126,7 +123,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
             Picasso.with(mActivity)
                     .load(item.youtube.thumbnail)
 
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
             Picasso.with(mActivity).load(R.drawable.ic_yt).into(holder.typeIcon);
@@ -135,7 +132,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
             holder.thumb.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
                     .load(item.clip.thumb)
-                    .error(R.drawable.offline)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
             Picasso.with(mActivity).load(R.drawable.ic_clip).into(holder.typeIcon);
@@ -152,7 +149,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
                     .fit().centerCrop()
                             //.resize(128,128)
                     //.centerInside()
-                            //.error(R.drawable.offline)
+                            //.error(R.drawable.default_offline)
                     .into(holder.thumb);
 
             holder.typeIcon.setVisibility(View.GONE);
@@ -259,66 +256,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
                         PhotoLoadEvent event = new PhotoLoadEvent(url);
                         ApiBus.getInstance().post(event);
 
-                    } else if (postType.equals("clip")) {
-
-                        Intent i = new Intent(mActivity, VideoViewNativeActivity.class);
-                        i.putExtra("url", post.clip.url);
-                        mActivity.startActivity(i);
-
-                    } else if (postType.equals("youtube")) {
-
-                        Intent i = new Intent(mActivity, YoutubeActivity.class);
-                        i.putExtra("id", post.youtube.id);
-                        i.putExtra("title", post.youtube.title);
-                        i.putExtra("desc", post.youtube.desc);
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("ago", post.getAgoText());
-                        mActivity.startActivity(i);
-
-                    } else if (postType.equals("soundcloud")) {
-                        if (mFragment != null) {
-                            mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
-                            Log.e("heysoundcloud", post.soundCloud.streamUrl);
-                        }
                     }
-                    if (mItemClickListener != null) {
-                        mItemClickListener.onItemClick(v, getPosition());
-                    }
-                    break;
-                case R.id.btn_comment:
-
-                    final Intent intent = new Intent(mActivity, CommentsActivity.class);
-                    int[] startingLocation = new int[2];
-                    v.getLocationOnScreen(startingLocation);
-                    intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
-                    intent.putParcelableArrayListExtra(CommentsActivity.ARG_COMMENT_LIST,post.comment);
-                    mActivity.startActivity(intent);
-                    mActivity.overridePendingTransition(0, 0);
-
-                    break;
-                case R.id.profile_name:
-                case R.id.avatar:
-                    //Intent intent = new Intent(mActivity, MainProfileFriends.class);
-                    //mActivity.startActivity(intent);
-                    break;
-                case R.id.btn_love:
-                    if (mItemLove != null) {
-                        mItemLove.onItemClick(v, getPosition());
-                    }
-                    break;
-                case R.id.btn_share:
-                    if (mItemShare != null) {
-                        mItemShare.onItemClick(v, getPosition());
-                    }
-                    break;
-                case R.id.btn_track_play:
-                    if (mFragment != null) {
-                        mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
-                        Log.e("heysoundcloud", post.soundCloud.streamUrl);
-                    }
-                    break;
-
 
 
             }

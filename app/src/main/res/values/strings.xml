@@ -33,4 +33,21 @@
     <string name="title_activity_profile_activity_test">ProfileActivity</string>
     <string name="title_activity_live_history">LiveHistory</string>
 
+    <!-- VideoPlayerActivity strings -->
+    <string name="now_playing">Now playing</string>
+    <string name="volume">Volume</string>
+    <string name="brightness">Brightness</string>
+    <string name="hardware_acceleration_error_title">HW acceleration error</string>
+    <string name="hardware_acceleration_error_message">An error occurred with hardware acceleration. Would you like to disable it and try again?</string>
+    <string name="best_fit">Best fit</string>
+    <string name="fill">Fill</string>
+    <string name="fit_horizontal">Fit horizontal</string>
+    <string name="fit_vertical">Fit vertical</string>
+    <string name="original_size">Original</string>
+    <string name="comm_error">Communications Error</string>
+    <string name="comm_message">An error occurred during the retrieval of the video. This could be due to network issues or YouTube protocols. Please try again later.</string>
+    <string name="leave_videoplayer_title">Are you sure?</string>
+    <string name="leave_videoplayer_message">Are you sure you want to leave the video player? %s will stop playing.</string>
+    <string name="title_activity_video_player">VideoPlayerActivity</string>
+
 </resources>

@@ -9,9 +9,14 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -72,14 +77,6 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
-
-        <activity
-            android:name=".activity.VideoViewNativeActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
-
         <activity
             android:name=".activity.PostPhotoActivity"
             android:label="@string/title_activity_login"
@@ -125,7 +122,6 @@
             android:label=""
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.TransparentActivity.FullScreen" />
-        <activity android:name=".activity.ProfileActivity" />
         <activity
             android:name=".activity.PostYoutubeActivity"
             android:label="Youtube"
@@ -152,14 +148,34 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.MainPhotoViewPager" />
         <activity
-            android:name=".activity.LiveHistoryActivity"
+            android:name=".fragment.LiveHistoryFragment"
             android:label="@string/title_activity_live_history" >
         </activity>
-
         <activity
             android:name=".activity.VitamioActivity"
             android:label="@string/title_activity_live_history" >
         </activity>
+        <activity
+            android:name=".activity.VideoPlayerActivity"
+            android:label="@string/title_activity_video_player"
+            android:screenOrientation="sensorLandscape">
+        </activity>
+
+        <activity
+            android:name=".activity.VideoTrailerPlayerActivity"
+            android:label="@string/title_activity_video_player"
+            android:screenOrientation="sensorLandscape">
+        </activity>
+
+        <activity
+            android:name=".youtube.OpenYouTubePlayerActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation"
+            android:theme="@android:style/Theme.Black"
+            android:label="@string/app_name">
+        </activity>
+
+
     </application>
 
 </manifest>

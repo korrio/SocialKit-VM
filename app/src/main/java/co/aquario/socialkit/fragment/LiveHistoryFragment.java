@@ -1,18 +1,17 @@
 package co.aquario.socialkit.fragment;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -25,24 +24,37 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.activity.VideoPlayerActivity;
 import co.aquario.socialkit.activity.VitamioActivity;
-import co.aquario.socialkit.adapter.AdapterListLiveFragment;
-import co.aquario.socialkit.fragment.main.VideoFragment;
+import co.aquario.socialkit.adapter.LiveHistoryRecyclerAdapter;
 import co.aquario.socialkit.model.Live;
 import co.aquario.socialkit.util.Utils;
 
 public class LiveHistoryFragment extends BaseFragment {
 
-    private static String userId;
+    String liveHistoryUrl = "http://api.vdomax.com/live/history";
 
-    AdapterListLiveFragment adapter;
-    ArrayList<Live> artistList = new ArrayList<>();
 
-    public static LiveHistoryFragment newInstance(String id) {
+    ArrayList<Live> list = new ArrayList<Live>();
+    LiveHistoryRecyclerAdapter adapter;
+    private GridLayoutManager manager;
+
+    public AQuery aq;
+
+    private MenuItem searchItem;
+    private SearchRecentSuggestions suggestions;
+    private SearchView searchView;
+
+    Activity mActivity;
+    RecyclerView recList;
+
+    private static final String USER_ID = "USER_ID";
+    private String userId = "";
+
+    public static LiveHistoryFragment newInstance(String userId){
         LiveHistoryFragment mFragment = new LiveHistoryFragment();
-        //userId = id;
         Bundle mBundle = new Bundle();
-        mBundle.putString("USER_ID", id);
+        mBundle.putString(USER_ID,userId);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -51,123 +63,102 @@ public class LiveHistoryFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = getArguments().getString("USER_ID");
+            userId = getArguments().getString(USER_ID);
         }
+
+        mActivity = getActivity();
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        View rootView = inflater.inflate(R.layout.fragment_recyclerview_autofit_2col, container, false);
+        recList = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
+        adapter = new LiveHistoryRecyclerAdapter(mActivity, list);
 
-        AQuery aq = new AQuery(getActivity());
-        String url = "http://api.vdomax.com/live/history/" + userId;
-
-        ProgressDialog dialog = new ProgressDialog(getActivity());
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Downloading live history");
-        dialog.setMessage("กำลังดาวน์โหลดประวัติการถ่ายทอดสด..");
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setIndeterminate(false);
-        dialog.setMax(100);
-
-        LiveHistoryFragment mFragment = this;
-
-        aq.progress(dialog).ajax(url, JSONObject.class,mFragment, "getJson");
-
-        Log.v("callsomething",url);
-    }
-
-    public void getJson(String url, JSONObject jo, AjaxStatus status)
-            throws JSONException {
-        AQUtility.debug("jo", jo);
-        Log.v("myhistory",jo.toString());
-        if (jo != null) {
-            String nameLive;
-            JSONArray ja = jo.getJSONArray("history");
-            for (int i = 0; i < ja.length(); i++) {
-                JSONObject obj = ja.optJSONObject(i);
-
-                nameLive = obj.optString("nameUser");
-
-                String urlLive = obj.optString("url");
-                String photoLive = obj.optString("thumb");
-                long timestamp = obj.optLong("date");
-
-                JSONObject media = obj.optJSONObject("duration");
-
-                String hours = media.optString("hours");
-                String minutes = media.optString("minutes");
-                String seconds = media.optString("seconds");
-
-                Live liveList = new Live(urlLive,photoLive,nameLive,hours,minutes,seconds,Long.toString(timestamp),null,null,null);
-                artistList.add(liveList);
-
-            }
-
-
-            adapter.notifyDataSetChanged();
-
-            AQUtility.debug("done");
-
-        } else {
-            AQUtility.debug("error!");
-        }
-    }
-
-
-    GridLayoutManager manager;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.fragment_list_live, container, false);
-
-        adapter = new AdapterListLiveFragment(getActivity(), artistList);
-
-
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
-        recyclerView.setHasFixedSize(true);
-        if(Utils.isTablet(getActivity()))
-            manager = new GridLayoutManager(getActivity(), 2);
+        recList.setHasFixedSize(true);
+        if(Utils.isTablet(mActivity))
+            manager = new GridLayoutManager(mActivity, 2);
         else
-            manager = new GridLayoutManager(getActivity(), 1);
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(adapter);
+            manager = new GridLayoutManager(mActivity, 1);
+        recList.setLayoutManager(manager);
+        recList.setAdapter(adapter);
 
-        adapter.SetOnItemClickListener(new AdapterListLiveFragment.OnItemClickListener() {
+        adapter.SetOnItemClickListener(new LiveHistoryRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String urlLive = artistList.get(position).getUrlLive();
+                String userId = list.get(position).getUserId();
+                String url = list.get(position).getUrlLive();
+                String avatarUrl = list.get(position).getAvatar();
+                String username = list.get(position).getNameLive();
+                String name = list.get(position).getNameLive();
+                String cover = avatarUrl;
 
-//                Log.d("Onclick_C",urlLive);
-//                Bundle data = new Bundle();
-//                data.putString("urlLive",urlLive);
-//                VideoViewFragment newFragment = new VideoViewFragment();
-//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//                transaction.replace(R.id.fl_container, newFragment);
-//                transaction.addToBackStack(null);
-//                newFragment.setArguments(data);
-//                transaction.commit();
+                Intent i = new Intent(mActivity, VitamioActivity.class);
+                i.putExtra("id", url);
+                i.putExtra("name", name);
+                i.putExtra("avatar", avatarUrl);
+                i.putExtra("title", name);
+                i.putExtra("cover", cover);
+                i.putExtra("desc", username);
+                i.putExtra("userId", userId);
+                //startActivity(i);
 
-                Intent i = new Intent(getActivity(), VitamioActivity.class);
-                i.putExtra("id",urlLive);
-                startActivity(i);
+                VideoPlayerActivity.startActivity(mActivity, url);
+                //VitamioActivity.startActivity(mActivity, url,list.get(position));
 
-//                VideoViewFragment fragment = VideoViewFragment.newInstance("video","name",urlLive);
-//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container,
-//                 fragment, "VIDEO_MAIN").addToBackStack(null).commit();
             }
         });
 
         return rootView;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        aq = new AQuery(mActivity);
+
+        String url = liveHistoryUrl;
+        if(!userId.equals("0"))
+            url = liveHistoryUrl + "/" + userId;
+
+        aq.ajax(url, JSONObject.class, this, "getJson");
+    }
+
+    public void getJson(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        AQUtility.debug("jo", jo);
+        if (jo != null) {
+            JSONArray ja = jo.getJSONArray("history");
+            for (int i = 0; i < ja.length(); i++) {
+                JSONObject obj = ja.getJSONObject(i);
+
+                String userId = obj.optString("user_id");
+                String  nameLive = obj.optString("username");
+                String urlLive = obj.optString("url");
+                String photoLive = obj.optString("thumb");
+                String avatar = obj.optString("avatar");
+                String date = obj.optString("date");
+
+                JSONObject media = obj.getJSONObject("duration");
+
+                String hours = media.optString("hours");
+                String minutes = media.optString("minutes");
+                String seconds = media.optString("seconds");
+
+                Live liveList = new Live(urlLive,photoLive,nameLive,hours,minutes,seconds,null,avatar,date,userId);
+                list.add(liveList);
+
+            }
+            adapter.notifyDataSetChanged();
+            AQUtility.debug("done");
+
+        } else {
+            AQUtility.debug("error!");
+        }
+    }
 
 
 
