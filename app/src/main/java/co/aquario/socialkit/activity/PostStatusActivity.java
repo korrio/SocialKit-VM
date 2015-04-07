@@ -36,6 +36,7 @@ import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.util.AndroidMultiPartEntity;
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.util.Utils;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
@@ -195,6 +196,9 @@ public class PostStatusActivity extends ActionBarActivity {
 
         Log.e("statusFinal",statusText);
 
+
+
+
         //statusText.toString().trim().replaceAll("\\s+", " ");
 
         Pattern pattern = Pattern.compile("\\s");
@@ -300,6 +304,8 @@ public class PostStatusActivity extends ActionBarActivity {
 
                 PrefManager pref = MainApplication.get(getApplicationContext()).getPrefManager();
                 String userId = pref.userId().getOr("3");
+
+                statusText = Utils.emoticonize(statusText);
 
                 Charset chars = Charset.forName("UTF-8");
                 entity.addPart("timeline_id", new StringBody(userId));

@@ -48,6 +48,7 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.util.AndroidMultiPartEntity;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.util.Utils;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
@@ -372,6 +373,8 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
 
 
                 Charset chars = Charset.forName("UTF-8");
+
+                statusText = Utils.emoticonize(statusText);
 
                 entity.addPart("timeline_id", new StringBody(userId));
                 entity.addPart("recipient_id", new StringBody(""));

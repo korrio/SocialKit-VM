@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.model.CommentStory;
 import co.aquario.socialkit.model.User;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import co.aquario.socialkit.widget.URLImageParser;
 
 
 /**
@@ -59,6 +62,21 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
         holder.tvComment.setText(comment.getText());
         holder.tvName.setText(comment.getUser().getName());
+
+        String textEmoticonized = comment.getmEmoticonizedText();
+
+        if (comment.getText() != null) {
+
+            if (textEmoticonized != null) {
+                URLImageParser parser = new URLImageParser(holder.tvComment, context,1);
+                Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+
+                holder.tvComment.setText(htmlSpan);
+            }
+
+        } else {
+            holder.tvComment.setVisibility(View.GONE);
+        }
 
         Picasso.with(context)
                 .load(comment.getUser().getAvatarUrl())

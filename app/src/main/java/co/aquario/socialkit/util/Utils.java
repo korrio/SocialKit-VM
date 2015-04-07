@@ -15,6 +15,34 @@ public class Utils {
     private static int screenWidth = 0;
     private static int screenHeight = 0;
 
+    public static String emoticonize(String oldText) {
+        String newText;
+
+        newText = oldText.replace("ā", ":tt0101:").replace("Ă", ":tt0102:")
+                .replace("ă", ":tt0103:").replace("Ą", ":tt0104:").replace("ą", ":tt0105:")
+                .replace("Ć", ":tt0106:").replace("ć", ":tt0107:").replace("ԁ", ":tt0501:")
+                .replace("Ԃ", ":tt0502:").replace("ԃ", ":tt0503:").replace("Ԅ", ":tt0504:")
+                .replace("ԅ", ":tt0505:").replace("Ԇ", ":tt0506:").replace("ԇ", ":tt0507:")
+                .replace("Ԉ", ":tt0509:").replace("́", ":tt0301:").replace("̂", ":tt0302:")
+                .replace("̃", ":tt0303:").replace("̄", ":tt0304:").replace("̅", ":tt0305:")
+                .replace("̆", ":tt0306:").replace("̇", ":tt0307:").replace("Ё", ":tt0401:")
+                .replace("Ђ", ":tt0402:").replace("Ѓ", ":tt0403:").replace("Є", ":tt0404:")
+                .replace("Ѕ", ":tt0405:").replace("І", ":tt0406:").replace("Ї", ":tt0407:")
+                .replace("ȁ", ":tt0201:").replace("Ȃ", ":tt0202:").replace("ȃ", ":tt0203:")
+                .replace("Ȅ", ":tt0204:").replace("ȅ", ":tt0205:").replace("Ȇ", ":tt0206:")
+                .replace("ȇ", ":tt0207:").replace("Ȉ", ":tt0208:").replace("ȉ", ":tt0209:")
+                .replace("Ȑ", ":tt0210:").replace("Ј", ":tt0408:").replace("Љ", ":tt0409:")
+                .replace("А", ":tt0410:").replace("̈", ":tt0308:").replace("̉", ":tt0309:")
+                .replace("̐", ":tt0310:").replace("ԉ", ":tt0509:").replace("Ԑ", ":tt0510:")
+                .replace("ć", ":tt0107:").replace("Ĉ", ":tt0108:").replace("ĉ", ":tt0109:")
+                .replace("Đ", ":tt0110:")
+        ;
+
+
+        return newText;
+
+    }
+
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }

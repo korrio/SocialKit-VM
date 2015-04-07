@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.util.Utils;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
@@ -244,6 +245,9 @@ public class PostVideoActivity extends Activity {
         statusText = "test from android";
 
         // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+        statusText = Utils.emoticonize(statusText);
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("timeline_id","6");
         params.put("recipient_id","");

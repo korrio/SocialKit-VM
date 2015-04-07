@@ -28,6 +28,7 @@ public class CommentStory implements Parcelable {
 
     private static final String FIELD_ID = "id";
     private static final String FIELD_TEXT = "text";
+    private static final String FIELD_EMOTICONIZED_TEXT = "emoticonized";
     private static final String FIELD_USER = "user";
     private static final String FIELD_LOVE = "love";
     private static final String FIELD_TIMESTAMP = "timestamp";
@@ -46,7 +47,17 @@ public class CommentStory implements Parcelable {
     private String mTimestamp;
     @SerializedName(FIELD_LOVE_COUNT)
     private int mLoveCount;
+    @SerializedName(FIELD_EMOTICONIZED_TEXT)
+    private String mEmoticonizedText;
 
+
+    public String getmEmoticonizedText() {
+        return mEmoticonizedText;
+    }
+
+    public void setmEmoticonizedText(String mEmoticonizedText) {
+        this.mEmoticonizedText = mEmoticonizedText;
+    }
 
     public CommentStory(){
 
@@ -116,6 +127,7 @@ public class CommentStory implements Parcelable {
     public CommentStory(Parcel in) {
         mId = in.readLong();
         mText = in.readString();
+        mEmoticonizedText = in.readString();
         mUser = in.readParcelable(User.class.getClassLoader());
         mLoves = new ArrayList<Love>();
         in.readTypedList(mLoves, Love.CREATOR);
@@ -142,6 +154,7 @@ public class CommentStory implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(mId);
         dest.writeString(mText);
+        dest.writeString(mEmoticonizedText);
         dest.writeParcelable(mUser, flags);
         dest.writeTypedList(mLoves);
         dest.writeString(mTimestamp);

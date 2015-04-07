@@ -121,7 +121,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             else
                 holder.msg.setText(Html.fromHtml("" + item.text.substring(0, 200) + " ..." + ""));
 
-            URLImageParser parser = new URLImageParser(holder.msg, mActivity);
+            URLImageParser parser = new URLImageParser(holder.msg, mActivity,2);
             Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
             holder.msg.setText(htmlSpan);
         } else {
@@ -222,6 +222,52 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     .into(holder.thumb);
         }
 
+        if (item.comment != null) {
+            if (item.comment.size() >= 1) {
+
+                if (textEmoticonized != null) {
+                    URLImageParser parser = new URLImageParser(holder.tvComment1, mActivity,1);
+                    Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+                    holder.tvComment1.setText(htmlSpan);
+                }
+
+
+                //holder.tvComment1.setText(item.comment.get(0).getText());
+                holder.tvName1.setText(item.comment.get(0).getUser().getName());
+                Picasso.with(mActivity)
+                        .load(item.comment.get(0).getUser().getAvatarUrl())
+                        .centerCrop()
+                        .resize(100, 100)
+                        .transform(new RoundedTransformation(50, 4))
+                        .into(holder.ivUserAvatar1);
+            } else {
+                holder.comment1.setVisibility(View.GONE);
+                holder.comment2.setVisibility(View.GONE);
+            }
+
+            if (item.comment.size() >= 2) {
+                if (textEmoticonized != null) {
+                    URLImageParser parser = new URLImageParser(holder.tvComment2, mActivity,1);
+                    Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+                    holder.tvComment2.setText(htmlSpan);
+                }
+                // holder.tvComment2.setText(item.comment.get(1).getText());
+                holder.tvName2.setText(item.comment.get(1).getUser().getName());
+                Picasso.with(mActivity)
+                        .load(item.comment.get(1).getUser().getAvatarUrl())
+                        .centerCrop()
+                        .resize(100, 100)
+                        .transform(new RoundedTransformation(50, 4))
+                        .into(holder.ivUserAvatar2);
+            } else {
+                holder.comment2.setVisibility(View.GONE);
+            }
+
+        } else {
+            holder.comment1.setVisibility(View.GONE);
+            holder.comment2.setVisibility(View.GONE);
+        }
+
     }
 
     public void updateBadge(int position) {
@@ -261,6 +307,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         TextView trackSubtitle;
         ImageButton btnPlay;
 
+        //Comment_view
+        ImageView ivUserAvatar1;
+        TextView tvName1;
+        TextView tvComment1;
+
+        ImageView ivUserAvatar2;
+        TextView tvName2;
+        TextView tvComment2;
+
+        View comment1;
+        View comment2;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -285,6 +343,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             trackTitle = (TextView) view.findViewById(R.id.track_title);
             trackSubtitle = (TextView) view.findViewById(R.id.track_sub_title);
             btnPlay = (ImageButton) view.findViewById(R.id.btn_track_play);
+
+            comment1 = view.findViewById(R.id.comment_view_1);
+            comment2 = view.findViewById(R.id.comment_view_2);
+
+            ivUserAvatar1 = (ImageView) comment1.findViewById(R.id.ivUserAvatar);
+            tvName1 = (TextView) comment1.findViewById(R.id.tvName);
+            tvComment1 = (TextView) comment1.findViewById(R.id.tvComment);
+
+            ivUserAvatar2 = (ImageView) comment2.findViewById(R.id.ivUserAvatar);
+            tvName2 = (TextView) comment2.findViewById(R.id.tvName);
+            tvComment2 = (TextView) comment2.findViewById(R.id.tvComment);
 
             btnPlay.setOnClickListener(this);
 

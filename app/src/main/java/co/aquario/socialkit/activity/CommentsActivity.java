@@ -2,18 +2,25 @@ package co.aquario.socialkit.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.EditText;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
@@ -35,6 +42,10 @@ import co.aquario.socialkit.model.CommentStory;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.view.SendCommentButton;
+import github.ankushsachdeva.emojicon.EmojiconEditText;
+import github.ankushsachdeva.emojicon.EmojiconGridView;
+import github.ankushsachdeva.emojicon.EmojiconsPopup;
+import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 
 public class CommentsActivity extends ActionBarActivity implements SendCommentButton.OnSendClickListener {
@@ -43,20 +54,20 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
 
     @Optional
     //@InjectView(R.id.toolbar)
-    //Toolbar toolbar;
+            //Toolbar toolbar;
 
-    //public Toolbar getToolbar() {
-        //return toolbar;
-    //}
-
+            //public Toolbar getToolbar() {
+            //return toolbar;
+            //}
+            String statusText;
     @InjectView(R.id.contentRoot)
     LinearLayout contentRoot;
     @InjectView(R.id.rvComments)
     RecyclerView rvComments;
     @InjectView(R.id.llAddComment)
     LinearLayout llAddComment;
-    @InjectView(R.id.etComment)
-    EditText etComment;
+    @InjectView(R.id.comment_box)
+    EmojiconEditText etComment;
     @InjectView(R.id.btnSendComment)
     SendCommentButton btnSendComment;
 
@@ -76,6 +87,11 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
         ButterKnife.inject(this);
+
+        final View rootView = findViewById(R.id.root_view);
+        final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
+        final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
+
         ApiBus.getInstance().register(this);
 
         postId = getIntent().getStringExtra("POST_ID");
@@ -105,6 +121,119 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
                 }
             });
         }
+
+        popup.setSizeForSoftKeyboard();
+        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+
+                etComment.append(emojicon.getEmoji());
+            }
+        });
+
+        popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
+
+            @Override
+            public void onEmojiconBackspaceClicked(View v) {
+                KeyEvent event = new KeyEvent(
+                        0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                etComment.dispatchKeyEvent(event);
+            }
+        });
+
+        //If the emoji popup is dismissed, change emojiButton to smiley icon
+        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+
+            @Override
+            public void onDismiss() {
+                changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
+            }
+        });
+
+        //If the text keyboard closes, also dismiss the emoji popup
+        popup.setOnSoftKeyboardOpenCloseListener(new EmojiconsPopup.OnSoftKeyboardOpenCloseListener() {
+
+            @Override
+            public void onKeyboardOpen(int keyBoardHeight) {
+
+            }
+
+            @Override
+            public void onKeyboardClose() {
+                if(popup.isShowing())
+                    popup.dismiss();
+            }
+        });
+
+        popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
+
+            @Override
+            public void onEmojiconClicked(Emojicon emojicon) {
+                etComment.append(emojicon.getEmoji());
+            }
+        });
+
+        //On backspace clicked, emulate the KEYCODE_DEL key event
+        popup.setOnEmojiconBackspaceClickedListener(new EmojiconsPopup.OnEmojiconBackspaceClickedListener() {
+
+            @Override
+            public void onEmojiconBackspaceClicked(View v) {
+                KeyEvent event = new KeyEvent(
+                        0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
+                etComment.dispatchKeyEvent(event);
+            }
+        });
+
+
+        emojiButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                //If popup is not showing => emoji keyboard is not visible, we need to show it
+                if(!popup.isShowing()){
+
+                    //If keyboard is visible, simply show the emoji popup
+                    if(popup.isKeyBoardOpen()){
+                        popup.showAtBottom();
+                        changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
+                    }
+
+                    //else, open the text keyboard first and immediately after that show the emoji popup
+                    else{
+                        etComment.setFocusableInTouchMode(true);
+                        etComment.requestFocus();
+                        popup.showAtBottomPending();
+                        final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.showSoftInput(etComment, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
+                    }
+                }
+
+                //If popup is showing, simply dismiss it to show the undelying text keyboard
+                else{
+                    popup.dismiss();
+                }
+            }
+        });
+
+        etComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v("emojiText", s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void setupComments() {
@@ -158,6 +287,10 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
 
     }
 
+    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
+        iconToBeChanged.setImageResource(drawableResourceId);
+    }
+
     @Override
     public void onBackPressed() {
 
@@ -181,6 +314,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
         if (validateComment()) {
 
             String commentText = etComment.getText().toString();
+            commentText = Utils.emoticonize(commentText);
 
             ApiBus.getInstance().post(new PostCommentEvent(commentText,userId,postId));
 
