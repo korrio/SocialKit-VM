@@ -138,6 +138,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.mediaLayout.setVisibility(View.VISIBLE);
 
         if (checkNull(item.media)) {
+            holder.feedThumb.setVisibility(View.VISIBLE);
             holder.thumb.setVisibility(View.VISIBLE);
 
             Picasso.with(mActivity)
@@ -152,6 +153,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             //holder.nView.setVisibility(View.GONE);
             //holder.typeIcon.setVisibility(View.GONE);
         } else if (checkNull(item.youtube)) {
+            holder.feedThumb.setVisibility(View.VISIBLE);
             holder.thumb.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
                     .load(item.youtube.thumbnail)
@@ -163,6 +165,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             Picasso.with(mActivity).load(R.drawable.ic_yt).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
         } else if (checkNull(item.clip)) {
+            holder.feedThumb.setVisibility(View.VISIBLE);
             holder.thumb.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
                     .load(item.clip.thumb)
@@ -176,7 +179,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
 
         } else if (checkNull(item.soundCloud)) {
-
+            holder.feedThumb.setVisibility(View.VISIBLE);
             holder.soundCloudLayout.setVisibility(View.VISIBLE);
             holder.trackTitle.setVisibility(View.VISIBLE);
             holder.trackSubtitle.setVisibility(View.VISIBLE);
@@ -204,6 +207,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
 
         }  else if(!checkNull(item.soundCloud) && !checkNull(item.clip) && !checkNull(item.youtube) && !checkNull(item.media)) {
+            holder.feedThumb.setVisibility(View.GONE);
             holder.nView.setVisibility(View.GONE);
             holder.thumb.setVisibility(View.GONE);
             holder.mediaLayout.setVisibility(View.GONE);
@@ -225,9 +229,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         if (item.comment != null) {
             if (item.comment.size() >= 1) {
 
-                if (textEmoticonized != null) {
+                if (item.comment.get(0).getmEmoticonizedText() != null) {
                     URLImageParser parser = new URLImageParser(holder.tvComment1, mActivity,1);
-                    Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+                    Spanned htmlSpan = Html.fromHtml(item.comment.get(0).getmEmoticonizedText(), parser, null);
                     holder.tvComment1.setText(htmlSpan);
                 }
 
@@ -246,9 +250,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             }
 
             if (item.comment.size() >= 2) {
-                if (textEmoticonized != null) {
+                if (item.comment.get(1).getmEmoticonizedText() != null) {
                     URLImageParser parser = new URLImageParser(holder.tvComment2, mActivity,1);
-                    Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+                    Spanned htmlSpan = Html.fromHtml(item.comment.get(1).getmEmoticonizedText(), parser, null);
                     holder.tvComment2.setText(htmlSpan);
                 }
                 // holder.tvComment2.setText(item.comment.get(1).getText());
@@ -319,9 +323,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         View comment1;
         View comment2;
 
+        RelativeLayout feedThumb;
+
 
         public ViewHolder(View view) {
             super(view);
+
+            feedThumb = (RelativeLayout) view.findViewById(R.id.feed_thumb_group);
+
             name = (TextView) view.findViewById(R.id.profile_name);
             ago = (TextView) view.findViewById(R.id.ago);
             nLove = (TextView) view.findViewById(R.id.number1);

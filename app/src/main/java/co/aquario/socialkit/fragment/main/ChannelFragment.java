@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.activity.VideoPlayerActivity;
 import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.ChannelAdapter;
 import co.aquario.socialkit.fragment.BaseFragment;
@@ -100,20 +101,29 @@ public class ChannelFragment extends BaseFragment {
 
         channelAdapter = new ChannelAdapter(getActivity(), list);
 
+
         mGridView = (GridView) view.findViewById(R.id.grid);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent i = new Intent(getActivity(),VitamioActivity.class);
-                i.putExtra("id","rtmp://150.107.31.6:1935/live/"+list.get(position).username);
-                i.putExtra("name",list.get(position).name);
-                i.putExtra("avatar",list.get(position).getAvatarUrl());
-                i.putExtra("cover",list.get(position).getCoverUrl());
-                i.putExtra("title",list.get(position).name);
-                i.putExtra("desc","@"+list.get(position).username);
-                i.putExtra("userId",list.get(position).id);
-                startActivity(i);
+                if(type.equals("EVERYONE")) {
+                    Intent i = new Intent(getActivity(),VitamioActivity.class);
+                    i.putExtra("id","rtmp://150.107.31.6:1935/live/"+list.get(position).username);
+                    i.putExtra("name",list.get(position).name);
+                    i.putExtra("avatar",list.get(position).getAvatarUrl());
+                    i.putExtra("cover",list.get(position).getCoverUrl());
+                    i.putExtra("title",list.get(position).name);
+                    i.putExtra("desc","@"+list.get(position).username);
+                    i.putExtra("userId",list.get(position).id);
+                    startActivity(i);
+                } else {
+                    VideoPlayerActivity.startActivity(getActivity(), "rtmp://150.107.31.6:1935/live/"+list.get(position).username);
+
+
+                }
+
+
 
                 /*
                 Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);

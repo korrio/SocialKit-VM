@@ -56,11 +56,12 @@
             <github.ankushsachdeva.emojicon.EmojiconEditText
                 android:id="@+id/comment_box"
                 android:layout_width="match_parent"
-                android:layout_height="110dp"
+                android:layout_height="50dp"
                 android:ems="10"
                 android:layout_weight="0.4"
                 android:gravity="top"
-                android:hint="โพสข้อความ" />
+                android:hint="โพสข้อความ"
+                android:textColor="#252525" />
 
             <co.aquario.socialkit.view.SendCommentButton
                 android:id="@+id/btnSendComment"

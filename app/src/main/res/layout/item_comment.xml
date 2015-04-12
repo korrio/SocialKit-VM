@@ -30,23 +30,27 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
                 android:id="@+id/tvName"
-                android:textColor="@color/material_drawer_primary_text" />
+                android:textColor="@color/material_drawer_primary_text"
+                android:textSize="16dp" />
 
             <TextView
                 android:id="@+id/tvComment"
                 android:layout_width="match_parent"
-                android:layout_height="24dp"
+                android:layout_height="32dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="16dp"
                 android:text="Lorem ipsum dolor sit amet"
-                android:textColor="@color/material_drawer_secondary_text" />
+                android:textColor="@color/material_drawer_secondary_text"
+                android:textSize="14dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="a moment ago"
-                android:id="@+id/tvAgo" />
+                android:id="@+id/tvAgo"
+                android:textColor="@color/material_drawer_secondary_text"
+                android:textSize="12dp" />
 
         </LinearLayout>
 

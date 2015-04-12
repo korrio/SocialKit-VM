@@ -80,13 +80,13 @@
         <activity
             android:name=".activity.PostPhotoActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme2"
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
         <activity
             android:name=".activity.PostVideoActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme2"
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
         <activity
@@ -147,10 +147,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity android:name=".activity.MainPhotoViewPager" />
-        <activity
-            android:name=".fragment.LiveHistoryFragment"
-            android:label="@string/title_activity_live_history" >
-        </activity>
+
         <activity
             android:name=".activity.VitamioActivity"
             android:label="@string/title_activity_live_history" >

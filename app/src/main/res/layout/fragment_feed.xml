@@ -117,7 +117,7 @@
                     fab:fab_colorPressed="@color/indigo_500"
                     fab:fab_size="mini"
                     fab:fab_icon="@drawable/ic_sc"
-                    fab:fab_title="SoundCloud" />
+                    fab:fab_title="Music" />
 
                 <com.getbase.floatingactionbutton.FloatingActionButton
                     android:id="@+id/action_photo"

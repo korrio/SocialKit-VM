@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -85,13 +86,14 @@ public class MainActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        View header = LayoutInflater.from(getApplication()).inflate(R.layout.header, null);
 
         result = new Drawer()
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withHeader(R.layout.header)
+                .withHeader(header)
                 .withActionBarDrawerToggle(true)
-                .withTranslucentStatusBar(true)
+                .withTranslucentStatusBar(false)
                 .addDrawerItems(
                         new PrimaryDrawerItem().withName("Channels").withIcon(FontAwesome.Icon.faw_terminal),
                         new PrimaryDrawerItem().withName("Social").withIcon(FontAwesome.Icon.faw_users),

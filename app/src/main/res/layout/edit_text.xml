@@ -26,7 +26,8 @@
             android:ems="10"
             android:layout_weight="0.4"
             android:gravity="top"
-            android:hint="โพสข้อความ" />
+            android:hint="โพสข้อความ"
+            android:textColor="#252525" />
 
             <Button
                 android:layout_weight="0.4"
@@ -34,7 +35,9 @@
                 android:layout_width="200dp"
                 android:layout_height="fill_parent"
                 android:paddingTop="10dp"
-                android:text="Post" />
+                android:background="@drawable/btn_send_comment"
+                android:text="Post"
+                android:textColor="#fff" />
 
     </LinearLayout>
 </LinearLayout>

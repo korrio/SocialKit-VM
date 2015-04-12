@@ -7,7 +7,7 @@
     <declare-styleable name="twowayview_StaggeredGridViewChild"><attr format="integer" name="twowayview_span"/></declare-styleable>
     <declare-styleable name="twowayview_TwoWayLayoutManager"><attr ns1:ignore="ResourceName" name="android:orientation"/></declare-styleable>
     <declare-styleable name="twowayview_TwoWayView"><attr format="string" name="twowayview_layoutManager"/></declare-styleable>
-    <!-- From: file:/Users/root1/Desktop/SocialKit-VM-6master/layouts/build/intermediates/exploded-aar/SocialKit-VM-6master/core/unspecified/res/values/values.xml -->
+    <!-- From: file:/Users/Mac/Desktop/android.2015/android.studio/SocialKit-VM-emoticon/layouts/build/intermediates/exploded-aar/SocialKit-VM-emoticon/core/unspecified/res/values/values.xml -->
     <eat-comment/>
     <item name="twowayview_item_click_support" type="id"/>
     <item name="twowayview_item_selection_support" type="id"/>
