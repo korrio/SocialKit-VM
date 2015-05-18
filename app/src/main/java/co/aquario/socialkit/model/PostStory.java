@@ -4,11 +4,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.ocpsoft.prettytime.PrettyTime;
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Parcel
 public class PostStory extends BaseModel {
 
     @Expose
@@ -83,6 +85,12 @@ public class PostStory extends BaseModel {
     @Expose
     @SerializedName("is_shared")
     public boolean isShared;
+
+    public enum PostType {
+        TEXT, TATTOO, PHOTO, CLIP, YOUTUBE, SOUNDCLOUD, MAP, LIVE, AD
+    }
+
+
 
     public String getId() {
         return id;

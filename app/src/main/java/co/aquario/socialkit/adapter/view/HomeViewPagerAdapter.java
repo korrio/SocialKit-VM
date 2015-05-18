@@ -10,10 +10,10 @@ import java.util.List;
 
 import co.aquario.socialkit.R;
 
-public class ViewPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider {
+public class HomeViewPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.IconTabProvider {
 
-	private List<TabPagerItem> mTabs;
-	public ViewPagerAdapter(FragmentManager fragmentManager, List<TabPagerItem> mTabs) {
+	private List<HomeTabPagerItem> mTabs;
+	public HomeViewPagerAdapter(FragmentManager fragmentManager, List<HomeTabPagerItem> mTabs) {
 		super(fragmentManager);
 		this.mTabs = mTabs;
 	}

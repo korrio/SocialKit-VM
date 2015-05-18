@@ -60,6 +60,11 @@ public interface ApiServiceVM {
     public void getPage(@Path("id") int id,@QueryMap Map<String, String> options,
                           Callback<FriendListDataResponse> responseJson);
 
+    //http://api.vdomax.com/search/social/a?from=0&limit=10&sort=A&user_id=3082
+    @GET("/search/social")
+    public void getSocial(@QueryMap Map<String, String> options,
+                        Callback<FriendListDataResponse> responseJson);
+
     @GET("/story/{id}")
     public void getStory(@Path("id") int id,
                          Callback<StoryDataResponse> responseJson);

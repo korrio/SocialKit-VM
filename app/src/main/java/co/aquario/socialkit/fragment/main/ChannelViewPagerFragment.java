@@ -19,13 +19,9 @@ import co.aquario.socialkit.fragment.BaseFragment;
 public class ChannelViewPagerFragment extends BaseFragment {
 	private List<ChannelTabPagerItem> mTabs = new ArrayList<>();
 
-    private static final String USER_ID = "USER_ID";
-    private String userId = "";
-
-    public static ChannelViewPagerFragment newInstance(String userId){
+    public static ChannelViewPagerFragment newInstance(){
         ChannelViewPagerFragment mFragment = new ChannelViewPagerFragment();
         Bundle mBundle = new Bundle();
-        mBundle.putString(USER_ID,userId);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -34,7 +30,7 @@ public class ChannelViewPagerFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTabs.add(new ChannelTabPagerItem(0, "NOW LIVE"));
-        mTabs.add(new ChannelTabPagerItem(1, "EVERYONE"));
+        mTabs.add(new ChannelTabPagerItem(1, "MOST FOLLOWER"));
         mTabs.add(new ChannelTabPagerItem(2, "WHO LIVE"));
 
     }

@@ -2,6 +2,7 @@ package co.aquario.socialkit.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +77,7 @@ public class ChannelAdapter extends BaseAdapter {
                     .into(status);
         }
 
-        name.setText(channel.name);
+        name.setText(Html.fromHtml(channel.name));
 
         Picasso.with(context)
                 .load(channel.liveCover)

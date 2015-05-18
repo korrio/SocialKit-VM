@@ -2,24 +2,22 @@ package co.aquario.socialkit.adapter.view;
 
 import android.support.v4.app.Fragment;
 
-import co.aquario.socialkit.fragment.FriendFragment;
+import co.aquario.socialkit.fragment.main.FriendSocialFragment;
 
 public class SocialTabPagerItem {
 
 	private final CharSequence mTitle;
     private final int position;
-    private final String userId;
 
     private Fragment[] listFragments;
-    public SocialTabPagerItem(int position, CharSequence title, String userId) {
+    public SocialTabPagerItem(int position, CharSequence title, String sort) {
         this.mTitle = title;
         this.position = position;
-        this.userId = userId;
 
         listFragments = new Fragment[] {
-                new FriendFragment().newInstance("FRIEND",userId),
-                new FriendFragment().newInstance("FOLLOWING",userId),
-                new FriendFragment().newInstance("FOLLOWER",userId)};
+                new FriendSocialFragment().newInstance("N",""),
+                new FriendSocialFragment().newInstance("F",""),
+                new FriendSocialFragment().newInstance("A","")};
 
     }
 
@@ -31,5 +29,4 @@ public class SocialTabPagerItem {
         return mTitle;
     }
 
-    public String getUserId() { return userId;}
 }

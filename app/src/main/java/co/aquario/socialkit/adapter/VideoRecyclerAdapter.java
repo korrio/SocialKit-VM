@@ -44,6 +44,10 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
     public void onBindViewHolder(ViewHolder holder, int position) {
         Video item = list.get(position);
 
+        holder.nLoveView.setText(item.getnLove() + "");
+        holder.nCommentView.setText(item.getnComment() + "");
+        holder.nShareView.setText(item.getnShare() + "");
+
         String viewCount = item.getView();
         if(viewCount.equals(""))
             viewCount = "0";
@@ -99,6 +103,10 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
         TextView videoDesc;
         TextView TxtView;
 
+        TextView nLoveView;
+        TextView nCommentView;
+        TextView nShareView;
+
         public ViewHolder(View view) {
             super(view);
             videoTitle = (TextView) view.findViewById(R.id.video_title);
@@ -109,8 +117,11 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
             avatar = (ImageView) view.findViewById(R.id.avatar);
             profileName = (TextView) view.findViewById(R.id.profile_name);
 
+            nLoveView = (TextView) view.findViewById(R.id.number1);
+            nCommentView = (TextView) view.findViewById(R.id.number2);
+            nShareView = (TextView) view.findViewById(R.id.number3);
 
-
+            avatar.setOnClickListener(this);
             videoThumb.setOnClickListener(this);
 
 
@@ -121,9 +132,11 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
 
             switch (v.getId()) {
                 case R.id.video_thumb:
+                case R.id.avatar:
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(v, getPosition());
                     }
+
 
             }
 

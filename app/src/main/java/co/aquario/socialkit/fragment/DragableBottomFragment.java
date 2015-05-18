@@ -2,6 +2,7 @@ package co.aquario.socialkit.fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -21,6 +22,8 @@ import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -29,6 +32,7 @@ import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.main.VideoFragment;
 import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.widget.RoundedTransformation;
 
 /**
@@ -49,6 +53,10 @@ public class DragableBottomFragment extends BaseFragment implements ObservableSc
     ImageView avatar;
     boolean isFollowing = false;
 
+    TextView loveCountView;
+    TextView commentCountView;
+    TextView shareCountView;
+
     //Intent
     String name = "";
     String avatarUrl = "";
@@ -58,17 +66,28 @@ public class DragableBottomFragment extends BaseFragment implements ObservableSc
     String countView = "";
     Button btnFollow;
 
+    private Video video;
+
+    int countLove;
+    int countComment;
+    int countShare;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userId = getActivity().getIntent().getExtras().getString("userId");
-        name = getActivity().getIntent().getExtras().getString("name");
-        avatarUrl = getActivity().getIntent().getExtras().getString("avatar");
-        title = getActivity().getIntent().getExtras().getString("title");
-        desc = getActivity().getIntent().getExtras().getString("desc");
 
-        countView = getActivity().getIntent().getExtras().getString("view");
+        video = Parcels.unwrap((Parcelable) getActivity().getIntent().getExtras().get("obj"));
+
+        userId = video.getpUserId();
+        name = video.getpName();
+        avatarUrl = video.getpAvatar();
+        title = video.getTitle();
+        desc = video.getDesc();
+        countView = video.getView();
+        countLove = video.getnLove();
+        countComment = video.getnComment();
+        countShare = video.getnShare();
+
     }
 
     @Override
@@ -98,16 +117,25 @@ public class DragableBottomFragment extends BaseFragment implements ObservableSc
         videoView = (TextView) view.findViewById(R.id.view);
         avatar = (ImageView) view.findViewById(R.id.myavatar);
         btnFollow = (Button) view.findViewById(R.id.btn_follow);
+
+        loveCountView = (TextView) view.findViewById(R.id.number1);
+        commentCountView = (TextView) view.findViewById(R.id.number2);
+        shareCountView = (TextView) view.findViewById(R.id.number3);
+
         btnFollow.setOnClickListener(this);
+
+        loveCountView.setText(countLove + "");
+        commentCountView.setText(countComment + "");
+        shareCountView.setText(countShare + "");
 
         nameUser.setText(Html.fromHtml(name));
         videoTitle.setText(Html.fromHtml(title));
 
         //String[] parts;
-        String keyword = "video";
+        String keyword = "";
         if(title != null) {
             //parts = title.split(" ");
-            keyword = name;
+            //keyword = name;
         }
 
         //videoView.setText(Html.fromHtml("<strong><em>" + desc + "</em></strong>"));
@@ -129,7 +157,7 @@ public class DragableBottomFragment extends BaseFragment implements ObservableSc
         ObservableScrollView scrollView = (ObservableScrollView) view.findViewById(R.id.scroll);
         scrollView.setScrollViewCallbacks(this);
 
-        VideoFragment fragment = VideoFragment.newInstance(keyword,"name",userId);
+        VideoFragment fragment = VideoFragment.newInstance(keyword,"N");
         //LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
         FragmentManager manager = getActivity().getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();

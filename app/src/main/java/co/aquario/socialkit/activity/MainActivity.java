@@ -48,10 +48,10 @@ import co.aquario.socialkit.adapter.view.TimelinePagerAdapter;
 import co.aquario.socialkit.event.ActivityResultEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.MainFragment;
-import co.aquario.socialkit.fragment.ViewPagerFragment;
+import co.aquario.socialkit.fragment.HomeViewPagerFragment;
 import co.aquario.socialkit.fragment.main.ChannelViewPagerFragment;
-import co.aquario.socialkit.fragment.main.SocialFragment;
-import co.aquario.socialkit.fragment.main.VideoFragment;
+import co.aquario.socialkit.fragment.main.SocialViewPagerFragment;
+import co.aquario.socialkit.fragment.main.VideoViewPagerFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PathManager;
@@ -76,8 +76,6 @@ public class MainActivity extends ActionBarActivity {
 
         userId = MainApplication.get(this).getPrefManager().userId().getOr("3");
         //new Drawer().withActivity(this).build();
-
-
         // Handle Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (getSupportActionBar() != null) {
@@ -123,12 +121,12 @@ public class MainActivity extends ActionBarActivity {
 
                         } else if (((Nameable) drawerItem).getName().equals("Social")) {
 
-                            SocialFragment fragment = new SocialFragment();
+                            SocialViewPagerFragment fragment = new SocialViewPagerFragment();
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
 
                         } else if (((Nameable) drawerItem).getName().equals("Videos")) {
 
-                            VideoFragment fragment = VideoFragment.newInstance("video","name",userId);
+                            VideoViewPagerFragment fragment = new VideoViewPagerFragment();
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
 
                         } else if (((Nameable) drawerItem).getName().equals("Photos")) {
@@ -143,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
                             startActivity(i);
                         } else if (((Nameable) drawerItem).getName().equals("Home")) {
 
-                            ViewPagerFragment fragment = new ViewPagerFragment();
+                            HomeViewPagerFragment fragment = new HomeViewPagerFragment();
                             FragmentManager manager = getSupportFragmentManager();
                             FragmentTransaction transaction = manager.beginTransaction();
                             transaction.replace(R.id.sub_container, fragment);
@@ -171,7 +169,7 @@ public class MainActivity extends ActionBarActivity {
         if (savedInstanceState == null) {
             // FeedFragmentWithHeader feedFragment = new FeedFragmentWithHeader();
             MainFragment mainFragment = new MainFragment();
-            ViewPagerFragment fragment = new ViewPagerFragment();
+            HomeViewPagerFragment fragment = new HomeViewPagerFragment();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.sub_container, fragment);

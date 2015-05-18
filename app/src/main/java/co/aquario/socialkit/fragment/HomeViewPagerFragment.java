@@ -14,18 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.adapter.view.TabPagerItem;
-import co.aquario.socialkit.adapter.view.ViewPagerAdapter;
+import co.aquario.socialkit.adapter.view.HomeTabPagerItem;
+import co.aquario.socialkit.adapter.view.HomeViewPagerAdapter;
 
-public class ViewPagerFragment extends BaseFragment {
-	private List<TabPagerItem> mTabs = new ArrayList<>();
+public class HomeViewPagerFragment extends BaseFragment {
+	private List<HomeTabPagerItem> mTabs = new ArrayList<>();
 
     private static final String USER_ID = "USER_ID";
 
     private String userId = "";
 
-    public static ViewPagerFragment newInstance(String userId){
-        ViewPagerFragment mFragment = new ViewPagerFragment();
+    public static HomeViewPagerFragment newInstance(String userId){
+        HomeViewPagerFragment mFragment = new HomeViewPagerFragment();
         Bundle mBundle = new Bundle();
         mBundle.putString(USER_ID,userId);
         mFragment.setArguments(mBundle);
@@ -38,14 +38,14 @@ public class ViewPagerFragment extends BaseFragment {
         if (getArguments() != null) {
             userId = getArguments().getString(USER_ID);
         } else {
-            userId = prefManager.userId().getOr("1301");
+            userId = prefManager.userId().getOr("6");
         }
 
-        mTabs.add(new TabPagerItem(0, getString(R.string.post),userId));
-        mTabs.add(new TabPagerItem(1, getString(R.string.follower),userId));
-        mTabs.add(new TabPagerItem(2, getString(R.string.following),userId));
-        mTabs.add(new TabPagerItem(3, getString(R.string.friend),userId));
-        mTabs.add(new TabPagerItem(4, getString(R.string.page),userId));
+        mTabs.add(new HomeTabPagerItem(0, getString(R.string.post),userId));
+        mTabs.add(new HomeTabPagerItem(1, getString(R.string.follower),userId));
+        mTabs.add(new HomeTabPagerItem(2, getString(R.string.following),userId));
+        mTabs.add(new HomeTabPagerItem(3, getString(R.string.friend),userId));
+        mTabs.add(new HomeTabPagerItem(4, getString(R.string.page),userId));
 
     }
 
@@ -65,7 +65,7 @@ public class ViewPagerFragment extends BaseFragment {
     	ViewPager mViewPager = (ViewPager) view.findViewById(R.id.pager);
     	
     	mViewPager.setOffscreenPageLimit(6);
-        mViewPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager(), mTabs));
+        mViewPager.setAdapter(new HomeViewPagerAdapter(getChildFragmentManager(), mTabs));
 
         PagerSlidingTabStrip mSlidingTabLayout = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
         //mSlidingTabLayout.setTextColorResource(R.color.white);

@@ -30,7 +30,6 @@ import java.util.Map;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.CommentsActivity;
-import co.aquario.socialkit.activity.VideoPlayerActivity;
 import co.aquario.socialkit.activity.YoutubeActivity;
 import co.aquario.socialkit.fragment.FeedFragment;
 import co.aquario.socialkit.fragment.PhotoZoomFragment;
@@ -71,11 +70,84 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         ApiBus.getInstance().register(this);
     }
 
+    public void add(PostStory item, int position) {
+        list.add(position, item);
+        notifyItemInserted(position);
+    }
+
+    public void remove(PostStory item) {
+        int position = list.indexOf(item);
+        list.remove(position);
+        notifyItemRemoved(position);
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+
+        String postType = list.get(position).type;
+        Log.e("getItemViewType",position + ":" + postType);
+        switch (postType) {
+            case "text":
+                return 0;
+            case "tattoo":
+                return 1;
+            case "photo":
+                return 2;
+            case "clip":
+                return 3;
+            case "soundcloud":
+                return 4;
+            case "youtube":
+                return 5;
+            case "ppv":
+                return 6;
+            case "live":
+                return 7;
+            case "ad":
+                return 8;
+            default:
+                return 0;
+        }
+    }
+
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.e("FeedAdapter.viewType", viewType + "");
         final LayoutInflater mInflater = LayoutInflater.from(parent.getContext());
-        final View sView = mInflater.inflate(R.layout.item_feed, parent, false);
+        View sView = null;
+        switch (viewType) {
+            case 0:
+                sView = mInflater.inflate(R.layout.item_feed_text, parent, false);
+                break;
+            case 1:
+                sView = mInflater.inflate(R.layout.item_feed_tattoo, parent, false);
+                break;
+            case 2:
+                sView = mInflater.inflate(R.layout.item_feed_photo, parent, false);
+                break;
+            case 3:
+                sView = mInflater.inflate(R.layout.item_feed_clip, parent, false);
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+            case 8:
+                break;
+            case 9:
+                break;
+            default:
+                sView = mInflater.inflate(R.layout.item_feed, parent, false);
+                break;
+
+        }
+
         return new ViewHolder(sView);
     }
 
@@ -91,7 +163,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         holder.soundCloudLayout.setVisibility(View.GONE);
         holder.trackTitle.setVisibility(View.GONE);
-        holder.trackSubtitle.setVisibility(View.GONE);
+        //holder.trackSubtitle.setVisibility(View.GONE);
         holder.btnPlay.setVisibility(View.GONE);
 
         holder.typeIcon.setVisibility(View.VISIBLE);
@@ -436,7 +508,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                         */
 
-                        VideoPlayerActivity.startActivity(mActivity,post.clip.url);
+                       // VideoPlayerActivity.startActivity(mActivity,post.clip.url);
 
                     } else if (postType.equals("youtube")) {
 
@@ -485,7 +557,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                         */
 
-                        VideoPlayerActivity.startActivity(mActivity,post.author.liveUrl);
+                        //VideoPlayerActivity.startActivity(mActivity,post.author.liveUrl);
                     }
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(v, getPosition());

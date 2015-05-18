@@ -9,6 +9,7 @@ public class LoadFriendListEvent {
     private int page;
     private int perPage;
 
+
     public LoadFriendListEvent(String type, int userId, int page, int perPage) {
         this.type = type;
         this.userId = userId;

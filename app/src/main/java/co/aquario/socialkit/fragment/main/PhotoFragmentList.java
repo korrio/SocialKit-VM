@@ -3,7 +3,6 @@ package co.aquario.socialkit.fragment.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +15,9 @@ import org.lucasr.twowayview.widget.TwoWayView;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.MainApplication;
-
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.LoginActivity;
-
 import co.aquario.socialkit.adapter.FeedAdapterPhotoList;
-
 import co.aquario.socialkit.event.LoadTimelineEvent;
 import co.aquario.socialkit.event.LoadTimelineSuccessEvent;
 import co.aquario.socialkit.event.LogoutEvent;
@@ -99,18 +95,18 @@ public class PhotoFragmentList extends BaseFragment {
 
         /*
         //gridView = (ObservableGridView) rootView.findViewById(R.id.scroll);
-        adapter = new FriendAdapter(getActivity(), list);
+        adapter = new FriendAdapter(getActivity(), liveChannelList);
         gridView.setAdapter(adapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
-                i.putExtra("userId",list.get(position).id);
-                i.putExtra("avatar",list.get(position).getAvatarUrl());
-                i.putExtra("cover",list.get(position).getCoverUrl());
-                i.putExtra("name",list.get(position).name);
-                i.putExtra("username",list.get(position).username);
+                i.putExtra("userId",liveChannelList.get(position).id);
+                i.putExtra("avatar",liveChannelList.get(position).getAvatarUrl());
+                i.putExtra("cover",liveChannelList.get(position).getCoverUrl());
+                i.putExtra("name",liveChannelList.get(position).name);
+                i.putExtra("username",liveChannelList.get(position).username);
                 getActivity().startActivity(i);
             }
         });

@@ -16,6 +16,7 @@ import com.androidquery.util.AQUtility;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -33,9 +34,9 @@ public class VideoFragment extends BaseFragment {
 
     public static final String KEYWORD_SEARCH = "KEYWORD_SEARCH";
     public static final String SORT_TYPE = "SORT_TYPE";
-    public static final String USER_ID = "USER_ID";
+    //public static final String USER_ID = "USER_ID";
 
-    private String userId = "";
+    //private String userId = "";
     private String sortType = "";
     private String keyword = "";
 
@@ -49,14 +50,12 @@ public class VideoFragment extends BaseFragment {
 
     }
 
-    char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-
-    public static VideoFragment newInstance(String keyword,String sortType,String userId){
+    public static VideoFragment newInstance(String keyword,String sortType){
         VideoFragment mFragment = new VideoFragment();
         Bundle mBundle = new Bundle();
         mBundle.putString(KEYWORD_SEARCH, keyword);
         mBundle.putString(SORT_TYPE, sortType);
-        mBundle.putString(USER_ID, userId);
+        //mBundle.putString(USER_ID, userId);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -69,10 +68,9 @@ public class VideoFragment extends BaseFragment {
         if (getArguments() != null) {
             keyword = getArguments().getString(KEYWORD_SEARCH);
             sortType = getArguments().getString(SORT_TYPE);
-            userId = getArguments().getString(USER_ID);
+            //userId = getArguments().getString(USER_ID);
         }
-        if(keyword.equals(""))
-            keyword = "epic";
+
         pref = MainApplication.get(getActivity().getApplicationContext()).getPrefManager();
     }
 
@@ -99,8 +97,8 @@ public class VideoFragment extends BaseFragment {
         recList.setOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
             @Override
             public void onLoadMore(int page) {
-                String loadmoreUrl = "http://api.vdomax.com/search/video/"+alphabet[page]+"?from="+page+"&limit=20";
-                Log.e("loadmoreurl",loadmoreUrl);
+                String loadmoreUrl = "http://api.vdomax.com/search/video?sort=" + sortType + "&page=" + page;
+                Log.e("loadmoreurl", loadmoreUrl);
                 aq.ajax(loadmoreUrl, JSONObject.class, fragment, "getJson");
             }
         });
@@ -109,22 +107,13 @@ public class VideoFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
                 Video post = list.get(position);
-                String idYoutube = post.getYoutubeId();
-                String title = post.getTitle();
-                String description = post.getDesc();
-                String avatarUrl = post.getpAvatar();
-                String profileName = post.getpName();
-                String viewCount = post.getView();
-                String userId = post.getpUserId();
+
 
                 Intent i2 = new Intent(getActivity(), YoutubeDragableActivity.class);
-                i2.putExtra("userId",userId);
-                i2.putExtra("name",profileName);
-                i2.putExtra("avatar",avatarUrl);
-                i2.putExtra("id",idYoutube);
-                i2.putExtra("title",title);
-                i2.putExtra("desc",description);
-                i2.putExtra("view",viewCount);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("obj", Parcels.wrap(post));
+
+                i2.putExtras(bundle);
 
                 startActivity(i2);
             }
@@ -132,7 +121,7 @@ public class VideoFragment extends BaseFragment {
 
 
 
-        url = "http://api.vdomax.com/search/video/"+keyword+"?from=0&limit=20";
+        url = "http://api.vdomax.com/search/video?sort="+sortType+"&page=1";
         Log.e("loadurl",url);
         aq.ajax(url, JSONObject.class, this, "getJson");
 
@@ -144,7 +133,7 @@ public class VideoFragment extends BaseFragment {
         AQUtility.debug("jo", jo);
 
         if (jo != null) {
-            JSONArray ja = jo.getJSONArray("result");
+            JSONArray ja = jo.getJSONArray("videos");
             for (int i = 0; i < ja.length(); i++) {
                 JSONObject obj = ja.getJSONObject(i);
 
@@ -168,16 +157,19 @@ public class VideoFragment extends BaseFragment {
 
                     JSONObject publisher = obj.optJSONObject("publisher");
                     String pUserId = publisher.optString("id");
-                    String pName = publisher.optString("username");
+                    String pName = publisher.optString("name");
                     //JSONObject cover = publisher.optJSONObject("cover");
                     String pAvatar = publisher.optString("avatar_url");
 
-                    Video item = new Video(postId,title,shortMessage,youtubeId,text,timestamp,view,pUserId,pName,pAvatar);
+                    int loveCount = obj.optInt("love_count");
+                    int commentCount = obj.optInt("comment_count");
+                    int shareCount = obj.optInt("share_count");
+
+                    Video item = new Video(postId,title,shortMessage,youtubeId,text,timestamp,view,pUserId,pName,pAvatar,loveCount,commentCount,shareCount);
                     list.add(item);
                 }
             }
             adapterVideos.notifyDataSetChanged();
-            Log.v("list.size()",list.size() + "");
 
             AQUtility.debug("done");
 

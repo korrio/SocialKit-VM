@@ -3,16 +3,16 @@ package co.aquario.socialkit.adapter.view;
 import android.support.v4.app.Fragment;
 
 import co.aquario.socialkit.fragment.FeedFragment;
-import co.aquario.socialkit.fragment.FriendFragment;
+import co.aquario.socialkit.fragment.main.FriendFragment;
 
-public class TabPagerItem {
+public class HomeTabPagerItem {
 	
 	private final CharSequence mTitle;
     private final int position;
     private final String userId;
         
     private Fragment[] listFragments;
-    public TabPagerItem(int position, CharSequence title, String userId) {
+    public HomeTabPagerItem(int position, CharSequence title, String userId) {
         this.mTitle = title;
         this.position = position;
         this.userId = userId;

@@ -94,18 +94,18 @@ public class PhotoFragmentGrid extends BaseFragment {
 
         /*
         //gridView = (ObservableGridView) rootView.findViewById(R.id.scroll);
-        adapter = new FriendAdapter(getActivity(), list);
+        adapter = new FriendAdapter(getActivity(), liveChannelList);
         gridView.setAdapter(adapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
-                i.putExtra("userId",list.get(position).id);
-                i.putExtra("avatar",list.get(position).getAvatarUrl());
-                i.putExtra("cover",list.get(position).getCoverUrl());
-                i.putExtra("name",list.get(position).name);
-                i.putExtra("username",list.get(position).username);
+                i.putExtra("userId",liveChannelList.get(position).id);
+                i.putExtra("avatar",liveChannelList.get(position).getAvatarUrl());
+                i.putExtra("cover",liveChannelList.get(position).getCoverUrl());
+                i.putExtra("name",liveChannelList.get(position).name);
+                i.putExtra("username",liveChannelList.get(position).username);
                 getActivity().startActivity(i);
             }
         });

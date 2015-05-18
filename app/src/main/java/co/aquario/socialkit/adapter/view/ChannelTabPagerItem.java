@@ -18,8 +18,8 @@ public class ChannelTabPagerItem {
         //this.userId = userId;
 
         listFragments = new Fragment[] {
-                new ChannelFragment().newInstance("NOW LIVE"),
-                new ChannelFragment().newInstance("EVERYONE"),
+                new ChannelFragment().newInstance("NOW LIVE",0),
+                new ChannelFragment().newInstance("MOST FOLLOWER",1),
                 new LiveHistoryFragment().newInstance("0")};
 
     }

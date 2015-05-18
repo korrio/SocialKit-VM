@@ -3,11 +3,14 @@ package co.aquario.socialkit.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 import co.aquario.socialkit.util.EndpointManager;
 
 /**
  * Created by root1 on 2/22/15.
  */
+@Parcel
 public class Author {
 
     @Expose

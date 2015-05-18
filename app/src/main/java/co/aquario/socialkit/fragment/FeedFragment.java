@@ -156,7 +156,7 @@ public class FeedFragment extends BaseFragment {
     }
 
     public void playTrack(String uri,String title) {
-        //mPlayerToolbar.setVisibility(View.VISIBLE);
+        mPlayerToolbar.setVisibility(View.VISIBLE);
         if (mMediaPlayer.isPlaying()){
             mMediaPlayer.stop();
         }
@@ -483,7 +483,7 @@ public class FeedFragment extends BaseFragment {
 		inflater.inflate(R.menu.menu_search, menu);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        searchView.setQueryHint("Search friends,tags,videos");
+        searchView.setQueryHint("Search friend, tag, video");
 
         ((EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text))
                 .setHintTextColor(getResources().getColor(android.R.color.white));

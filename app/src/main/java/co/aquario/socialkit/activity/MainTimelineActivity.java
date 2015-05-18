@@ -34,8 +34,8 @@ import com.squareup.picasso.Picasso;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.FeedFragment;
-import co.aquario.socialkit.fragment.FriendFragment;
-import co.aquario.socialkit.fragment.ViewPagerFragment;
+import co.aquario.socialkit.fragment.main.FriendFragment;
+import co.aquario.socialkit.fragment.HomeViewPagerFragment;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PrefManager;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -61,7 +61,7 @@ public class MainTimelineActivity extends ActionBarActivity implements Observabl
     private Activity activity;
     private Drawer.Result result;
 
-    ViewPagerFragment fragment;
+    HomeViewPagerFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +108,7 @@ public class MainTimelineActivity extends ActionBarActivity implements Observabl
             }
         });
 
-        fragment = new ViewPagerFragment();
+        fragment = new HomeViewPagerFragment();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.pager_wrapper, fragment);

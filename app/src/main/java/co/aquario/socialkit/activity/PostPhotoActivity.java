@@ -382,6 +382,7 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
                         new StringBody(statusText,chars));
                 entity.addPart("photos[]", new FileBody(sourceFile));
 
+
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);
 

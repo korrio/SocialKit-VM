@@ -3,9 +3,12 @@ package co.aquario.socialkit.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 /**
  * Created by Mac on 3/10/15.
  */
+@Parcel
 public class SoundCloud {
     @Expose
     public String title;

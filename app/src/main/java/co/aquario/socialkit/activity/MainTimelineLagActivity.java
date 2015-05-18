@@ -34,7 +34,7 @@ import com.squareup.picasso.Picasso;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.FeedFragment;
-import co.aquario.socialkit.fragment.FriendFragment;
+import co.aquario.socialkit.fragment.main.FriendFragment;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.widget.SlidingTabLayout;

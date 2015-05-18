@@ -79,20 +79,20 @@ public class ApiHandlerVM {
             @Override
             public void success(LoginData loginData, Response response) {
                 //Log.e("loginData",loginData.apiToken);
-                Log.e("response",response.getBody().toString());
+                Log.e("response", response.getBody().toString());
 
-                if(loginData.status.equals("1"))
+                if (loginData.status.equals("1"))
                     apiBus.post(new LoginSuccessEvent(loginData));
                 else
                     apiBus.post(new LoginFailedAuthEvent());
 
-                Log.e("POSTBACK","post response back to LoginFragment");
+                Log.e("POSTBACK", "post response back to LoginFragment");
             }
 
             @Override
             public void failure(RetrofitError error) {
                 //Log.e("response",error.getBody().toString());
-                Log.e("failedNetwork","failedNetworkEvent");
+                Log.e("failedNetwork", "failedNetworkEvent");
                 apiBus.post(new FailedNetworkEvent());
             }
         });
@@ -107,14 +107,14 @@ public class ApiHandlerVM {
             @Override
             public void success(LoginData loginData, Response response) {
                 //Log.e("loginData",loginData.apiToken);
-                Log.e("response",response.getBody().toString());
+                Log.e("response", response.getBody().toString());
 
-                if(loginData.status.equals("1"))
+                if (loginData.status.equals("1"))
                     apiBus.post(new LoginSuccessEvent(loginData));
                 else
                     apiBus.post(new LoginFailedAuthEvent());
 
-                Log.e("POSTBACK","post response back to LoginFragment");
+                Log.e("POSTBACK", "post response back to LoginFragment");
             }
 
             @Override
@@ -142,8 +142,7 @@ public class ApiHandlerVM {
 
                 if (registerData.status.equals("1")) {
                     apiBus.post(new RegisterSuccessEvent(registerData));
-                }
-                else {
+                } else {
                     apiBus.post(new RegisterFailedEvent(registerData.message));
                 }
             }
@@ -190,7 +189,7 @@ public class ApiHandlerVM {
         options.put("timeline_id", event.getUserId());
         options.put("text", event.getPostText());
 
-        api.postComment(Integer.parseInt(event.getPostId()),options,new Callback<PostCommentDataResponse>() {
+        api.postComment(Integer.parseInt(event.getPostId()), options, new Callback<PostCommentDataResponse>() {
             @Override
             public void success(PostCommentDataResponse postCommentDataResponse, Response response) {
                 ApiBus.getInstance().post(new PostCommentSuccessEvent());
@@ -242,13 +241,13 @@ public class ApiHandlerVM {
     }
 
     @Subscribe public void onFollowUser(FollowRegisterEvent event) {
-        api.followUser(Integer.parseInt(event.getUserId()),new Callback<FollowUserResponse>() {
+        api.followUser(Integer.parseInt(event.getUserId()), new Callback<FollowUserResponse>() {
             @Override
             public void success(FollowUserResponse followUserResponse, Response response) {
 
-                Log.v("FollowRegisterEvent",followUserResponse.message);
+                Log.v("FollowRegisterEvent", followUserResponse.message);
 
-                if(followUserResponse.isFollowing)
+                if (followUserResponse.isFollowing)
                     ApiBus.getInstance().post(new FollowUserSuccessEvent(followUserResponse.userId));
                 else
                     ApiBus.getInstance().post(new UnfollowUserSuccessEvent(followUserResponse.userId));
@@ -266,7 +265,7 @@ public class ApiHandlerVM {
         api.getProfile(Integer.parseInt(event.getUserId()), new Callback<UserProfileDataResponse>() {
             @Override
             public void success(UserProfileDataResponse userProfileDataResponse, Response response) {
-                GetUserProfileSuccessEvent event = new GetUserProfileSuccessEvent(userProfileDataResponse.user,userProfileDataResponse.count);
+                GetUserProfileSuccessEvent event = new GetUserProfileSuccessEvent(userProfileDataResponse.user, userProfileDataResponse.count);
                 ApiBus.getInstance().post(event);
             }
 
@@ -352,7 +351,7 @@ public class ApiHandlerVM {
                         Log.e("friendListDataResponse", friendListDataResponse.status);
                         if (friendListDataResponse.status.equals("1")) {
                             //Log.e("timelineDataResponse", response.getBody().toString());
-                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse,event.getType()));
+                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse, event.getType()));
 
                         } else {
                             //MainApplication.get(this).getPrefManager().isLogin().put(false);
@@ -374,7 +373,7 @@ public class ApiHandlerVM {
                         Log.e("friendListDataResponse", friendListDataResponse.status);
                         if (friendListDataResponse.status.equals("1")) {
                             //Log.e("timelineDataResponse", response.getBody().toString());
-                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse,event.getType()));
+                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse, event.getType()));
 
                         } else {
                             //MainApplication.get(this).getPrefManager().isLogin().put(false);
@@ -418,7 +417,7 @@ public class ApiHandlerVM {
                         Log.e("friendListDataResponse", friendListDataResponse.status);
                         if (friendListDataResponse.status.equals("1")) {
                             //Log.e("timelineDataResponse", response.getBody().toString());
-                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse,event.getType()));
+                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse, event.getType()));
 
                         } else {
                             //MainApplication.get(this).getPrefManager().isLogin().put(false);
@@ -433,10 +432,41 @@ public class ApiHandlerVM {
                     }
                 });
                 break;
+
+            // 1 -> 10 page 1
+            // 11 -> 20 page 2
+
+            default:
+                options.put("sort",event.getType());
+
+                api.getSocial( options, new Callback<FriendListDataResponse>() {
+                    @Override
+                    public void success(FriendListDataResponse friendListDataResponse, Response response) {
+                        Log.e("friendListDataResponse", friendListDataResponse.status);
+                        if (friendListDataResponse.status.equals("1")) {
+                            //Log.e("timelineDataResponse", response.getBody().toString());
+                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse, event.getType()));
+
+                        } else {
+                            //MainApplication.get(this).getPrefManager().isLogin().put(false);
+                            Log.e("LOGOUT!", "LOG OUT LAEW");
+                            ApiBus.getInstance().post(new LogoutEvent());
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e("error", error.toString());
+                    }
+                });
+                break;
+
         }
 
 
     }
+
+
 
 
 }

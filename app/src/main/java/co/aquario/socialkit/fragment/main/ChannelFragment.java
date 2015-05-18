@@ -22,7 +22,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.VideoPlayerActivity;
 import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.ChannelAdapter;
 import co.aquario.socialkit.fragment.BaseFragment;
@@ -31,28 +30,33 @@ import co.aquario.socialkit.widget.EndlessListOnScrollListener;
 
 
 public class ChannelFragment extends BaseFragment {
-    String channelUrl = "http://api.vdomax.com/search/channel/a?from=0&limit=20";
-    String liveChannelUrl = "http://api.vdomax.com/live/now";
 
-    ArrayList<Channel> list = new ArrayList<Channel>();
-    ChannelAdapter channelAdapter;
-    GridView mGridView;
-    public AQuery aq;
-    public SwipeRefreshLayout swipeLayout;
+    String endpoint = "http://api.vdomax.com";
+    // tab 0
+    String liveChannelUrl = endpoint + "/live/now";
+    // tab 1
+    String channelUrl = endpoint + "/search/channel?page=1&sort=F";
 
-    private static final String USER_ID = "USER_ID";
-    private static final String TYPE = "TYPE";
-    public String userId = null;
+    private ArrayList<Channel> liveChannelList = new ArrayList<Channel>();
+    private ArrayList<Channel> mostFollowerList = new ArrayList<Channel>();
+    private ChannelAdapter channelAdapter;
+    private GridView mGridView;
 
-    private String type;
+    private AQuery aq;
+    private SwipeRefreshLayout swipeLayout;
 
-    ChannelFragment fragment;
-    char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+    private static final String TITLE = "TITLE";
+    private static final String TAB = "TAB";
 
-    public static ChannelFragment newInstance(String type) {
+    private int tabNo;
+
+    public ChannelFragment fragment;
+
+    public static ChannelFragment newInstance(String tabTitle,int tabNo) {
         ChannelFragment mFragment = new ChannelFragment();
         Bundle mBundle = new Bundle();
-        mBundle.putString(TYPE, type);
+        mBundle.putString(TITLE, tabTitle);
+        mBundle.putInt(TAB, tabNo);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -61,9 +65,11 @@ public class ChannelFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            type = getArguments().getString(TYPE);
+            tabNo = getArguments().getInt(TAB);
+            //getActivity().setTitle(getArguments().getString(TITLE));
         } else {
-            type = "EVERYONE";
+            tabNo = 0;
+            //getActivity().setTitle("Channels");
         }
         fragment = this;
     }
@@ -90,50 +96,43 @@ public class ChannelFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 isRefresh = true;
-                String loadMoreUrl = "http://api.vdomax.com/search/channel/a?from=0&limit=10";
-                if(type.equals("EVERYONE"))
-                    aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
-                else
+                if (tabNo == 0) {
                     aq.ajax(liveChannelUrl, JSONObject.class, fragment, "getJson");
-                //Log.e("5555","onRefresh");
+                    Log.e("liveChannelUrl", liveChannelUrl);
+                }
+                else {
+                    aq.ajax(channelUrl, JSONObject.class, fragment, "getJson");
+                    Log.e("channelUrl", channelUrl);
+                }
             }
         });
 
-        channelAdapter = new ChannelAdapter(getActivity(), list);
-
+        if(tabNo == 0)
+            channelAdapter = new ChannelAdapter(getActivity(), liveChannelList);
+        else
+            channelAdapter = new ChannelAdapter(getActivity(), mostFollowerList);
 
         mGridView = (GridView) view.findViewById(R.id.grid);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(type.equals("EVERYONE")) {
-                    Intent i = new Intent(getActivity(),VitamioActivity.class);
-                    i.putExtra("id","rtmp://150.107.31.6:1935/live/"+list.get(position).username);
-                    i.putExtra("name",list.get(position).name);
-                    i.putExtra("avatar",list.get(position).getAvatarUrl());
-                    i.putExtra("cover",list.get(position).getCoverUrl());
-                    i.putExtra("title",list.get(position).name);
-                    i.putExtra("desc","@"+list.get(position).username);
-                    i.putExtra("userId",list.get(position).id);
+                if (tabNo == 0) {
+                    // intent to profile page with live streaming
+                    Intent i = new Intent(getActivity(), VitamioActivity.class);
+                    i.putExtra("id", "rtmp://150.107.31.6:1935/live/" + liveChannelList.get(position).username);
+                    i.putExtra("name", liveChannelList.get(position).name);
+                    i.putExtra("avatar", liveChannelList.get(position).getAvatarUrl());
+                    i.putExtra("cover", liveChannelList.get(position).getCoverUrl());
+                    i.putExtra("title", liveChannelList.get(position).name);
+                    i.putExtra("desc", "@" + liveChannelList.get(position).username);
+                    i.putExtra("userId", liveChannelList.get(position).id);
                     startActivity(i);
-                } else {
-                    VideoPlayerActivity.startActivity(getActivity(), "rtmp://150.107.31.6:1935/live/"+list.get(position).username);
-
+                } else if (tabNo == 1) {
+                    // intent to profile page w/o live streaming
 
                 }
 
-
-
-                /*
-                Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
-                i.putExtra("userId", list.get(position).id);
-                i.putExtra("avatar", list.get(position).getAvatarUrl());
-                i.putExtra("cover", list.get(position).getCoverUrl());
-                i.putExtra("name", list.get(position).name);
-                i.putExtra("username", list.get(position).username);
-                getActivity().startActivity(i);
-                */
             }
         });
         mGridView.setAdapter(channelAdapter);
@@ -142,31 +141,39 @@ public class ChannelFragment extends BaseFragment {
             public void onLoadMore(int page, int totalItemsCount) {
                 currentPage = page;
                 isRefresh = false;
-                String loadMoreUrl = "http://api.vdomax.com/search/channel/" + alphabet[page] + "?from=" + page + "&limit=20";
-                if (!isLoadding)
+                String loadMoreUrl = endpoint + "/search/channel?sort=F&page="+page;
+                if (!isLoadding) {
                     aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
+                    Log.e("loadMoreUrl",loadMoreUrl);
+                }
+
                 isLoadding = true;
-                Log.e("5555", loadMoreUrl);
             }
         });
 
         aq = new AQuery(getActivity());
-        if(type.equals("EVERYONE"))
-            aq.ajax(channelUrl, JSONObject.class, this, "getJson");
-        else
+        if(tabNo == 0) {
             aq.ajax(liveChannelUrl, JSONObject.class, this, "getJson");
-        //Log.e("callme", fragment.channelUrl);
+            Log.e("liveChannelUrl",liveChannelUrl);
+        } else {
+            aq.ajax(channelUrl, JSONObject.class, this, "getJson");
+            Log.e("channelUrl", channelUrl);
+        }
+
     }
 
     public void getJson(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {
         AQUtility.debug("jo", jo);
         if (jo != null) {
-            if (isRefresh || type.equals("EVERYONE"))
-                list.clear();
+            if (isRefresh) {
+                mostFollowerList.clear();
+                liveChannelList.clear();
+            }
+
             isRefresh = false;
 
-            JSONArray ja = jo.optJSONArray("result");
+            JSONArray ja = jo.optJSONArray("channels");
             for (int i = 0; i < ja.length(); i++) {
                 JSONObject obj = ja.optJSONObject(i);
 
@@ -180,14 +187,15 @@ public class ChannelFragment extends BaseFragment {
                 boolean liveStatus = obj.optBoolean("status");
 
                 Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, "male", liveStatus);
-                list.add(channel);
+                if(tabNo == 0)
+                    liveChannelList.add(channel);
+                else
+                    mostFollowerList.add(channel);
             }
             channelAdapter.notifyDataSetChanged();
             swipeLayout.setRefreshing(false);
             isLoadding = false;
             AQUtility.debug("done");
-            Log.e("araiwa", "call?");
-            Log.e("sizesize", list.size() + "");
 
         } else {
             AQUtility.debug("error!");

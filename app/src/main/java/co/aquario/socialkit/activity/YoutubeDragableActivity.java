@@ -1,6 +1,7 @@
 package co.aquario.socialkit.activity;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
 import com.github.pedrovgs.DraggableListener;
@@ -9,11 +10,14 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
+import org.parceler.Parcels;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.DragableBottomFragment;
+import co.aquario.socialkit.model.Video;
 
 
 public class YoutubeDragableActivity extends BaseActivity {
@@ -35,7 +39,12 @@ public class YoutubeDragableActivity extends BaseActivity {
     String avatar = "";
     String description = "";
     String countView = "";
+    int countLove;
+    int countComment;
+    int countShare;
     String userId;
+
+    private Video video;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +52,18 @@ public class YoutubeDragableActivity extends BaseActivity {
         setContentView(R.layout.activity_youtube_sample);
         ButterKnife.inject(this);
 
-        VIDEO_KEY = getIntent().getStringExtra("id");
-        userId = getIntent().getStringExtra("userId");
-        name = getIntent().getStringExtra("name");
-        avatar = getIntent().getStringExtra("avatar");
-        title = getIntent().getStringExtra("title");
-        description = getIntent().getStringExtra("desc");
-        countView = getIntent().getStringExtra("view");
+        video = Parcels.unwrap((Parcelable) getIntent().getExtras().get("obj"));
+
+        VIDEO_KEY = video.getYoutubeId();
+        userId = video.getpUserId();
+        name = video.getpName();
+        avatar = video.getpAvatar();
+        title = video.getTitle();
+        description = video.getDesc();
+        countView = video.getView();
+        countLove = video.getnLove();
+        countComment = video.getnComment();
+        countShare = video.getnShare();
 
         initializeYoutubeFragment();
         initializeDraggablePanel();
@@ -100,14 +114,24 @@ public class YoutubeDragableActivity extends BaseActivity {
         //dragableBottomFragment.setPoster(VIDEO_POSTER_THUMBNAIL);
         //dragableBottomFragment.setPosterTitle(VIDEO_POSTER_TITLE);
 
+        /*
         Bundle data = new Bundle();
         data.putString("userId",userId);
         data.putString("name", name);
         data.putString("avatar", avatar);
         data.putString("title",title);
         data.putString("desc", description);
-        data.putString("view",countView);
-        dragableBottomFragment.setArguments(data);
+        data.putString("view", countView);
+        data.putInt("love_count", countLove);
+        data.putInt("comment_count",countComment);
+        data.putInt("share_count",countShare);
+        */
+
+        //dragableBottomFragment.setArguments(data);
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("obj", Parcels.wrap(video));
+        dragableBottomFragment.setArguments(bundle);
 
         draggablePanel.setBottomFragment(dragableBottomFragment);
         draggablePanel.initializeView();

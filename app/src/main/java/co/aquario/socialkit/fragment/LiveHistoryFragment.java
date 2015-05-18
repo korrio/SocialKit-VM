@@ -24,7 +24,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.VideoPlayerActivity;
 import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.LiveHistoryRecyclerAdapter;
 import co.aquario.socialkit.model.Live;
@@ -105,7 +104,7 @@ public class LiveHistoryFragment extends BaseFragment {
                 i.putExtra("userId", userId);
                 //startActivity(i);
 
-                VideoPlayerActivity.startActivity(mActivity, url);
+               // VideoPlayerActivity.startActivity(mActivity, url);
                 //VitamioActivity.startActivity(mActivity, url,list.get(position));
 
             }

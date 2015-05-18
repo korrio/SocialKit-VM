@@ -16,17 +16,18 @@ import co.aquario.socialkit.adapter.view.SocialTabPagerItem;
 import co.aquario.socialkit.adapter.view.SocialViewPagerAdapter;
 import co.aquario.socialkit.fragment.BaseFragment;
 
-public class SocialFragment extends BaseFragment {
+public class SocialViewPagerFragment extends BaseFragment {
 	private List<SocialTabPagerItem> mTabs = new ArrayList<>();
 
-    private static final String USER_ID = "USER_ID";
-
+    private static final String SORT_TYPE = "SORT_TYPE";
     private String userId = "";
 
-    public static SocialFragment newInstance(String userId){
-        SocialFragment mFragment = new SocialFragment();
+
+
+    public static SocialViewPagerFragment newInstance(String sort){
+        SocialViewPagerFragment mFragment = new SocialViewPagerFragment();
         Bundle mBundle = new Bundle();
-        mBundle.putString(USER_ID,userId);
+        mBundle.putString(SORT_TYPE,sort);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -34,15 +35,10 @@ public class SocialFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            userId = getArguments().getString(USER_ID);
-        } else {
-            userId = prefManager.userId().getOr("1301");
-        }
+        mTabs.add(new SocialTabPagerItem(0, "Newest", "N"));
+        mTabs.add(new SocialTabPagerItem(1, "Most Followers", "F"));
+        mTabs.add(new SocialTabPagerItem(2, "Alphabets", "A"));
 
-        mTabs.add(new SocialTabPagerItem(0, getString(R.string.friend),userId));
-        mTabs.add(new SocialTabPagerItem(1, getString(R.string.following),userId));
-        mTabs.add(new SocialTabPagerItem(2, getString(R.string.follower),userId));
     }
 
     @Override
@@ -50,7 +46,7 @@ public class SocialFragment extends BaseFragment {
             Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_viewpager, container, false);
-        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT ));
+        rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT ));
         return rootView;
     }
 

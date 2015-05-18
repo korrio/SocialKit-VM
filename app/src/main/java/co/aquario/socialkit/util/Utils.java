@@ -12,8 +12,17 @@ import android.view.WindowManager;
  * Created by froger_mcs on 05.11.14.
  */
 public class Utils {
+
+    public enum Sort {
+        N, // Newest
+        F, // Most Follower
+        A // Alphabetica
+    }
+
     private static int screenWidth = 0;
     private static int screenHeight = 0;
+
+    public static char[] alphabets = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
     public static String emoticonize(String oldText) {
         String newText;

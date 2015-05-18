@@ -14,23 +14,20 @@
         android:padding="@dimen/padding_size_layout_medium"
         android:paddingLeft="@dimen/padding_size_layout_medium"
         android:paddingRight="@dimen/padding_size_layout_medium"
-        android:gravity="top"
-        android:visibility="gone">
+        android:gravity="top">
 
         <ImageView
             android:layout_width="@dimen/logo_size"
             android:layout_height="@dimen/logo_size"
             android:id="@+id/profile_avatar"
             android:layout_marginRight="10dp"
-            android:gravity="center"
-            android:visibility="gone"/>
+            android:gravity="center" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -108,8 +105,7 @@
         android:paddingLeft="@dimen/padding_size_layout_medium"
         android:paddingRight="@dimen/padding_size_layout_medium"
         android:paddingBottom="@dimen/padding_size_layout_medium"
-        android:layout_height="wrap_content"
-        android:visibility="gone">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
@@ -147,19 +143,19 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/feed_thumb_group">
+        android:id="@+id/feed_thumb_group"
+        android:visibility="visible">
 
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="@dimen/feed_image_height"
             android:id="@+id/thumb"
             android:layout_gravity="center_horizontal"
-            android:scaleType="fitCenter"
-            android:src="@color/material_drawer_dark_hint_text"/>
+            android:scaleType="fitCenter" />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_height="@dimen/feed_image_height"
             android:id="@+id/media_group">
 
             <ImageView
@@ -169,7 +165,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/ic_yt"
+                android:src="@drawable/ic_photo"
                 android:layout_marginRight="6dp" />
 
             <TextView
@@ -185,40 +181,6 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:id="@+id/soundcloud_group"
-            android:visibility="gone">
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/row_height">
-
-                <TextView
-                    android:id="@+id/track_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:text="Cool Track Title"
-                    android:textSize="18dp"
-                    android:textColor="#252525"
-                    android:drawableLeft="@drawable/ic_soundcloud_small"
-                    android:drawablePadding="6dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginTop="6dp" />
-            </RelativeLayout>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_track_play"
-                android:src="@drawable/ic_play"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
-
-        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>

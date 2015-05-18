@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.Locale;
 
 import co.aquario.socialkit.fragment.FeedFragment;
-import co.aquario.socialkit.fragment.FriendFragment;
+import co.aquario.socialkit.fragment.main.FriendFragment;
 
 public class TimelinePagerAdapter extends FragmentPagerAdapter {
 

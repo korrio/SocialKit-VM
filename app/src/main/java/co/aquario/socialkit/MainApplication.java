@@ -1,5 +1,6 @@
 package co.aquario.socialkit;
 
+import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
@@ -11,8 +12,6 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.squareup.okhttp.OkHttpClient;
-
-import org.videolan.vlc.VLCApplication;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +34,7 @@ import retrofit.converter.GsonConverter;
 /**
  * Created by Mac on 3/2/15.
  */
-public class MainApplication extends VLCApplication {
+public class MainApplication extends Application {
 
     private static final String ENDPOINT = "http://api.vdomax.com";
     
@@ -104,15 +103,15 @@ public class MainApplication extends VLCApplication {
         Log.e("isLogin",":::"+isLogin);
     }
 
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
+    //@Override
+    //public void onLowMemory() {
+        //super.onLowMemory();
+    //}
 
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-    }
+    //@Override
+    //public void onTerminate() {
+        //super.onTerminate();
+    //}
 
     ApiServiceVM buildLoginApi() {
 

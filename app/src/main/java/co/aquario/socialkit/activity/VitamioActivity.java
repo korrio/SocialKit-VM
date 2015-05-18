@@ -14,7 +14,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.LIvePosterFragment;
-import co.aquario.socialkit.fragment.VideoPlayerFragment;
 import co.aquario.socialkit.fragment.VideoViewFragment;
 import co.aquario.socialkit.model.Live;
 
@@ -26,7 +25,6 @@ import co.aquario.socialkit.model.Live;
 public class VitamioActivity extends BaseActivity  {
 
     private String mLocation;
-    private VideoPlayerFragment mVideoPlayerFragment;
 
     private static String VIDEO_KEY = "";
 

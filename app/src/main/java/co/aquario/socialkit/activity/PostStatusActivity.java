@@ -313,6 +313,11 @@ public class PostStatusActivity extends ActionBarActivity {
                 entity.addPart("text",
                         new StringBody(statusText,chars));
 
+
+
+
+
+
                 //entity.addPart("photos[]", new FileBody(sourceFile));
 
                 totalSize = entity.getContentLength();

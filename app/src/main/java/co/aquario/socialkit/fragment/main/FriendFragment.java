@@ -1,4 +1,4 @@
-package co.aquario.socialkit.fragment;
+package co.aquario.socialkit.fragment.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +22,7 @@ import co.aquario.socialkit.event.LoadFriendListEvent;
 import co.aquario.socialkit.event.LoadFriendListSuccessEvent;
 import co.aquario.socialkit.event.LogoutEvent;
 import co.aquario.socialkit.event.UnfollowUserSuccessEvent;
+import co.aquario.socialkit.fragment.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.User;
 import co.aquario.socialkit.util.Utils;
