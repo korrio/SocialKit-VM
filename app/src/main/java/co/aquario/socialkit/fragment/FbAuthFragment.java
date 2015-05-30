@@ -12,6 +12,7 @@ import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.FbAuthEvent;
 import co.aquario.socialkit.event.LoadFbProfileEvent;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PrefManager;
 

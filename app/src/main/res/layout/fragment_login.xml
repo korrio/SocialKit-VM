@@ -4,10 +4,10 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:id="@+id/imageView"
         android:src="@drawable/default_bg_login" />
 
     <RelativeLayout
@@ -15,6 +15,7 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -23,27 +24,26 @@
             android:layout_margin="20dp"
             android:text="VM!"
             android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:id="@+id/textView" />
+            android:textSize="30sp" />
 
         <FrameLayout
+            android:id="@+id/frameLayout"
             android:layout_width="480dp"
             android:layout_height="220dp"
-            android:background="#aa252525"
-            android:padding="16px"
-            android:id="@+id/frameLayout"
             android:layout_below="@+id/textView"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp">
+            android:layout_marginRight="16dp"
+            android:background="#aa252525"
+            android:padding="16px">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_marginTop="12dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp">
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
                     android:id="@+id/et_user"
@@ -61,8 +61,8 @@
                     android:id="@+id/et_pass"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
                     android:hint="Password"
+                    android:inputType="textPassword"
                     android:text=""
                     android:textCursorDrawable="@drawable/text_cursor_cyan"
                     app:baseColor="@android:color/white"
@@ -70,37 +70,37 @@
                     app:primaryColor="@color/material_drawer_primary" />
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
+                    android:layout_marginTop="6dp"
                     android:divider="@drawable/divider"
-                    android:showDividers="middle"
-                    android:layout_marginTop="6dp">
+                    android:orientation="horizontal"
+                    android:showDividers="middle">
 
                     <TextView
                         android:id="@+id/tv_reg"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Register"
-
-                        android:textColor="#ddd"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:gravity="center" />
+
+                        android:gravity="center"
+                        android:text="Register"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#ddd" />
 
 
                     <TextView
                         android:id="@+id/tv_login"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Login"
-
-                        android:textColor="#ddd"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:gravity="center" />
+
+                        android:gravity="center"
+                        android:text="Login"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#ddd" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -108,31 +108,31 @@
 
         <LinearLayout
             android:id="@+id/btn_fb"
-            android:orientation="horizontal"
             android:layout_width="480dp"
             android:layout_height="60dp"
-            android:layout_marginTop="67dp"
-            android:background="@color/indigo_700"
             android:layout_below="@+id/frameLayout"
             android:layout_centerHorizontal="true"
+            android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp">
+            android:layout_marginTop="67dp"
+            android:background="@color/indigo_700"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_fb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Login with Facebook"
-
-                android:layout_weight="1"
-                android:gravity="center"
                 android:layout_gravity="center"
-                android:textColor="#eee"
+                android:layout_marginLeft="42dp"
+
+                android:layout_marginRight="42dp"
+                android:layout_weight="1"
                 android:drawableLeft="@drawable/ic_fb"
                 android:drawablePadding="5dp"
-                android:layout_marginLeft="42dp"
-                android:layout_marginRight="42dp" />
+                android:gravity="center"
+                android:text="Login with Facebook"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#eee" />
         </LinearLayout>
 
     </RelativeLayout>

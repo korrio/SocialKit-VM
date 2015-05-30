@@ -4,8 +4,10 @@
     tools:context="com.gbaldera.yts.activities.SearchActivity">
 
     <item android:id="@+id/action_search"
-        android:title="@string/action_search"
-        app:showAsAction="always"
         android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
-        app:actionViewClass="android.support.v7.widget.SearchView"/>
+        android:title="@string/action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+
 </menu>

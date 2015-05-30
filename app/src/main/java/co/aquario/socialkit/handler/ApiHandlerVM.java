@@ -291,14 +291,15 @@ public class ApiHandlerVM {
             api.getHomeTimeline(event.getUserId(),options,new Callback<TimelineDataResponse>() {
                 @Override
                 public void success(TimelineDataResponse timelineDataResponse, Response response) {
-                    Log.e("timelineDataResponse",timelineDataResponse.getStatus().toString());
+                    //Log.e("timelineDataResponse",timelineDataResponse.getStatus().toString());
+                    //Log.e("posts",timelineDataResponse.getPosts().toArray().toString());
                     if(timelineDataResponse.getStatus().equals("1")) {
                         Log.e("timelineDataResponse",response.getBody().toString());
                         ApiBus.getInstance().post(new LoadTimelineSuccessEvent(timelineDataResponse));
 
                     } else {
                         //MainApplication.get(this).getPrefManager().isLogin().put(false);
-                        Log.e("LOGOUT!","LOG OUT LAEW");
+                        //Log.e("LOGOUT!","LOG OUT LAEW");
                         ApiBus.getInstance().post(new LogoutEvent());
                     }
 
@@ -314,8 +315,10 @@ public class ApiHandlerVM {
                 @Override
                 public void success(TimelineDataResponse timelineDataResponse, Response response) {
                     Log.e("timelineDataResponse",timelineDataResponse.getStatus().toString());
+                    Log.e("posts", timelineDataResponse.getPosts().toArray().toString());
                     if(timelineDataResponse.getStatus().equals("1")) {
                         Log.e("timelineDataResponse",response.getBody().toString());
+
                         ApiBus.getInstance().post(new LoadTimelineSuccessEvent(timelineDataResponse));
 
                     } else {

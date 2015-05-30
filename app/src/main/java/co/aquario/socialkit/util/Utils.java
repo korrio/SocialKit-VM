@@ -1,28 +1,24 @@
 package co.aquario.socialkit.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * Created by froger_mcs on 05.11.14.
  */
 public class Utils {
 
-    public enum Sort {
-        N, // Newest
-        F, // Most Follower
-        A // Alphabetica
-    }
-
+    public static char[] alphabets = "abcdefghijklmnopqrstuvwxyz".toCharArray();
     private static int screenWidth = 0;
     private static int screenHeight = 0;
-
-    public static char[] alphabets = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
     public static String emoticonize(String oldText) {
         String newText;
@@ -54,6 +50,13 @@ public class Utils {
 
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int pxToDp(int px, Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        int dp = Math.round(px / (dm.densityDpi
+                / DisplayMetrics.DENSITY_DEFAULT));
+        return dp;
     }
 
     public static int getScreenHeight(Context c) {
@@ -113,6 +116,23 @@ public class Utils {
      */
     public static boolean isHoneycombTablet(Context context) {
         return isHoneycomb() && isTablet(context);
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        if (activity != null &&
+                activity.getCurrentFocus() != null &&
+                activity.getCurrentFocus().getWindowToken() != null) {
+            InputMethodManager inputManager = (InputMethodManager)
+                    activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    public enum Sort {
+        N, // Newest
+        F, // Most Follower
+        A // Alphabetica
     }
 
 }

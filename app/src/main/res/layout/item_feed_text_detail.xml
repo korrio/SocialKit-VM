@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="horizontal"
         android:padding="@dimen/padding_size_layout_medium"
         android:paddingLeft="@dimen/padding_size_layout_medium"
-        android:paddingRight="@dimen/padding_size_layout_medium"
-        android:gravity="top">
+        android:paddingRight="@dimen/padding_size_layout_medium">
 
         <ImageView
+            android:id="@+id/profile_avatar"
             android:layout_width="@dimen/logo_size"
             android:layout_height="@dimen/logo_size"
-            android:id="@+id/profile_avatar"
             android:layout_marginRight="10dp"
             android:gravity="center" />
 
@@ -30,24 +29,24 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/profile_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"
-                android:textStyle="bold"
                 android:text="Aung"
                 android:textColor="#000000"
-                android:id="@+id/profile_name" />
+                android:textSize="@dimen/text_size"
+                android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/ago"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="11 days ago"
-                android:id="@+id/ago"
-                android:textSize="10sp"
-
                 android:gravity="center"
-                android:textColor="#9497A3" />
+                android:text="11 days ago"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+
+                android:textColor="#9497A3"
+                android:textSize="10sp" />
         </LinearLayout>
 
         <!--<LinearLayout-->
@@ -57,86 +56,110 @@
         <!--android:layout_weight="1"></LinearLayout>-->
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="3"
-            android:gravity="center"
-            android:textColor="#9497A3"
-            android:layout_marginLeft="@dimen/margin_size_layout_small"
             android:id="@+id/number1"
-            android:textSize="@dimen/size_text_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:drawablePadding="2dp"
             android:drawableRight="@drawable/ic_love"
-            android:drawablePadding="6dp"/>
+            android:gravity="center"
+            android:text="3"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#9497A3"
+            android:textSize="@dimen/size_text_icon" />
 
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="2"
-            android:textColor="#9497A3"
             android:id="@+id/number2"
-            android:gravity="center"
-            android:layout_marginLeft="@dimen/margin_size_layout_small"
-            android:textSize="@dimen/size_text_icon"
-            android:drawableRight="@drawable/ic_comment"
-            android:drawablePadding="6dp"/>
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="0"
-            android:textColor="#9497A3"
+            android:layout_marginLeft="0dp"
+            android:drawablePadding="2dp"
+            android:drawableRight="@drawable/ic_comment"
             android:gravity="center"
+            android:text="2"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#9497A3"
+            android:textSize="@dimen/size_text_icon" />
+
+        <TextView
             android:id="@+id/number3"
-            android:layout_marginLeft="@dimen/margin_size_layout_small"
-            android:textSize="@dimen/size_text_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:drawablePadding="2dp"
             android:drawableRight="@drawable/ic_share"
-            android:drawablePadding="6dp"/>
+            android:gravity="center"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#9497A3"
+            android:textSize="@dimen/size_text_icon" />
 
     </LinearLayout>
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:paddingLeft="@dimen/padding_size_layout_medium"
-        android:paddingRight="@dimen/padding_size_layout_medium"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/padding_size_layout_medium"
-        android:layout_height="wrap_content">
+        android:paddingLeft="@dimen/padding_size_layout_medium"
+        android:paddingRight="@dimen/padding_size_layout_medium">
 
         <TextView
+            android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Hello Sunday morning :)"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#000000"
-            android:id="@+id/text"
             android:textSize="15dp" />
 
+
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/padding_size_layout_medium"
         android:paddingLeft="@dimen/padding_size_layout_medium"
         android:paddingRight="@dimen/padding_size_layout_medium"
-        android:paddingBottom="@dimen/padding_size_layout_medium"
-        android:layout_height="wrap_content"
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/smile_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Smile"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#000000"
-            android:id="@+id/smile_icon"
             android:textSize="15dp" />
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/feed_thumb_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="240dp">
+
+            <ImageView
+                android:id="@+id/thumb"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/tt0101" />
+        </FrameLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -27,21 +28,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.adapter.TracksAdapter;
-import co.aquario.socialkit.soundcloud.SoundCloud;
-import co.aquario.socialkit.soundcloud.SoundCloudService;
-import co.aquario.socialkit.soundcloud.Track;
+import co.aquario.socialkit.search.soundcloud.SoundCloud;
+import co.aquario.socialkit.search.soundcloud.SoundCloudService;
+import co.aquario.socialkit.search.soundcloud.Track;
+import co.aquario.socialkit.search.soundcloud.TracksAdapter;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
 public class SoundCloudActivity extends ActionBarActivity implements SearchView.OnQueryTextListener{
-    private static final String TAG = "MainActivity";
+
 
     private TracksAdapter mAdapter;
     private List<Track> mTracks;
     private TextView mSelectedTitle;
+    private TextView mSelectedSubtitle;
     private ImageView mSelectedThumbnail;
     private MediaPlayer mMediaPlayer;
     private Toolbar mPlayerToolbar;
@@ -53,9 +55,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_soundcloud);
-
-
+        setContentView(R.layout.activity_search_soundcloud);
 
         mPlayerToolbar = (Toolbar)findViewById(R.id.player_toolbar);
         mMediaPlayer = new MediaPlayer();
@@ -74,6 +74,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
         });
 
         mSelectedTitle = (TextView)findViewById(R.id.selected_title);
+        mSelectedSubtitle = (TextView) findViewById(R.id.selected_subtitle);
         mSelectedThumbnail = (ImageView)findViewById(R.id.selected_thumbnail);
 
         mPlayerStateButton = (ImageView)findViewById(R.id.player_state);
@@ -94,7 +95,8 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Track selectedTrack = mTracks.get(position);
-                mSelectedTitle.setText(selectedTrack.getTitle());
+                mSelectedTitle.setText(selectedTrack.mTitle);
+                mSelectedSubtitle.setText(selectedTrack.user.username);
                 Picasso.with(SoundCloudActivity.this).load(selectedTrack.getArtworkURL()).into(mSelectedThumbnail);
 
                 if (mMediaPlayer.isPlaying()){
@@ -105,7 +107,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
                 mPlayerToolbar.setVisibility(View.VISIBLE);
 
                 try {
-                    mMediaPlayer.setDataSource(selectedTrack.getStreamURL() + "?client_id=" + SoundCloudService.CLIENT_ID);
+                    mMediaPlayer.setDataSource(selectedTrack.mStreamURL + "?client_id=" + SoundCloudService.CLIENT_ID);
                     mMediaPlayer.prepareAsync();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -115,7 +117,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
         recyclerView.setAdapter(mAdapter);
 
         SoundCloudService service = SoundCloud.getService();
-        service.searchSongs("scrubb",new Callback<List<Track>>() {
+        service.searchSongs("cityscape", new Callback<List<Track>>() {
             @Override
             public void success(List<Track> tracks, Response response) {
                 updateTracks(tracks);
@@ -123,7 +125,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
 
             @Override
             public void failure(RetrofitError error) {
-                Log.d(TAG, "Failed call: " + error.toString());
+                Log.d("fail", "Failed call: " + error.toString());
             }
         });
 
@@ -144,7 +146,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
 
     private void updateTracks(List<Track> tracks){
         mTracks.clear();
-        mTracks.addAll((tracks));
+        mTracks.addAll(tracks);
         mAdapter.notifyDataSetChanged();
         Log.e("heyhey",mTracks.size() + "");
     }
@@ -182,7 +184,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
 
             @Override
             public void failure(RetrofitError error) {
-
+                Toast.makeText(getApplicationContext(), "Something went wrong..", Toast.LENGTH_LONG).show();
             }
         } );
         return true;
@@ -209,10 +211,10 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the search; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        mSearchView = (SearchView) menu.findItem(R.id.search_view).getActionView();
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearchView.setOnQueryTextListener(this);
-        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.search_view), new MenuItemCompat.OnActionExpandListener() {
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.action_search), new MenuItemCompat.OnActionExpandListener() {
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -242,7 +244,7 @@ public class SoundCloudActivity extends ActionBarActivity implements SearchView.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.search_view) {
+        if (id == R.id.action_search) {
             return true;
         }
 

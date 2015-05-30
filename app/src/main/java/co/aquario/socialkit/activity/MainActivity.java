@@ -15,7 +15,8 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,20 +24,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nispok.snackbar.Snackbar;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -44,164 +42,110 @@ import java.util.List;
 
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.adapter.view.TimelinePagerAdapter;
 import co.aquario.socialkit.event.ActivityResultEvent;
-import co.aquario.socialkit.fragment.LiveHistoryFragment;
-import co.aquario.socialkit.fragment.MainFragment;
 import co.aquario.socialkit.fragment.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.LiveHistoryFragment;
+import co.aquario.socialkit.fragment.SettingFragment;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.ChannelViewPagerFragment;
 import co.aquario.socialkit.fragment.main.SocialViewPagerFragment;
 import co.aquario.socialkit.fragment.main.VideoViewPagerFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
-import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.search.main.SearchActivity;
 import co.aquario.socialkit.util.PathManager;
+import co.aquario.socialkit.util.Utils;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends BaseActivity implements BaseFragment.SearchListener {
 
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_CHOOSE_PHOTO = 2;
+    private static final int RESULT_PICK_VIDEO = 4;
+    private static final int RESULT_VIDEO_CAP = 5;
+    private static final int PHOTO_SIZE_WIDTH = 100;
+    private static final int PHOTO_SIZE_HEIGHT = 100;
+    public Toolbar toolbar;
+    public ActionBarDrawerToggle toggle;
+    public DrawerLayout mDrawer;
+    List<WeakReference<Fragment>> fragList = new ArrayList<>();
+    File tempFile;
     private Drawer.Result result = null;
-    private Context context;
-    private Activity activity;
-
-    private TimelinePagerAdapter timelinePagerAdapter;
-
+    private Context mContext;
+    private Activity mActivity;
     private String userId;
+    private Uri mFileURI = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = this;
-        activity = this;
+        mContext = this;
+        mActivity = this;
 
-        userId = MainApplication.get(this).getPrefManager().userId().getOr("3");
-        //new Drawer().withActivity(this).build();
-        // Handle Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        userId = MainApplication.get(this).getPrefManager().userId().getOr("0");
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
         }
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        View header = LayoutInflater.from(getApplication()).inflate(R.layout.header, null);
-
-        result = new Drawer()
-                .withActivity(this)
-                .withToolbar(toolbar)
-                .withHeader(header)
-                .withActionBarDrawerToggle(true)
-                .withTranslucentStatusBar(false)
-                .addDrawerItems(
-                        new PrimaryDrawerItem().withName("Channels").withIcon(FontAwesome.Icon.faw_terminal),
-                        new PrimaryDrawerItem().withName("Social").withIcon(FontAwesome.Icon.faw_users),
-                        new PrimaryDrawerItem().withName("Videos").withIcon(FontAwesome.Icon.faw_video_camera),
-                        new PrimaryDrawerItem().withName("Photos").withIcon(FontAwesome.Icon.faw_camera_retro),
-                        new SectionDrawerItem().withName("Account"),
-                        new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home),
-                        new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history),
-                        new SecondaryDrawerItem().withName("Setting").withIcon(FontAwesome.Icon.faw_cog),
-                        new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc),
-                        new SecondaryDrawerItem().withName("Tattoo Store").withIcon(FontAwesome.Icon.faw_shopping_cart).setEnabled(false),
-                        new SecondaryDrawerItem().withName("Term & Policies").withIcon(FontAwesome.Icon.faw_terminal),
-                        new SecondaryDrawerItem().withName("Log Out").withIcon(FontAwesome.Icon.faw_sign_out)
-
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-                        if (drawerItem instanceof Nameable) {
-                            Snackbar.with(getApplicationContext()).text(((Nameable) drawerItem).getName()).show(activity);
-                        }
-
-                        if (((Nameable) drawerItem).getName().equals("Channels")) {
-
-                            ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
-
-                        } else if (((Nameable) drawerItem).getName().equals("Social")) {
-
-                            SocialViewPagerFragment fragment = new SocialViewPagerFragment();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
-
-                        } else if (((Nameable) drawerItem).getName().equals("Videos")) {
-
-                            VideoViewPagerFragment fragment = new VideoViewPagerFragment();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
-
-                        } else if (((Nameable) drawerItem).getName().equals("Photos")) {
-//                            PhotoFragmentGrid fragment = new PhotoFragmentGrid();
-//
-//                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                            transaction.replace(R.id.sub_container, fragment, "PHOTO_MAIN");
-//                            transaction.addToBackStack(null);
-//                            transaction.commit();
-
-                            Intent i = new Intent(getApplicationContext(), MainPhotoViewPager.class);
-                            startActivity(i);
-                        } else if (((Nameable) drawerItem).getName().equals("Home")) {
-
-                            HomeViewPagerFragment fragment = new HomeViewPagerFragment();
-                            FragmentManager manager = getSupportFragmentManager();
-                            FragmentTransaction transaction = manager.beginTransaction();
-                            transaction.replace(R.id.sub_container, fragment);
-                            transaction.commit();
-
-                        } else if (((Nameable) drawerItem).getName().equals("Live History")) {
-
-                            LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "LIVE_HISTORY").addToBackStack(null).commit();
-
-                        } else if (((Nameable) drawerItem).getName().equals("Setting")) {
-
-                        } else if (((Nameable) drawerItem).getName().equals("Log Out")) {
-                            MainApplication.logout();
-                            Intent login = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(login);
-                            finish();
-                        }
-
-
-                    }
-                }).build();
-
 
         if (savedInstanceState == null) {
-            // FeedFragmentWithHeader feedFragment = new FeedFragmentWithHeader();
-            MainFragment mainFragment = new MainFragment();
             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.sub_container, fragment);
             transaction.commit();
-            /*
-            FragmentTransactionExtended fragmentTransactionExtended = new FragmentTransactionExtended(this, transaction, mainFragment, fragment, R.id.sub_container);
-            fragmentTransactionExtended.addTransition(FragmentTransactionExtended.GLIDE);
-            fragmentTransactionExtended.commit();
-            */
-
-
-            //Snackbar.with(this).text("this is main social section").show(this);
-            //ApiBus.getInstance().post(new SomeEvent("var1",
-            //      2));
         }
+
+        initDrawer();
     }
 
-    File tempFile;
-    private static final int REQUEST_TAKE_PHOTO = 1;
-    private static final int REQUEST_CHOOSE_PHOTO = 2;
-    private static final int RESULT_PICK_VIDEO = 4;
-    private static final int RESULT_VIDEO_CAP = 5;
-    private Uri mFileURI = null;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the search; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-    boolean doubleBackToExitPressedOnce = false;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public List<Fragment> getActiveFragments() {
+        ArrayList<Fragment> ret = new ArrayList<Fragment>();
+        for (WeakReference<Fragment> ref : fragList) {
+            Fragment f = ref.get();
+            if (f != null) {
+                if (f.isVisible()) {
+                    ret.add(f);
+                }
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        fragList.add(new WeakReference<Fragment>(fragment));
+    }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         if (fragList.size() == 0)
             finish();
-
     }
 
     @Override
@@ -222,7 +166,7 @@ public class MainActivity extends ActionBarActivity {
 
             if (requestCode == REQUEST_TAKE_PHOTO) {
 
-                try {
+
                     Bitmap bm;
                     BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
 
@@ -242,7 +186,6 @@ public class MainActivity extends ActionBarActivity {
 
                     startActivity(postPhotoIntent);
 
-                    f.delete();
                     OutputStream fOut = null;
                     File file = new File(path);
                     try {
@@ -251,21 +194,15 @@ public class MainActivity extends ActionBarActivity {
                         fOut.flush();
                         fOut.close();
 
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
             } else if (requestCode == REQUEST_CHOOSE_PHOTO) {
 
                 Uri selectedImageUri = data.getData();
 
-                String path = PathManager.getRealPathFromURIForKitKat(context, selectedImageUri);
+                String path = PathManager.getRealPathFromURIForKitKat(mContext, selectedImageUri);
 
                 int rotate = getCameraPhotoOrientation(path);
                 Intent postPhotoIntent = new Intent(this,
@@ -281,7 +218,7 @@ public class MainActivity extends ActionBarActivity {
 
                 mFileURI = data.getData();
                 if (mFileURI != null) {
-                    Intent intent = new Intent(context,
+                    Intent intent = new Intent(mContext,
                             PostVideoActivity.class);
                     intent.setData(mFileURI);
                     startActivity(intent);
@@ -291,7 +228,7 @@ public class MainActivity extends ActionBarActivity {
 
                 mFileURI = data.getData();
                 if (mFileURI != null) {
-                    Intent intent = new Intent(context,
+                    Intent intent = new Intent(mContext,
                             PostVideoActivity.class);
                     intent.setData(mFileURI);
                     startActivity(intent);
@@ -301,14 +238,11 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private static final int PHOTO_SIZE_WIDTH = 100;
-    private static final int PHOTO_SIZE_HEIGHT = 100;
-
     public void selectImage() {
         final CharSequence[] items = {"Take Photo", "Choose from Library",
                 "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("Change avatar!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
@@ -407,60 +341,140 @@ public class MainActivity extends ActionBarActivity {
         return rotate;
     }
 
-
     @Override
-    public void onResume() {
-        super.onResume();
-        ApiBus.getInstance().register(this);
+    public void onSearchQuery(String query) {
+        Utils.hideKeyboard(this);
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra("query", query);
+        startActivity(intent);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        ApiBus.getInstance().unregister(this);
-    }
+    public void initDrawer() {
+        View header = LayoutInflater.from(getApplication()).inflate(R.layout.header_drawer, null);
+        result = new Drawer()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withHeader(header)
+                .withActionBarDrawerToggle(true)
+                .withTranslucentStatusBar(true)
+                .addDrawerItems(
+                        //new PrimaryDrawerItem().withName("Channels").withIcon(FontAwesome.Icon.faw_terminal),
+                        //new PrimaryDrawerItem().withName("Social").withIcon(FontAwesome.Icon.faw_users),
+                        //new PrimaryDrawerItem().withName("Videos").withIcon(FontAwesome.Icon.faw_video_camera),
+                        //new PrimaryDrawerItem().withName("Photos").withIcon(FontAwesome.Icon.faw_camera_retro),
+                        //new SectionDrawerItem().withName("Account"),
+                        new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home),
+                        new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history),
+                        new SecondaryDrawerItem().withName("Setting").withIcon(FontAwesome.Icon.faw_cog),
+                        new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc),
+                        new SecondaryDrawerItem().withName("Tattoo Store").withIcon(FontAwesome.Icon.faw_shopping_cart).setEnabled(false),
+                        new SecondaryDrawerItem().withName("Term & Policies").withIcon(FontAwesome.Icon.faw_terminal),
+                        new SecondaryDrawerItem().withName("Log Out").withIcon(FontAwesome.Icon.faw_sign_out)
+
+                )
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof Nameable) {
+                            Snackbar.with(getApplicationContext()).text(((Nameable) drawerItem).getName()).show(mActivity);
+                        }
+
+                        if (((Nameable) drawerItem).getName().equals("Channels")) {
+
+                            ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
+
+                        } else if (((Nameable) drawerItem).getName().equals("Social")) {
+
+                            SocialViewPagerFragment fragment = new SocialViewPagerFragment();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
+
+                        } else if (((Nameable) drawerItem).getName().equals("Videos")) {
+
+                            VideoViewPagerFragment fragment = new VideoViewPagerFragment();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
+
+                        } else if (((Nameable) drawerItem).getName().equals("Photos")) {
+//                            PhotoFragmentGrid fragment = new PhotoFragmentGrid();
+//
+//                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//                            transaction.replace(R.id.sub_container, fragment, "PHOTO_MAIN");
+//                            transaction.addToBackStack(null);
+//                            transaction.commit();
+
+                            Intent i = new Intent(MainActivity.this, PhotoDetailActivity.class);
+                            startActivity(i);
+                        } else if (((Nameable) drawerItem).getName().equals("Home")) {
+
+                            HomeViewPagerFragment fragment = new HomeViewPagerFragment();
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.replace(R.id.sub_container, fragment);
+                            transaction.commit();
+
+                        } else if (((Nameable) drawerItem).getName().equals("Live History")) {
+
+                            LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "LIVE_HISTORY").addToBackStack(null).commit();
+
+                        } else if (((Nameable) drawerItem).getName().equals("Setting")) {
+
+                            SettingFragment fragment = SettingFragment.newInstance(userId);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SETTINGS").addToBackStack(null).commit();
+
+                        } else if (((Nameable) drawerItem).getName().equals("Log Out")) {
+                            MainApplication.logout();
+                            Intent login = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(login);
+                            finish();
+                        }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the search; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+                    }
+                }).build();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        toggle = result.getActionBarDrawerToggle();
+        mDrawer = result.getDrawerLayout();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        ImageView channelMenu = (ImageView) result.getHeader().findViewById(R.id.channel_menu);
+        ImageView sociallMenu = (ImageView) result.getHeader().findViewById(R.id.social_menu);
+        ImageView videoMenu = (ImageView) result.getHeader().findViewById(R.id.video_menu);
+        ImageView photoMenu = (ImageView) result.getHeader().findViewById(R.id.photo_menu);
 
-        return super.onOptionsItemSelected(item);
-    }
-
-    List<WeakReference<Fragment>> fragList = new ArrayList<WeakReference<Fragment>>();
-
-    @Override
-    public void onAttachFragment(Fragment fragment) {
-        fragList.add(new WeakReference(fragment));
-    }
-
-    public List<Fragment> getActiveFragments() {
-        ArrayList<Fragment> ret = new ArrayList<Fragment>();
-        for (WeakReference<Fragment> ref : fragList) {
-            Fragment f = ref.get();
-            if (f != null) {
-                if (f.isVisible()) {
-                    ret.add(f);
-                }
+        channelMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
+                result.closeDrawer();
             }
-        }
-        return ret;
-    }
+        });
 
+        sociallMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SocialViewPagerFragment fragment = new SocialViewPagerFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
+                result.closeDrawer();
+            }
+        });
+
+        videoMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                VideoViewPagerFragment fragment = new VideoViewPagerFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
+                result.closeDrawer();
+            }
+        });
+
+        photoMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, VMActivity.class);
+                startActivity(i);
+                result.closeDrawer();
+            }
+        });
+    }
 }

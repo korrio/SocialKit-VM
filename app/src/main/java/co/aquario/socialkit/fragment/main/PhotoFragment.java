@@ -20,7 +20,6 @@ import co.aquario.socialkit.adapter.FeedAdapter;
 import co.aquario.socialkit.event.LoadTimelineEvent;
 import co.aquario.socialkit.event.LoadTimelineSuccessEvent;
 import co.aquario.socialkit.event.LogoutEvent;
-import co.aquario.socialkit.fragment.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
@@ -31,20 +30,17 @@ import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
 public class PhotoFragment extends BaseFragment {
     private static final String LOAD_TYPE = "TYPE";
     private static final String USER_ID = "USER_ID";
-
-    //private String type = "";
-    private String userId = "";
-
+    private static final int PER_PAGE = 20;
     ArrayList<PostStory> list = new ArrayList<>();
 
     FeedAdapter adapter;
 
     RecyclerView recyclerView;
     boolean refresh = false;
-
+    //private String type = "";
+    private String userId = "";
     private boolean isHomeTimeline = true;
     private String TYPE = "photo";
-    private static final int PER_PAGE = 20;
 
     public static PhotoFragment newInstance(String text,String userId){
         PhotoFragment mFragment = new PhotoFragment();
@@ -71,7 +67,7 @@ public class PhotoFragment extends BaseFragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_recyclerview_observable, container, false);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.scroll);
         //recyclerView.setHasFixedSize(true);
@@ -79,6 +75,8 @@ public class PhotoFragment extends BaseFragment {
         recyclerView.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+
         recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page) {

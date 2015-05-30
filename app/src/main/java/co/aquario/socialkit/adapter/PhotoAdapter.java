@@ -23,7 +23,7 @@ import java.util.Date;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.PhotoActivity;
 import co.aquario.socialkit.event.PhotoLoadEvent;
-import co.aquario.socialkit.fragment.FeedFragment;
+import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.widget.RoundedTransformation;
@@ -31,9 +31,8 @@ import co.aquario.socialkit.widget.RoundedTransformation;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> {
 
-    private ArrayList<PostStory> list = new ArrayList<>();
     private static Activity mActivity;
-
+    private ArrayList<PostStory> list = new ArrayList<>();
     private OnItemClickListener mItemClickListener;
     private OnItemClickListener mItemLove;
     private OnItemClickListener mItemShare;
@@ -41,14 +40,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
     private FeedFragment mFragment;
 
     public PhotoAdapter(Activity mActivity, ArrayList<PostStory> list) {
-        this.mActivity = mActivity;
+        PhotoAdapter.mActivity = mActivity;
         this.list = list;
 
         ApiBus.getInstance().register(this);
     }
 
     public PhotoAdapter(Activity mActivity, ArrayList<PostStory> list, FeedFragment fragment) {
-        this.mActivity = mActivity;
+        PhotoAdapter.mActivity = mActivity;
         this.list = list;
         mFragment = fragment;
 
@@ -183,6 +182,32 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
         return list.size();
     }
 
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    public void OnItemLoveClick(final OnItemClickListener mItemLove) {
+
+        this.mItemLove = mItemLove;
+    }
+
+    public void OnItemShareClick(final OnItemClickListener mItemShare) {
+        this.mItemShare = mItemShare;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public interface OnItemLoveClick {
+        void onItemClick(View view, int position);
+    }
+
+
+    public interface OnItemShareClick {
+        void onItemClick(View view, int position);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView name;
@@ -262,32 +287,5 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
             }
         }
 
-    }
-
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
-    }
-
-    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mItemClickListener = mItemClickListener;
-    }
-
-    public interface OnItemLoveClick {
-        public void onItemClick(View view, int position);
-    }
-
-    public void OnItemLoveClick(final OnItemClickListener mItemLove) {
-
-        this.mItemLove = mItemLove;
-    }
-
-
-    public interface OnItemShareClick {
-        public void onItemClick(View view, int position);
-    }
-
-    public void OnItemShareClick(final OnItemClickListener mItemShare) {
-        this.mItemShare = mItemShare;
     }
 }

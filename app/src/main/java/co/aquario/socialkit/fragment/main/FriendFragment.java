@@ -22,7 +22,6 @@ import co.aquario.socialkit.event.LoadFriendListEvent;
 import co.aquario.socialkit.event.LoadFriendListSuccessEvent;
 import co.aquario.socialkit.event.LogoutEvent;
 import co.aquario.socialkit.event.UnfollowUserSuccessEvent;
-import co.aquario.socialkit.fragment.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.User;
 import co.aquario.socialkit.util.Utils;
@@ -35,15 +34,13 @@ import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
 public class FriendFragment extends BaseFragment {
     private static final String LOAD_TYPE = "TYPE";
     private static final String USER_ID = "USER_ID";
-
-    private String type = "";
-    private String userId = "";
-
     ArrayList<User> list = new ArrayList<>();
     FriendRecyclerAdapter adapter2;
     RecyclerView recyclerView;
     GridLayoutManager manager;
     boolean refresh = false;
+    private String type = "";
+    private String userId = "";
 
     public static FriendFragment newInstance(String text,String userId){
         FriendFragment mFragment = new FriendFragment();
@@ -64,7 +61,7 @@ public class FriendFragment extends BaseFragment {
         }
         if(!type.equals("")) {
             if(userId.equals(""))
-                userId = prefManager.userId().getOr("6");
+                userId = prefManager.userId().getOr("0");
             ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),1,100));
         }
     }
@@ -86,40 +83,15 @@ public class FriendFragment extends BaseFragment {
         //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
+        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
             @Override
             public void onLoadMore(int current_page) {
-                Log.e("scrollBottom","laew na");
                 refresh = false;
-                ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),current_page,100));
+                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
             }
 
 
         });
-
-
-
-
-
-
-        /*
-        //gridView = (ObservableGridView) rootView.findViewById(R.id.scroll);
-        adapter = new FriendAdapter(getActivity(), list);
-        gridView.setAdapter(adapter);
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
-                i.putExtra("userId",list.get(position).id);
-                i.putExtra("avatarUrl",list.get(position).getAvatarUrl());
-                i.putExtra("cover",list.get(position).getCoverUrl());
-                i.putExtra("nameUser",list.get(position).nameUser);
-                i.putExtra("username",list.get(position).username);
-                getActivity().startActivity(i);
-            }
-        });
-        */
 
         return rootView;
     }

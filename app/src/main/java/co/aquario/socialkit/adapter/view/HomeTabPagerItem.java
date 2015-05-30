@@ -2,7 +2,7 @@ package co.aquario.socialkit.adapter.view;
 
 import android.support.v4.app.Fragment;
 
-import co.aquario.socialkit.fragment.FeedFragment;
+import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.FriendFragment;
 
 public class HomeTabPagerItem {
@@ -18,7 +18,7 @@ public class HomeTabPagerItem {
         this.userId = userId;
 
         listFragments = new Fragment[] {
-                new FeedFragment().newInstance(title.toString()),
+                new FeedFragment().newInstance(userId, true),
                 new FriendFragment().newInstance("FOLLOWER",userId),
                 new FriendFragment().newInstance("FOLLOWING",userId),
                 new FriendFragment().newInstance("FRIEND",userId),

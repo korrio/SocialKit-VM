@@ -14,16 +14,16 @@ import com.squareup.picasso.Picasso;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.PhotoLoadEvent;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
 public class PhotoZoomFragment extends BaseFragment {
 
+    public static final String LOAD_URL = "LOAD_URL";
     Context context;
     ImageViewTouch imageView;
     TextView nameTv;
     TextView descTv;
-
-    public static final String LOAD_URL = "LOAD_URL";
     private String mUrl = "";
     private String mName = "";
     private String mDesc = "";

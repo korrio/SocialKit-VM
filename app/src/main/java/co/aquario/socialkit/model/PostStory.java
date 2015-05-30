@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class PostStory extends BaseModel {
     @Expose
     public int commentCount;
     @Expose
-    public ArrayList<CommentStory> comment;
+    public List<CommentStory> comment;
     @SerializedName("share_count")
     @Expose
     public int shareCount;
@@ -86,11 +85,9 @@ public class PostStory extends BaseModel {
     @SerializedName("is_shared")
     public boolean isShared;
 
-    public enum PostType {
-        TEXT, TATTOO, PHOTO, CLIP, YOUTUBE, SOUNDCLOUD, MAP, LIVE, AD
-    }
-
-
+    @Expose
+    @SerializedName("tattoo_url")
+    public String tattooUrl;
 
     public String getId() {
         return id;
@@ -101,6 +98,10 @@ public class PostStory extends BaseModel {
         long agoLong = Integer.parseInt(time);
         Date timeAgo = new java.util.Date(agoLong * 1000);
         return p.format(timeAgo);
+    }
+
+    public enum PostType {
+        TEXT, TATTOO, PHOTO, CLIP, YOUTUBE, SOUNDCLOUD, MAP, LIVE, AD
     }
 
 

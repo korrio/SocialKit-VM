@@ -1,6 +1,11 @@
 package co.aquario.socialkit.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import org.parceler.Parcel;
+
+import java.util.List;
 
 import co.aquario.socialkit.util.EndpointManager;
 
@@ -10,107 +15,37 @@ import co.aquario.socialkit.util.EndpointManager;
 @Parcel
 public class Media {
 
-    private String id;
-    private String active;
-    private String albumId;
-    private String clipId;
-    private String extension;
-    private String name;
-    private String postId;
-    private String temp;
-    private String timeline;
-    private String type;
-    private String url;
+    @Expose
+    public String id;
+    @Expose
+    public String active;
+    @Expose
+    public String albumId;
+    @Expose
+    public String clipId;
+    @Expose
+    public String extension;
+    @Expose
+    public String name;
+    @Expose
+    public String postId;
+    @Expose
+    public String temp;
+    @Expose
+    public String timeline;
+    @Expose
+    public String type;
+    @Expose
+    public String url;
+    @Expose
+    public String url_thumb;
+    @Expose
+    @SerializedName("album_photos")
+    public List<Media> album;
 
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getActive() {
-        return active;
-    }
-
-    public void setActive(String active) {
-        this.active = active;
-    }
-
-    public String getAlbumId() {
-        return albumId;
-    }
-
-    public void setAlbumId(String albumId) {
-        this.albumId = albumId;
-    }
-
-    public String getClipId() {
-        return clipId;
-    }
-
-    public void setClipId(String clipId) {
-        this.clipId = clipId;
-    }
-
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPostId() {
-        return postId;
-    }
-
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
-
-    public String getTemp() {
-        return temp;
-    }
-
-    public void setTemp(String temp) {
-        this.temp = temp;
-    }
-
-    public String getTimeline() {
-        return timeline;
-    }
-
-    public void setTimeline(String timeline) {
-        this.timeline = timeline;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     public String getThumbUrl() {
-        return EndpointManager.getPath(getUrl() + "." + getExtension());
+        return EndpointManager.getAvatarPath(url);
     }
 }

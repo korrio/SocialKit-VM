@@ -42,10 +42,10 @@ public class Channel extends BaseModel {
     }
 
     public String getAvatarUrl() {
-        return EndpointManager.getPath(avatar);
+        return EndpointManager.getAvatarPath(avatar);
     }
 
     public String getCoverUrl() {
-        return EndpointManager.getPath(cover);
+        return EndpointManager.getAvatarPath(cover);
     }
 }

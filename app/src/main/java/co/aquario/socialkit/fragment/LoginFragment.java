@@ -37,6 +37,7 @@ import co.aquario.socialkit.event.LoginEvent;
 import co.aquario.socialkit.event.LoginFailedAuthEvent;
 import co.aquario.socialkit.event.LoginSuccessEvent;
 import co.aquario.socialkit.event.UpdateProfileEvent;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.FbProfile;
 import co.aquario.socialkit.model.UserProfile;
@@ -44,14 +45,10 @@ import co.aquario.socialkit.util.PrefManager;
 
 public class LoginFragment extends BaseFragment {
 
+    public PrefManager prefManager;
     private AQuery aq;
     private FacebookHandle handle;
-
     private FbProfile profile;
-
-    public LoginFragment() {
-    }
-
     private MaterialEditText userEt;
     private MaterialEditText passEt;
 
@@ -59,8 +56,10 @@ public class LoginFragment extends BaseFragment {
     private TextView registerBtn;
 
     private LinearLayout fbBtn;
+    private String facebookToken;
 
-    public PrefManager prefManager;
+    public LoginFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,8 +131,6 @@ public class LoginFragment extends BaseFragment {
         aq.auth(handle).progress(dialog)
                 .ajax(url, JSONObject.class, this, "facebookCb");
     }
-
-    private String facebookToken;
 
     public void facebookCb(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {

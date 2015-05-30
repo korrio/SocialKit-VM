@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -44,18 +46,19 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 public class PostYoutubeActivity extends ActionBarActivity {
 
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public long totalSize;
     String yid;
     String title;
     String desc;
     String statusText;
-
     ImageView thumb;
     EditText etStatus;
     Button btnPost;
     ProgressDialog dialog;
-
+    TextView titleView;
+    TextView descView;
     Context context;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +69,9 @@ public class PostYoutubeActivity extends ActionBarActivity {
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
         context = this;
 
-        thumb = (ImageView) findViewById(R.id.thumb);
+        thumb = (ImageView) findViewById(R.id.video_thumbnail_imv);
+        titleView = (TextView) findViewById(R.id.video_title_txv);
+        descView = (TextView) findViewById(R.id.video_desc_txv);
         etStatus = (EditText) findViewById(R.id.comment_box);
         btnPost = (Button) findViewById(R.id.button_recent);
 
@@ -80,6 +85,9 @@ public class PostYoutubeActivity extends ActionBarActivity {
         yid = getIntent().getStringExtra("yid");
         title = getIntent().getStringExtra("title");
         desc = getIntent().getStringExtra("desc");
+
+        titleView.setText(title);
+        descView.setText(Html.fromHtml(desc));
 
         popup.setSizeForSoftKeyboard();
         popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
@@ -182,9 +190,6 @@ public class PostYoutubeActivity extends ActionBarActivity {
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
         iconToBeChanged.setImageResource(drawableResourceId);
     }
-
-    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
-    public long totalSize;
 
     public void postYoutube() {
         statusText = etStatus.getText().toString()

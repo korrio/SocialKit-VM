@@ -19,17 +19,17 @@
             android:background="@drawable/bg_comment_avatar" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:theme="@style/AppTheme2">
 
             <TextView
+                android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
-                android:id="@+id/tvName"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/material_drawer_primary_text"
                 android:textSize="16dp" />
 
@@ -44,11 +44,11 @@
                 android:textSize="14dp" />
 
             <TextView
+                android:id="@+id/tvAgo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="a moment ago"
-                android:id="@+id/tvAgo"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/material_drawer_secondary_text"
                 android:textSize="12dp" />
 
@@ -56,10 +56,12 @@
 
     </LinearLayout>
 
+    <!--
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:layout_marginLeft="88dp"
         android:background="#cccccc" />
+    -->
 </FrameLayout>

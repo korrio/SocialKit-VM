@@ -34,7 +34,7 @@
     <dimen name="padding_size_layout_large">16dp</dimen>
 
     <dimen name="text_size">15sp</dimen>
-    <dimen name="logo_size">60dp</dimen>
+    <dimen name="logo_size">48dp</dimen>
     <dimen name="avatar_medium">92dp</dimen>
 
     <dimen name="size_image">25dp</dimen>

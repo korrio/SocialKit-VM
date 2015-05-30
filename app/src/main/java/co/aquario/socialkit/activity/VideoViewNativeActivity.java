@@ -28,23 +28,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoViewNativeActivity extends Activity {
 
+    String vidAddress = "https://archive.org/download/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4";
+    boolean loaded = false;
     private String path = "";
     private VideoView mVideoView;
     private EditText mEditText;
     private Button button1;
     private Button start;
-
     private CircleImageView mProfileImageView;
     private ImageView mImageView;
     private TextView mProfileNameTextView;
     private ImageView mLogo;
-
     private MediaPlayer mediaPlayer;
-
-    String vidAddress = "https://archive.org/download/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4";
-
-
-    boolean loaded = false;
+    private LinearLayout.LayoutParams paramsNotFullscreen; //if you're using RelativeLatout
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -104,8 +100,8 @@ public class VideoViewNativeActivity extends Activity {
 
         setTitle(name);
         //mTitle.setText(name);
-        Picasso.with(this).load(EndpointManager.getPath(coverUrl)).into((ImageView) mImageView);
-        Picasso.with(this).load(EndpointManager.getPath(avatarUrl)).into(mProfileImageView);
+        Picasso.with(this).load(EndpointManager.getAvatarPath(coverUrl)).into(mImageView);
+        Picasso.with(this).load(EndpointManager.getAvatarPath(avatarUrl)).into(mProfileImageView);
 
 
         mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -120,7 +116,7 @@ public class VideoViewNativeActivity extends Activity {
             }
         });
 
-        if (path == "") {
+        if (path.equals("")) {
             // Tell the user to provide a media file URL/path.
             path = "http://server-a.vdomax.com:8080/record/Nuchiko-260115_20:55:13.flv";
             //Toast.makeText(VideoViewFragment.this, "Please edit VideoViewDemo Activity, and set path" + " variable to your media file URL/path", Toast.LENGTH_LONG).show();
@@ -158,8 +154,6 @@ public class VideoViewNativeActivity extends Activity {
         }
 
     }
-
-    private LinearLayout.LayoutParams paramsNotFullscreen; //if you're using RelativeLatout
 
     @Override
     public void onConfigurationChanged(Configuration newConfig)

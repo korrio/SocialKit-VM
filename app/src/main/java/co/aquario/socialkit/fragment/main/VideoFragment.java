@@ -24,7 +24,6 @@ import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.YoutubeDragableActivity;
 import co.aquario.socialkit.adapter.VideoRecyclerAdapter;
-import co.aquario.socialkit.fragment.BaseFragment;
 import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
@@ -35,16 +34,16 @@ public class VideoFragment extends BaseFragment {
     public static final String KEYWORD_SEARCH = "KEYWORD_SEARCH";
     public static final String SORT_TYPE = "SORT_TYPE";
     //public static final String USER_ID = "USER_ID";
-
+    VideoFragment fragment;
     //private String userId = "";
     private String sortType = "";
     private String keyword = "";
-
     private AQuery aq;
     private String url;
     private ArrayList<Video> list = new ArrayList<Video>();
     private VideoRecyclerAdapter adapterVideos;
     private GridLayoutManager manager;
+    private PrefManager pref;
 
     public VideoFragment() {
 
@@ -60,8 +59,6 @@ public class VideoFragment extends BaseFragment {
         return mFragment;
     }
 
-    private PrefManager pref;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,8 +70,6 @@ public class VideoFragment extends BaseFragment {
 
         pref = MainApplication.get(getActivity().getApplicationContext()).getPrefManager();
     }
-
-    VideoFragment fragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,14 +102,11 @@ public class VideoFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
                 Video post = list.get(position);
-
-
                 Intent i2 = new Intent(getActivity(), YoutubeDragableActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("obj", Parcels.wrap(post));
 
                 i2.putExtras(bundle);
-
                 startActivity(i2);
             }
         });

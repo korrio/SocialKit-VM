@@ -3,150 +3,157 @@
     android:id="@+id/svScroll"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fillViewport="true"
-    android:background="@color/material_drawer_hint_text">
+    android:background="@color/md_blue_grey_100"
+    android:fillViewport="true">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView
-
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />
 
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone" />
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/player_toolbar"
-        android:background="@color/ripple_material_light"
-        android:visibility="visible"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:layout_height="@dimen/player_toolbar"
         android:layout_width="match_parent"
+        android:layout_height="@dimen/player_toolbar"
         android:layout_alignParentTop="true"
-        >
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:visibility="gone">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            >
-            <ImageView
-                android:id="@+id/selected_thumbnail"
-                android:layout_width="@dimen/avatar_size"
-                android:layout_height="@dimen/avatar_size"
-                android:src="@drawable/ic_soundcloud_small" />
+            android:gravity="center">
+
             <RelativeLayout
                 android:id="@+id/player_control"
-                android:layout_alignParentRight="true"
                 android:layout_width="@dimen/avatar_size"
                 android:layout_height="@dimen/avatar_size"
-                >
+                android:layout_alignParentRight="true">
+
                 <ImageView
-                    android:background="@drawable/oval"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="3dp"
-                    />
+                    android:background="@drawable/oval" />
+
                 <ImageView
                     android:id="@+id/player_state"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="match_parent" />
+
                 <ProgressBar
                     android:id="@+id/player_progress"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="match_parent" />
             </RelativeLayout>
+
             <TextView
                 android:id="@+id/selected_title"
-                android:text="@string/hello_world"
-                android:layout_toRightOf="@id/selected_thumbnail"
-                android:layout_toLeftOf="@id/player_control"
-                android:paddingLeft="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/player_control"
+                android:layout_toRightOf="@id/selected_thumbnail"
+                android:paddingLeft="8dp"
+                android:text="@string/hello_world"
+                android:visibility="invisible" />
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-        <RelativeLayout
-            android:id="@+id/layoutMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true">
+    <RelativeLayout
+        android:id="@+id/layoutMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true">
 
-            <com.getbase.floatingactionbutton.FloatingActionsMenu
-                android:id="@+id/multiple_actions"
-                android:layout_width="match_parent"
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/multiple_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="16dp"
+            fab:fab_addButtonColorNormal="@color/indigo_700"
+            fab:fab_addButtonColorPressed="@color/indigo_500"
+            fab:fab_addButtonPlusIconColor="@color/white"
+            fab:fab_addButtonSize="normal"
+            fab:fab_labelStyle="@style/menu_labels_style">
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/action_youtube"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                fab:fab_addButtonColorNormal="@color/indigo_700"
-                fab:fab_addButtonColorPressed="@color/indigo_500"
-                fab:fab_addButtonPlusIconColor="@color/white"
-                fab:fab_labelStyle="@style/menu_labels_style"
-                fab:fab_addButtonSize="normal"
-                android:layout_marginBottom="1dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginEnd="1dp">
+                android:layout_marginBottom="-15dp"
+                fab:fab_colorNormal="@color/indigo_700"
+                fab:fab_colorPressed="@color/indigo_500"
+                fab:fab_icon="@drawable/ic_yt"
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/action_youtube"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/indigo_700"
-                    fab:fab_colorPressed="@color/indigo_500"
-                    fab:fab_size="mini"
-                    fab:fab_icon="@drawable/ic_yt"
+                fab:fab_size="mini"
+                fab:fab_title="Youtube" />
 
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/action_soundcloud"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                fab:fab_colorNormal="@color/indigo_700"
+                fab:fab_colorPressed="@color/indigo_500"
+                fab:fab_icon="@drawable/ic_sc"
+                fab:fab_size="mini"
+                fab:fab_title="Music" />
 
-                    android:layout_marginBottom="-15dp"
-                    fab:fab_title="Youtube" />
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/action_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-15dp"
+                fab:fab_colorNormal="@color/indigo_700"
+                fab:fab_colorPressed="@color/indigo_500"
+                fab:fab_icon="@drawable/ic_photo"
+                fab:fab_size="mini"
+                fab:fab_title="Photo" />
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/action_soundcloud"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/indigo_700"
-                    fab:fab_colorPressed="@color/indigo_500"
-                    fab:fab_size="mini"
-                    fab:fab_icon="@drawable/ic_sc"
-                    fab:fab_title="Music" />
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/action_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-15dp"
+                fab:fab_colorNormal="@color/indigo_700"
+                fab:fab_colorPressed="@color/indigo_500"
+                fab:fab_icon="@drawable/ic_clip"
+                fab:fab_size="mini"
+                fab:fab_title="Video" />
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/action_photo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/indigo_700"
-                    fab:fab_colorPressed="@color/indigo_500"
-                    fab:fab_size="mini"
-                    fab:fab_icon="@drawable/ic_photo"
-                    android:layout_marginBottom="-15dp"
-                    fab:fab_title="Post Photo" />
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/action_write_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-15dp"
+                fab:fab_colorNormal="@color/indigo_700"
+                fab:fab_colorPressed="@color/indigo_500"
+                fab:fab_icon="@drawable/ic_text"
+                fab:fab_size="mini"
+                fab:fab_title="Status" />
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/action_video"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/indigo_700"
-                    fab:fab_colorPressed="@color/indigo_500"
-                    fab:fab_size="mini"
-                    fab:fab_icon="@drawable/ic_clip"
-                    android:layout_marginBottom="-15dp"
-                    fab:fab_title="Post Video" />
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/action_write_post"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/indigo_700"
-                    fab:fab_colorPressed="@color/indigo_500"
-                    fab:fab_size="mini"
-                    fab:fab_icon="@drawable/ic_text"
-                    android:layout_marginBottom="-15dp"
-                    fab:fab_title="Write Post" />
-
-            </com.getbase.floatingactionbutton.FloatingActionsMenu>
-
-        </RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
 

@@ -13,10 +13,15 @@ public class EndpointManager {
 
     public static String getDefaultFemaleAvatar = "https://www.vdomax.com/themes/vdomax1.1/images/default-female-avatar.png";
 
-    public static String getPath(String path) {
-        if(!path.equals(""))
-            return prefix + "/" + path;
-        else
+    public static String getAvatarPath(String path) {
+        if (path != null) {
+            if (!path.equals(""))
+                return prefix + "/" + path;
+            else
+                return defaultMaleAvatar;
+        } else {
             return defaultMaleAvatar;
+        }
+
     }
 }

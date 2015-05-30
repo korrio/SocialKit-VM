@@ -14,7 +14,6 @@ import java.util.List;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.view.ChannelTabPagerItem;
 import co.aquario.socialkit.adapter.view.ChannelViewPagerAdapter;
-import co.aquario.socialkit.fragment.BaseFragment;
 
 public class ChannelViewPagerFragment extends BaseFragment {
 	private List<ChannelTabPagerItem> mTabs = new ArrayList<>();

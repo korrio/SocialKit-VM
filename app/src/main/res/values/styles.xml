@@ -2,20 +2,51 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat">
-        <!-- Customize your theme here. -->
+
+        <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+
+        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryDark">@color/indigo_700</item>
         <item name="colorAccent">@color/accent</item>
     </style>
 
-    <style name="AppTheme2" parent="MaterialDrawerBaseTheme.Light">
-        <!-- Customize your theme here. -->
-        <item name="windowActionBar">true</item>
+    <style name="Theme.VM" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/indigo_500</item>
         <item name="colorPrimaryDark">@color/indigo_700</item>
         <item name="colorAccent">@color/accent</item>
     </style>
+
+
+    <style name="AppTheme.NoActionBar">
+        <!-- Both of these are needed -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme2" parent="MaterialDrawerBaseTheme.Light.DarkToolbar">
+        <!-- Customize your theme here. -->
+
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+
+        <item name="colorPrimary">@color/indigo_500</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="AppTheme2.NoActionBar">
+        <!-- Both of these are needed -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Swipeable" parent="Theme.VM">
+        <item name="android:windowContentOverlay">@drawable/bottom_shadow</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
 
     <style name="AppTheme.TransparentActivity">
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -35,9 +66,31 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="AppTheme.TransparentActivity.FullScreen" parent="AppTheme">
-        <item name="android:windowFullscreen">true</item>
+    <style name="CustomTheme" parent="MaterialDrawerTheme.TranslucentStatus">
+        <!-- ...and here we setting appcompat’s color theme attrs -->
+        <item name="colorPrimary">@color/indigo_700</item>
+        <item name="colorPrimaryDark">@color/indigo_500</item>
+        <item name="colorAccent">@color/cpb_white</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_dark_background</item>
+        <item name="material_drawer_icons">@color/material_drawer_dark_icons</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_dark_primary_text</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_dark_secondary_text
+        </item>
+        <item name="material_drawer_hint_text">@color/material_drawer_dark_hint_text</item>
+        <item name="material_drawer_divider">@color/material_drawer_dark_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_dark_selected</item>
+        <item name="material_drawer_selected_text">#F1433C</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_dark_primary_text
+        </item>
+
+        <!-- CAB :D -->
+        <item name="windowActionModeOverlay">true</item>
     </style>
+
+    <style name="FullscreenTheme" parent="MaterialDrawerTheme.Light.DarkToolbar.TranslucentStatus"></style>
 
     <style name="Theme.Transparent" parent="android:Theme">
         <item name="android:windowIsTranslucent">true</item>
@@ -48,11 +101,6 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="AppTheme.Toolbar" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/indigo_700</item>
-        <item name="colorPrimaryDark">@color/indigo_500</item>
-        <item name="colorAccent">@color/accent</item>
-    </style>
 
     <style name="Toolbar" parent="Theme.AppCompat">
         <item name="colorPrimary">@color/indigo_700</item>

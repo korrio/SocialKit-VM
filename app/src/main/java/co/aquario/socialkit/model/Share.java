@@ -7,7 +7,7 @@ import org.parceler.Parcel;
 @Parcel
 public class Share {
     @Expose
-    private String id;
+    public String id;
     @Expose
-    private String name;
+    public String name;
 }

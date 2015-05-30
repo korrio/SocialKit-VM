@@ -33,7 +33,12 @@ import co.aquario.socialkit.util.PrefManager;
 public abstract class BaseActivity extends ActionBarActivity {
     private static final int NUM_OF_ITEMS = 100;
     private static final int NUM_OF_ITEMS_FEW = 3;
-    private PrefManager pref;
+    private PrefManager mPref;
+    private Context mContext;
+
+    public static PrefManager getPref(Context context) {
+        return MainApplication.get(context).getPrefManager();
+    }
 
     @Override
     public void setContentView(int layoutResID) {
@@ -48,13 +53,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         return true;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        pref = MainApplication.get(this).getPrefManager();
-
-    }
-
     /*
     @Override
     protected void onStart() {
@@ -66,6 +64,13 @@ public abstract class BaseActivity extends ActionBarActivity {
         super.onStop();
     }
     */
+
+    @Override
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+        mContext = this;
+        mPref = MainApplication.get(mContext).getPrefManager();
+    }
 
     @Override
     protected void onResume() {
@@ -89,10 +94,6 @@ public abstract class BaseActivity extends ActionBarActivity {
         int actionBarSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
         a.recycle();
         return actionBarSize;
-    }
-
-    public static PrefManager getPref(Context context) {
-        return MainApplication.get(context).getPrefManager();
     }
 
     protected int getScreenHeight() {

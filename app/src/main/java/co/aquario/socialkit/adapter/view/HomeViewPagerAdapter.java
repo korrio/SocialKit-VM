@@ -33,21 +33,24 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter implements PagerS
         return mTabs.get(position).getTitle();
     }
 
+
     @Override
     public int getPageIconResId(int i) {
         switch (i) {
             case 0:
-                return R.drawable.ic_action_post;
+                return R.drawable.ic_action_post_white;
             case 1:
-                return R.drawable.ic_action_follower;
+                return R.drawable.ic_action_following_white;
             case 2:
-                return R.drawable.ic_action_following;
+                return R.drawable.ic_action_follower_white;
             case 3:
-                return R.drawable.ic_action_friend;
+                return R.drawable.ic_action_friend_white;
             case 4:
-                return R.drawable.ic_heart_outline_grey;
+                return R.drawable.ic_heart_white;
         }
 
         return 0;
     }
+
+
 }

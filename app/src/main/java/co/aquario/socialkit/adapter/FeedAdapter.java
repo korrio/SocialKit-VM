@@ -3,13 +3,13 @@ package co.aquario.socialkit.adapter;
 import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.ocpsoft.prettytime.PrettyTime;
+import org.parceler.Parcels;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,41 +33,40 @@ import java.util.Map;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.CommentsActivity;
-import co.aquario.socialkit.activity.YoutubeActivity;
-import co.aquario.socialkit.fragment.FeedFragment;
+import co.aquario.socialkit.activity.YoutubeDragableActivity;
 import co.aquario.socialkit.fragment.PhotoZoomFragment;
-import co.aquario.socialkit.fragment.ProfileDetailFragment;
+import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
+import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.widget.RoundedTransformation;
 import co.aquario.socialkit.widget.URLImageParser;
 
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
+    private static Activity mActivity;
     private final Map<Integer, Integer> likesCount = new HashMap<>();
     private final Map<RecyclerView.ViewHolder, AnimatorSet> likeAnimations = new HashMap<>();
     private final ArrayList<Integer> likedPositions = new ArrayList<>();
-
+    public boolean isHomeTimeline;
     private ArrayList<PostStory> list = new ArrayList<>();
-    private static Activity mActivity;
-
     private OnItemClickListener mItemClickListener;
     private OnItemClickListener mItemLove;
     private OnItemClickListener mItemShare;
-
     private FeedFragment mFragment;
 
     public FeedAdapter(Activity mActivity, ArrayList<PostStory> list) {
-        this.mActivity = mActivity;
+        FeedAdapter.mActivity = mActivity;
         this.list = list;
 
         ApiBus.getInstance().register(this);
     }
 
-    public FeedAdapter(Activity mActivity, ArrayList<PostStory> list, FeedFragment fragment) {
-        this.mActivity = mActivity;
+    public FeedAdapter(Activity mActivity, ArrayList<PostStory> list, FeedFragment fragment, boolean isHomeTimeline) {
+        FeedAdapter.mActivity = mActivity;
         this.list = list;
+        this.isHomeTimeline = isHomeTimeline;
         mFragment = fragment;
 
         ApiBus.getInstance().register(this);
@@ -86,26 +88,31 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public int getItemViewType(int position) {
 
         String postType = list.get(position).type;
-        Log.e("getItemViewType",position + ":" + postType);
+        //Log.e("getItemViewType",position + ":" + postType);
         switch (postType) {
             case "text":
                 return 0;
             case "tattoo":
                 return 1;
             case "photo":
-                return 2;
+                if (list.get(position).media.type.equals("album"))
+                    return 21;
+                else
+                    return 2;
             case "clip":
                 return 3;
-            case "soundcloud":
-                return 4;
             case "youtube":
+                return 4;
+            case "soundcloud":
                 return 5;
             case "ppv":
                 return 6;
             case "live":
                 return 7;
-            case "ad":
+            case "map":
                 return 8;
+            case "ad":
+                return 9;
             default:
                 return 0;
         }
@@ -114,7 +121,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.e("FeedAdapter.viewType", viewType + "");
+        //Log.e("FeedAdapter.viewType", viewType + "");
         final LayoutInflater mInflater = LayoutInflater.from(parent.getContext());
         View sView = null;
         switch (viewType) {
@@ -127,18 +134,26 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             case 2:
                 sView = mInflater.inflate(R.layout.item_feed_photo, parent, false);
                 break;
+            case 21:
+                sView = mInflater.inflate(R.layout.item_feed_photo, parent, false);
+                break;
             case 3:
                 sView = mInflater.inflate(R.layout.item_feed_clip, parent, false);
                 break;
             case 4:
+                sView = mInflater.inflate(R.layout.item_feed_clip, parent, false);
                 break;
             case 5:
+                sView = mInflater.inflate(R.layout.item_feed_soundcloud, parent, false);
                 break;
             case 6:
+                sView = mInflater.inflate(R.layout.item_feed_clip, parent, false);
                 break;
             case 7:
+                sView = mInflater.inflate(R.layout.item_feed_live, parent, false);
                 break;
             case 8:
+                sView = mInflater.inflate(R.layout.item_feed_map, parent, false);
                 break;
             case 9:
                 break;
@@ -161,18 +176,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         //if(item.isShared)
             //holder.btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share,0,0,0);
 
-        holder.soundCloudLayout.setVisibility(View.GONE);
-        holder.trackTitle.setVisibility(View.GONE);
-        //holder.trackSubtitle.setVisibility(View.GONE);
-        holder.btnPlay.setVisibility(View.GONE);
-
-        holder.typeIcon.setVisibility(View.VISIBLE);
-        holder.nView.setVisibility(View.VISIBLE);
-
-        holder.thumb.setVisibility(View.GONE);
-        holder.mediaLayout.setVisibility(View.VISIBLE);
-        holder.soundCloudLayout.setVisibility(View.VISIBLE);
-
         PrettyTime p = new PrettyTime();
         long agoLong = Integer.parseInt(item.time);
         Date timeAgo = new java.util.Date(agoLong * 1000);
@@ -185,20 +188,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.nShare.setText(item.shareCount + "");
         holder.ago.setText(ago);
 
-        String textEmoticonized = item.textEmoticonized;
-
-        if (item.text != null) {
-            if (item.text.trim().length() < 200)
-                holder.msg.setText(Html.fromHtml("" + item.text + ""));
-            else
-                holder.msg.setText(Html.fromHtml("" + item.text.substring(0, 200) + " ..." + ""));
-
-            URLImageParser parser = new URLImageParser(holder.msg, mActivity,2);
-            Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
-            holder.msg.setText(htmlSpan);
-        } else {
-            holder.msg.setVisibility(View.GONE);
-        }
 
         Picasso.with(mActivity)
                 .load(item.author.getAvatarPath())
@@ -207,38 +196,45 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 .transform(new RoundedTransformation(50, 4))
                 .into(holder.avatar);
 
-        holder.mediaLayout.setVisibility(View.VISIBLE);
+        if (isNull(item.text)) {
+            holder.msg.setVisibility(View.GONE);
+        } else {
+            if (item.text.trim().length() < 200)
+                holder.msg.setText(Html.fromHtml("" + item.text + ""));
+            else
+                holder.msg.setText(Html.fromHtml("" + item.text.substring(0, 200) + " ..." + ""));
+        }
 
-        if (checkNull(item.media)) {
-            holder.feedThumb.setVisibility(View.VISIBLE);
-            holder.thumb.setVisibility(View.VISIBLE);
+        if (item.type.equals("text")) {
 
+            holder.msg.setTextSize(18.0f);
+
+            /*
+            URLImageParser parser = new URLImageParser(holder.msg, mActivity,2);
+            Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+            holder.msg.setText(htmlSpan);
+            */
+
+
+        } else if (item.type.equals("tattoo")) {
+            holder.msg.setVisibility(View.GONE);
+            Picasso.with(mActivity)
+                    .load(item.tattooUrl)
+                            //.resize(100,100)
+                    .fit().centerInside()
+                    .into(holder.thumb);
+
+        } else if (item.type.equals("photo")) {
             Picasso.with(mActivity)
                     .load(item.media.getThumbUrl())
-
-                    .error(R.drawable.default_offline)
-                    .fit().centerCrop()
-                    .into(holder.thumb)
-                    ;
-            Picasso.with(mActivity).load(R.drawable.ic_photo).into(holder.typeIcon);
-            holder.nView.setText(item.view + " views");
-            //holder.nView.setVisibility(View.GONE);
-            //holder.typeIcon.setVisibility(View.GONE);
-        } else if (checkNull(item.youtube)) {
-            holder.feedThumb.setVisibility(View.VISIBLE);
-            holder.thumb.setVisibility(View.VISIBLE);
-            Picasso.with(mActivity)
-                    .load(item.youtube.thumbnail)
-
                     .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
-
-            Picasso.with(mActivity).load(R.drawable.ic_yt).into(holder.typeIcon);
+            Picasso.with(mActivity).load(R.drawable.ic_photo).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
-        } else if (checkNull(item.clip)) {
-            holder.feedThumb.setVisibility(View.VISIBLE);
-            holder.thumb.setVisibility(View.VISIBLE);
+
+        } else if (item.type.equals("clip")) {
+
             Picasso.with(mActivity)
                     .load(item.clip.thumb)
                     .error(R.drawable.default_offline)
@@ -248,55 +244,64 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             Picasso.with(mActivity).load(R.drawable.ic_clip).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
 
+        } else if (item.type.equals("youtube")) {
 
-
-        } else if (checkNull(item.soundCloud)) {
-            holder.feedThumb.setVisibility(View.VISIBLE);
-            holder.soundCloudLayout.setVisibility(View.VISIBLE);
-            holder.trackTitle.setVisibility(View.VISIBLE);
-            holder.trackSubtitle.setVisibility(View.VISIBLE);
-            holder.btnPlay.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
-                    .load(R.drawable.ic_soundcloud)
+                    .load(item.youtube.thumbnail)
+                    .error(R.drawable.default_offline)
                     .fit().centerCrop()
-                            //.resize(128,128)
-                    //.centerInside()
-                            //.error(R.drawable.default_offline)
                     .into(holder.thumb);
 
-            holder.typeIcon.setVisibility(View.GONE);
-            holder.nView.setVisibility(View.GONE);
+            Picasso.with(mActivity).load(R.drawable.ic_yt).into(holder.typeIcon);
+            holder.nView.setText(item.view + " views");
+        } else if (item.type.equals("soundcloud")) {
 
-            holder.trackTitle.setText(item.soundCloud.title);
-            holder.trackSubtitle.setText(item.soundCloud.trackId);
-            holder.mediaLayout.setVisibility(View.GONE);
+            if (item.soundCloud.title.trim().length() < 40)
+                holder.trackTitle.setText(Html.fromHtml("" + Html.fromHtml("" + item.soundCloud.title + "") + ""));
+            else
+                holder.trackTitle.setText(Html.fromHtml("" + Html.fromHtml(item.soundCloud.title.substring(0, 40)) + " ..." + ""));
 
-            //holder.soundCloudLayout.setVisibility(View.VISIBLE);
-            //holder.mediaLayout.setVisibility(View.GONE);
+            holder.nView.setText(item.view + " listens");
+
+            //holder.trackTitle.setText(item.soundCloud.title);
+            //holder.trackSubtitle.setText(item.soundCloud.trackId);
+//            holder.mediaLayout.setVisibility(View.GONE);
 
 
-            //Picasso.with(mActivity).load(R.drawable.ic_sound).into(holder.typeIcon);
+        } else if (item.type.equals("ppv")) {
+            Picasso.with(mActivity)
+                    .load(item.clip.thumb)
+                    .error(R.drawable.default_offline)
+                    .fit().centerCrop()
+                    .into(holder.thumb);
 
-
-        }  else if(!checkNull(item.soundCloud) && !checkNull(item.clip) && !checkNull(item.youtube) && !checkNull(item.media)) {
-            holder.feedThumb.setVisibility(View.GONE);
-            holder.nView.setVisibility(View.GONE);
-            holder.thumb.setVisibility(View.GONE);
-            holder.mediaLayout.setVisibility(View.GONE);
-            holder.soundCloudLayout.setVisibility(View.GONE);
-            holder.msg.setTextSize(18);
-        }
-
-        if(item.type.equals("live")){
-            holder.thumb.setVisibility(View.VISIBLE);
-            holder.mediaLayout.setVisibility(View.VISIBLE);
-            holder.msg.setTextSize(18);
+            Picasso.with(mActivity).load(R.drawable.ic_clip).into(holder.typeIcon);
+            holder.nView.setText(item.view + " views");
+        } else if (item.type.equals("live")) {
             Picasso.with(mActivity)
                     .load(item.author.liveCover)
                     .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
+        } else if (item.type.equals("map")) {
+            String mapUrl = null;
+            try {
+                mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center=" + URLEncoder.encode(item.google_map_name, "UTF-8") + "&zoom=16&size=400x300&maptype=roadmap";
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            Picasso.with(mActivity)
+                    .load(mapUrl)
+                    .error(R.drawable.default_offline)
+                    .fit().centerCrop()
+                    .into(holder.thumb);
+
+            //Log.e("mapUrl",mapUrl);
+
+
+
         }
+
 
         if (item.comment != null) {
             if (item.comment.size() >= 1) {
@@ -350,13 +355,39 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     }
 
-    private boolean checkNull(Object obj) {
-        return obj != null;
+    private boolean isNull(Object obj) {
+        return obj == null;
     }
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    public void OnItemLoveClick(final OnItemClickListener mItemLove) {
+
+        this.mItemLove = mItemLove;
+    }
+
+    public void OnItemShareClick(final OnItemClickListener mItemShare) {
+        this.mItemShare = mItemShare;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+    }
+
+    public interface OnItemLoveClick {
+        void onItemClick(View view, int position);
+    }
+
+
+    public interface OnItemShareClick {
+        void onItemClick(View view, int position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -401,6 +432,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         public ViewHolder(View view) {
             super(view);
 
+
             feedThumb = (RelativeLayout) view.findViewById(R.id.feed_thumb_group);
 
             name = (TextView) view.findViewById(R.id.profile_name);
@@ -436,8 +468,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             tvName2 = (TextView) comment2.findViewById(R.id.tvName);
             tvComment2 = (TextView) comment2.findViewById(R.id.tvComment);
 
-            btnPlay.setOnClickListener(this);
-
             thumb.setOnClickListener(this);
             avatar.setOnClickListener(this);
             btnComment.setOnClickListener(this);
@@ -449,20 +479,33 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         @Override
         public void onClick(View v) {
 
-            PostStory post = list.get(getPosition());
+            int clickedPos = getPosition();
+            if (!isHomeTimeline)
+                clickedPos--;
+
+            PostStory post = list.get(clickedPos);
             String postType = post.type;
 
 
             switch (v.getId()) {
                 case R.id.thumb:
                     if (postType.equals("photo")) {
-                        String url = list.get(getPosition()).media.getThumbUrl();
-                        String name = list.get(getPosition()).author.name;
-                        String text = list.get(getPosition()).text;
-                        //PhotoZoomFragment fragment = new PhotoZoomFragment();
+                        String url = post.media.getThumbUrl();
+                        String name = post.author.name;
 
+                        String text = post.text;
                         if(text == null)
                             text = "";
+                        else {
+                            text = Html.fromHtml("" + list.get(clickedPos).text + "").toString();
+                            if (text.trim().length() >= 200)
+                                text = text.substring(0, 200);
+                        }
+
+
+                        //PhotoZoomFragment fragment = new PhotoZoomFragment();
+
+
 
                         PhotoZoomFragment fragment = new PhotoZoomFragment().newInstance(url,name,text);
                         FragmentManager manager = ((ActionBarActivity) mActivity).getSupportFragmentManager();
@@ -512,6 +555,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     } else if (postType.equals("youtube")) {
 
+
                         //String location = "https://www.youtube.com/watch?v=SvDMZFfwmgo";
                         //String location = "https://www.youtube.com/watch?v=" + post.youtube.id;
 
@@ -527,7 +571,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
 
 
-
+    /*
                         Intent i = new Intent(mActivity, YoutubeActivity.class);
                         i.putExtra("id", post.youtube.id);
                         i.putExtra("title", post.youtube.title);
@@ -535,13 +579,26 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         i.putExtra("name", post.author.name);
                         i.putExtra("avatar", post.author.getAvatarPath());
                         i.putExtra("ago", post.getAgoText());
+
                         mActivity.startActivity(i);
+                        */
+
+                        Video item = new Video(post.postId, post.youtube.title, post.youtube.desc, post.youtube.id, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
+
+                        Intent i2 = new Intent(mActivity, YoutubeDragableActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("obj", Parcels.wrap(item));
+
+                        i2.putExtras(bundle);
+                        mActivity.startActivity(i2);
+
+
 
 
                     } else if (postType.equals("soundcloud")) {
                         if (mFragment != null) {
                             mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
-                            Log.e("heysoundcloud", post.soundCloud.streamUrl);
+                            //Log.e("heysoundcloud", post.soundCloud.streamUrl);
                         }
                     } else if(postType.equals("live")) {
 
@@ -569,23 +626,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     int[] startingLocation = new int[2];
                     v.getLocationOnScreen(startingLocation);
                     intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
-                    intent.putParcelableArrayListExtra(CommentsActivity.ARG_COMMENT_LIST,post.comment);
-                    intent.putExtra("POST_ID",post.postId);
+                    //intent.putParcelableArrayListExtra(CommentsActivity.ARG_COMMENT_LIST, Parcels.wrap(post.comment));
+                    intent.putExtra("POST_ID", post.postId);
                     mActivity.startActivity(intent);
                     mActivity.overridePendingTransition(0, 0);
 
-                    /*
-                    TimelineDataEvent event = new TimelineDataEvent(list.get(getPosition()));
-                    ApiBus.getInstance().post(event);
-
-                    Intent i = new Intent(mActivity, CommentActivity.class);
-                    i.putExtra("postId", list.get(getPosition()).postId);
-                    mActivity.startActivity(i);
-                    */
                     break;
                 case R.id.profile_name:
                 case R.id.avatar:
-                    ProfileDetailFragment fragment = new ProfileDetailFragment().newInstance(post.author.id);
+                    FeedFragment fragment = new FeedFragment().newInstance(post.author.id, false);
                     FragmentManager manager = ((ActionBarActivity) mActivity).getSupportFragmentManager();
                     FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
@@ -632,7 +681,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 case R.id.btn_track_play:
                     if (mFragment != null) {
                         mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
-                        Log.e("heysoundcloud", post.soundCloud.streamUrl);
+                        //Log.e("heysoundcloud", post.soundCloud.streamUrl);
                     }
                     break;
 
@@ -641,97 +690,5 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             }
         }
 
-    }
-
-    /*
-
-    private void updateLikesCounter(ViewHolder holder, boolean animated) {
-        holder.getPosition()
-        int currentLikesCount = Integer.parseInt() + 1
-        String likesCountText = context.getResources().getQuantityString(
-                R.plurals.likes_count, currentLikesCount, currentLikesCount
-        );
-
-        if (animated) {
-            holder.tsLikesCounter.setText(likesCountText);
-        } else {
-            holder.tsLikesCounter.setCurrentText(likesCountText);
-        }
-
-        likesCount.put(holder.getPosition(), currentLikesCount);
-    }
-
-    private void updateHeartButton(final ViewHolder holder, boolean animated) {
-        if (animated) {
-            if (!likeAnimations.containsKey(holder)) {
-                AnimatorSet animatorSet = new AnimatorSet();
-                likeAnimations.put(holder, animatorSet);
-
-                ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(holder.btnLike, "rotation", 0f, 360f);
-                rotationAnim.setDuration(300);
-                rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
-
-                ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(holder.btnLike, "scaleX", 0.2f, 1f);
-                bounceAnimX.setDuration(300);
-                bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
-
-                ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(holder.btnLike, "scaleY", 0.2f, 1f);
-                bounceAnimY.setDuration(300);
-                bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
-                bounceAnimY.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        holder.btnLike.setImageResource(R.drawable.ic_heart_red);
-                    }
-                });
-
-                animatorSet.play(rotationAnim);
-                animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
-
-                animatorSet.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        resetLikeAnimationState(holder);
-                    }
-                });
-
-                animatorSet.start();
-            }
-        } else {
-            if (likedPositions.contains(holder.getPosition())) {
-                holder.btnLike.setImageResource(R.drawable.ic_heart_red);
-            } else {
-                holder.btnLike.setImageResource(R.drawable.ic_heart_outline_grey);
-            }
-        }
-    }
-
-    */
-
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
-    }
-
-    public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mItemClickListener = mItemClickListener;
-    }
-
-    public interface OnItemLoveClick {
-        public void onItemClick(View view, int position);
-    }
-
-    public void OnItemLoveClick(final OnItemClickListener mItemLove) {
-
-        this.mItemLove = mItemLove;
-    }
-
-
-    public interface OnItemShareClick {
-        public void onItemClick(View view, int position);
-    }
-
-    public void OnItemShareClick(final OnItemClickListener mItemShare) {
-        this.mItemShare = mItemShare;
     }
 }

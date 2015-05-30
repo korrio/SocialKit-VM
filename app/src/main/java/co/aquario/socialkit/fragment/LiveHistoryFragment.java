@@ -26,28 +26,23 @@ import java.util.ArrayList;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.LiveHistoryRecyclerAdapter;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.model.Live;
 import co.aquario.socialkit.util.Utils;
 
 public class LiveHistoryFragment extends BaseFragment {
 
+    private static final String USER_ID = "USER_ID";
+    public AQuery aq;
     String liveHistoryUrl = "http://api.vdomax.com/live/history";
-
-
     ArrayList<Live> list = new ArrayList<Live>();
     LiveHistoryRecyclerAdapter adapter;
+    Activity mActivity;
+    RecyclerView recList;
     private GridLayoutManager manager;
-
-    public AQuery aq;
-
     private MenuItem searchItem;
     private SearchRecentSuggestions suggestions;
     private SearchView searchView;
-
-    Activity mActivity;
-    RecyclerView recList;
-
-    private static final String USER_ID = "USER_ID";
     private String userId = "";
 
     public static LiveHistoryFragment newInstance(String userId){

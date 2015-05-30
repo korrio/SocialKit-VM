@@ -37,6 +37,7 @@ import butterknife.OnClick;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.PostPhotoActivity;
 import co.aquario.socialkit.adapter.view.PhotoFiltersAdapter;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.view.RevealBackgroundView;
 
@@ -49,9 +50,10 @@ public class TakePhotoFragmentUseless extends BaseFragment implements RevealBack
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final int STATE_TAKE_PHOTO = 0;
     private static final int STATE_SETUP_PHOTO = 1;
-
+             private static final int PHOTO_SIZE_WIDTH = 100;
+             private static final int PHOTO_SIZE_HEIGHT = 100;
+             private static final int REQUEST_CHOOSE_PHOTO = 2;
     private static boolean KEY_USE_FFC = false;
-
     @InjectView(R.id.vRevealBackground)
     RevealBackgroundView vRevealBackground;
     @InjectView(R.id.vPhotoRoot)
@@ -70,16 +72,11 @@ public class TakePhotoFragmentUseless extends BaseFragment implements RevealBack
     RecyclerView rvFilters;
     @InjectView(R.id.btnTakePhoto)
     Button btnTakePhoto;
-
     @InjectView(R.id.btnChoosePhoto)
     ImageButton btnChoosePhoto;
-
     private boolean pendingIntro;
     private int currentState;
-
     private File photoPath;
-
-
 
     public static TakePhotoFragmentUseless newInstance(int[] startingLocation,Activity startingActivity){
         //startCameraFromLocation(startingLocation,startingActivity);
@@ -134,7 +131,6 @@ public class TakePhotoFragmentUseless extends BaseFragment implements RevealBack
         return rootView;
     }
 
-
     private void setupRevealBackground(Bundle savedInstanceState) {
         vRevealBackground.setFillPaintColor(0xFF16181a);
         vRevealBackground.setOnStateChangeListener(this);
@@ -159,8 +155,6 @@ public class TakePhotoFragmentUseless extends BaseFragment implements RevealBack
         rvFilters.setAdapter(photoFiltersAdapter);
         rvFilters.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
     }
-
-
 
     @Override
     public void onResume() {
@@ -192,10 +186,6 @@ public class TakePhotoFragmentUseless extends BaseFragment implements RevealBack
         choosePhoto();
         //animateShutter();
     }
-
-    private static final int PHOTO_SIZE_WIDTH = 100;
-    private static final int PHOTO_SIZE_HEIGHT = 100;
-    private static final int REQUEST_CHOOSE_PHOTO = 2;
 
     private void choosePhoto() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);

@@ -2,13 +2,16 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/FreeFlow/FreeFlow.iml" filepath="$PROJECT_DIR$/FreeFlow/FreeFlow.iml" />
       <module fileurl="file://$PROJECT_DIR$/SocialKit-VM-emoticon.iml" filepath="$PROJECT_DIR$/SocialKit-VM-emoticon.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bookends/bookends.iml" filepath="$PROJECT_DIR$/bookends/bookends.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/emoji/emojicon.iml" filepath="$PROJECT_DIR$/emoji/emojicon.iml" />
       <module fileurl="file://$PROJECT_DIR$/layouts/layouts.iml" filepath="$PROJECT_DIR$/layouts/layouts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/projectLibs/projectLibs.iml" filepath="$PROJECT_DIR$/app/projectLibs/projectLibs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/projectLibs/sbl/sbl.iml" filepath="$PROJECT_DIR$/app/projectLibs/sbl/sbl.iml" />
       <module fileurl="file://$PROJECT_DIR$/vlc/vlc.iml" filepath="$PROJECT_DIR$/vlc/vlc.iml" />
     </modules>
   </component>
 </project>
-

@@ -50,4 +50,13 @@
     <string name="leave_videoplayer_message">Are you sure you want to leave the video player? %s will stop playing.</string>
     <string name="title_activity_video_player">VideoPlayerActivity</string>
 
+    <string name="no_story">No stories</string>
+
+    <string name="socialNetworks">Social Networks</string>
+
+    <string-array name="socialNetworks">
+        <item>VDOMAX</item>
+        <item>Facebook</item>
+    </string-array>
+
 </resources>

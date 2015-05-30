@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:mActivity="co.aquario.socialkit.activity.VMActivity">
+
+    <item
+        android:id="@+id/action_change_layout"
+        android:orderInCategory="100"
+
+        android:title="grid" />
+
+
+</menu>

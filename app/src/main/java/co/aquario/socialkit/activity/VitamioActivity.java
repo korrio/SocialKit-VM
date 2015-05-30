@@ -24,24 +24,21 @@ import co.aquario.socialkit.model.Live;
  */
 public class VitamioActivity extends BaseActivity  {
 
-    private String mLocation;
-
+    public final static String LOCATION = "stream_url";
+    public final static String QUALITY = "quality";
     private static String VIDEO_KEY = "";
-
     @InjectView(R.id.iv_thumbnail)
     ImageView thumbnailImageView;
     @InjectView(R.id.draggable_panel)
     DraggablePanel draggablePanel;
-
     String profileName = "";
     String title = "";
     String userProfile = "";
     String description= "";
     String userId = "";
     String cover = "";
-
-    public final static String LOCATION = "stream_url";
-    public final static String QUALITY = "quality";
+    String mQuality = "HQ";
+    private String mLocation;
 
     public static Intent startActivity(Activity activity, String streamUrl,Live mLive) {
         return startActivity(activity, streamUrl, null, 0,mLive);
@@ -70,7 +67,7 @@ public class VitamioActivity extends BaseActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_youtube_sample);
+        setContentView(R.layout.activity_youtube_dragable);
         ButterKnife.inject(this);
 
         VIDEO_KEY = getIntent().getStringExtra("id");
@@ -169,7 +166,5 @@ public class VitamioActivity extends BaseActivity  {
             }
         });
     }
-
-    String mQuality = "HQ";
 
 }

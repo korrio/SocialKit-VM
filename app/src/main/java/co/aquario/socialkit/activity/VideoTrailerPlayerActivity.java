@@ -20,7 +20,7 @@ package co.aquario.socialkit.activity;
 //
 //import co.aquario.socialkit.R;
 //import co.aquario.socialkit.fragment.VideoPlayerFragment;
-//import co.aquario.socialkit.youtube.YouTubeData;
+//import co.aquario.socialkit.search.youtube.YouTubeData;
 //
 //
 //public class VideoTrailerPlayerActivity extends BaseActivity implements VideoPlayerFragment.Callback {

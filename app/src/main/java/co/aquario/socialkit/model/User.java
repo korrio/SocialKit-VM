@@ -47,6 +47,15 @@ public class User extends BaseModel implements Parcelable {
 
     */
 
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
     private static final String FIELD_AVATAR_ID = "avatar_id";
     private static final String FIELD_VERIFIED = "verified";
     private static final String FIELD_COVER = "cover";
@@ -69,8 +78,6 @@ public class User extends BaseModel implements Parcelable {
     private static final String FIELD_TIME = "time";
     private static final String FIELD_EMAIL = "email";
     private static final String FIELD_FOLLOWING = "is_following";
-
-
     @SerializedName(FIELD_AVATAR_ID)
     private int mAvatarId;
     @SerializedName(FIELD_VERIFIED)
@@ -116,198 +123,8 @@ public class User extends BaseModel implements Parcelable {
     @SerializedName(FIELD_FOLLOWING)
     private boolean mIsFollowing;
 
-
     public User(){
 
-    }
-
-    public void setAvatarId(int avatarId) {
-        mAvatarId = avatarId;
-    }
-
-    public int getAvatarId() {
-        return mAvatarId;
-    }
-
-    public void setVerified(int verified) {
-        mVerified = verified;
-    }
-
-    public int getVerified() {
-        return mVerified;
-    }
-
-    public void setCover(String cover) {
-        mCover = cover;
-    }
-
-    public String getCover() {
-        return mCover;
-    }
-
-    public void setCoverId(int coverId) {
-        mCoverId = coverId;
-    }
-
-    public int getCoverId() {
-        return mCoverId;
-    }
-
-    public void setLanguage(String language) {
-        mLanguage = language;
-    }
-
-    public String getLanguage() {
-        return mLanguage;
-    }
-
-    public void setAbout(String about) {
-        mAbout = about;
-    }
-
-    public String getAbout() {
-        return mAbout;
-    }
-
-    public void setAvatar(String avatar) {
-        mAvatar = avatar;
-    }
-
-    public String getAvatar() {
-        return mAvatar;
-    }
-
-    public void setTimestamp(String timestamp) {
-        mTimestamp = timestamp;
-    }
-
-    public String getTimestamp() {
-        return mTimestamp;
-    }
-
-    public void setCoverPosition(int coverPosition) {
-        mCoverPosition = coverPosition;
-    }
-
-    public int getCoverPosition() {
-        return mCoverPosition;
-    }
-
-    public void setEmailVerificationKey(String emailVerificationKey) {
-        mEmailVerificationKey = emailVerificationKey;
-    }
-
-    public String getEmailVerificationKey() {
-        return mEmailVerificationKey;
-    }
-
-    public void setUsername(String username) {
-        mUsername = username;
-    }
-
-    public String getUsername() {
-        return mUsername;
-    }
-
-    public void setType(String type) {
-        mType = type;
-    }
-
-    public String getType() {
-        return mType;
-    }
-
-    public void setId(String id) {
-        mId = id;
-    }
-
-    public String getId() {
-        return mId;
-    }
-
-    public void setLastLogged(long lastLogged) {
-        mLastLogged = lastLogged;
-    }
-
-    public long getLastLogged() {
-        return mLastLogged;
-    }
-
-    public void setPassword(String password) {
-        mPassword = password;
-    }
-
-    public String getPassword() {
-        return mPassword;
-    }
-
-    public void setEmailVerified(int emailVerified) {
-        mEmailVerified = emailVerified;
-    }
-
-    public int getEmailVerified() {
-        return mEmailVerified;
-    }
-
-    public void setActive(int active) {
-        mActive = active;
-    }
-
-    public int getActive() {
-        return mActive;
-    }
-
-    public void setTimezone(String timezone) {
-        mTimezone = timezone;
-    }
-
-    public String getTimezone() {
-        return mTimezone;
-    }
-
-    public void setName(String name) {
-        mName = name;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public void setTime(long time) {
-        mTime = time;
-    }
-
-    public long getTime() {
-        return mTime;
-    }
-
-    public void setEmail(String email) {
-        mEmail = email;
-    }
-
-    public String getEmail() {
-        return mEmail;
-    }
-
-    public void setIsFollowing(boolean isFollowing) {
-        mIsFollowing = isFollowing;
-    }
-
-    public boolean getIsFollowing() {
-        return mIsFollowing;
-    }
-
-    @Override
-    public boolean equals(Object obj){
-        if(obj instanceof User){
-            return ((User) obj).getId() == mId;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode(){
-        return Integer.parseInt(mId);
     }
 
     public User(Parcel in) {
@@ -335,20 +152,199 @@ public class User extends BaseModel implements Parcelable {
         mIsFollowing = in.readByte() != 0;
     }
 
+    public int getAvatarId() {
+        return mAvatarId;
+    }
+
+    public void setAvatarId(int avatarId) {
+        mAvatarId = avatarId;
+    }
+
+    public int getVerified() {
+        return mVerified;
+    }
+
+    public void setVerified(int verified) {
+        mVerified = verified;
+    }
+
+    public String getCover() {
+        return mCover;
+    }
+
+    public void setCover(String cover) {
+        mCover = cover;
+    }
+
+    public int getCoverId() {
+        return mCoverId;
+    }
+
+    public void setCoverId(int coverId) {
+        mCoverId = coverId;
+    }
+
+    public String getLanguage() {
+        return mLanguage;
+    }
+
+    public void setLanguage(String language) {
+        mLanguage = language;
+    }
+
+    public String getAbout() {
+        return mAbout;
+    }
+
+    public void setAbout(String about) {
+        mAbout = about;
+    }
+
+    public String getAvatar() {
+        return mAvatar;
+    }
+
+    public void setAvatar(String avatar) {
+        mAvatar = avatar;
+    }
+
+    public String getTimestamp() {
+        return mTimestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        mTimestamp = timestamp;
+    }
+
+    public int getCoverPosition() {
+        return mCoverPosition;
+    }
+
+    public void setCoverPosition(int coverPosition) {
+        mCoverPosition = coverPosition;
+    }
+
+    public String getEmailVerificationKey() {
+        return mEmailVerificationKey;
+    }
+
+    public void setEmailVerificationKey(String emailVerificationKey) {
+        mEmailVerificationKey = emailVerificationKey;
+    }
+
+    public String getUsername() {
+        return mUsername;
+    }
+
+    public void setUsername(String username) {
+        mUsername = username;
+    }
+
+    public String getType() {
+        return mType;
+    }
+
+    public void setType(String type) {
+        mType = type;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
+
+    public long getLastLogged() {
+        return mLastLogged;
+    }
+
+    public void setLastLogged(long lastLogged) {
+        mLastLogged = lastLogged;
+    }
+
+    public String getPassword() {
+        return mPassword;
+    }
+
+    public void setPassword(String password) {
+        mPassword = password;
+    }
+
+    public int getEmailVerified() {
+        return mEmailVerified;
+    }
+
+    public void setEmailVerified(int emailVerified) {
+        mEmailVerified = emailVerified;
+    }
+
+    public int getActive() {
+        return mActive;
+    }
+
+    public void setActive(int active) {
+        mActive = active;
+    }
+
+    public String getTimezone() {
+        return mTimezone;
+    }
+
+    public void setTimezone(String timezone) {
+        mTimezone = timezone;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public long getTime() {
+        return mTime;
+    }
+
+    public void setTime(long time) {
+        mTime = time;
+    }
+
+    public String getEmail() {
+        return mEmail;
+    }
+
+    public void setEmail(String email) {
+        mEmail = email;
+    }
+
+    public boolean getIsFollowing() {
+        return mIsFollowing;
+    }
+
+    public void setIsFollowing(boolean isFollowing) {
+        mIsFollowing = isFollowing;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof User){
+            return ((User) obj).getId() == mId;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return Integer.parseInt(mId);
+    }
+
     @Override
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
-
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -382,10 +378,10 @@ public class User extends BaseModel implements Parcelable {
     }
 
     public String getAvatarUrl() {
-        return EndpointManager.getPath(mAvatar);
+        return EndpointManager.getAvatarPath(mAvatar);
     }
 
     public String getCoverUrl() {
-        return EndpointManager.getPath(mCover);
+        return EndpointManager.getAvatarPath(mCover);
     }
 }

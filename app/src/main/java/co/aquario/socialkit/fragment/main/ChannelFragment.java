@@ -24,33 +24,31 @@ import java.util.ArrayList;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.ChannelAdapter;
-import co.aquario.socialkit.fragment.BaseFragment;
 import co.aquario.socialkit.model.Channel;
+import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.EndlessListOnScrollListener;
 
 
 public class ChannelFragment extends BaseFragment {
 
+    private static final String TITLE = "TITLE";
+    private static final String TAB = "TAB";
+    public ChannelFragment fragment;
     String endpoint = "http://api.vdomax.com";
     // tab 0
     String liveChannelUrl = endpoint + "/live/now";
     // tab 1
     String channelUrl = endpoint + "/search/channel?page=1&sort=F";
-
+    int currentPage;
+    boolean isRefresh = false;
+    boolean isLoadding = false;
     private ArrayList<Channel> liveChannelList = new ArrayList<Channel>();
     private ArrayList<Channel> mostFollowerList = new ArrayList<Channel>();
     private ChannelAdapter channelAdapter;
     private GridView mGridView;
-
     private AQuery aq;
     private SwipeRefreshLayout swipeLayout;
-
-    private static final String TITLE = "TITLE";
-    private static final String TAB = "TAB";
-
     private int tabNo;
-
-    public ChannelFragment fragment;
 
     public static ChannelFragment newInstance(String tabTitle,int tabNo) {
         ChannelFragment mFragment = new ChannelFragment();
@@ -84,10 +82,6 @@ public class ChannelFragment extends BaseFragment {
         return rootView;
     }
 
-    int currentPage;
-    boolean isRefresh = false;
-    boolean isLoadding = false;
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -113,6 +107,11 @@ public class ChannelFragment extends BaseFragment {
             channelAdapter = new ChannelAdapter(getActivity(), mostFollowerList);
 
         mGridView = (GridView) view.findViewById(R.id.grid);
+
+        int col = (Utils.isTablet(getActivity().getApplicationContext())) ? 2 : 1;
+
+        mGridView.setNumColumns(col);
+
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

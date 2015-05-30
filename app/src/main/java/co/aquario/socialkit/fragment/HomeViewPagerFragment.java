@@ -2,6 +2,7 @@ package co.aquario.socialkit.fragment;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +17,12 @@ import java.util.List;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.view.HomeTabPagerItem;
 import co.aquario.socialkit.adapter.view.HomeViewPagerAdapter;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 
 public class HomeViewPagerFragment extends BaseFragment {
-	private List<HomeTabPagerItem> mTabs = new ArrayList<>();
-
     private static final String USER_ID = "USER_ID";
-
+    LinearLayout mTabsLinearLayout;
+    private List<HomeTabPagerItem> mTabs = new ArrayList<>();
     private String userId = "";
 
     public static HomeViewPagerFragment newInstance(String userId){
@@ -58,8 +59,6 @@ public class HomeViewPagerFragment extends BaseFragment {
         return rootView;
     }
 
-    LinearLayout mTabsLinearLayout;
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
     	ViewPager mViewPager = (ViewPager) view.findViewById(R.id.pager);
@@ -71,23 +70,22 @@ public class HomeViewPagerFragment extends BaseFragment {
         //mSlidingTabLayout.setTextColorResource(R.color.white);
 
         mSlidingTabLayout.setAllCaps(false);
-        mSlidingTabLayout.setShouldExpand(true);
-        //mSlidingTabLayout.setFillViewport(true);
-        //mSlidingTabLayout.setDistributeEvenly(true)
+        mSlidingTabLayout.setShouldExpand(false);
+        mSlidingTabLayout.setFillViewport(true);
+        //mSlidingTabLayout.setDistributeEvenly(true);
 
-        mSlidingTabLayout.setBackgroundResource(R.color.white);
+        //mSlidingTabLayout.setBackgroundResource(R.color.black_semi_transparent);
 
-        mSlidingTabLayout.setIndicatorColorResource(R.color.indigo_700);
+        //mSlidingTabLayout.setIndicatorColorResource(getResources().getColor(android.R.color.transparent));
         mSlidingTabLayout.setDividerColor(getResources().getColor(android.R.color.transparent));
 
         mSlidingTabLayout.setViewPager(mViewPager);
 
-
         mTabsLinearLayout = ((LinearLayout) mSlidingTabLayout.getChildAt(0));
         ImageButton ib = (ImageButton) mTabsLinearLayout.getChildAt(0);
-        ib.setImageResource(R.drawable.ic_action_post);
+        ib.setImageResource(R.drawable.ic_action_post_white);
 
-
+        getActivity().setTitle("Home");
 
         mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -97,50 +95,74 @@ public class HomeViewPagerFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int position) {
+
+                switch (position) {
+                    case 0:
+                        getActivity().setTitle("Home");
+                        break;
+                    case 1:
+                        getActivity().setTitle("Followers");
+                        break;
+                    case 2:
+                        getActivity().setTitle("Followings");
+                        break;
+                    case 3:
+                        getActivity().setTitle("Friends");
+                        break;
+                    case 4:
+                        getActivity().setTitle("Pages");
+                        break;
+                }
+
                 for(int i=0; i < mTabsLinearLayout.getChildCount(); i++){
                     ImageButton ib = (ImageButton) mTabsLinearLayout.getChildAt(i);
                     switch (i){
                         case 0:
                             if(i == position)
-                                ib.setImageResource(R.drawable.ic_action_post_highlighted);
+                                ib.setImageResource(R.drawable.ic_action_post_white);
                             else
-                                ib.setImageResource(R.drawable.ic_action_post);
+                                ib.setImageResource(R.drawable.ic_action_post_white);
                             break;
                         case 1:
                             if(i == position)
-                                ib.setImageResource(R.drawable.ic_action_follower_highlighted);
+                                ib.setImageResource(R.drawable.ic_action_following_white);
                             else
-                                ib.setImageResource(R.drawable.ic_action_follower);
+                                ib.setImageResource(R.drawable.ic_action_following_white);
                             break;
                         case 2:
                             if(i == position)
-                                ib.setImageResource(R.drawable.ic_action_following_highlighted);
+                                ib.setImageResource(R.drawable.ic_action_follower_white);
                             else
-                                ib.setImageResource(R.drawable.ic_action_following);
+                                ib.setImageResource(R.drawable.ic_action_follower_white);
                             break;
                         case 3:
                             if(i == position)
-                                ib.setImageResource(R.drawable.ic_action_friend_highlighted);
+                                ib.setImageResource(R.drawable.ic_action_friend_white);
                             else
-                                ib.setImageResource(R.drawable.ic_action_friend);
+                                ib.setImageResource(R.drawable.ic_action_friend_white);
                             break;
                         case 4:
                             if(i == position)
-                                ib.setImageResource(R.drawable.ic_heart_red);
+                                ib.setImageResource(R.drawable.ic_heart_white);
                             else
-                                ib.setImageResource(R.drawable.ic_heart_outline_grey);
+                                ib.setImageResource(R.drawable.ic_heart_white);
                             break;
 
                         default:
                             break;
                     }
+
                 }
+
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                Log.e("HomePageState", state + "");
             }
+
+
         });
     }
+
 }

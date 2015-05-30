@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.fragment.DragableBottomFragment;
+import co.aquario.socialkit.fragment.YoutubeDetailFragment;
 import co.aquario.socialkit.model.Video;
 
 
@@ -25,15 +25,10 @@ public class YoutubeDragableActivity extends BaseActivity {
     private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
     private static String VIDEO_KEY = "";
 
-
-
     @InjectView(R.id.iv_thumbnail)
     ImageView thumbnailImageView;
     @InjectView(R.id.draggable_panel)
     DraggablePanel draggablePanel;
-
-    private YouTubePlayer youtubePlayer;
-    private YouTubePlayerSupportFragment youtubeFragment;
     String name = "";
     String title = "";
     String avatar = "";
@@ -43,13 +38,14 @@ public class YoutubeDragableActivity extends BaseActivity {
     int countComment;
     int countShare;
     String userId;
-
+    private YouTubePlayer youtubePlayer;
+    private YouTubePlayerSupportFragment youtubeFragment;
     private Video video;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_youtube_sample);
+        setContentView(R.layout.activity_youtube_dragable);
         ButterKnife.inject(this);
 
         video = Parcels.unwrap((Parcelable) getIntent().getExtras().get("obj"));
@@ -110,30 +106,13 @@ public class YoutubeDragableActivity extends BaseActivity {
         draggablePanel.setFragmentManager(getSupportFragmentManager());
         draggablePanel.setTopFragment(youtubeFragment);
 
-        DragableBottomFragment dragableBottomFragment = new DragableBottomFragment();
-        //dragableBottomFragment.setPoster(VIDEO_POSTER_THUMBNAIL);
-        //dragableBottomFragment.setPosterTitle(VIDEO_POSTER_TITLE);
-
-        /*
-        Bundle data = new Bundle();
-        data.putString("userId",userId);
-        data.putString("name", name);
-        data.putString("avatar", avatar);
-        data.putString("title",title);
-        data.putString("desc", description);
-        data.putString("view", countView);
-        data.putInt("love_count", countLove);
-        data.putInt("comment_count",countComment);
-        data.putInt("share_count",countShare);
-        */
-
-        //dragableBottomFragment.setArguments(data);
+        YoutubeDetailFragment youtubeDetailFragment = new YoutubeDetailFragment();
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("obj", Parcels.wrap(video));
-        dragableBottomFragment.setArguments(bundle);
+        youtubeDetailFragment.setArguments(bundle);
 
-        draggablePanel.setBottomFragment(dragableBottomFragment);
+        draggablePanel.setBottomFragment(youtubeDetailFragment);
         draggablePanel.initializeView();
 
     }

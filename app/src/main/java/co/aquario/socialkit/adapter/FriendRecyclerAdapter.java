@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.FollowRegisterEvent;
-import co.aquario.socialkit.fragment.ProfileDetailFragment;
+import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.User;
 import co.aquario.socialkit.widget.RoundedTransformation;
@@ -31,12 +31,12 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
 
     private static Activity mActivity;
 
-    public ArrayList<User> list = new ArrayList<User>();
+    public ArrayList<User> list = new ArrayList<>();
 
     public OnItemClickListener mItemClickListener;
 
     public FriendRecyclerAdapter(Activity mActivity, ArrayList<User> list) {
-        this.mActivity = mActivity;
+        FriendRecyclerAdapter.mActivity = mActivity;
         this.list = list;
     }
 
@@ -51,7 +51,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             @Override
             public void onItemClick(View view, int position) {
 
-                ProfileDetailFragment fragment = new ProfileDetailFragment().newInstance(list.get(position).getId());
+                FeedFragment fragment = new FeedFragment().newInstance(list.get(position).getId(), false);
                 FragmentManager manager = ((ActionBarActivity) mActivity).getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
@@ -136,6 +136,16 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
 
     }
 
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
+        this.mItemClickListener = mItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
+
+        void onFollowClick(View view, int position);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView name;
@@ -165,7 +175,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
 
             switch (v.getId()) {
                 case R.id.profile_image:
-                    listener.onItemClick(v,getPosition());
+                    listener.onItemClick(v, getPosition());
                     break;
                 case R.id.btn_follow:
                     listener.onFollowClick(v, getPosition());
@@ -173,7 +183,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             }
         }
 
-        public void initButton(boolean following,View v) {
+        public void initButton(boolean following, View v) {
             Button button = (Button) v;
 
             list.get(getPosition()).setIsFollowing(following);
@@ -190,14 +200,5 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
 
 
 
-    }
-
-    public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
-        public void onFollowClick(View view, int position);
-    }
-
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mItemClickListener = mItemClickListener;
     }
 }

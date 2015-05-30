@@ -20,15 +20,30 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.RegisterEvent;
 import co.aquario.socialkit.event.RegisterFailedEvent;
 import co.aquario.socialkit.event.RegisterSuccessEvent;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 
 public class RegisterFragment extends BaseFragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    public int checkedId;
     private String mParam1;
     private String mParam2;
+    private LinearLayout btnRegister;
+    private String name;
+    private MaterialEditText etUsername;
+    private MaterialEditText etPassword;
+    private MaterialEditText etRepeatPassword;
+    private MaterialEditText etEmail;
+    private RadioGroup radioGroupGender;
+    private RadioButton radioGender;
+    private FlatButton btnRequestOtp;
+    private MaterialEditText etPhone;
+
+    public RegisterFragment() {
+        // Required empty public constructor
+    }
 
     public static RegisterFragment newInstance(String param1, String param2) {
         RegisterFragment fragment = new RegisterFragment();
@@ -39,10 +54,6 @@ public class RegisterFragment extends BaseFragment {
         return fragment;
     }
 
-    public RegisterFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,20 +62,6 @@ public class RegisterFragment extends BaseFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
-    private LinearLayout btnRegister;
-    private String name;
-
-    private MaterialEditText etUsername;
-    private MaterialEditText etPassword;
-    private MaterialEditText etRepeatPassword;
-    private MaterialEditText etEmail;
-    private RadioGroup radioGroupGender;
-    private RadioButton radioGender;
-    private FlatButton btnRequestOtp;
-    private MaterialEditText etPhone;
-
-    public int checkedId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -53,13 +53,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     public static final String ARG_COMMENT_LIST = "arg_comment_list";
 
     @Optional
-    //@InjectView(R.id.toolbar)
-            //Toolbar toolbar;
-
-            //public Toolbar getToolbar() {
-            //return toolbar;
-            //}
-            String statusText;
+    String statusText;
     @InjectView(R.id.contentRoot)
     LinearLayout contentRoot;
     @InjectView(R.id.rvComments)
@@ -70,17 +64,14 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     EmojiconEditText etComment;
     @InjectView(R.id.btnSendComment)
     SendCommentButton btnSendComment;
-
-    private CommentsAdapter commentsAdapter;
-    private int drawingStartLocation;
-
     ArrayList<CommentStory> commentList;
-
     PrefManager pref;
     String avatar;
     String name;
     String postId;
     String userId;
+    private CommentsAdapter commentsAdapter;
+    private int drawingStartLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -33,10 +33,10 @@ public class Author {
     public String liveUrl;
 
     public String getAvatarPath() {
-        return EndpointManager.getPath(avatarPath);
+        return EndpointManager.getAvatarPath(avatarPath);
     }
     public String getCoverPath() {
-        return EndpointManager.getPath(coverPath);
+        return EndpointManager.getAvatarPath(coverPath);
     }
 
 }

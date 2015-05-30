@@ -22,7 +22,6 @@ import co.aquario.socialkit.event.LoadFriendListEvent;
 import co.aquario.socialkit.event.LoadFriendListSuccessEvent;
 import co.aquario.socialkit.event.LogoutEvent;
 import co.aquario.socialkit.event.UnfollowUserSuccessEvent;
-import co.aquario.socialkit.fragment.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.User;
 import co.aquario.socialkit.util.Utils;
@@ -35,15 +34,13 @@ import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
 public class FriendSocialFragment extends BaseFragment {
     private static final String LOAD_TYPE = "TYPE";
     private static final String USER_ID = "USER_ID";
-
-    private String type = "";
-    private String userId = "";
-
     ArrayList<User> list = new ArrayList<>();
     FriendRecyclerAdapter adapter2;
     RecyclerView recyclerView;
     GridLayoutManager manager;
     boolean refresh = false;
+    private String type = "";
+    private String userId = "";
 
     public static FriendSocialFragment newInstance(String text,String userId){
         FriendSocialFragment mFragment = new FriendSocialFragment();
@@ -63,7 +60,7 @@ public class FriendSocialFragment extends BaseFragment {
             //userId = getArguments().getString(USER_ID);
         }
         if(!type.equals("")) {
-            userId = prefManager.userId().getOr("6");
+            userId = prefManager.userId().getOr("0");
             ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),1,100));
         }
     }
@@ -85,12 +82,12 @@ public class FriendSocialFragment extends BaseFragment {
         //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
+        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
             @Override
             public void onLoadMore(int current_page) {
-                Log.e("scrollBottom","laew na");
+                Log.e("scrollBottom", "laew na");
                 refresh = false;
-                ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),current_page,100));
+                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
             }
 
 

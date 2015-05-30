@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.AdapterListLiveFragment;
+import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.model.Live;
 import co.aquario.socialkit.util.Utils;
 
@@ -33,6 +34,7 @@ public class LiveHistoryListFragment extends BaseFragment {
 
     AdapterListLiveFragment adapter;
     ArrayList<Live> artistList = new ArrayList<>();
+    GridLayoutManager manager;
 
     public static LiveHistoryListFragment newInstance(String id) {
         LiveHistoryListFragment mFragment = new LiveHistoryListFragment();
@@ -111,9 +113,6 @@ public class LiveHistoryListFragment extends BaseFragment {
             AQUtility.debug("error!");
         }
     }
-
-
-    GridLayoutManager manager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

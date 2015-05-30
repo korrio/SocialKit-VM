@@ -14,12 +14,10 @@ import java.util.List;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.view.SocialTabPagerItem;
 import co.aquario.socialkit.adapter.view.SocialViewPagerAdapter;
-import co.aquario.socialkit.fragment.BaseFragment;
 
 public class SocialViewPagerFragment extends BaseFragment {
-	private List<SocialTabPagerItem> mTabs = new ArrayList<>();
-
     private static final String SORT_TYPE = "SORT_TYPE";
+    private List<SocialTabPagerItem> mTabs = new ArrayList<>();
     private String userId = "";
 
 

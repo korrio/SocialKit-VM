@@ -14,12 +14,10 @@ import java.util.List;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.view.VideoTabPagerItem;
 import co.aquario.socialkit.adapter.view.VideoViewPagerAdapter;
-import co.aquario.socialkit.fragment.BaseFragment;
 
 public class VideoViewPagerFragment extends BaseFragment {
-	private List<VideoTabPagerItem> mTabs = new ArrayList<>();
-
     private static final String USER_ID = "USER_ID";
+    private List<VideoTabPagerItem> mTabs = new ArrayList<>();
     private String userId = "";
 
     public static VideoViewPagerFragment newInstance(String userId){
