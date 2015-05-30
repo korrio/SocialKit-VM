@@ -32,8 +32,8 @@ public class VideoViewPagerFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTabs.add(new VideoTabPagerItem(0, "NEWEST"));
-        mTabs.add(new VideoTabPagerItem(1, "MOST VIEW"));
-        mTabs.add(new VideoTabPagerItem(2, "MOST LOVE"));
+        mTabs.add(new VideoTabPagerItem(1, "TOP VIEW"));
+        mTabs.add(new VideoTabPagerItem(2, "TOP LOVE"));
 
     }
 

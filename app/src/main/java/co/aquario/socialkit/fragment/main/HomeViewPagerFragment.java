@@ -1,4 +1,4 @@
-package co.aquario.socialkit.fragment;
+package co.aquario.socialkit.fragment.main;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.view.HomeTabPagerItem;
 import co.aquario.socialkit.fragment.view.HomeViewPagerAdapter;
 
@@ -70,7 +69,7 @@ public class HomeViewPagerFragment extends BaseFragment {
         //mSlidingTabLayout.setTextColorResource(R.color.white);
 
         mSlidingTabLayout.setAllCaps(false);
-        mSlidingTabLayout.setShouldExpand(false);
+        mSlidingTabLayout.setShouldExpand(true);
         mSlidingTabLayout.setFillViewport(true);
         //mSlidingTabLayout.setDistributeEvenly(true);
 

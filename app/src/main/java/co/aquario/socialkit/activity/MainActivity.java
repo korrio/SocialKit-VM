@@ -43,7 +43,7 @@ import java.util.List;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.ActivityResultEvent;
-import co.aquario.socialkit.fragment.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.main.HomeViewPagerFragment;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sort) {
             return true;
         }
 

@@ -39,6 +39,7 @@ import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.model.Video;
+import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
 import co.aquario.socialkit.widget.URLImageParser;
 
@@ -200,9 +201,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.msg.setVisibility(View.GONE);
         } else {
             if (item.text.trim().length() < 200)
-                holder.msg.setText(Html.fromHtml("" + item.text + ""));
+                holder.msg.setText(Html.fromHtml("" + Utils.bbcode(item.text) + ""));
             else
-                holder.msg.setText(Html.fromHtml("" + item.text.substring(0, 200) + " ..." + ""));
+                holder.msg.setText(Html.fromHtml("" + Utils.bbcode(item.text).substring(0, 200) + " ..." + ""));
         }
 
         if (item.type.equals("text")) {
@@ -281,6 +282,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             Picasso.with(mActivity)
                     .load(item.author.liveCover)
                     .error(R.drawable.default_offline)
+                    .placeholder(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
         } else if (item.type.equals("map")) {

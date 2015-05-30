@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,12 +75,13 @@ public class FeedFragment extends BaseFragment {
 
     public static final String USER_ID = "USER_ID";
     public static final String IS_HOMETIMELINE = "IS_HOMETIMELINE";
-    private static final String TYPE = "";
-    private static final int PER_PAGE = 20;
+
+    private static String TYPE = "";
+    private static int PER_PAGE = 20;
     public ArrayList<PostStory> list = new ArrayList<>();
     public FeedAdapter adapter;
     public Bookends<FeedAdapter> bAdapter;
-    public RelativeLayout layoutMenu;
+    public RelativeLayout fabLayout;
     public RecyclerView mRecyclerView;
     PrefManager pref;
     Button btnLove;
@@ -153,7 +155,7 @@ public class FeedFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 isRefresh = true;
-                ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
+                ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
                 //String loadMoreUrl = "http://api.vdomax.com/search/channel/a?from=0&limit=10";
                 //aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
                 //Log.e("5555","onRefresh");
@@ -241,7 +243,7 @@ public class FeedFragment extends BaseFragment {
         btnLove = (Button) rootView.findViewById(R.id.btn_love);
         btnShare = (Button) rootView.findViewById(R.id.btn_share);
 
-        layoutMenu = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
+        fabLayout = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
         mPlayerToolbar = (Toolbar) rootView.findViewById(R.id.player_toolbar);
         mPlayerStateButton = (ImageView)rootView.findViewById(R.id.player_state);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.player_progress);
@@ -272,11 +274,11 @@ public class FeedFragment extends BaseFragment {
             }
         });
 
-        postPhotoBtn = (FloatingActionButton) layoutMenu.findViewById(R.id.action_photo);
-        postVideoBtn = (FloatingActionButton) layoutMenu.findViewById(R.id.action_video);
-        postYoutubeBtn = (FloatingActionButton) layoutMenu.findViewById(R.id.action_youtube);
-        postSoundCloudBtn = (FloatingActionButton) layoutMenu.findViewById(R.id.action_soundcloud);
-        postStatusBtn = (FloatingActionButton) layoutMenu.findViewById(R.id.action_write_post);
+        postPhotoBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_photo);
+        postVideoBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_video);
+        postYoutubeBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_youtube);
+        postSoundCloudBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_soundcloud);
+        postStatusBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_write_post);
 
         postSoundCloudBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -382,7 +384,7 @@ public class FeedFragment extends BaseFragment {
 
 
         // load more
-        mRecyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page) {
                 currentPage = page;
@@ -409,7 +411,7 @@ public class FeedFragment extends BaseFragment {
 
             float startY = 0;
             float dist = 0;
-            boolean isMenuHide = false;
+            boolean isFabHide = false;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -421,16 +423,16 @@ public class FeedFragment extends BaseFragment {
                 } else if (action == MotionEvent.ACTION_MOVE) {
                     dist = event.getY() - startY;
 
-                    if ((Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE) && !isMenuHide) {
-                        isMenuHide = true;
+                    if ((Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE) && !isFabHide) {
+                        isFabHide = true;
                         hideFloatingButton();
-                    } else if ((Utils.pxToDp((int) dist, getActivity()) > DISTANCE) && isMenuHide) {
-                        isMenuHide = false;
+                    } else if ((Utils.pxToDp((int) dist, getActivity()) > DISTANCE) && isFabHide) {
+                        isFabHide = false;
                         showFloatingButton();
                     }
 
-                    if ((isMenuHide && (Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE))
-                            || (!isMenuHide && (Utils.pxToDp((int) dist, getActivity()) > 0))) {
+                    if ((isFabHide && (Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE))
+                            || (!isFabHide && (Utils.pxToDp((int) dist, getActivity()) > 0))) {
                         startY = event.getY();
                     }
                 } else if (action == MotionEvent.ACTION_UP) {
@@ -604,7 +606,7 @@ public class FeedFragment extends BaseFragment {
     public void showFloatingButton() {
         AnimatorSet animSet = new AnimatorSet();
 
-        ObjectAnimator anim1 = ObjectAnimator.ofFloat(layoutMenu
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(fabLayout
                 , View.TRANSLATION_Y, 0);
 
         animSet.playTogether(anim1);
@@ -615,8 +617,8 @@ public class FeedFragment extends BaseFragment {
     public void hideFloatingButton() {
         AnimatorSet animSet = new AnimatorSet();
 
-        ObjectAnimator anim1 = ObjectAnimator.ofFloat(layoutMenu
-                , View.TRANSLATION_Y, layoutMenu.getHeight());
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(fabLayout
+                , View.TRANSLATION_Y, fabLayout.getHeight());
 
         animSet.playTogether(anim1);
         animSet.setDuration(300);
@@ -638,6 +640,54 @@ public class FeedFragment extends BaseFragment {
     @Subscribe
     public void onUnfollowSuccess(UnfollowUserSuccessEvent event) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                mSearchCheck = true;
+                break;
+            case R.id.menu_sort_all:
+                isRefresh = true;
+                TYPE = "";
+                break;
+            case R.id.menu_sort_text:
+                isRefresh = true;
+                TYPE = "text";
+                break;
+            case R.id.menu_sort_photo:
+                isRefresh = true;
+                TYPE = "photo";
+                break;
+            case R.id.menu_sort_video:
+                isRefresh = true;
+                TYPE = "video";
+                break;
+            case R.id.menu_sort_youtube:
+                isRefresh = true;
+                TYPE = "youtube";
+                break;
+            case R.id.menu_sort_soundcloud:
+                isRefresh = true;
+                TYPE = "soundcloud";
+                break;
+            case R.id.menu_sort_place:
+                isRefresh = true;
+                TYPE = "place";
+                break;
+            case R.id.menu_sort_live:
+                isRefresh = true;
+                TYPE = "live";
+                break;
+            default:
+                isRefresh = true;
+                break;
+        }
+        ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+
+        return true;
     }
 
 
