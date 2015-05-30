@@ -1,4 +1,4 @@
-package co.aquario.socialkit.adapter.view;
+package co.aquario.socialkit.fragment.view;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

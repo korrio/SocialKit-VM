@@ -36,8 +36,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.PostPhotoActivity;
-import co.aquario.socialkit.adapter.view.PhotoFiltersAdapter;
 import co.aquario.socialkit.fragment.main.BaseFragment;
+import co.aquario.socialkit.fragment.view.PhotoFiltersAdapter;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.view.RevealBackgroundView;
 

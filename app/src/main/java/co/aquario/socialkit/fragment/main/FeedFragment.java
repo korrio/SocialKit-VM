@@ -394,12 +394,14 @@ public class FeedFragment extends BaseFragment {
             }
         });
 
+        /*
         mRecyclerView.setPadding(
                 mRecyclerView.getPaddingLeft(),
                 mRecyclerView.getPaddingTop() + Utils.dpToPx(48), // + tabs height
                 mRecyclerView.getPaddingRight(),
                 mRecyclerView.getPaddingBottom()
         );
+        */
 
         mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
 
@@ -463,7 +465,7 @@ public class FeedFragment extends BaseFragment {
 
     @Subscribe public void onRefreshFeed(RefreshEvent event) {
         ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
-        Log.e("onRefreshFeed","true");
+        Log.e("onRefreshFeed", "true");
     }
 
     /**
@@ -536,7 +538,8 @@ public class FeedFragment extends BaseFragment {
         //usernameTv.setText("@" + event.getUser().getUsername());
         bioTv.setText(Html.fromHtml(event.getUser().getAbout()));
 
-        getActivity().setTitle(Html.fromHtml(event.getUser().getName()).toString().substring(0, 15));
+        if (Html.fromHtml(event.getUser().getName()).toString().length() >= 0)
+            getActivity().setTitle(Html.fromHtml(event.getUser().getName()).toString());
 
         Picasso.with(getActivity())
                 .load(event.getUser().getCoverUrl())

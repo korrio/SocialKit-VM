@@ -278,8 +278,6 @@ public class ApiHandlerVM {
 
     }
 
-
-
     @Subscribe public void onHomeTimelineRequestEvent(LoadTimelineEvent event) {
         Map<String, String> options = new HashMap<String, String>();
 

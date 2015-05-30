@@ -37,7 +37,7 @@ import java.io.IOException;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.adapter.view.PhotoFiltersAdapter;
+import co.aquario.socialkit.fragment.view.PhotoFiltersAdapter;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.view.RevealBackgroundView;
 
@@ -51,9 +51,10 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final int STATE_TAKE_PHOTO = 0;
     private static final int STATE_SETUP_PHOTO = 1;
-
+    private static final int PHOTO_SIZE_WIDTH = 100;
+    private static final int PHOTO_SIZE_HEIGHT = 100;
+    private static final int REQUEST_CHOOSE_PHOTO = 2;
     private static boolean USE_FFC = false;
-
     @InjectView(R.id.vRevealBackground)
     RevealBackgroundView vRevealBackground;
     @InjectView(R.id.vPhotoRoot)
@@ -72,18 +73,14 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     RecyclerView rvFilters;
     @InjectView(R.id.btnTakePhoto)
     Button btnTakePhoto;
-
     @InjectView(R.id.btnChoosePhoto)
     ImageButton btnChoosePhoto;
     @InjectView(R.id.btnFrontCamera)
     ImageButton btnFrontCamera;
-
+    int[] startingLocation;
     private boolean pendingIntro;
     private int currentState;
-
     private File photoPath;
-
-    int[] startingLocation;
 
     public static void startCameraFromLocation(int[] startingLocation, Activity startingActivity,boolean frontCamera) {
 
@@ -187,11 +184,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         finish();
     }
 
-
-    private static final int PHOTO_SIZE_WIDTH = 100;
-    private static final int PHOTO_SIZE_HEIGHT = 100;
-    private static final int REQUEST_CHOOSE_PHOTO = 2;
-
     private void choosePhoto() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setDataAndType(
@@ -271,6 +263,47 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         return new MyCameraHost(this);
     }
 
+    private void showTakenPicture(Bitmap bitmap) {
+        vUpperPanel.showNext();
+        vLowerPanel.showNext();
+        ivTakenPhoto.setImageBitmap(bitmap);
+        updateState(STATE_SETUP_PHOTO);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (currentState == STATE_SETUP_PHOTO) {
+            btnTakePhoto.setEnabled(true);
+            vUpperPanel.showNext();
+            vLowerPanel.showNext();
+            updateState(STATE_TAKE_PHOTO);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void updateState(int state) {
+        currentState = state;
+        if (currentState == STATE_TAKE_PHOTO) {
+            vUpperPanel.setInAnimation(this, R.anim.slide_in_from_right);
+            vLowerPanel.setInAnimation(this, R.anim.slide_in_from_right);
+            vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_left);
+            vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_left);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ivTakenPhoto.setVisibility(View.GONE);
+                }
+            }, 400);
+        } else if (currentState == STATE_SETUP_PHOTO) {
+            vUpperPanel.setInAnimation(this, R.anim.slide_in_from_left);
+            vLowerPanel.setInAnimation(this, R.anim.slide_in_from_left);
+            vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_right);
+            vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_right);
+            ivTakenPhoto.setVisibility(View.VISIBLE);
+        }
+    }
+
     class MyCameraHost extends SimpleCameraHost {
 
         private Camera.Size previewSize;
@@ -315,47 +348,6 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         @Override
         public boolean useFrontFacingCamera() {
             return USE_FFC;
-        }
-    }
-
-    private void showTakenPicture(Bitmap bitmap) {
-        vUpperPanel.showNext();
-        vLowerPanel.showNext();
-        ivTakenPhoto.setImageBitmap(bitmap);
-        updateState(STATE_SETUP_PHOTO);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (currentState == STATE_SETUP_PHOTO) {
-            btnTakePhoto.setEnabled(true);
-            vUpperPanel.showNext();
-            vLowerPanel.showNext();
-            updateState(STATE_TAKE_PHOTO);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    private void updateState(int state) {
-        currentState = state;
-        if (currentState == STATE_TAKE_PHOTO) {
-            vUpperPanel.setInAnimation(this, R.anim.slide_in_from_right);
-            vLowerPanel.setInAnimation(this, R.anim.slide_in_from_right);
-            vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_left);
-            vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_left);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ivTakenPhoto.setVisibility(View.GONE);
-                }
-            }, 400);
-        } else if (currentState == STATE_SETUP_PHOTO) {
-            vUpperPanel.setInAnimation(this, R.anim.slide_in_from_left);
-            vLowerPanel.setInAnimation(this, R.anim.slide_in_from_left);
-            vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_right);
-            vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_right);
-            ivTakenPhoto.setVisibility(View.VISIBLE);
         }
     }
 }

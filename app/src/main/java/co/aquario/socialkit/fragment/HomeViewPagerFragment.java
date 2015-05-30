@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.adapter.view.HomeTabPagerItem;
-import co.aquario.socialkit.adapter.view.HomeViewPagerAdapter;
 import co.aquario.socialkit.fragment.main.BaseFragment;
+import co.aquario.socialkit.fragment.view.HomeTabPagerItem;
+import co.aquario.socialkit.fragment.view.HomeViewPagerAdapter;
 
 public class HomeViewPagerFragment extends BaseFragment {
     private static final String USER_ID = "USER_ID";

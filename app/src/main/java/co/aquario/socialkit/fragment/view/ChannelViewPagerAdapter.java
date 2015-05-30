@@ -1,4 +1,4 @@
-package co.aquario.socialkit.adapter.view;
+package co.aquario.socialkit.fragment.view;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -6,10 +6,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-public class VideoViewPagerAdapter extends FragmentPagerAdapter {
+public class ChannelViewPagerAdapter extends FragmentPagerAdapter {
 
-	private List<VideoTabPagerItem> mTabs;
-	public VideoViewPagerAdapter(FragmentManager fragmentManager, List<VideoTabPagerItem> mTabs) {
+	private List<ChannelTabPagerItem> mTabs;
+	public ChannelViewPagerAdapter(FragmentManager fragmentManager, List<ChannelTabPagerItem> mTabs) {
 		super(fragmentManager);
 		this.mTabs = mTabs;
 	}

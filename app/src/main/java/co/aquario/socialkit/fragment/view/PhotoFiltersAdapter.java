@@ -1,4 +1,4 @@
-package co.aquario.socialkit.adapter.view;
+package co.aquario.socialkit.fragment.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

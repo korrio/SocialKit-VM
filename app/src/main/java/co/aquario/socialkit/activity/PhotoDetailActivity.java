@@ -23,8 +23,8 @@ public class PhotoDetailActivity extends Activity implements ViewPager.OnPageCha
     @InjectView(R.id.pager)
     ViewPager mViewPager;
 
-    @InjectView(R.id.favorites)
-    ImageView favorites;
+    @InjectView(R.id.love)
+    ImageView love;
 
     @InjectView(R.id.share)
     ImageView share;
@@ -38,11 +38,14 @@ public class PhotoDetailActivity extends Activity implements ViewPager.OnPageCha
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        setContentView(R.layout.fragment_photo_detail);
+        ButterKnife.inject(this);
+
         list = (List<ImageSimpleBean>) getIntent().getSerializableExtra("info");
         String url = getIntent().getStringExtra("url");
         mIndex = getIntent().getIntExtra("position", 0);
-        setContentView(R.layout.fragment_photo_detail);
-        ButterKnife.inject(this);
+
         PagerAdapter pagerAdapter = new PagerAdapter(this, list, getLayoutInflater());
         mViewPager.setAdapter(pagerAdapter);
         mViewPager.setCurrentItem(mIndex);
@@ -52,11 +55,11 @@ public class PhotoDetailActivity extends Activity implements ViewPager.OnPageCha
     }
 
 
-    @OnClick({R.id.favorites, R.id.share})
+    @OnClick({R.id.love, R.id.share})
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.favorites:
-                favorites.setBackgroundResource(R.drawable.ic_love_vm_red);
+            case R.id.love:
+                love.setBackgroundResource(R.drawable.ic_love_vm_red);
                 break;
             case R.id.share:
                 break;
