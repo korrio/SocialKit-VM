@@ -4,6 +4,7 @@ import java.util.Map;
 
 import co.aquario.socialkit.event.FollowUserResponse;
 import co.aquario.socialkit.event.FriendListDataResponse;
+import co.aquario.socialkit.event.PhotoListDataResponse;
 import co.aquario.socialkit.event.PostCommentDataResponse;
 import co.aquario.socialkit.event.StoryDataResponse;
 import co.aquario.socialkit.event.TimelineDataResponse;
@@ -64,6 +65,10 @@ public interface ApiServiceVM {
     @GET("/search/social")
     public void getSocial(@QueryMap Map<String, String> options,
                         Callback<FriendListDataResponse> responseJson);
+
+    @GET("/search/photo")
+    public void getPhoto(@QueryMap Map<String, String> options,
+                          Callback<PhotoListDataResponse> responseJson);
 
     @GET("/story/{id}")
     public void getStory(@Path("id") int id,

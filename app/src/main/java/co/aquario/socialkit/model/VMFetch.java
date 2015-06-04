@@ -45,7 +45,7 @@ public class VMFetch {
 
     public void load(final Activity caller, int itemsPerPage, int page) {
 
-        String myurl = "http://api.vdomax.com/search/photo?sort=V&page=" + page;
+        String myurl = "http://api.vdomax.com/search/photo?sort=V&page=" + page + "&limit=" + itemsPerPage;
 
         new AsyncTask<String, Void, String>() {
 

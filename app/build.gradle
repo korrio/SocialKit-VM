@@ -131,6 +131,8 @@ dependencies {
     compile 'com.nhaarman.supertooltips:library:3.0.+'
     compile 'com.venmo.view.tooltip:tooltip:0.1@aar'
 
+    compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
+
     //compile ('com.github.florent37:materialviewpager:1.0.3@aar'){
     //  transitive=true
     //}
@@ -148,8 +150,14 @@ dependencies {
     compile "org.parceler:parceler-api:1.0.0"
     provided "org.parceler:parceler:1.0.0"
 
+    compile 'com.felipecsl.asymmetricgridview:library:2.0.0'
+
+
+    //compile group: 'org.bytedeco', name: 'javacv', version: '0.11'
+
     //compile project(':layouts')
     compile project(':emojicon')
+    //compile project(':touchGalleryLib')
     compile project(':FreeFlow')
     compile project(':bookends')
     compile project(':app:projectLibs:sbl')

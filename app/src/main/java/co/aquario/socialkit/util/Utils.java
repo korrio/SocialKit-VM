@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.os.Build;
 import android.util.DisplayMetrics;
@@ -14,6 +15,8 @@ import android.view.inputmethod.InputMethodManager;
 import java.util.HashMap;
 import java.util.Map;
 
+import co.aquario.socialkit.R;
+
 /**
  * Created by froger_mcs on 05.11.14.
  */
@@ -22,6 +25,19 @@ public class Utils {
     public static char[] alphabets = "abcdefghijklmnopqrstuvwxyz".toCharArray();
     private static int screenWidth = 0;
     private static int screenHeight = 0;
+
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        return toolbarHeight;
+    }
+
+    public static int getTabsHeight(Context context) {
+        return (int) context.getResources().getDimension(R.dimen.tabsHeight);
+    }
 
     public static String emoticonize(String oldText) {
         String newText;

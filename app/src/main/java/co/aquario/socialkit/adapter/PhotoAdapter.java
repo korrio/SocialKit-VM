@@ -108,7 +108,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
         if (checkNull(item.media)) {
             holder.thumb.setVisibility(View.VISIBLE);
             Picasso.with(mActivity)
-                    .load(item.media.getThumbUrl())
+                    .load(item.media.getFullUrl())
 
                     .error(R.drawable.default_offline)
                     .fit().centerCrop()
@@ -268,7 +268,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
             switch (v.getId()) {
                 case R.id.thumb:
                     if (postType.equals("photo")) {
-                        String url = list.get(getPosition()).media.getThumbUrl();
+                        String url = list.get(getPosition()).media.getFullUrl();
                         String name = list.get(getPosition()).author.name;
                         String desc = list.get(getPosition()).text;
 

@@ -197,6 +197,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 .transform(new RoundedTransformation(50, 4))
                 .into(holder.avatar);
 
+
         if (isNull(item.text)) {
             holder.msg.setVisibility(View.GONE);
         } else {
@@ -227,7 +228,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         } else if (item.type.equals("photo")) {
             Picasso.with(mActivity)
-                    .load(item.media.getThumbUrl())
+                    .load(item.media.getFullUrl())
                     .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
@@ -492,7 +493,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             switch (v.getId()) {
                 case R.id.thumb:
                     if (postType.equals("photo")) {
-                        String url = post.media.getThumbUrl();
+                        String url = post.media.getFullUrl();
                         String name = post.author.name;
 
                         String text = post.text;
@@ -512,7 +513,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         PhotoZoomFragment fragment = new PhotoZoomFragment().newInstance(url,name,text);
                         FragmentManager manager = ((ActionBarActivity) mActivity).getSupportFragmentManager();
                         FragmentTransaction transaction = manager.beginTransaction();
-                        transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+                        transaction.add(R.id.sub_container, fragment).addToBackStack(null);
                         transaction.commit();
 
                         /*

@@ -20,12 +20,15 @@ import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.event.LoadFriendListEvent;
 import co.aquario.socialkit.event.LoadFriendListSuccessEvent;
+import co.aquario.socialkit.event.LoadPhotoListEvent;
+import co.aquario.socialkit.event.LoadPhotoListSuccessEvent;
 import co.aquario.socialkit.event.LoadTimelineEvent;
 import co.aquario.socialkit.event.LoadTimelineSuccessEvent;
 import co.aquario.socialkit.event.LoginEvent;
 import co.aquario.socialkit.event.LoginFailedAuthEvent;
 import co.aquario.socialkit.event.LoginSuccessEvent;
 import co.aquario.socialkit.event.LogoutEvent;
+import co.aquario.socialkit.event.PhotoListDataResponse;
 import co.aquario.socialkit.event.PostCommentDataResponse;
 import co.aquario.socialkit.event.PostCommentEvent;
 import co.aquario.socialkit.event.PostCommentSuccessEvent;
@@ -278,6 +281,38 @@ public class ApiHandlerVM {
 
     }
 
+    @Subscribe public void onPhotoListRequestEvent(LoadPhotoListEvent event) {
+
+        Map<String, String> options = new HashMap<String, String>();
+
+        //api.vdomax.com/search/photo?sort=N&page=1&limit=50
+
+        options.put("sort", event.getSortType());
+        options.put("page", Integer.toString(event.getPage()));
+        options.put("limit",Integer.toString(event.getPerPage()));
+
+        api.getPhoto(options, new Callback<PhotoListDataResponse>() {
+            @Override
+            public void success(PhotoListDataResponse photoListDataResponse, Response response) {
+                Log.e("photoListDataResponse", photoListDataResponse.status);
+                if (photoListDataResponse.status.equals("1")) {
+                    //Log.e("timelineDataResponse", response.getBody().toString());
+                    ApiBus.getInstance().post(new LoadPhotoListSuccessEvent(photoListDataResponse, photoListDataResponse.sort));
+
+                } else {
+                    //MainApplication.get(this).getPrefManager().isLogin().put(false);
+                    Log.e("LOGOUT!", "LOG OUT LAEW");
+                    ApiBus.getInstance().post(new LogoutEvent());
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
     @Subscribe public void onHomeTimelineRequestEvent(LoadTimelineEvent event) {
         Map<String, String> options = new HashMap<String, String>();
 
@@ -396,7 +431,7 @@ public class ApiHandlerVM {
                         Log.e("friendListDataResponse", friendListDataResponse.status);
                         if (friendListDataResponse.status.equals("1")) {
                             //Log.e("timelineDataResponse", response.getBody().toString());
-                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse,event.getType()));
+                            ApiBus.getInstance().post(new LoadFriendListSuccessEvent(friendListDataResponse, event.getType()));
 
                         } else {
                             //MainApplication.get(this).getPrefManager().isLogin().put(false);

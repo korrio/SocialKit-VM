@@ -66,8 +66,12 @@ import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.search.soundcloud.SoundCloudService;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
+import co.aquario.socialkit.view.TitanicTextView;
 import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
+import co.aquario.socialkit.widget.HidingScrollListener;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import co.aquario.socialkit.widget.Titanic;
+import co.aquario.socialkit.widget.Typefaces;
 
 
 public class FeedFragment extends BaseFragment {
@@ -113,7 +117,7 @@ public class FeedFragment extends BaseFragment {
     private String userId = "";
     // home_timeline = including others post
     // user_timeline = only the user's post
-    private boolean isHomeTimeline;
+    private boolean isHomeTimeline = false;
     private SwipeRefreshLayout swipeLayout;
     private FloatingActionButton postPhotoBtn;
     private FloatingActionButton postVideoBtn;
@@ -143,8 +147,12 @@ public class FeedFragment extends BaseFragment {
         } else {
             userId = prefManager.userId().getOr("0");
             isHomeTimeline = true;
+            ((MainActivity) getActivity()).getToolbar().setSubtitle("");
         }
     }
+
+    Titanic titanic;
+    TitanicTextView myTitanicTextView;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -222,11 +230,20 @@ public class FeedFragment extends BaseFragment {
         //mEmptyView.setText(emptyText);
     }
 
+    Toolbar mToolbar;
+    int mToolbarHeight;
+    View mToolbarContainer;
+
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
+
+        mToolbar = ((MainActivity) getActivity()).getToolbar();
+        mToolbarContainer = mToolbar;
+
+        mToolbarHeight = mToolbar.getHeight();
         // Create your views, whatever they may be
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.scroll);
         mRecyclerView.setHasFixedSize(true);
@@ -239,6 +256,13 @@ public class FeedFragment extends BaseFragment {
         myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.activity_profile, mRecyclerView, false);
 
         setEmptyText(getString(R.string.no_story));
+
+        myTitanicTextView = (TitanicTextView) rootView.findViewById(R.id.titanic_tv);
+        myTitanicTextView.setTypeface(Typefaces.get(getActivity(), "Satisfy-Regular.ttf"));
+
+        titanic = new Titanic();
+        titanic.start(myTitanicTextView);
+        myTitanicTextView.setVisibility(View.VISIBLE);
 
         btnLove = (Button) rootView.findViewById(R.id.btn_love);
         btnShare = (Button) rootView.findViewById(R.id.btn_share);
@@ -396,6 +420,24 @@ public class FeedFragment extends BaseFragment {
             }
         });
 
+        mRecyclerView.addOnScrollListener(new HidingScrollListener(getActivity()) {
+            @Override
+            public void onMoved(int distance) {
+
+                //mToolbarContainer.setTranslationY(-distance);
+            }
+
+            @Override
+            public void onShow() {
+                //mToolbarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+            }
+
+            @Override
+            public void onHide() {
+                //mToolbarContainer.animate().translationY(-mToolbarHeight).setInterpolator(new AccelerateInterpolator(2)).start();
+            }
+        });
+
         /*
         mRecyclerView.setPadding(
                 mRecyclerView.getPaddingLeft(),
@@ -413,6 +455,7 @@ public class FeedFragment extends BaseFragment {
             float dist = 0;
             boolean isFabHide = false;
 
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -426,9 +469,11 @@ public class FeedFragment extends BaseFragment {
                     if ((Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE) && !isFabHide) {
                         isFabHide = true;
                         hideFloatingButton();
+                        //showMenuBar();
                     } else if ((Utils.pxToDp((int) dist, getActivity()) > DISTANCE) && isFabHide) {
                         isFabHide = false;
                         showFloatingButton();
+                        //hideMenuBar();
                     }
 
                     if ((isFabHide && (Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE))
@@ -465,6 +510,46 @@ public class FeedFragment extends BaseFragment {
         return rootView;
     }
 
+    public void showMenuBar() {
+        AnimatorSet animSet = new AnimatorSet();
+
+        HomeViewPagerFragment fragment = (HomeViewPagerFragment) getParentFragment();
+        Toolbar toolbar = ((MainActivity) getActivity()).getToolbar();
+
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(fragment.mSlidingTabLayout
+                , View.TRANSLATION_Y, 0);
+
+        ObjectAnimator anim2 = ObjectAnimator.ofFloat(toolbar
+                , View.TRANSLATION_Y, 0);
+
+        //ObjectAnimator anim3 = ObjectAnimator.ofFloat(layoutHeader
+          //      , View.TRANSLATION_Y, 0);
+
+        animSet.playTogether(anim1, anim2);
+        animSet.setDuration(300);
+        animSet.start();
+    }
+
+    public void hideMenuBar() {
+        AnimatorSet animSet = new AnimatorSet();
+
+        HomeViewPagerFragment fragment = (HomeViewPagerFragment) getParentFragment();
+        Toolbar toolbar = ((MainActivity) getActivity()).getToolbar();
+
+        ObjectAnimator anim1 = ObjectAnimator.ofFloat(fragment.mSlidingTabLayout
+                , View.TRANSLATION_Y, -fragment.mSlidingTabLayout.getHeight());
+
+        ObjectAnimator anim2 = ObjectAnimator.ofFloat(toolbar
+                , View.TRANSLATION_Y, -toolbar.getHeight());
+
+        //ObjectAnimator anim3 = ObjectAnimator.ofFloat(layoutHeader
+          //      , View.TRANSLATION_Y, -layoutHeader.getHeight() * 2);
+
+        animSet.playTogether(anim1, anim2);
+        animSet.setDuration(300);
+        animSet.start();
+    }
+
     @Subscribe public void onRefreshFeed(RefreshEvent event) {
         ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
         Log.e("onRefreshFeed", "true");
@@ -490,6 +575,14 @@ public class FeedFragment extends BaseFragment {
         //tvSample.setText(savedInstanceState.getString("text"));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+       // myTitanicTextView.setVisibility(View.GONE);
+
+    }
+
     @Subscribe public void onLoadTimelineSuccess(LoadTimelineSuccessEvent event) {
         if(isRefresh)
             list.clear();
@@ -499,6 +592,7 @@ public class FeedFragment extends BaseFragment {
         adapter.notifyDataSetChanged();
         swipeLayout.setRefreshing(false);
         isLoadding = false;
+        myTitanicTextView.setVisibility(View.GONE);
 
     }
 
@@ -522,6 +616,8 @@ public class FeedFragment extends BaseFragment {
         //Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
     }
 
+
+
     @Subscribe
     public void onLoadProfile(final GetUserProfileSuccessEvent event) {
 
@@ -535,6 +631,13 @@ public class FeedFragment extends BaseFragment {
         titleTv = (TextView) myHeader.findViewById(R.id.user_name);
         //usernameTv = (TextView) myHeader.findViewById(R.id.user_username);
         bioTv = (TextView) myHeader.findViewById(R.id.user_des);
+
+        ((MainActivity) getActivity()).getToolbar().setSubtitle("@" + event.getUser().getUsername());
+
+        if(Utils.isTablet(getActivity()))
+            bioTv.setVisibility(View.VISIBLE);
+        else
+            bioTv.setVisibility(View.GONE);
 
         titleTv.setText(Html.fromHtml(event.getUser().getName()));
         //usernameTv.setText("@" + event.getUser().getUsername());
@@ -685,6 +788,12 @@ public class FeedFragment extends BaseFragment {
                 isRefresh = true;
                 break;
         }
+        //myTitanicTextView.setVisibility(View.VISIBLE);
+        list.clear();
+        bAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+
+        swipeLayout.setRefreshing(true);
         ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
 
         return true;

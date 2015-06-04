@@ -27,6 +27,7 @@ import android.widget.ViewSwitcher;
 
 import com.commonsware.cwac.camera.CameraHost;
 import com.commonsware.cwac.camera.CameraHostProvider;
+import com.commonsware.cwac.camera.CameraUtils;
 import com.commonsware.cwac.camera.CameraView;
 import com.commonsware.cwac.camera.PictureTransaction;
 import com.commonsware.cwac.camera.SimpleCameraHost;
@@ -317,9 +318,16 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             return true;
         }
 
+
+        @Override
+        public Camera.Size getPreviewSize(int displayOrientation, int width, int height, Camera.Parameters parameters) {
+            return CameraUtils.getOptimalPreviewSize(displayOrientation, width, height, parameters);
+        }
+
         @Override
         public Camera.Size getPictureSize(PictureTransaction xact, Camera.Parameters parameters) {
             return previewSize;
+            //return CameraUtils.getLargestPictureSize(this, parameters);
         }
 
         @Override

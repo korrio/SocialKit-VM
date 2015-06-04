@@ -20,7 +20,7 @@ import co.aquario.socialkit.fragment.view.HomeViewPagerAdapter;
 
 public class HomeViewPagerFragment extends BaseFragment {
     private static final String USER_ID = "USER_ID";
-    LinearLayout mTabsLinearLayout;
+    public LinearLayout mTabsLinearLayout;
     private List<HomeTabPagerItem> mTabs = new ArrayList<>();
     private String userId = "";
 
@@ -58,14 +58,17 @@ public class HomeViewPagerFragment extends BaseFragment {
         return rootView;
     }
 
+    public PagerSlidingTabStrip mSlidingTabLayout;
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
     	ViewPager mViewPager = (ViewPager) view.findViewById(R.id.pager);
     	
     	mViewPager.setOffscreenPageLimit(6);
         mViewPager.setAdapter(new HomeViewPagerAdapter(getChildFragmentManager(), mTabs));
+        //mViewPager.setPageTransformer(true, new ForegroundToBackgroundTransformer());
 
-        PagerSlidingTabStrip mSlidingTabLayout = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
+        mSlidingTabLayout = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
         //mSlidingTabLayout.setTextColorResource(R.color.white);
 
         mSlidingTabLayout.setAllCaps(false);
@@ -79,6 +82,7 @@ public class HomeViewPagerFragment extends BaseFragment {
         mSlidingTabLayout.setDividerColor(getResources().getColor(android.R.color.transparent));
 
         mSlidingTabLayout.setViewPager(mViewPager);
+
 
         mTabsLinearLayout = ((LinearLayout) mSlidingTabLayout.getChildAt(0));
         ImageButton ib = (ImageButton) mTabsLinearLayout.getChildAt(0);

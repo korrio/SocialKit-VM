@@ -28,8 +28,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-
-
                 <include
                     layout="@layout/item_social_buttons"
                     android:layout_width="match_parent"

@@ -43,6 +43,9 @@ import co.aquario.socialkit.adapter.VMDataAdapter;
 import co.aquario.socialkit.model.VMFeed;
 import co.aquario.socialkit.model.VMFetch;
 import co.aquario.socialkit.view.ArtbookLayout;
+import co.aquario.socialkit.view.TitanicTextView;
+import co.aquario.socialkit.widget.Titanic;
+import co.aquario.socialkit.widget.Typefaces;
 
 public class VMActivity extends Activity implements OnClickListener {
 
@@ -57,12 +60,20 @@ public class VMActivity extends Activity implements OnClickListener {
     private int itemsPerPage = 25;
     private int pageIndex = 1;
 
+    Titanic titanic;
+    TitanicTextView myTitanicTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artbook);
 
+        myTitanicTextView = (TitanicTextView) findViewById(R.id.titanic_tv);
+        myTitanicTextView.setTypeface(Typefaces.get(this, "Satisfy-Regular.ttf"));
 
+        titanic = new Titanic();
+        titanic.start(myTitanicTextView);
+        
         container = (FreeFlowContainer) findViewById(R.id.container);
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -105,6 +116,8 @@ public class VMActivity extends Activity implements OnClickListener {
 
     public void onDataLoaded(VMFeed feed) {
 
+        myTitanicTextView.setVisibility(View.GONE);
+
         adapter.update(feed);
         container.dataInvalidated();
         container.setOnItemClickListener(new OnItemClickListener() {
@@ -114,6 +127,10 @@ public class VMActivity extends Activity implements OnClickListener {
             }
         });
 
+
+
+
+
         container.addScrollListener(new OnScrollListener() {
 
             @Override
@@ -121,6 +138,8 @@ public class VMActivity extends Activity implements OnClickListener {
                 Log.d(TAG, "scroll percent " + container.getScrollPercentY());
             }
         });
+
+
     }
 
     @Override

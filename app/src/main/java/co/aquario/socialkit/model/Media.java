@@ -45,7 +45,15 @@ public class Media {
 
 
 
-    public String getThumbUrl() {
+    public String getFullUrl() {
         return EndpointManager.getAvatarPath(url);
     }
+
+    public String getThumbUrl() {
+        return EndpointManager.getAvatarPath(url_thumb);
+    }
+
+
+
+
 }

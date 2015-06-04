@@ -148,8 +148,15 @@
         </activity>
 
         <activity
+            android:name=".activity.GalleryActivity"
+            android:label="" >
+        </activity>
+
+        GalleryActivity
+
+        <activity
             android:name=".activity.VMActivity"
-            android:theme="@style/CustomTheme"></activity>
+            android:theme="@style/android:Theme.Holo.Light.DarkActionBar"></activity>
 
         <activity
             android:name=".activity.PhotoDetailActivity"

@@ -84,6 +84,7 @@ public class LiveHistoryListFragment extends BaseFragment {
         if (jo != null) {
             String nameLive;
             JSONArray ja = jo.getJSONArray("history");
+            if(ja != null)
             for (int i = 0; i < ja.length(); i++) {
                 JSONObject obj = ja.optJSONObject(i);
 

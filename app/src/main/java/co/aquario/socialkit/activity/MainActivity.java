@@ -43,16 +43,18 @@ import java.util.List;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.ActivityResultEvent;
-import co.aquario.socialkit.fragment.main.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.GalleryFragment;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.ChannelViewPagerFragment;
+import co.aquario.socialkit.fragment.main.HomeViewPagerFragment;
 import co.aquario.socialkit.fragment.main.SocialViewPagerFragment;
 import co.aquario.socialkit.fragment.main.VideoViewPagerFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.search.main.SearchActivity;
 import co.aquario.socialkit.util.PathManager;
+import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 
 
@@ -75,6 +77,15 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     private String userId;
     private Uri mFileURI = null;
 
+    public PrefManager pref;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getToolbar().setTitle("VDOMAX");
+        getToolbar().setSubtitle("@" + pref.username().getOr("null"));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +93,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         mContext = this;
         mActivity = this;
 
-        userId = MainApplication.get(this).getPrefManager().userId().getOr("0");
+        pref = getPref(getApplicationContext());
+        userId = pref.userId().getOr("0");
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (getSupportActionBar() != null) {
@@ -99,6 +111,10 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         }
 
         initDrawer();
+    }
+
+    public Toolbar getToolbar() {
+        return toolbar;
     }
 
     @Override
@@ -395,6 +411,10 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
 
                         } else if (((Nameable) drawerItem).getName().equals("Photos")) {
+
+                            GalleryFragment fragment = GalleryFragment.newInstance("","","");
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
+
 //                            PhotoFragmentGrid fragment = new PhotoFragmentGrid();
 //
 //                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -402,8 +422,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 //                            transaction.addToBackStack(null);
 //                            transaction.commit();
 
-                            Intent i = new Intent(MainActivity.this, PhotoDetailActivity.class);
-                            startActivity(i);
+                           // Intent i = new Intent(MainActivity.this, PhotoDetailActivity.class);
+                            //startActivity(i);
                         } else if (((Nameable) drawerItem).getName().equals("Home")) {
 
                             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
@@ -441,12 +461,19 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         ImageView videoMenu = (ImageView) result.getHeader().findViewById(R.id.video_menu);
         ImageView photoMenu = (ImageView) result.getHeader().findViewById(R.id.photo_menu);
 
+        getToolbar().setTitle("VDOMAX");
+        getToolbar().setSubtitle("@" + pref.username().getOr("null"));
+
         channelMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
+
+                getToolbar().setTitle("VDOMAX");
+                getToolbar().setSubtitle("Channels");
                 result.closeDrawer();
+
             }
         });
 
@@ -455,6 +482,9 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             public void onClick(View view) {
                 SocialViewPagerFragment fragment = new SocialViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
+
+                getToolbar().setTitle("VDOMAX");
+                getToolbar().setSubtitle("Social");
                 result.closeDrawer();
             }
         });
@@ -464,6 +494,9 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             public void onClick(View view) {
                 VideoViewPagerFragment fragment = new VideoViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
+
+                getToolbar().setTitle("VDOMAX");
+                getToolbar().setSubtitle("Videos");
                 result.closeDrawer();
             }
         });
@@ -471,8 +504,11 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         photoMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, VMActivity.class);
+                Intent i = new Intent(MainActivity.this, GalleryActivity.class);
                 startActivity(i);
+
+                getToolbar().setTitle("VDOMAX");
+                getToolbar().setSubtitle("Photos");
                 result.closeDrawer();
             }
         });

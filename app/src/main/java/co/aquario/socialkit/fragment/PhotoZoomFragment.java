@@ -13,6 +13,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.activity.MainActivity;
 import co.aquario.socialkit.event.PhotoLoadEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
@@ -51,10 +52,14 @@ public class PhotoZoomFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_photo_zoom, container, false);
 
+
+
         context = getActivity();
         imageView = (ImageViewTouch) rootView.findViewById(R.id.image);
         nameTv = (TextView) rootView.findViewById(R.id.name);
         descTv = (TextView) rootView.findViewById(R.id.desc);
+
+        ((MainActivity) getActivity()).getToolbar().setVisibility(View.GONE);
 
         if(!mName.equals(""))
             nameTv.setText(mName);
@@ -83,6 +88,12 @@ public class PhotoZoomFragment extends BaseFragment {
                     });
 
         return rootView;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        ((MainActivity) getActivity()).getToolbar().setVisibility(View.VISIBLE);
     }
 
     @Subscribe public void onPhotoLoad(PhotoLoadEvent event) {

@@ -32,4 +32,14 @@
         android:layout_marginBottom="10dp"
         android:text="Load More" />
 
+    <co.aquario.socialkit.view.TitanicTextView
+        android:id="@+id/titanic_tv"
+        android:text="Loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#212121"
+        android:textSize="70sp"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true" />
+
 </FrameLayout>

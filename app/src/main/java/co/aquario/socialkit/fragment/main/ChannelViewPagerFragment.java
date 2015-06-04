@@ -30,7 +30,7 @@ public class ChannelViewPagerFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         mTabs.add(new ChannelTabPagerItem(0, "NOW LIVE"));
         mTabs.add(new ChannelTabPagerItem(1, "MOST FOLLOWER"));
-        mTabs.add(new ChannelTabPagerItem(2, "WHO LIVE"));
+        //mTabs.add(new ChannelTabPagerItem(2, "WHO LIVE"));
 
     }
 

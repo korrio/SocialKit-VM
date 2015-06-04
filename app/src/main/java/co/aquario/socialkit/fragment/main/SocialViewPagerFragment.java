@@ -32,9 +32,9 @@ public class SocialViewPagerFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTabs.add(new SocialTabPagerItem(0, "Newest", "N"));
-        mTabs.add(new SocialTabPagerItem(1, "Most Followers", "F"));
-        mTabs.add(new SocialTabPagerItem(2, "Alphabets", "A"));
+        mTabs.add(new SocialTabPagerItem(0, "Recent", "N"));
+        mTabs.add(new SocialTabPagerItem(1, "Most Followed", "F"));
+        mTabs.add(new SocialTabPagerItem(2, "A-Z", "A"));
 
     }
 
@@ -53,6 +53,7 @@ public class SocialViewPagerFragment extends BaseFragment {
     	
     	mViewPager.setOffscreenPageLimit(6);
         mViewPager.setAdapter(new SocialViewPagerAdapter(getChildFragmentManager(), mTabs));
+        //mViewPager.setPageTransformer(true, new ForegroundToBackgroundTransformer());
 
         PagerSlidingTabStrip mSlidingTabLayout = (PagerSlidingTabStrip) view.findViewById(R.id.tabs);
         mSlidingTabLayout.setTextColorResource(R.color.white);
