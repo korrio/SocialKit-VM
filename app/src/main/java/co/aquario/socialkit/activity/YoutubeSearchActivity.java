@@ -25,7 +25,7 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.YtSearchResultAdapter;
 import co.aquario.socialkit.connections.ServerResponseListener;
 import co.aquario.socialkit.connections.ServiceTask;
-import co.aquario.socialkit.util.AppUtils;
+import co.aquario.socialkit.util.Utils;
 
 
 public class YoutubeSearchActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener, ServerResponseListener {
@@ -140,7 +140,7 @@ public class YoutubeSearchActivity extends ActionBarActivity implements View.OnC
 
 
                 } else {
-                    AppUtils.showToast("Empty field");
+                    Utils.showToast("Empty field");
                 }
                 break;
         }

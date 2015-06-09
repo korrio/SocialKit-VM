@@ -32,7 +32,7 @@ import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
 public class VideoFragment extends BaseFragment {
 
     public static final String KEYWORD_SEARCH = "KEYWORD_SEARCH";
-    public static final String SORT_TYPE = "SORT_TYPE";
+    public static final String SORT_TYPE = "TYPE";
     //public static final String USER_ID = "USER_ID";
     VideoFragment fragment;
     //private String userId = "";
@@ -59,13 +59,22 @@ public class VideoFragment extends BaseFragment {
         return mFragment;
     }
 
+    public static VideoFragment newInstance(String keyword,String sortType, ArrayList<Video> videoArrayList){
+        VideoFragment mFragment = new VideoFragment();
+        Bundle mBundle = new Bundle();
+        mBundle.putParcelable("LIST", Parcels.wrap(videoArrayList));
+        mBundle.putString(KEYWORD_SEARCH, keyword);
+        mBundle.putString(SORT_TYPE, sortType);
+        mFragment.setArguments(mBundle);
+        return mFragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            keyword = getArguments().getString(KEYWORD_SEARCH);
             sortType = getArguments().getString(SORT_TYPE);
-            //userId = getArguments().getString(USER_ID);
+            keyword = getArguments().getString(KEYWORD_SEARCH);
         }
 
         pref = MainApplication.get(getActivity().getApplicationContext()).getPrefManager();
@@ -77,7 +86,6 @@ public class VideoFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview_autofit_2col, container, false);
 
         aq = new AQuery(getActivity());
-        adapterVideos = new VideoRecyclerAdapter(getActivity(), list);
         fragment = this;
 
         RecyclerView recList = (RecyclerView) rootView.findViewById(R.id.recycler_view);
@@ -87,16 +95,8 @@ public class VideoFragment extends BaseFragment {
         else
             manager = new GridLayoutManager(getActivity(), 1);
         recList.setLayoutManager(manager);
-        recList.setAdapter(adapterVideos);
 
-        recList.setOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
-            @Override
-            public void onLoadMore(int page) {
-                String loadmoreUrl = "http://api.vdomax.com/search/video?sort=" + sortType + "&page=" + page;
-                Log.e("loadmoreurl", loadmoreUrl);
-                aq.ajax(loadmoreUrl, JSONObject.class, fragment, "getJson");
-            }
-        });
+        adapterVideos = new VideoRecyclerAdapter(getActivity(),list);
 
         adapterVideos.SetOnItemClickListener(new VideoRecyclerAdapter.OnItemClickListener() {
             @Override
@@ -111,11 +111,32 @@ public class VideoFragment extends BaseFragment {
             }
         });
 
+        recList.setAdapter(adapterVideos);
+
+        recList.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
+            @Override
+            public void onLoadMore(int page) {
+                if (!sortType.equals("SEARCH")) {
+                    String loadmoreUrl = "http://api.vdomax.com/search/video?sort=" + sortType + "&page=" + page;
+                    Log.e("loadmoreurl", loadmoreUrl);
+                    aq.ajax(loadmoreUrl, JSONObject.class, fragment, "getJson");
+                }
+            }
+        });
 
 
-        url = "http://api.vdomax.com/search/video?sort="+sortType+"&page=1";
-        Log.e("loadurl",url);
-        aq.ajax(url, JSONObject.class, this, "getJson");
+
+        Log.e("sortType",sortType);
+
+        if(!sortType.equals("SEARCH")) {
+            url = "http://api.vdomax.com/search/video?sort="+sortType+"&page=1";
+            Log.e("loadurl",url);
+            aq.ajax(url, JSONObject.class, this, "getJson");
+        } else {
+            list = Parcels.unwrap(getArguments().getParcelable("LIST"));
+            adapterVideos.notifyDataSetChanged();
+        }
+
 
         return rootView;
     }

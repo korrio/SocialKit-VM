@@ -35,17 +35,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import co.aquario.socialkit.activity.VMActivity;
 import co.aquario.socialkit.connections.RetrofitHttpClient;
+import co.aquario.socialkit.event.LoadGalleryEvent;
+import co.aquario.socialkit.handler.ApiBus;
 
 public class VMFetch {
 
-    public static final String TAG = "DribbbleFetch";
+    public static final String TAG = "VMFetch";
 
 
-    public void load(final Activity caller, int itemsPerPage, int page) {
+    public void load(final Activity caller, int itemsPerPage, int page, final String sort) {
 
-        String myurl = "http://api.vdomax.com/search/photo?sort=V&page=" + page + "&limit=" + itemsPerPage;
+        String myurl = "http://api.vdomax.com/search/photo?sort="+sort+"&page=" + page + "&limit=" + itemsPerPage;
 
         new AsyncTask<String, Void, String>() {
 
@@ -67,7 +68,8 @@ public class VMFetch {
             protected void onPostExecute(String data) {
                 Log.e("mydata", data);
                 VMFeed feed = new Gson().fromJson(data, VMFeed.class);
-                ((VMActivity) caller).onDataLoaded(feed);
+                ApiBus.getInstance().postQueue(new LoadGalleryEvent(feed,sort));
+
             }
 
             String get(URL url) throws IOException {

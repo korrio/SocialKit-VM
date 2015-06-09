@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
@@ -66,8 +67,12 @@ public class FriendFragment extends BaseFragment {
         }
     }
 
+    TextView emptyTv;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview_autofit, container, false);
+
+        emptyTv = (TextView) rootView.findViewById(R.id.no_data);
 
         recyclerView = (AutofitRecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -123,6 +128,7 @@ public class FriendFragment extends BaseFragment {
                 list.clear();
             list.addAll(event.getFriendListData().users);
             adapter2.updateList(list);
+            emptyTv.setVisibility(View.GONE);
         }
     }
 

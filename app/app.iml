@@ -114,13 +114,17 @@
     <orderEntry type="library" exported="" name="prettysharedpreferences-1.0.2" level="project" />
     <orderEntry type="library" exported="" name="support-v13-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="otto-1.3.5" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="tooltip-0.1" level="project" />
     <orderEntry type="library" exported="" name="library-1.1.3" level="project" />
+    <orderEntry type="library" exported="" name="1_library-1.1.3" level="project" />
+    <orderEntry type="library" exported="" name="FreeFlow-d4bdd5edca" level="project" />
     <orderEntry type="library" exported="" name="google-oauth-client-1.20.0" level="project" />
+    <orderEntry type="library" exported="" name="utils-v4-1.1.3" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-gson-1.20.0" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="prettytime-3.2.7.Final" level="project" />
+    <orderEntry type="library" exported="" name="library-1.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="okhttp-urlconnection-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-1.20.0" level="project" />
     <orderEntry type="library" exported="" name="audio-wife-1.0.3" level="project" />
@@ -136,19 +140,20 @@
     <orderEntry type="library" exported="" name="google-api-client-gson-1.20.0" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.20.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="google-api-services-youtube-v3-rev120-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="httpclient-android-4.3.5" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="library-3.0.0" level="project" />
     <orderEntry type="library" exported="" name="butterknife-6.1.0" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.3.6" level="project" />
     <orderEntry type="library" exported="" name="library-2.9.7" level="project" />
+    <orderEntry type="library" exported="" name="android-crop-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="google-http-client-android-1.20.0" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="parceler-api-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="jsoup-1.8.1" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-22.1.1" level="project" />
     <orderEntry type="module" module-name="bookends" exported="" />
-    <orderEntry type="module" module-name="FreeFlow" exported="" />
+    <orderEntry type="module" module-name="cvlibrary" exported="" />
     <orderEntry type="module" module-name="emojicon" exported="" />
     <orderEntry type="module" module-name="sbl" exported="" />
   </component>

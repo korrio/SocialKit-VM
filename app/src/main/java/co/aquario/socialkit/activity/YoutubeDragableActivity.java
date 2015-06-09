@@ -15,6 +15,7 @@ import org.parceler.Parcels;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.YoutubeDetailFragment;
 import co.aquario.socialkit.model.Video;

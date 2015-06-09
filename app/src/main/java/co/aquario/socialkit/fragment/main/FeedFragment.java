@@ -37,13 +37,13 @@ import com.tumblr.bookends.Bookends;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.TakePhotoActivity2;
 import co.aquario.socialkit.activity.LoginActivity;
-import co.aquario.socialkit.activity.MainActivity;
 import co.aquario.socialkit.activity.PostStatusActivity2;
 import co.aquario.socialkit.activity.SoundCloudActivity;
-import co.aquario.socialkit.activity.TakePhotoActivity;
 import co.aquario.socialkit.activity.YoutubeSearchActivity;
 import co.aquario.socialkit.adapter.ButtonItemAdapter;
 import co.aquario.socialkit.adapter.FeedAdapter;
@@ -147,7 +147,7 @@ public class FeedFragment extends BaseFragment {
         } else {
             userId = prefManager.userId().getOr("0");
             isHomeTimeline = true;
-            ((MainActivity) getActivity()).getToolbar().setSubtitle("");
+            //((MainActivity) getActivity()).getToolbar().setSubtitle("");
         }
     }
 
@@ -230,7 +230,7 @@ public class FeedFragment extends BaseFragment {
         //mEmptyView.setText(emptyText);
     }
 
-    Toolbar mToolbar;
+    //Toolbar mToolbar;
     int mToolbarHeight;
     View mToolbarContainer;
 
@@ -240,10 +240,10 @@ public class FeedFragment extends BaseFragment {
         // TODO Auto-generated method stub
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
 
-        mToolbar = ((MainActivity) getActivity()).getToolbar();
-        mToolbarContainer = mToolbar;
+        //mToolbar = ((MainActivity) getActivity()).getToolbar();
+        //mToolbarContainer = mToolbar;
 
-        mToolbarHeight = mToolbar.getHeight();
+        //mToolbarHeight = mToolbar.getHeight();
         // Create your views, whatever they may be
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.scroll);
         mRecyclerView.setHasFixedSize(true);
@@ -328,7 +328,7 @@ public class FeedFragment extends BaseFragment {
                 int[] startingLocation = new int[2];
                 v.getLocationOnScreen(startingLocation);
                 startingLocation[0] += v.getWidth() / 2;
-                TakePhotoActivity.startCameraFromLocation(startingLocation, getActivity(), false);
+                TakePhotoActivity2.startCameraFromLocation(startingLocation, getActivity(), false);
                 /*
                 TakePhotoFragmentUseless fragment = TakePhotoFragmentUseless.newInstance(startingLocation, getActivity());
                 FragmentManager manager = getActivity().getSupportFragmentManager();
@@ -632,7 +632,7 @@ public class FeedFragment extends BaseFragment {
         //usernameTv = (TextView) myHeader.findViewById(R.id.user_username);
         bioTv = (TextView) myHeader.findViewById(R.id.user_des);
 
-        ((MainActivity) getActivity()).getToolbar().setSubtitle("@" + event.getUser().getUsername());
+        //((MainActivity) getActivity()).getToolbar().setSubtitle("@" + event.getUser().getUsername());
 
         if(Utils.isTablet(getActivity()))
             bioTv.setVisibility(View.VISIBLE);

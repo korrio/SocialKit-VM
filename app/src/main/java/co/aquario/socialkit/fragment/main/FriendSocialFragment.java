@@ -8,8 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -42,11 +45,21 @@ public class FriendSocialFragment extends BaseFragment {
     private String type = "";
     private String userId = "";
 
-    public static FriendSocialFragment newInstance(String text,String userId){
+    public static FriendSocialFragment newInstance(String type,String userId){
         FriendSocialFragment mFragment = new FriendSocialFragment();
         Bundle mBundle = new Bundle();
-        mBundle.putString(LOAD_TYPE, text);
+        mBundle.putString(LOAD_TYPE, type);
         mBundle.putString(USER_ID,userId);
+        mFragment.setArguments(mBundle);
+        return mFragment;
+    }
+
+    public static FriendSocialFragment newInstance(String type,String userId,ArrayList<User> list){
+        FriendSocialFragment mFragment = new FriendSocialFragment();
+        Bundle mBundle = new Bundle();
+        mBundle.putString(LOAD_TYPE, type);
+        mBundle.putString(USER_ID,userId);
+        mBundle.putParcelable("LIST", Parcels.wrap(list));
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -55,22 +68,34 @@ public class FriendSocialFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefManager = MainApplication.get(getActivity()).getPrefManager();
+        adapter2 = new FriendRecyclerAdapter(getActivity(),list);
+
         if (getArguments() != null) {
+            //userId = prefManager.userId().getOr("0");
             type = getArguments().getString(LOAD_TYPE);
-            //userId = getArguments().getString(USER_ID);
-        }
-        if(!type.equals("")) {
-            userId = prefManager.userId().getOr("0");
-            ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),1,100));
+            userId = getArguments().getString(USER_ID);
+            if(userId.equals(""))
+                userId = prefManager.userId().getOr("0");
+            if(!type.equals("SEARCH"))
+                ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),1,100));
+            else {
+                list = Parcels.unwrap(getArguments().getParcelable("LIST")) ;
+                adapter2.updateList(list);
+                //emptyTv.setVisibility(View.GONE);
+            }
+
         }
     }
+
+    TextView emptyTv;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview_autofit, container, false);
 
+        emptyTv = (TextView) rootView.findViewById(R.id.no_data);
+
         recyclerView = (AutofitRecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
-        adapter2 = new FriendRecyclerAdapter(getActivity(),list);
         recyclerView.setAdapter(adapter2);
         if(Utils.isTablet(getActivity()))
             manager = new GridLayoutManager(getActivity(), 6);
@@ -87,7 +112,8 @@ public class FriendSocialFragment extends BaseFragment {
             public void onLoadMore(int current_page) {
                 Log.e("scrollBottom", "laew na");
                 refresh = false;
-                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
+                if(!type.equals("SEARCH"))
+                    ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
             }
 
 
@@ -147,6 +173,7 @@ public class FriendSocialFragment extends BaseFragment {
                 list.clear();
             list.addAll(event.getFriendListData().users);
             adapter2.updateList(list);
+            emptyTv.setVisibility(View.GONE);
         }
     }
 

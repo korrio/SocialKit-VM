@@ -14,7 +14,8 @@
         android:id="@+id/no_data"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:textColor="#252525" />
+        android:textColor="#252525"
+        android:visibility="gone"/>
 
     <co.aquario.socialkit.view.AutofitRecyclerView
         android:id="@+id/recycler_view"

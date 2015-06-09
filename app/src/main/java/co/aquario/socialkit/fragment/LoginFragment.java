@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.MainActivity;
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.event.FailedNetworkEvent;
 import co.aquario.socialkit.event.LoadFbProfileEvent;
 import co.aquario.socialkit.event.LoginEvent;

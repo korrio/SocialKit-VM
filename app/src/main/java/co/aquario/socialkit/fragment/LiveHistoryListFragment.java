@@ -65,8 +65,8 @@ public class LiveHistoryListFragment extends BaseFragment {
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Downloading live history");
-        dialog.setMessage("กำลังดาวน์โหลดประวัติการถ่ายทอดสด..");
+        dialog.setTitle("Live history..");
+        dialog.setMessage("ดาวน์โหลดประวัติการถ่ายทอดสด..");
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setIndeterminate(false);
         dialog.setMax(100);

@@ -33,6 +33,7 @@ import java.util.Map;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.CommentsActivity;
+import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.activity.YoutubeDragableActivity;
 import co.aquario.socialkit.fragment.PhotoZoomFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
@@ -603,7 +604,19 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                             mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
                             //Log.e("heysoundcloud", post.soundCloud.streamUrl);
                         }
+
+
                     } else if(postType.equals("live")) {
+
+                        Intent i = new Intent(mActivity, VitamioActivity.class);
+                        i.putExtra("id", "rtmp://150.107.31.6:1935/live/" + post.author.username);
+                        i.putExtra("name", post.author.name);
+                        i.putExtra("avatar", post.author.getAvatarPath());
+                        i.putExtra("cover", post.author.getCoverPath());
+                        i.putExtra("title", post.text);
+                        i.putExtra("desc", "@" + post.author.username);
+                        i.putExtra("userId", post.author.id);
+                        mActivity.startActivity(i);
 
                         /*
                         Intent i = new Intent(mActivity,VideoViewFragment.class);

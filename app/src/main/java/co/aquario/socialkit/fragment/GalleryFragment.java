@@ -10,7 +10,7 @@ import com.squareup.otto.Subscribe;
 import java.util.List;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.MainActivity;
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.event.LoadPhotoListEvent;
 import co.aquario.socialkit.event.LoadPhotoListSuccessEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;

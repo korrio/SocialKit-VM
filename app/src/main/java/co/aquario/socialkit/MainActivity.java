@@ -1,4 +1,4 @@
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
@@ -32,6 +33,8 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nispok.snackbar.Snackbar;
+import com.soundcloud.android.crop.Crop;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,22 +43,25 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.aquario.socialkit.MainApplication;
-import co.aquario.socialkit.R;
+import co.aquario.socialkit.activity.LoginActivity;
+import co.aquario.socialkit.activity.PostPhotoActivity;
+import co.aquario.socialkit.activity.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
-import co.aquario.socialkit.fragment.GalleryFragment;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
+import co.aquario.socialkit.fragment.PhotoFragmentGrid;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.ChannelViewPagerFragment;
 import co.aquario.socialkit.fragment.main.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.main.PhotoViewPagerFragment;
 import co.aquario.socialkit.fragment.main.SocialViewPagerFragment;
 import co.aquario.socialkit.fragment.main.VideoViewPagerFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
-import co.aquario.socialkit.search.main.SearchActivity;
+import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
+import co.aquario.socialkit.widget.RoundedTransformation;
 
 
 public class MainActivity extends BaseActivity implements BaseFragment.SearchListener {
@@ -250,6 +256,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                     startActivity(intent);
                 }
 
+            } else if(requestCode == Crop.REQUEST_CROP) {
+
             }
         }
     }
@@ -292,6 +300,11 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             }
         });
         builder.show();
+    }
+
+    private void startCropImage(String path) {
+
+        //Crop.of(path, path).asSquare().start(activity);
     }
 
     public void selectVideo() {
@@ -360,9 +373,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     @Override
     public void onSearchQuery(String query) {
         Utils.hideKeyboard(this);
-        Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra("query", query);
-        startActivity(intent);
+        SearchActivity.startActivity(getApplicationContext(),query);
+
     }
 
     public void initDrawer() {
@@ -412,8 +424,11 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                         } else if (((Nameable) drawerItem).getName().equals("Photos")) {
 
-                            GalleryFragment fragment = GalleryFragment.newInstance("","","");
+                            PhotoFragmentGrid fragment = new PhotoFragmentGrid();
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
+
+                            //GalleryFragment fragment = GalleryFragment.newInstance("","","");
+                            //getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
 
 //                            PhotoFragmentGrid fragment = new PhotoFragmentGrid();
 //
@@ -461,6 +476,20 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         ImageView videoMenu = (ImageView) result.getHeader().findViewById(R.id.video_menu);
         ImageView photoMenu = (ImageView) result.getHeader().findViewById(R.id.photo_menu);
 
+        ImageView avatarMenu = (ImageView) result.getHeader().findViewById(R.id.header_avatar);
+        TextView usernameMenu = (TextView) result.getHeader().findViewById(R.id.header_username);
+
+        Picasso.with(this).load(EndpointManager.getAvatarPath(pref.avatar().getOr(""))).placeholder(R.drawable.avatar_default).centerCrop()
+                .resize(100, 100).transform(new RoundedTransformation(50, 4)).into(avatarMenu);
+        usernameMenu.setText("@" + pref.username().getOr("null"));
+
+        avatarMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
+            }
+        });
+
         getToolbar().setTitle("VDOMAX");
         getToolbar().setSubtitle("@" + pref.username().getOr("null"));
 
@@ -504,8 +533,11 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         photoMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(MainActivity.this, GalleryActivity.class);
-                startActivity(i);
+
+
+                PhotoViewPagerFragment fragment = new PhotoViewPagerFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
+
 
                 getToolbar().setTitle("VDOMAX");
                 getToolbar().setSubtitle("Photos");

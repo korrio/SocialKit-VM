@@ -35,6 +35,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/CustomTheme">
+
+        <activity android:theme="@style/AppTheme2" android:name="RevealActivity"/>
+
+
         <activity
             android:name="io.vov.vitamio.activity.InitActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
@@ -42,16 +46,23 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".SearchActivity" />
+
+        <activity
+            android:name=".TakePhotoActivity2" />
+
+        <activity
+            android:name=".PublishActivity"  />
+
         <activity
             android:name=".activity.CommentsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
-        <activity
-            android:name=".search.main.SearchActivity"
-            android:theme="@style/Swipeable"></activity>
+
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login"
@@ -59,7 +70,6 @@
             android:windowSoftInputMode="adjustResize|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -96,7 +106,7 @@
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
         <activity
-            android:name=".activity.TakePhotoActivity"
+            android:name=".TakePhotoActivity"
             android:label=""
             android:screenOrientation="portrait" />
         <activity
@@ -119,12 +129,12 @@
         <activity
             android:name=".activity.YoutubeDragableActivity"
             android:label="Youtube"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".activity.YoutubeSearchActivity"
             android:label="Search Youtube"
             android:theme="@style/CustomTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
 
 
         <activity
@@ -135,11 +145,11 @@
         <activity
             android:name=".activity.PostStatusActivity2"
             android:label="Write Post"
-            android:theme="@style/CustomTheme"></activity>
+            android:theme="@style/CustomTheme"/>
         <activity
             android:name=".activity.PostSoundCloudActivity"
             android:label="Share your music "
-            android:theme="@style/CustomTheme"></activity>
+            android:theme="@style/CustomTheme"/>
 
 
         <activity
@@ -151,16 +161,6 @@
             android:name=".activity.GalleryActivity"
             android:label="" >
         </activity>
-
-        GalleryActivity
-
-        <activity
-            android:name=".activity.VMActivity"
-            android:theme="@style/android:Theme.Holo.Light.DarkActionBar"></activity>
-
-        <activity
-            android:name=".activity.PhotoDetailActivity"
-            android:theme="@style/CustomTheme"></activity>
 
         <!--
         <activity

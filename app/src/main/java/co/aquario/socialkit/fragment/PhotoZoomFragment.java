@@ -13,7 +13,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.MainActivity;
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.event.PhotoLoadEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;

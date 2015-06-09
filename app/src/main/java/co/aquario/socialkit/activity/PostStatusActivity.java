@@ -32,6 +32,7 @@ import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.util.AndroidMultiPartEntity;

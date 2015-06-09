@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
+import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.PhotoLoadEvent;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;

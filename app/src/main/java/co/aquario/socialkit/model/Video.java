@@ -19,6 +19,10 @@ public class Video extends BaseModel {
     public int nComment;
     public int nShare;
 
+
+    public Video() {
+
+    }
     @ParcelConstructor
     public Video(String postId, String title, String desc, String youtubeId, String text, String timestamp, String view, String pUserId, String pName, String pAvatar, int nLove, int nComment, int nShare) {
         this.postId = postId;

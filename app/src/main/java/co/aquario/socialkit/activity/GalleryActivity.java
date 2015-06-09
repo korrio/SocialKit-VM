@@ -1,6 +1,7 @@
 package co.aquario.socialkit.activity;
 
 
+import co.aquario.socialkit.BaseActivity;
 
 /**
  * Created by Mac on 6/3/15.

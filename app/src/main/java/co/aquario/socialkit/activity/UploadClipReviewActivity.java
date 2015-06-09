@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.util.AndroidMultiPartEntity;
 

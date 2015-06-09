@@ -83,9 +83,10 @@ public class VMDataAdapter implements SectionedAdapter {
 
         } else {
             PhotoStory s = (PhotoStory) (this.section.getData().get(position));
-            Picasso.with(context)
-                    .load(s.media.getThumbUrl())
-                    .into(img);
+            if(s.media_type.equals("photos"))
+                Picasso.with(context)
+                        .load(s.media.getThumbUrl())
+                        .into(img);
         }
 
         return convertView;

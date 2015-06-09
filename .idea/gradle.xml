@@ -9,12 +9,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/FreeFlow" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app/projectLibs" />
             <option value="$PROJECT_DIR$/app/projectLibs/sbl" />
             <option value="$PROJECT_DIR$/bookends" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/cvlibrary" />
             <option value="$PROJECT_DIR$/emoji" />
             <option value="$PROJECT_DIR$/layouts" />
             <option value="$PROJECT_DIR$/vlc" />

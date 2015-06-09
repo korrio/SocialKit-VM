@@ -11,10 +11,12 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 
 /**
@@ -25,6 +27,10 @@ public class Utils {
     public static char[] alphabets = "abcdefghijklmnopqrstuvwxyz".toCharArray();
     private static int screenWidth = 0;
     private static int screenHeight = 0;
+
+    public static boolean isAndroid5() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
 
     public static int getToolbarHeight(Context context) {
         final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
@@ -191,6 +197,10 @@ public class Utils {
         }
 
         return html;
+    }
+
+    public static void showToast(String iMessage) {
+        Toast.makeText(MainApplication.getAppContext(), iMessage, Toast.LENGTH_SHORT).show();
     }
 
 }

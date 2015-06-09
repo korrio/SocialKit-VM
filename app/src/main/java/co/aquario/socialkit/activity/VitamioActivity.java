@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.LIvePosterFragment;
 import co.aquario.socialkit.fragment.VideoViewFragment;
@@ -22,7 +23,7 @@ import co.aquario.socialkit.model.Live;
  *
  * @author Pedro Vicente Gómez Sánchez.
  */
-public class VitamioActivity extends BaseActivity  {
+public class VitamioActivity extends BaseActivity {
 
     public final static String LOCATION = "stream_url";
     public final static String QUALITY = "quality";

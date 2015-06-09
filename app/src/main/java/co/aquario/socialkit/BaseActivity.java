@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -24,8 +24,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 
 import butterknife.ButterKnife;
-import co.aquario.socialkit.MainApplication;
-import co.aquario.socialkit.R;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PrefManager;

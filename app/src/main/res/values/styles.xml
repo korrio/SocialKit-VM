@@ -117,4 +117,9 @@
         <item name="android:background">#999999</item>
     </style>
 
+    <style name="RevealTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+
 </resources>

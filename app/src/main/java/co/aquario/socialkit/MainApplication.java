@@ -41,7 +41,7 @@ public class MainApplication extends Application {
     public static final String APP_ID = "391414774312517";
     public static final String APP_SECRET ="f486294a7603127e78833e54f17cbc51";
     public static final String APP_NAMESPACE = "vdomaxsocial";
-    public static final String APP_PERMISSIONS = "read_stream,read_friendlists,manage_friendlists,manage_notifications,publish_stream,publish_checkins,offline_access,user_about_me,friends_about_me,user_activities,friends_activities,user_checkins,friends_checkins,user_events,friends_events,user_groups,friends_groups,user_interests,friends_interests,user_likes,friends_likes,user_notes,friends_notes,user_photos,friends_photos,user_status,friends_status,user_videos,friends_videos";
+    public static final String APP_PERMISSIONS = "email,public_profile,user_friends";
 
     public static PrefManager prefManager;
     public static String USER_TOKEN;

@@ -7,4 +7,9 @@
         <attr name="headerVisibleHeight" format="dimension" />
     </declare-styleable>
 
+
+    <declare-styleable name="TintableImageView">
+        <attr name="tint" format="reference|color"/>
+    </declare-styleable>
+
 </resources>

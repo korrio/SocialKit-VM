@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.MainActivity;
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 
 

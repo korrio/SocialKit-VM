@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.WindowManager;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.UpdateProfileEvent;

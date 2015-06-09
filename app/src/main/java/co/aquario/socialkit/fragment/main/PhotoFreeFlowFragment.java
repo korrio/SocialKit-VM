@@ -15,17 +15,20 @@
  * limitations under the License.
  * ****************************************************************************
  */
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit.fragment.main;
 
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Display;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.comcast.freeflow.core.AbsLayoutContainer;
 import com.comcast.freeflow.core.AbsLayoutContainer.OnItemClickListener;
@@ -37,9 +40,13 @@ import com.comcast.freeflow.layouts.HLayout;
 import com.comcast.freeflow.layouts.VGridLayout;
 import com.comcast.freeflow.layouts.VGridLayout.LayoutParams;
 import com.comcast.freeflow.layouts.VLayout;
+import com.squareup.otto.Subscribe;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.VMDataAdapter;
+import co.aquario.socialkit.event.LoadGalleryEvent;
+import co.aquario.socialkit.fragment.PhotoZoomFragment;
 import co.aquario.socialkit.model.VMFeed;
 import co.aquario.socialkit.model.VMFetch;
 import co.aquario.socialkit.view.ArtbookLayout;
@@ -47,40 +54,62 @@ import co.aquario.socialkit.view.TitanicTextView;
 import co.aquario.socialkit.widget.Titanic;
 import co.aquario.socialkit.widget.Typefaces;
 
-public class VMActivity extends Activity implements OnClickListener {
+public class PhotoFreeFlowFragment extends BaseFragment implements OnClickListener {
 
-    public static final String TAG = "ArtbookActivity";
+
+    public static String SORT = "SORT";
+
     VMDataAdapter adapter;
     FreeFlowLayout[] layouts;
     int currLayoutIndex = 0;
-    private FreeFlowContainer container;
+    private FreeFlowContainer ffContainer;
     private VGridLayout grid;
     private ArtbookLayout custom;
     private VMFetch fetch;
     private int itemsPerPage = 25;
     private int pageIndex = 1;
+    private String sort = "";
+
+    Activity mActivity;
 
     Titanic titanic;
     TitanicTextView myTitanicTextView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artbook);
+    public static PhotoFreeFlowFragment newInstance(String sort){
+        PhotoFreeFlowFragment mFragment = new PhotoFreeFlowFragment();
+        Bundle mBundle = new Bundle();
+        mBundle.putString(SORT, sort);
+        mFragment.setArguments(mBundle);
+        return mFragment;
+    }
 
-        myTitanicTextView = (TitanicTextView) findViewById(R.id.titanic_tv);
-        myTitanicTextView.setTypeface(Typefaces.get(this, "Satisfy-Regular.ttf"));
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            sort = getArguments().getString(SORT);
+        }
+    }
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_freeflow_gallery, container, false);
+
+
+        mActivity = getActivity();
+
+        myTitanicTextView = (TitanicTextView) rootView.findViewById(R.id.titanic_tv);
+        myTitanicTextView.setTypeface(Typefaces.get(getActivity(), "Satisfy-Regular.ttf"));
 
         titanic = new Titanic();
         titanic.start(myTitanicTextView);
         
-        container = (FreeFlowContainer) findViewById(R.id.container);
+        ffContainer = (FreeFlowContainer) rootView.findViewById(R.id.container);
 
-        Display display = getWindowManager().getDefaultDisplay();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
 
-        findViewById(R.id.load_more).setOnClickListener(this);
+        rootView.findViewById(R.id.load_more).setOnClickListener(this);
         //Our new layout
         custom = new ArtbookLayout();
 
@@ -101,28 +130,49 @@ public class VMActivity extends Activity implements OnClickListener {
 
         layouts = new FreeFlowLayout[]{custom, grid, vlayout};
 
-        adapter = new VMDataAdapter(this);
+        adapter = new VMDataAdapter(getActivity());
 
 
-        container.setLayout(layouts[currLayoutIndex]);
-        container.setAdapter(adapter);
+        ffContainer.setLayout(layouts[currLayoutIndex]);
+        ffContainer.setAdapter(adapter);
 
 
         fetch = new VMFetch();
 
-        fetch.load(this, itemsPerPage, pageIndex);
+        fetch.load(getActivity(), itemsPerPage, pageIndex, sort);
+
+        return rootView;
 
     }
 
-    public void onDataLoaded(VMFeed feed) {
+    @Subscribe
+    public void onDataLoaded(LoadGalleryEvent event) {
 
-        myTitanicTextView.setVisibility(View.GONE);
+        final VMFeed feed = event.feed;
 
-        adapter.update(feed);
-        container.dataInvalidated();
-        container.setOnItemClickListener(new OnItemClickListener() {
+        if(event.sort.equals(sort)) {
+            myTitanicTextView.setVisibility(View.GONE);
+            adapter.update(feed);
+            ffContainer.dataInvalidated();
+        }
+
+
+
+        ffContainer.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AbsLayoutContainer parent, FreeFlowItem item) {
+               // Toast.makeText(getApplicationContext(),item.itemIndex + " : " + ((VMFeed) item.data).getShots().get(item.itemIndex).media.getFullUrl(),Toast.LENGTH_SHORT).show();
+
+                String url = feed.getShots().get(item.itemIndex).media.getFullUrl();
+                String name = feed.getShots().get(item.itemIndex).author.name;
+                String text = feed.getShots().get(item.itemIndex).text;
+
+
+                PhotoZoomFragment fragment = new PhotoZoomFragment().newInstance(url,name,text);
+                FragmentManager manager =((MainActivity) mActivity).getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.add(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commit();
 
             }
         });
@@ -131,22 +181,18 @@ public class VMActivity extends Activity implements OnClickListener {
 
 
 
-        container.addScrollListener(new OnScrollListener() {
+        ffContainer.addScrollListener(new OnScrollListener() {
 
             @Override
             public void onScroll(FreeFlowContainer container) {
-                Log.d(TAG, "scroll percent " + container.getScrollPercentY());
+                Toast.makeText(getActivity(), "scroll percent " + container.getScrollPercentY(), Toast.LENGTH_SHORT).show();
             }
         });
 
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.artbook, menu);
-        return true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -157,7 +203,7 @@ public class VMActivity extends Activity implements OnClickListener {
                 if (currLayoutIndex == layouts.length) {
                     currLayoutIndex = 0;
                 }
-                container.setLayout(layouts[currLayoutIndex]);
+                ffContainer.setLayout(layouts[currLayoutIndex]);
 
                 break;
 
@@ -169,8 +215,9 @@ public class VMActivity extends Activity implements OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "Loading data");
+
         pageIndex++;
-        fetch.load(this, itemsPerPage, pageIndex);
+        fetch.load(getActivity(), itemsPerPage, pageIndex,sort);
+        myTitanicTextView.setVisibility(View.VISIBLE);
     }
 }
