@@ -1,0 +1,19 @@
+apply plugin: 'com.android.library'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:21.+'
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.0.1"
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 21
+    }
+}

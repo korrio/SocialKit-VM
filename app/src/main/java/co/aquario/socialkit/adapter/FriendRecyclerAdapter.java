@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -52,7 +52,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             public void onItemClick(View view, int position) {
 
                 FeedFragment fragment = new FeedFragment().newInstance(list.get(position).getId(), false);
-                FragmentManager manager = ((ActionBarActivity) mActivity).getSupportFragmentManager();
+                FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
                 transaction.commit();

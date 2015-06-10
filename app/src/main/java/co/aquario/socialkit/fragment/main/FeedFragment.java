@@ -26,9 +26,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
@@ -43,8 +43,8 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.TakePhotoActivity2;
 import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.activity.PostStatusActivity2;
-import co.aquario.socialkit.activity.SoundCloudActivity;
-import co.aquario.socialkit.activity.YoutubeSearchActivity;
+import co.aquario.socialkit.activity.SCSearchActivity;
+import co.aquario.socialkit.activity.YtSearchActivity;
 import co.aquario.socialkit.adapter.ButtonItemAdapter;
 import co.aquario.socialkit.adapter.FeedAdapter;
 import co.aquario.socialkit.event.FollowRegisterEvent;
@@ -253,7 +253,7 @@ public class FeedFragment extends BaseFragment {
 
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.activity_profile, mRecyclerView, false);
+        myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.activity_profile2, mRecyclerView, false);
 
         setEmptyText(getString(R.string.no_story));
 
@@ -307,7 +307,7 @@ public class FeedFragment extends BaseFragment {
         postSoundCloudBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), SoundCloudActivity.class);
+                Intent i = new Intent(getActivity(), SCSearchActivity.class);
                 startActivity(i);
             }
         });
@@ -315,7 +315,7 @@ public class FeedFragment extends BaseFragment {
         postYoutubeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), YoutubeSearchActivity.class);
+                Intent i = new Intent(getActivity(), YtSearchActivity.class);
                 startActivity(i);
 
             }
@@ -380,12 +380,12 @@ public class FeedFragment extends BaseFragment {
                 pShare = position;
 
                 new MaterialDialog.Builder(getActivity())
-                        .title(R.string.socialNetworks)
-                        .adapter(new ButtonItemAdapter(getActivity(), R.array.socialNetworks),
+                        .title("Share to")
+                        .adapter(new ButtonItemAdapter(getActivity(),R.array.socialNetworks),
                                 new MaterialDialog.ListCallback() {
                                     @Override
                                     public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                        Toast.makeText(getActivity(), "Clicked item " + which, Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getActivity(), "Clicked item " + which, Toast.LENGTH_SHORT).show();
                                         switch (which) {
                                             case 0:
                                                 // Share to vdomax
@@ -397,8 +397,10 @@ public class FeedFragment extends BaseFragment {
                                                 break;
 
                                         }
+
                                     }
                                 })
+                        .theme(Theme.LIGHT)
                         .show();
 
                 //ApiBus.getInstance().post(new PostShareEvent(pref.userId().getOr("6"), list.get(position).postId));

@@ -43,6 +43,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.aquario.socialkit.activity.NewProfileActivity;
 import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.activity.PostPhotoActivity;
 import co.aquario.socialkit.activity.PostVideoActivity;
@@ -107,6 +108,15 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             getSupportActionBar().setElevation(0);
         }
         setSupportActionBar(toolbar);
+
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mActivity, NewProfileActivity.class);
+                startActivity(i);
+
+            }
+        });
 
         if (savedInstanceState == null) {
             HomeViewPagerFragment fragment = new HomeViewPagerFragment();

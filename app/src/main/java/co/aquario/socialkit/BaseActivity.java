@@ -21,6 +21,7 @@ import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
 import butterknife.ButterKnife;
@@ -28,7 +29,7 @@ import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PrefManager;
 
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     private static final int NUM_OF_ITEMS = 100;
     private static final int NUM_OF_ITEMS_FEW = 3;
     private PrefManager mPref;
