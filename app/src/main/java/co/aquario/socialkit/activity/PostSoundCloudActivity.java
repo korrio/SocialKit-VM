@@ -1,11 +1,11 @@
 package co.aquario.socialkit.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -44,7 +44,7 @@ import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
-public class PostSoundCloudActivity extends ActionBarActivity {
+public class PostSoundCloudActivity extends Activity {
 
     String sid;
     String title;

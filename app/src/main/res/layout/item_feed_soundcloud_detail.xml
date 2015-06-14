@@ -152,8 +152,8 @@
             android:layout_width="match_parent"
             android:layout_height="220dp"
             android:layout_gravity="center_horizontal"
-            android:background="#ff7700"
-            android:scaleType="fitCenter" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_soundcloud" />
 
         <RelativeLayout
             android:id="@+id/soundcloud_group"

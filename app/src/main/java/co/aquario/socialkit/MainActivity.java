@@ -29,8 +29,12 @@ import android.widget.TextView;
 
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.nispok.snackbar.Snackbar;
 import com.soundcloud.android.crop.Crop;
@@ -43,8 +47,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.aquario.socialkit.activity.NewProfileActivity;
 import co.aquario.socialkit.activity.LoginActivity;
+import co.aquario.socialkit.activity.NewProfileActivity;
 import co.aquario.socialkit.activity.PostPhotoActivity;
 import co.aquario.socialkit.activity.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
@@ -113,6 +117,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(mActivity, NewProfileActivity.class);
+                i.putExtra("user_id",userId);
                 startActivity(i);
 
             }
@@ -126,7 +131,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             transaction.commit();
         }
 
-        initDrawer();
+        initDrawer(savedInstanceState);
     }
 
     public Toolbar getToolbar() {
@@ -136,7 +141,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the search; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -387,20 +392,41 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
     }
 
-    public void initDrawer() {
+    public void initDrawer(Bundle savedInstanceState) {
+        AccountHeader headerResult = new AccountHeader()
+                .withActivity(this)
+                //.withHeaderBackground(R.drawable.header_bg)
+                .withCompactStyle(true)
+                .addProfiles(
+                        new ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .withSavedInstance(savedInstanceState);
+
         View header = LayoutInflater.from(getApplication()).inflate(R.layout.header_drawer, null);
         result = new Drawer()
                 .withActivity(this)
                 .withToolbar(toolbar)
+
                 .withHeader(header)
+                //.withAccountHeader(headerResult.build())
                 .withActionBarDrawerToggle(true)
                 .withTranslucentStatusBar(true)
+                //.withAnimateDrawerItems(true)
+//                .addStickyDrawerItems(
+//                        new PrimaryDrawerItem().withName("Channels").withIcon(FontAwesome.Icon.faw_terminal),
+//                        new PrimaryDrawerItem().withName("Social").withIcon(FontAwesome.Icon.faw_users),
+//                        new PrimaryDrawerItem().withName("Videos").withIcon(FontAwesome.Icon.faw_video_camera),
+//                        new PrimaryDrawerItem().withName("Photos").withIcon(FontAwesome.Icon.faw_camera_retro)
+//                        )
                 .addDrawerItems(
-                        //new PrimaryDrawerItem().withName("Channels").withIcon(FontAwesome.Icon.faw_terminal),
-                        //new PrimaryDrawerItem().withName("Social").withIcon(FontAwesome.Icon.faw_users),
-                        //new PrimaryDrawerItem().withName("Videos").withIcon(FontAwesome.Icon.faw_video_camera),
-                        //new PrimaryDrawerItem().withName("Photos").withIcon(FontAwesome.Icon.faw_camera_retro),
-                        //new SectionDrawerItem().withName("Account"),
+
+                        new SectionDrawerItem().withName("Menu"),
                         new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home),
                         new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history),
                         new SecondaryDrawerItem().withName("Setting").withIcon(FontAwesome.Icon.faw_cog),
@@ -447,7 +473,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 //                            transaction.addToBackStack(null);
 //                            transaction.commit();
 
-                           // Intent i = new Intent(MainActivity.this, PhotoDetailActivity.class);
+                            // Intent i = new Intent(MainActivity.this, PhotoDetailActivity.class);
                             //startActivity(i);
                         } else if (((Nameable) drawerItem).getName().equals("Home")) {
 
@@ -476,10 +502,16 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
 
                     }
-                }).build();
+                })
+                .withTranslucentActionBarCompatibility(false)
+                .withSavedInstance(savedInstanceState)
+                .build();
 
         toggle = result.getActionBarDrawerToggle();
         mDrawer = result.getDrawerLayout();
+
+
+
 
         ImageView channelMenu = (ImageView) result.getHeader().findViewById(R.id.channel_menu);
         ImageView sociallMenu = (ImageView) result.getHeader().findViewById(R.id.social_menu);
@@ -499,6 +531,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 selectImage();
             }
         });
+
 
         getToolbar().setTitle("VDOMAX");
         getToolbar().setSubtitle("@" + pref.username().getOr("null"));

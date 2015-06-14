@@ -216,16 +216,19 @@ public class Utils {
         //[a]http%3A%2F%2Fwww.google.com[/a]
         bbMap.put("\\[a\\](.+?)\\[/a\\]", "$1");
         //#[1121]
-        bbMap.put("\\#\\[(.+?)\\]", "$1");
+        bbMap.put("\\#\\[(.+?)\\]", "#$1");
         //@[6]
-        bbMap.put("\\@\\{(.+?)\\}", "$1");
+        bbMap.put("\\@\\{(.+?)\\}", "@$1");
 //        bbMap.put("\\[url=(.+?)\\](.+?)\\[/url\\]", "<a href='$1'>$2</a>");
 //        bbMap.put("\\[youtube\\](.+?)\\[/youtube\\]", "<object width='640' height='380'><param name='movie' value='http://www.youtube.com/v/$1'></param><embed src='http://www.youtube.com/v/$1' type='application/x-shockwave-flash' width='640' height='380'></embed></object>");
 //        bbMap.put("\\[video\\](.+?)\\[/video\\]", "<video src='$1' />");
 
         for (Map.Entry entry: bbMap.entrySet()) {
             try {
-                html = URLDecoder.decode(html.replaceAll(entry.getKey().toString(), entry.getValue().toString()), "UTF-8");
+                if(entry.getKey().toString().equals("\\[a\\](.+?)\\[/a\\]"))
+                    html = URLDecoder.decode(html.replaceAll(entry.getKey().toString(), entry.getValue().toString()), "UTF-8");
+                else
+                    html = html.replaceAll(entry.getKey().toString(), entry.getValue().toString());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -236,6 +239,19 @@ public class Utils {
 
     public static void showToast(String iMessage) {
         Toast.makeText(MainApplication.getAppContext(), iMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    public static boolean isNumeric(String str)
+    {
+        try
+        {
+            double d = Double.parseDouble(str);
+        }
+        catch(NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
     }
 
 }

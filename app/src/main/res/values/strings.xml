@@ -59,4 +59,12 @@
         <item>Facebook</item>
     </string-array>
 
+    <!-- Chat String -->
+    <string name="title">(VMChat)</string>
+    <string name="author_name">By VDOMAX</string>
+    <string name="author_url">www.vdomax.com</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="btn_join">JOIN</string>
+    <string name="btn_send">Send</string>
+
 </resources>

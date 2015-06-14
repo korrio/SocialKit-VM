@@ -265,19 +265,37 @@ public class ApiHandlerVM {
 
     @Subscribe public void onGetUserProfile(GetUserProfileEvent event) {
 
-        api.getProfile(Integer.parseInt(event.getUserId()), new Callback<UserProfileDataResponse>() {
-            @Override
-            public void success(UserProfileDataResponse userProfileDataResponse, Response response) {
-                GetUserProfileSuccessEvent event = new GetUserProfileSuccessEvent(userProfileDataResponse.user, userProfileDataResponse.count);
-                ApiBus.getInstance().post(event);
-            }
+        if(!event.getUserId().equals("")) {
+            api.getProfile(Integer.parseInt(event.getUserId()), new Callback<UserProfileDataResponse>() {
+                @Override
+                public void success(UserProfileDataResponse userProfileDataResponse, Response response) {
+                    GetUserProfileSuccessEvent event = new GetUserProfileSuccessEvent(userProfileDataResponse.user, userProfileDataResponse.count);
+                    ApiBus.getInstance().post(event);
+                }
 
-            @Override
-            public void failure(RetrofitError error) {
-                Log.e("error", error.toString());
-            }
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("error", error.toString());
+                }
 
-        });
+            });
+        } else {
+            api.getProfileUsername(event.getUsername(), new Callback<UserProfileDataResponse>() {
+                @Override
+                public void success(UserProfileDataResponse userProfileDataResponse, Response response) {
+                    GetUserProfileSuccessEvent event = new GetUserProfileSuccessEvent(userProfileDataResponse.user, userProfileDataResponse.count);
+                    ApiBus.getInstance().post(event);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("error", error.toString());
+                }
+
+            });
+        }
+
+
 
     }
 

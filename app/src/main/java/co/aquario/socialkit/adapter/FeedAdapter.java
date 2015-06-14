@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,19 +35,22 @@ import java.util.Map;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.CommentsActivity;
-import co.aquario.socialkit.activity.VitamioActivity;
-import co.aquario.socialkit.activity.YoutubeDragableActivity;
+import co.aquario.socialkit.activity.LiveFragment;
+import co.aquario.socialkit.activity.WatchDragableActivity;
 import co.aquario.socialkit.fragment.PhotoZoomFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.interfaces.TagClick;
+import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import co.aquario.socialkit.widget.TagSelectingTextview;
 import co.aquario.socialkit.widget.URLImageParser;
 
 
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
+public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> implements TagClick {
 
     private static Activity mActivity;
     private final Map<Integer, Integer> likesCount = new HashMap<>();
@@ -173,10 +178,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         PostStory item = list.get(position);
 
         if(item.isLoved)
-            holder.btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_love_vm_red,0,0,0);
+            holder.btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red,0,0,0);
 
-        //if(item.isShared)
-            //holder.btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share,0,0,0);
+        if(item.isShared)
+            holder.btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share_blue,0,0,0);
 
         PrettyTime p = new PrettyTime();
         long agoLong = Integer.parseInt(item.time);
@@ -202,10 +207,24 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         if (isNull(item.text)) {
             holder.msg.setVisibility(View.GONE);
         } else {
+            holder.msg.setMovementMethod(LinkMovementMethod.getInstance());
             if (item.text.trim().length() < 200)
                 holder.msg.setText(Html.fromHtml("" + Utils.bbcode(item.text) + ""));
             else
                 holder.msg.setText(Html.fromHtml("" + Utils.bbcode(item.text).substring(0, 200) + " ..." + ""));
+
+            TagSelectingTextview mTagSelectingTextview = new TagSelectingTextview();
+
+            String hastTagColorBlue = "#5BCFF2", hastTagColorRed = "#FF0000",
+                    hastTagColorYellow = "#FFFF00", hastTagColorGreen = "#014a01", hashtagColorIndigo500 = "#3f51b5",
+                    testText, currentHashTagColor;
+
+            int hashTagHyperLinkEnabled = 1;
+            int hashTagHyperLinkDisabled = 0;
+
+            holder.msg.setText(mTagSelectingTextview.addClickablePart(
+                            Utils.bbcode(item.text), this, hashTagHyperLinkDisabled, hashtagColorIndigo500),
+                    TextView.BufferType.SPANNABLE);
         }
 
         if (item.type.equals("text")) {
@@ -381,6 +400,20 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         this.mItemShare = mItemShare;
     }
 
+    @Override
+    public void clickedTag(String tag) {
+        if(tag.startsWith("@")) {
+            FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1), false);
+            FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+            transaction.commit();
+        } else if(tag.startsWith("#")) {
+
+        }
+
+    }
+
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
@@ -512,7 +545,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
 
                         PhotoZoomFragment fragment = new PhotoZoomFragment().newInstance(url,name,text);
-                        FragmentManager manager = ((ActionBarActivity) mActivity).getSupportFragmentManager();
+                        FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
                         FragmentTransaction transaction = manager.beginTransaction();
                         transaction.add(R.id.sub_container, fragment).addToBackStack(null);
                         transaction.commit();
@@ -528,6 +561,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
 
                     } else if (postType.equals("clip")) {
+
+                        Log.e("fromFeedAdapter",post.clip.url);
+
+                        Video item = new Video("clip",post.postId, post.author.name, "@"+post.author.username, post.clip.url, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
+
+                        Intent i2 = new Intent(mActivity, WatchDragableActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("obj", Parcels.wrap(item));
+
+                        i2.putExtras(bundle);
+                        mActivity.startActivity(i2);
 
                         /*
                         Intent i = new Intent(mActivity, VideoViewNativeActivity.class);
@@ -587,9 +631,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         mActivity.startActivity(i);
                         */
 
-                        Video item = new Video(post.postId, post.youtube.title, post.youtube.desc, post.youtube.id, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
+                        Video item = new Video("youtube",post.postId, post.youtube.title, post.youtube.desc, post.youtube.id, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
 
-                        Intent i2 = new Intent(mActivity, YoutubeDragableActivity.class);
+                        Intent i2 = new Intent(mActivity, WatchDragableActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("obj", Parcels.wrap(item));
 
@@ -608,6 +652,22 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     } else if(postType.equals("live")) {
 
+                        String userId = post.author.id;
+                        String name = post.author.name;
+                        String username = post.author.username;
+                        String avatar = post.author.getAvatarPath();
+                        String cover = post.author.getCoverPath();
+                        String liveCover = post.author.liveCover;
+                        String gender = "male";
+                        boolean liveStatus = true;
+
+                        Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, "male", liveStatus);
+
+                        LiveFragment fragment = LiveFragment.newInstance(channel);
+                        ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+
+                        /*
+
                         Intent i = new Intent(mActivity, VitamioActivity.class);
                         i.putExtra("id", "rtmp://150.107.31.6:1935/live/" + post.author.username);
                         i.putExtra("name", post.author.name);
@@ -617,6 +677,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         i.putExtra("desc", "@" + post.author.username);
                         i.putExtra("userId", post.author.id);
                         mActivity.startActivity(i);
+                        */
 
                         /*
                         Intent i = new Intent(mActivity,VideoViewFragment.class);
@@ -651,7 +712,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 case R.id.profile_name:
                 case R.id.avatar:
                     FeedFragment fragment = new FeedFragment().newInstance(post.author.id, false);
-                    FragmentManager manager = ((ActionBarActivity) mActivity).getSupportFragmentManager();
+                    FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
                     FragmentTransaction transaction = manager.beginTransaction();
                     transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
                     transaction.commit();
@@ -661,7 +722,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     if(Integer.parseInt(nLove.getText().toString()) == post.loveCount && !post.isLoved) {
                         oldLoveCount = post.loveCount;
                         oldLoveCount++;
-                        btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_love_vm_red,0,0,0);
+                        btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red,0,0,0);
 
                     }
                     else {
@@ -687,7 +748,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     else {
                         oldShareCount = Integer.parseInt(nShare.getText().toString());
                         oldShareCount--;
-                        btnShare.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                        btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share_blue,0,0,0);
                     }
                     nShare.setText(oldShareCount + "");
                     if (mItemShare != null) {

@@ -3,13 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <item
-        android:id="@+id/action_message"
-        android:icon="@drawable/ic_message_white"
-        app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_follow"
-        android:title="+ FOLLOW"
+        android:id="@+id/action_edit_profile"
+        android:title="EDIT PROFILE"
         app:showAsAction="always" />
 </menu>

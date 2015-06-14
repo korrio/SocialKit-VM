@@ -17,11 +17,12 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.fragment.VideoViewFragment;
 import co.aquario.socialkit.fragment.YoutubeDetailFragment;
 import co.aquario.socialkit.model.Video;
 
 
-public class YoutubeDragableActivity extends BaseActivity {
+public class WatchDragableActivity extends BaseActivity {
 
     private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
     private static String VIDEO_KEY = "";
@@ -41,17 +42,18 @@ public class YoutubeDragableActivity extends BaseActivity {
     String userId;
     private YouTubePlayer youtubePlayer;
     private YouTubePlayerSupportFragment youtubeFragment;
+    private VideoViewFragment videoViewFragment;
     private Video video;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_youtube_dragable);
+        setContentView(R.layout.activity_watch_dragable);
         ButterKnife.inject(this);
 
         video = Parcels.unwrap((Parcelable) getIntent().getExtras().get("obj"));
 
-        VIDEO_KEY = video.getYoutubeId();
+
         userId = video.getpUserId();
         name = video.getpName();
         avatar = video.getpAvatar();
@@ -61,9 +63,15 @@ public class YoutubeDragableActivity extends BaseActivity {
         countLove = video.getnLove();
         countComment = video.getnComment();
         countShare = video.getnShare();
+        VIDEO_KEY = video.getYoutubeId();
 
-        initializeYoutubeFragment();
-        initializeDraggablePanel();
+        if(video.getPostType().equals("youtube")) {
+            initYoutubeFragment(VIDEO_KEY);
+        } else {
+            initClipFragment(VIDEO_KEY);
+        }
+
+        initDraggablePanel();
         hookDraggablePanelListeners();
     }
 
@@ -76,11 +84,18 @@ public class YoutubeDragableActivity extends BaseActivity {
         draggablePanel.maximize();
     }
 
+    private void initClipFragment(String clipPath) {
+        Bundle data2 = new Bundle();
+        videoViewFragment = new VideoViewFragment();
+        data2.putString("PATH", clipPath);
+        videoViewFragment.setArguments(data2);
+    }
+
     /**
      * Initialize the YouTubeSupportFrament attached as top fragment to the DraggablePanel widget and
      * reproduce the YouTube video represented with a YouTube url.
      */
-    private void initializeYoutubeFragment() {
+    private void initYoutubeFragment(final String youtubeId) {
         youtubeFragment = new YouTubePlayerSupportFragment();
         youtubeFragment.initialize(YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
 
@@ -88,7 +103,7 @@ public class YoutubeDragableActivity extends BaseActivity {
             public void onInitializationSuccess(YouTubePlayer.Provider provider,YouTubePlayer player, boolean wasRestored) {
                 if (!wasRestored) {
                     youtubePlayer = player;
-                    youtubePlayer.loadVideo(VIDEO_KEY);
+                    youtubePlayer.loadVideo(youtubeId);
                     youtubePlayer.setShowFullscreenButton(true);
                 }
             }
@@ -103,9 +118,15 @@ public class YoutubeDragableActivity extends BaseActivity {
     /**
      * Initialize and configure the DraggablePanel widget with two fragments and some attributes.
      */
-    private void initializeDraggablePanel() {
+    private void initDraggablePanel() {
         draggablePanel.setFragmentManager(getSupportFragmentManager());
-        draggablePanel.setTopFragment(youtubeFragment);
+
+        if(video.getPostType().equals("youtube")) {
+            draggablePanel.setTopFragment(youtubeFragment);
+        } else {
+            draggablePanel.setTopFragment(videoViewFragment);
+        }
+
 
         YoutubeDetailFragment youtubeDetailFragment = new YoutubeDetailFragment();
 

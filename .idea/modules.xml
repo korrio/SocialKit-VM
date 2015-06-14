@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SocialKit-VM-emoticon.iml" filepath="$PROJECT_DIR$/SocialKit-VM-emoticon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidwebsocketsmaster/androidwebsocketsmaster.iml" filepath="$PROJECT_DIR$/androidwebsocketsmaster/androidwebsocketsmaster.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/bookends/bookends.iml" filepath="$PROJECT_DIR$/bookends/bookends.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
@@ -11,6 +12,7 @@
       <module fileurl="file://$PROJECT_DIR$/layouts/layouts.iml" filepath="$PROJECT_DIR$/layouts/layouts.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/projectLibs/projectLibs.iml" filepath="$PROJECT_DIR$/app/projectLibs/projectLibs.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/projectLibs/sbl/sbl.iml" filepath="$PROJECT_DIR$/app/projectLibs/sbl/sbl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />
       <module fileurl="file://$PROJECT_DIR$/vlc/vlc.iml" filepath="$PROJECT_DIR$/vlc/vlc.iml" />
     </modules>
   </component>

@@ -175,5 +175,6 @@ dependencies {
     compile project(':bookends')
     compile project(':app:projectLibs:sbl')
     compile project(':cvlibrary')
-    //compile project(':vlc')
+    compile project(':androidwebsocketsmaster')
+    //compile project(':vitamio')
 }

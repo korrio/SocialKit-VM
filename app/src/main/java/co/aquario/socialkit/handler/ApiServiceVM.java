@@ -78,6 +78,10 @@ public interface ApiServiceVM {
     public void getProfile(@Path("id") int id,
                            Callback<UserProfileDataResponse> responseJson);
 
+    @GET("/username/{username}")
+    public void getProfileUsername(@Path("username") String username,
+                           Callback<UserProfileDataResponse> responseJson);
+
     @POST("/1.0/posts/{id}/comment")
     public void postComment(@Path("id") int postId,@QueryMap Map<String, String> options,Callback<PostCommentDataResponse> responseCallback);
 

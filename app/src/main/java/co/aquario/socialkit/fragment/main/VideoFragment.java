@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.YoutubeDragableActivity;
+import co.aquario.socialkit.activity.WatchDragableActivity;
 import co.aquario.socialkit.adapter.VideoRecyclerAdapter;
 import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.util.PrefManager;
@@ -102,7 +102,7 @@ public class VideoFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
                 Video post = list.get(position);
-                Intent i2 = new Intent(getActivity(), YoutubeDragableActivity.class);
+                Intent i2 = new Intent(getActivity(), WatchDragableActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("obj", Parcels.wrap(post));
 
@@ -178,7 +178,7 @@ public class VideoFragment extends BaseFragment {
                     int commentCount = obj.optInt("comment_count");
                     int shareCount = obj.optInt("share_count");
 
-                    Video item = new Video(postId,title,shortMessage,youtubeId,text,timestamp,view,pUserId,pName,pAvatar,loveCount,commentCount,shareCount);
+                    Video item = new Video("youtube",postId,title,shortMessage,youtubeId,text,timestamp,view,pUserId,pName,pAvatar,loveCount,commentCount,shareCount);
                     list.add(item);
                 }
             }
