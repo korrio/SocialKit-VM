@@ -52,7 +52,7 @@ import android.widget.VideoView;
  * <p>Code used to invoke this intent should look something like the following:</p>
  *
  * <pre>
- *      Intent lVideoIntent = new Intent(null, Uri.parse("ytpl://"+YOUTUBE_PLAYLIST_ID), this, OpenYouTubePlayerActivity.class);
+ *      Intent lVideoIntent = toolbar Intent(null, Uri.parse("ytpl://"+YOUTUBE_PLAYLIST_ID), this, OpenYouTubePlayerActivity.class);
  * 		startActivity(lVideoIntent);
  * </pre>
  *
@@ -74,7 +74,7 @@ import android.widget.VideoView;
  * <p>For example:</p>
  *
  * <pre>
- *      Intent lVideoIntent = new Intent(null, Uri.parse("ytpl://"+YOUTUBE_PLAYLIST_ID), this, OpenYouTubePlayerActivity.class);
+ *      Intent lVideoIntent = toolbar Intent(null, Uri.parse("ytpl://"+YOUTUBE_PLAYLIST_ID), this, OpenYouTubePlayerActivity.class);
  *      lVideoIntent.putExtra("com.keyes.video.msg.init", getString("str_video_intro"));
  *      lVideoIntent.putExtra("com.keyes.video.msg.detect", getString("str_video_detecting_bandwidth"));
  *      ...
@@ -246,7 +246,7 @@ public class OpenYouTubePlayerActivity extends Activity {
 
         mVideoView = new VideoView(this);
         mVideoView.setId(3);
-        //android.widget.RelativeLayout.LayoutParams lVidViewLayoutParams = new android.widget.RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //android.widget.RelativeLayout.LayoutParams lVidViewLayoutParams = toolbar android.widget.RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         android.widget.RelativeLayout.LayoutParams lVidViewLayoutParams = new RelativeLayout.LayoutParams(px * 2, px);
         lVidViewLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);

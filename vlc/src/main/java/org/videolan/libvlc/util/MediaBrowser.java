@@ -49,7 +49,7 @@ public class MediaBrowser {
      */
     public interface EventListener {
         /**
-         * Received when a new media is added.
+         * Received when a toolbar media is added.
          * @param index
          * @param media
          */

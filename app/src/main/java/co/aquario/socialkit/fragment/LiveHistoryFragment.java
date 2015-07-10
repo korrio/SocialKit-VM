@@ -1,7 +1,6 @@
 package co.aquario.socialkit.fragment;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.annotation.Nullable;
@@ -23,8 +22,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import co.aquario.socialkit.ExoSimplePlayerActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.LiveHistoryRecyclerAdapter;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.model.Live;
@@ -89,7 +88,9 @@ public class LiveHistoryFragment extends BaseFragment {
                 String name = list.get(position).getNameLive();
                 String cover = avatarUrl;
 
-                Intent i = new Intent(mActivity, VitamioActivity.class);
+
+                /*
+                Intent i = toolbar Intent(mActivity, VitamioActivity.class);
                 i.putExtra("id", url);
                 i.putExtra("name", name);
                 i.putExtra("avatar", avatarUrl);
@@ -97,10 +98,13 @@ public class LiveHistoryFragment extends BaseFragment {
                 i.putExtra("cover", cover);
                 i.putExtra("desc", username);
                 i.putExtra("userId", userId);
-                //startActivity(i);
+                startActivity(i);
 
-               // VideoPlayerActivity.startActivity(mActivity, url);
-                //VitamioActivity.startActivity(mActivity, url,list.get(position));
+                */
+
+
+                ExoSimplePlayerActivity.startActivity(getActivity(), url);
+
 
             }
         });

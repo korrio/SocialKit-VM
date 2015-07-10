@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_love"
+            android:layout_width="65dp"
+            android:layout_height="@dimen/height_size_button_content"
+            android:textColor="@color/material_drawer_dark_hint_text"
+            android:text="123"
+            android:textStyle="bold"
+            android:background="#fff"
+            android:drawableLeft="@drawable/ic_heart_outline_grey"
+            android:paddingLeft="12dp"/>
+
+        <Button
+            android:id="@+id/btn_comment"
+            android:layout_width="65dp"
+            android:layout_height="@dimen/height_size_button_content"
+            android:text="321"
+            android:drawableLeft="@drawable/ic_comment"
+            android:textStyle="bold"
+            android:textColor="@color/material_drawer_dark_hint_text"
+            android:background="#fff"
+            android:paddingLeft="6dp"/>
+
+        <View android:layout_width="120dp"
+              android:layout_height="@dimen/height_size_button_content"
+              android:background="#fff"
+              android:layout_weight="4"/>
+
+
+        <Button
+            android:id="@+id/btn_share"
+            android:layout_width="65dp"
+            android:layout_height="@dimen/height_size_button_content"
+            android:textColor="#252525"
+            android:drawableLeft="@drawable/facebook"
+            android:text="456"
+            android:textStyle="bold"
+            android:background="#fff"
+            />
+    </LinearLayout>
+</LinearLayout>

@@ -46,7 +46,7 @@ public class VLCInstance {
             LibVLC.setOnNativeCrashListener(new LibVLC.OnNativeCrashListener() {
                 @Override
                 public void onNativeCrash() {
-                    /*Intent i = new Intent(context, NativeCrashActivity.class);
+                    /*Intent i = toolbar Intent(context, NativeCrashActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     i.putExtra("PID", android.os.Process.myPid());
                     context.startActivity(i);*/

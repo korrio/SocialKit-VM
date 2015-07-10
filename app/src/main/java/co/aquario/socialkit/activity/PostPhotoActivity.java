@@ -281,7 +281,7 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
 		return super.onOptionsItemSelected(item);
 	}
 
-    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
     public ProgressDialog dialog;
     public String statusText;

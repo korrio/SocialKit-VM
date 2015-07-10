@@ -1,12 +1,12 @@
 package co.aquario.socialkit.activity;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -37,7 +37,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class SCSearchActivity extends ActionBarActivity implements SearchView.OnQueryTextListener{
+public class SCSearchActivity extends Activity implements SearchView.OnQueryTextListener{
 
 
     private TracksAdapter mAdapter;
@@ -130,7 +130,7 @@ public class SCSearchActivity extends ActionBarActivity implements SearchView.On
         });
 
         /*
-        service.getRecentSongs(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()), new Callback<List<Track>>() {
+        service.getRecentSongs(toolbar SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(toolbar Date()), toolbar Callback<List<Track>>() {
             @Override
             public void success(List<Track> tracks, Response response) {
                updateTracks(tracks);

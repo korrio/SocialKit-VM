@@ -122,7 +122,7 @@ public class YouTubeUtility {
 
         //Find out the URI string from the parameters
 
-        //Populate the list of formats for the video
+        //Populate the listStory of formats for the video
         String lFmtList = URLDecoder.decode(lArgMap.get("fmt_list"));
         ArrayList<Format> lFormats = new ArrayList<Format>();
         if(null != lFmtList){
@@ -134,7 +134,7 @@ public class YouTubeUtility {
             }
         }
 
-        //Populate the list of streams for the video
+        //Populate the listStory of streams for the video
         String lStreamList = lArgMap.get("url_encoded_fmt_stream_map");
         if(null != lStreamList){
             String lStreamStrs[] = lStreamList.split(",");
@@ -144,7 +144,7 @@ public class YouTubeUtility {
                 lStreams.add(lStream);
             }
 
-            //Search for the given format in the list of video formats
+            //Search for the given format in the listStory of video formats
             // if it is there, select the corresponding stream
             // otherwise if fallback is requested, check for next lower format
             int lFormatId = Integer.parseInt(pYouTubeFmtQuality);
@@ -168,7 +168,7 @@ public class YouTubeUtility {
 
         }
         //Return the URI string. It may be null if the format (or a fallback format if enabled)
-        // is not found in the list of formats for the video
+        // is not found in the listStory of formats for the video
         return lUriStr;
     }
 
@@ -221,7 +221,7 @@ public class YouTubeUtility {
             lMap.put(lSplitIds[i], lSplitIds[i]);
         }
 
-        // recreate the viewed list
+        // recreate the viewed listStory
         String lNewIdList = "";
         Set<String> lKeys = lMap.keySet();
         Iterator<String> lIter = lKeys.iterator();
@@ -232,7 +232,7 @@ public class YouTubeUtility {
             }
         }
 
-        // add the new video id
+        // add the toolbar video id
         lNewIdList += pVideoId + ";";
 
         Editor lPrefEdit = lPrefs.edit();

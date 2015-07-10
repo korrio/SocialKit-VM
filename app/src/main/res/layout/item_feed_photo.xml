@@ -23,6 +23,11 @@
             android:layout_marginTop="6dp"
             android:layout_marginRight="6dp">
 
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/card_toolbar"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -34,7 +39,7 @@
                     android:layout_height="wrap_content" />
 
                 <include
-                    layout="@layout/item_social_buttons"
+                    layout="@layout/item_social_buttons_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

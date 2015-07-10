@@ -83,7 +83,7 @@ public class PhotoFragment extends BaseFragment {
                 Log.e("scrollBottom","laew na");
                 refresh = true;
                 ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
-                //ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),current_page,15));
+                //ApiBus.getInstance().post(toolbar LoadFriendListEvent(type,Integer.parseInt(userId),current_page,15));
             }
         });
 
@@ -92,13 +92,13 @@ public class PhotoFragment extends BaseFragment {
 
         /*
         //gridView = (ObservableGridView) rootView.findViewById(R.id.scroll);
-        adapter = new FriendAdapter(getActivity(), liveChannelList);
+        adapter = toolbar FriendAdapter(getActivity(), liveChannelList);
         gridView.setAdapter(adapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(toolbar AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
+                Intent i = toolbar Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
                 i.putExtra("userId",liveChannelList.get(position).id);
                 i.putExtra("avatar",liveChannelList.get(position).getAvatarUrl());
                 i.putExtra("cover",liveChannelList.get(position).getCoverUrl());

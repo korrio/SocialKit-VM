@@ -7,96 +7,10 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:orientation="horizontal"
-        android:padding="@dimen/padding_size_layout_medium"
-        android:paddingLeft="@dimen/padding_size_layout_medium"
-        android:paddingRight="@dimen/padding_size_layout_medium">
-
-        <ImageView
-            android:id="@+id/profile_avatar"
-            android:layout_width="@dimen/logo_size"
-            android:layout_height="@dimen/logo_size"
-            android:layout_marginRight="10dp"
-            android:gravity="center" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/profile_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Aung"
-                android:textColor="#000000"
-                android:textSize="@dimen/text_size"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/ago"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="11 days ago"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-
-                android:textColor="#9497A3"
-                android:textSize="10sp" />
-        </LinearLayout>
-
-        <!--<LinearLayout-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_weight="1"></LinearLayout>-->
-
-        <TextView
-            android:id="@+id/number1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_size_layout_small"
-            android:drawablePadding="6dp"
-            android:drawableRight="@drawable/ic_love"
-            android:gravity="center"
-            android:text="3"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#9497A3"
-            android:textSize="@dimen/size_text_icon" />
-
-
-        <TextView
-            android:id="@+id/number2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_size_layout_small"
-            android:drawablePadding="6dp"
-            android:drawableRight="@drawable/ic_comment"
-            android:gravity="center"
-            android:text="2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#9497A3"
-            android:textSize="@dimen/size_text_icon" />
-
-        <TextView
-            android:id="@+id/number3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_size_layout_small"
-            android:drawablePadding="6dp"
-            android:drawableRight="@drawable/ic_share"
-            android:gravity="center"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#9497A3"
-            android:textSize="@dimen/size_text_icon" />
-
-    </LinearLayout>
+    <include
+        layout="@layout/item_feed_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
     <LinearLayout

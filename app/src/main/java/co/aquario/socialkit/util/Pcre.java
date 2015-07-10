@@ -77,7 +77,7 @@ public class Pcre {
             "\\)" //24
     };
 
-    /** Creates a new instance of RegexFinder */
+    /** Creates a toolbar instance of RegexFinder */
     public Pcre() {
     }
 

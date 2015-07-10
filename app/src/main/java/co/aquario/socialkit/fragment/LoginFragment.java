@@ -2,14 +2,18 @@ package co.aquario.socialkit.fragment;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,8 +21,8 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.auth.FacebookHandle;
 import com.androidquery.callback.AjaxStatus;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
-import com.nispok.snackbar.Snackbar;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -26,11 +30,13 @@ import com.squareup.otto.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.event.FailedNetworkEvent;
 import co.aquario.socialkit.event.LoadFbProfileEvent;
 import co.aquario.socialkit.event.LoginEvent;
@@ -42,6 +48,7 @@ import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.FbProfile;
 import co.aquario.socialkit.model.UserProfile;
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.util.Utils;
 
 public class LoginFragment extends BaseFragment {
 
@@ -51,6 +58,8 @@ public class LoginFragment extends BaseFragment {
     private FbProfile profile;
     private MaterialEditText userEt;
     private MaterialEditText passEt;
+
+    private ImageView loginBg;
 
     private TextView loginBtn;
     private TextView registerBtn;
@@ -66,12 +75,34 @@ public class LoginFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         aq = new AQuery(getActivity());
         prefManager = MainApplication.get(getActivity()).getPrefManager();
+
+        try {
+            PackageInfo info = getActivity().getPackageManager().getPackageInfo(
+                    "co.aquario.socialkit",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        loginBg = (ImageView) rootView.findViewById(R.id.imageView);
+
+        if(Utils.isTablet(getActivity()))
+            Glide.with(this).load(MainApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=600").into(loginBg);
+        else
+            Glide.with(this).load(MainApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=360").into(loginBg);
 
         userEt = (MaterialEditText) rootView.findViewById(R.id.et_user);
         passEt = (MaterialEditText) rootView.findViewById(R.id.et_pass);
@@ -119,17 +150,20 @@ public class LoginFragment extends BaseFragment {
     }
 
     public void authFacebook() {
-        handle = new FacebookHandle(getActivity(), MainApplication.APP_ID, MainApplication.APP_PERMISSIONS);
-        String url = "https://graph.facebook.com/me";
-        ProgressDialog dialog = new ProgressDialog(getActivity());
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(true);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(true);
-        dialog.setTitle("Authenicating...");
 
-        aq.auth(handle).progress(dialog)
-                .ajax(url, JSONObject.class, this, "facebookCb");
+
+
+//        handle = toolbar FacebookHandle(getActivity(), MainApplication.APP_ID, MainApplication.APP_PERMISSIONS);
+//        String url = "https://graph.facebook.com/me";
+//        ProgressDialog dialog = toolbar ProgressDialog(getActivity());
+//        dialog.setIndeterminate(true);
+//        dialog.setCancelable(true);
+//        dialog.setInverseBackgroundForced(false);
+//        dialog.setCanceledOnTouchOutside(true);
+//        dialog.setTitle("Authenicating...");
+//
+//        aq.auth(handle).progress(dialog)
+//                .ajax(url, JSONObject.class, this, "facebookCb");
     }
 
     public void facebookCb(String url, JSONObject jo, AjaxStatus status)
@@ -173,7 +207,7 @@ public class LoginFragment extends BaseFragment {
                 .isLogin().put(true)
                 .commit();
 
-        Snackbar.with(getActivity().getApplicationContext()).text(event.getLoginData().token).show(getActivity());
+        //Snackbar.with(getActivity().getApplicationContext()).text(event.getLoginData().token).show(getActivity());
 
         Log.e("VM_PROFILE",event.getLoginData().user.toString());
 
@@ -188,13 +222,12 @@ public class LoginFragment extends BaseFragment {
     public void onLoginFailedNetwork(FailedNetworkEvent event) {
         Log.e("ARAIWA", "onLoginFailedNetwork");
         prefManager.clear();
-        Snackbar.with(getActivity().getApplicationContext()).text("Cannot connect to server").show(getActivity());
+        Toast.makeText(getActivity().getApplicationContext(), "Cannot connect to server", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe
     public void onLoginFailedAuth(LoginFailedAuthEvent event) {
         Log.e("ARAIWA", "onLoginFailedAuth");
-        Snackbar.with(getActivity().getApplicationContext()).text("Wrong username or password").show(getActivity());
         Toast.makeText(getActivity().getApplicationContext(), "Wrong username or password", Toast.LENGTH_SHORT).show();
 
         //prefManager.clear();

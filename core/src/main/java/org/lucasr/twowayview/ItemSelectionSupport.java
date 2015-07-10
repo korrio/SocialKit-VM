@@ -129,7 +129,7 @@ public class ItemSelectionSupport {
      * choice mode has not been set to {@link ChoiceMode#NONE} and the adapter
      * has stable IDs.
      *
-     * @return A new array which contains the id of each checked item in the
+     * @return A toolbar array which contains the id of each checked item in the
      *         list.
      *
      * @see android.support.v7.widget.RecyclerView.Adapter#hasStableIds()
@@ -156,7 +156,7 @@ public class ItemSelectionSupport {
      * {@link ChoiceMode#MULTIPLE}.
      *
      * @param position The item whose checked state is to be checked
-     * @param checked The new checked state for the item
+     * @param checked The toolbar checked state for the item
      */
     public void setItemChecked(int position, boolean checked) {
         if (mChoiceMode == ChoiceMode.NONE) {

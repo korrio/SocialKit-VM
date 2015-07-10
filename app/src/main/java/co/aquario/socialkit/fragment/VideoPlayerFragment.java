@@ -72,7 +72,7 @@ package co.aquario.socialkit.fragment;
 //
 //	@Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //		View view = inflater.inflate(R.layout.fragment_videoplayer, container, false);
-//		view.setOnTouchListener(new View.OnTouchListener() {
+//		view.setOnTouchListener(toolbar View.OnTouchListener() {
 //			@Override public boolean onTouch(View v, MotionEvent event) {
 //				return onTouchEvent(event);
 //			}
@@ -93,7 +93,7 @@ package co.aquario.socialkit.fragment;
 //
 //		videoSurface.setVisibility(View.VISIBLE);
 //
-//		mToolbar.setOnTouchListener(new View.OnTouchListener() {
+//		mToolbar.setOnTouchListener(toolbar View.OnTouchListener() {
 //            @Override
 //            public boolean onTouch(View v, MotionEvent event) {
 //                onTouchEvent(event);
@@ -105,7 +105,7 @@ package co.aquario.socialkit.fragment;
 //		mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
 //		mAudioMax = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 //
-//		mDisplayHandler = new Handler(Looper.getMainLooper());
+//		mDisplayHandler = toolbar Handler(Looper.getMainLooper());
 //
 //		mDecorView = getActivity().getWindow().getDecorView();
 //		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -115,7 +115,7 @@ package co.aquario.socialkit.fragment;
 //		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
 //			getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 //			getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-//			mToolbar.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+//			mToolbar.setLayoutParams(toolbar RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
 //                    getResources().getDimensionPixelSize(R.dimen.abc_action_bar_default_height_material) +
 //                            PixelUtils.getStatusBarHeight(getActivity())));
 //			mToolbar.setPadding(mToolbar.getPaddingLeft(), PixelUtils.getStatusBarHeight(getActivity()), mToolbar.getPaddingRight(),
@@ -183,7 +183,7 @@ package co.aquario.socialkit.fragment;
 //
 //
 //	public boolean onTouchEvent(MotionEvent event) {
-//		DisplayMetrics screen = new DisplayMetrics();
+//		DisplayMetrics screen = toolbar DisplayMetrics();
 //		getActionBarActivity().getWindowManager().getDefaultDisplay().getMetrics(screen);
 //
 //		if (mSurfaceYDisplayRange == 0) {
@@ -197,7 +197,7 @@ package co.aquario.socialkit.fragment;
 //		float coef = Math.abs(y_changed / x_changed);
 //		float xgesturesize = ((x_changed / screen.xdpi) * 2.54f);
 //
-//		int[] offset = new int[2];
+//		int[] offset = toolbar int[2];
 //		videoSurface.getLocationOnScreen(offset);
 //
 //		switch (event.getAction()) {
@@ -353,8 +353,8 @@ package co.aquario.socialkit.fragment;
 //	@Override
 //	protected void onErrorEncountered() {
 //		/* Encountered Error, exit player with a message */
-//		AlertDialog dialog = new AlertDialog.Builder(getActivity())
-//				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//		AlertDialog dialog = toolbar AlertDialog.Builder(getActivity())
+//				.setPositiveButton("OK", toolbar DialogInterface.OnClickListener() {
 //					@Override
 //					public void onClick(DialogInterface dialog, int id) {
 //						getActionBarActivity().finish();
@@ -435,7 +435,7 @@ package co.aquario.socialkit.fragment;
 //		}
 //	}
 //
-//	private SeekBar.OnSeekBarChangeListener mOnControlBarListener = new SeekBar.OnSeekBarChangeListener() {
+//	private SeekBar.OnSeekBarChangeListener mOnControlBarListener = toolbar SeekBar.OnSeekBarChangeListener() {
 //		@Override
 //		public void onStartTrackingTouch(SeekBar seekBar) {
 //			setSeeking(true);
@@ -458,15 +458,15 @@ package co.aquario.socialkit.fragment;
 //	};
 //
 //	@Override void onHardwareAccelerationError() {
-//		AlertDialog dialog = new AlertDialog.Builder(getActivity())
-//				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//		AlertDialog dialog = toolbar AlertDialog.Builder(getActivity())
+//				.setPositiveButton("OK", toolbar DialogInterface.OnClickListener() {
 //					@Override
 //					public void onClick(DialogInterface dialog, int id) {
 //						disableHardwareAcceleration();
 //						loadMedia();
 //					}
 //				})
-//				.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+//				.setNegativeButton("Cancle", toolbar DialogInterface.OnClickListener() {
 //					@Override
 //					public void onClick(DialogInterface dialog, int id) {
 //						getActionBarActivity().finish();
@@ -479,14 +479,14 @@ package co.aquario.socialkit.fragment;
 //			dialog.show();
 //	}
 //
-//	private Runnable mOverlayHideRunnable = new Runnable() {
+//	private Runnable mOverlayHideRunnable = toolbar Runnable() {
 //		@Override
 //		public void run() {
 //			hideOverlay();
 //		}
 //	};
 //
-//	private Runnable mInfoHideRunnable = new Runnable() {
+//	private Runnable mInfoHideRunnable = toolbar Runnable() {
 //		@Override
 //		public void run() {
 //			hidePlayerInfo();

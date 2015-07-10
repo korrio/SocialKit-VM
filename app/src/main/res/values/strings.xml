@@ -67,4 +67,8 @@
     <string name="btn_join">JOIN</string>
     <string name="btn_send">Send</string>
 
+    <string name="action_report">Report</string>
+
+    <string name="more_video">More videos</string>
+
 </resources>

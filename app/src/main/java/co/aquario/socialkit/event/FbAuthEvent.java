@@ -1,7 +1,7 @@
 package co.aquario.socialkit.event;
 
 /**
- * Created by Mac on 3/4/15.
+ * Created by Mac on 6/27/15.
  */
 public class FbAuthEvent {
     private String fbToken;

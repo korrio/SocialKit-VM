@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="co.aquario.socialkit" >
+    package="co.aquario.socialkit">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -34,56 +34,24 @@
         android:label="@string/app_name"
         android:theme="@style/CustomTheme">
 
-        <activity android:theme="@style/CustomTheme" android:name="RevealActivity"/>
+        <activity android:name="me.iwf.photopicker.PhotoPickerActivity"
+                  android:theme="@style/Theme.AppCompat.NoActionBar"
+            />
 
+        <activity android:name="me.iwf.photopicker.PhotoPagerActivity"
+                  android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
+        <activity android:name=".CustomPhotoPagerActivity"
+                  android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <activity
-            android:name="io.vov.vitamio.activity.InitActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-           >
+            android:name=".SearchActivity">
         </activity>
-
-        <activity
-            android:name=".chat.NameActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/ChatAppTheme">
-
-        </activity>
-        <activity
-            android:name=".chat.ChatActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ChatAppTheme">
-        </activity>
-
-        <activity
-            android:name=".activity.NewProfileActivity" android:theme="@style/AppCompatTheme" />
-
-        <activity
-            android:name=".SearchActivity" android:theme="@style/CustomTheme" />
-
-        <activity
-            android:name=".TakePhotoActivity2" android:theme="@style/CustomTheme" />
-
-        <activity
-            android:name=".PublishActivity" android:theme="@style/CustomTheme"  />
-
-        <activity
-            android:name=".activity.CommentsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CustomTheme" />
 
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/CustomTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -91,90 +59,127 @@
         </activity>
 
         <activity
-            android:name=".activity.VideoActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/CustomTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
+            android:name=".RevealActivity"
+            android:theme="@style/CustomTheme" />
+
+
+
+
         <activity
-            android:name=".activity.PostPhotoActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme2"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
-        <activity
-            android:name=".activity.PostVideoActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme2"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
-        <activity
-            android:name=".activity.UploadClipReviewActivity"
-            android:label="Upload video"
-            android:theme="@style/AppTheme2"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
+            android:name=".MainActivity"
+            android:label="@string/app_name">
         </activity>
 
         <activity
-            android:name=".activity.PhotoActivity"
-            android:label="Photos"
-            android:theme="@style/AppTheme2"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
+            android:name=".ExoSimplePlayerActivity"
+            android:label="@string/app_name" />
+
+        <activity
+            android:name=".TakePhotoActivity2"
+            android:theme="@style/CustomTheme" />
+
+        <activity
+            android:name=".PublishActivity"
+            android:theme="@style/CustomTheme" />
+
         <activity
             android:name=".TakePhotoActivity"
             android:label=""
             android:screenOrientation="portrait" />
+
+
+        <activity
+            android:name=".chat.NameActivity"
+            android:label="@string/app_name"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustPan">
+
+        </activity>
+        <activity
+            android:name=".chat.ChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"/>
+
+        <activity
+            android:name=".NewProfileActivity"
+            android:theme="@style/AppCompatTheme" />
+
+        <activity
+            android:name=".activity.DragableActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".activity.CommentsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme" />
+
+
+        <activity
+            android:name=".activity.VideoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+        <activity
+            android:name=".activity.PostPhotoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+        <activity
+            android:name=".activity.PostVideoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+        <activity
+            android:name=".activity.UploadClipReviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+
+        <activity
+            android:name=".activity.PhotoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
+
         <activity
             android:name=".activity.PostYoutubeActivity"
-            android:label="Youtube"
-            android:theme="@style/AppTheme2">
-        </activity>
-
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme" />
 
         <activity
             android:name=".activity.SCSearchActivity"
-            android:label="SoundCloud"
-            android:theme="@style/AppTheme2"
-            android:windowSoftInputMode="adjustResize|stateHidden">
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".activity.YtSearchActivity"
-            android:label="Search Youtube"
-            android:theme="@style/AppTheme2"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
             android:name=".activity.YoutubeActivity"
             android:label="Youtube"
-            android:windowSoftInputMode="adjustResize|stateHidden">
-        </activity>
-        <activity
-            android:name=".activity.WatchDragableActivity"
-            android:label="Youtube"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
-
-
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <activity
             android:name=".activity.PostStatusActivity"
-            android:label="Write Post"
-            android:theme="@style/AppTheme2">
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme"></activity>
         <activity
             android:name=".activity.PostStatusActivity2"
-            android:label="Write Post"
-            android:theme="@style/AppTheme2"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/ChatAppTheme" />
         <activity
             android:name=".activity.PostSoundCloudActivity"
             android:label="Share your music "
-            android:theme="@style/AppTheme2"/>
-
+            android:theme="@style/AppTheme2" />
 
         <activity
-            android:name=".activity.VitamioActivity"
-            android:label="@string/title_activity_live_history" >
-        </activity>
+            android:name=".search.youtube.OpenYouTubePlayerActivity"/>
+
 
 
 
@@ -192,13 +197,7 @@
         </activity>
         -->
 
-        <activity
-            android:name=".search.youtube.OpenYouTubePlayerActivity"
-            android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Black">
-        </activity>
+
 
 
     </application>

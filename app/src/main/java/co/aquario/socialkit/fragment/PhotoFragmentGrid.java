@@ -77,7 +77,7 @@ public class PhotoFragmentGrid extends BaseFragment {
                 Log.e("scrollBottom","laew na");
                 refresh = true;
                 ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
-                //ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),current_page,15));
+                //ApiBus.getInstance().post(toolbar LoadFriendListEvent(type,Integer.parseInt(userId),current_page,15));
             }
         });
 
@@ -86,18 +86,18 @@ public class PhotoFragmentGrid extends BaseFragment {
 
         /*
         //gridView = (ObservableGridView) rootView.findViewById(R.id.scroll);
-        adapter = new FriendAdapter(getActivity(), list);
+        adapter = toolbar FriendAdapter(getActivity(), listStory);
         gridView.setAdapter(adapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(toolbar AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
-                i.putExtra("userId",list.get(position).id);
-                i.putExtra("avatar",list.get(position).getAvatarUrl());
-                i.putExtra("cover",list.get(position).getCoverUrl());
-                i.putExtra("name",list.get(position).name);
-                i.putExtra("username",list.get(position).username);
+                Intent i = toolbar Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
+                i.putExtra("userId",listStory.get(position).id);
+                i.putExtra("avatar",listStory.get(position).getAvatarUrl());
+                i.putExtra("cover",listStory.get(position).getCoverUrl());
+                i.putExtra("name",listStory.get(position).name);
+                i.putExtra("username",listStory.get(position).username);
                 getActivity().startActivity(i);
             }
         });

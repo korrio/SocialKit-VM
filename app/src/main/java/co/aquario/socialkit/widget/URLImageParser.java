@@ -63,22 +63,25 @@ public class URLImageParser implements Html.ImageGetter {
         @Override
         protected void onPostExecute(Drawable result) {
             // set the correct bound according to the result from HTTP call
-            urlDrawable.setBounds(0, 0, 0 + result.getIntrinsicWidth() * size, 0
-                    + result.getIntrinsicHeight() * size);
+            if(result != null) {
+                urlDrawable.setBounds(0, 0, 0 + result.getIntrinsicWidth() * size, 0
+                        + result.getIntrinsicHeight() * size);
 
-            // change the reference of the current drawable to the result
-            // from the HTTP call
-            urlDrawable.drawable = result;
+                // change the reference of the current drawable to the result
+                // from the HTTP call
+                urlDrawable.drawable = result;
 
-            // redraw the image by invalidating the container
-            URLImageParser.this.container.invalidate();
+                // redraw the image by invalidating the container
+                URLImageParser.this.container.invalidate();
 
-            // For ICS
-            URLImageParser.this.container.setHeight((URLImageParser.this.container.getHeight()
-                    + result.getIntrinsicHeight()));
+                // For ICS
+                URLImageParser.this.container.setHeight((URLImageParser.this.container.getHeight()
+                        + result.getIntrinsicHeight()));
 
-            // Pre ICS
-            URLImageParser.this.container.setEllipsize(null);
+                // Pre ICS
+                URLImageParser.this.container.setEllipsize(null);
+            }
+
 
 
         }
@@ -111,8 +114,8 @@ public class URLImageParser implements Html.ImageGetter {
             return response.body().byteStream();
  
             /*
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpGet request = new HttpGet(urlString);
+            DefaultHttpClient httpClient = toolbar DefaultHttpClient();
+            HttpGet request = toolbar HttpGet(urlString);
             HttpResponse response = httpClient.execute(request);
             return response.getEntity().getContent();
             */

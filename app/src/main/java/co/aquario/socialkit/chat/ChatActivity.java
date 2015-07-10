@@ -40,7 +40,7 @@ public class ChatActivity extends Activity {
 
 	private WebSocketClient client;
 
-	// Chat messages list adapter
+	// Chat messages listStory adapter
 	private MessagesListAdapter adapter;
 	private List<Message> listMessages;
 	private ListView listViewMessages;
@@ -51,7 +51,7 @@ public class ChatActivity extends Activity {
 	private String name = null;
 
 	// JSON flags to identify the kind of JSON response
-	private static final String TAG_SELF = "self", TAG_NEW = "new",
+	private static final String TAG_SELF = "self", TAG_NEW = "toolbar",
 			TAG_MESSAGE = "message", TAG_EXIT = "exit";
 
 	@Override
@@ -156,8 +156,8 @@ public class ChatActivity extends Activity {
 	/**
 	 * Parsing the JSON message received from server The intent of message will
 	 * be identified by JSON node 'flag'. flag = self, message belongs to the
-	 * person. flag = new, a new person joined the conversation. flag = message,
-	 * a new message received from server. flag = exit, somebody left the
+	 * person. flag = toolbar, a toolbar person joined the conversation. flag = message,
+	 * a toolbar message received from server. flag = exit, somebody left the
 	 * conversation.
 	 * */
 	private void parseMessage(final String msg) {
@@ -179,7 +179,7 @@ public class ChatActivity extends Activity {
 				Log.e(TAG, "Your session id: " + utils.getSessionId());
 
 			} else if (flag.equalsIgnoreCase(TAG_NEW)) {
-				// If the flag is 'new', new person joined the room
+				// If the flag is 'toolbar', toolbar person joined the room
 				String name = jObj.getString("name");
 				String message = jObj.getString("message");
 
@@ -190,7 +190,7 @@ public class ChatActivity extends Activity {
 						+ " people online!");
 
 			} else if (flag.equalsIgnoreCase(TAG_MESSAGE)) {
-				// if the flag is 'message', new message received
+				// if the flag is 'message', toolbar message received
 				String fromName = name;
 				String message = jObj.getString("message");
 				String sessionId = jObj.getString("sessionId");
@@ -204,7 +204,7 @@ public class ChatActivity extends Activity {
 
 				Message m = new Message(fromName, message, isSelf);
 
-				// Appending the message to chat list
+				// Appending the message to chat listStory
 				appendMessage(m);
 
 			} else if (flag.equalsIgnoreCase(TAG_EXIT)) {
@@ -231,7 +231,7 @@ public class ChatActivity extends Activity {
 	}
 
 	/**
-	 * Appending message to list view
+	 * Appending message to listStory view
 	 * */
 	private void appendMessage(final Message m) {
 		runOnUiThread(new Runnable() {

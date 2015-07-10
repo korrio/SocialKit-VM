@@ -327,7 +327,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     }
 
     @Subscribe public void onPostCommentSuccess(PostCommentSuccessEvent event) {
-        //ApiBus.getInstance().post(new RefreshEvent());
+        //ApiBus.getInstance().post(toolbar RefreshEvent());
         Toast.makeText(getApplicationContext(),"Success comment",Toast.LENGTH_SHORT).show();
     }
 

@@ -187,7 +187,7 @@ public class PostSoundCloudActivity extends Activity {
 
     }
 
-    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
 
     public void postSoundCloud() {
@@ -310,7 +310,7 @@ public class PostSoundCloudActivity extends Activity {
                         new StringBody(title,chars));
                 entity.addPart("soundcloud_uri",
                         new StringBody(sid,chars));
-                //entity.addPart("photos[]", new FileBody(sourceFile));
+                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

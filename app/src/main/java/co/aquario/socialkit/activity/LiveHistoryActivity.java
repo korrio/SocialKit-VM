@@ -1,6 +1,6 @@
 package co.aquario.socialkit.activity;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v7.app.ActionBarActivity;
@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import co.aquario.socialkit.ExoSimplePlayerActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.LiveHistoryRecyclerAdapter;
 import co.aquario.socialkit.model.Live;
@@ -43,10 +44,14 @@ public class LiveHistoryActivity extends ActionBarActivity {
     private SearchRecentSuggestions suggestions;
     private SearchView searchView;
 
+    Activity mActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_history_recycler);
+
+        mActivity = this;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         if (getSupportActionBar() != null) {
@@ -83,15 +88,7 @@ public class LiveHistoryActivity extends ActionBarActivity {
                 String name = list.get(position).getNameLive();
                 String cover = avatarUrl;
 
-               Intent i = new Intent(getApplicationContext(),VitamioActivity.class);
-                i.putExtra("id",url);
-                i.putExtra("name",name);
-                i.putExtra("avatar",avatarUrl);
-                i.putExtra("title",name);
-                i.putExtra("cover",cover);
-                i.putExtra("desc",username);
-                i.putExtra("userId",userId);
-                startActivity(i);
+                ExoSimplePlayerActivity.startActivity(mActivity,url);
 
             }
         });

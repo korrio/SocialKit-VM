@@ -1,5 +1,6 @@
 package co.aquario.socialkit.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -27,11 +28,11 @@ import org.parceler.Parcels;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
-import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.VideoFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.Video;
@@ -97,9 +98,7 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
     @Subscribe
     public void onLoadProfile(GetUserProfileSuccessEvent event) {
         isFollowing = event.getUser().getIsFollowing();
-
         countFollowerView.setText(event.getCount().follower + " followers");
-
         initButton(isFollowing, btnFollow);
     }
 
@@ -207,11 +206,12 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.myavatar:
-                FeedFragment fragment = new FeedFragment().newInstance(userId, false);
-                FragmentManager manager = getActivity().getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                transaction.replace(R.id.fl_container, fragment).addToBackStack(null);
-                transaction.commit();
+
+                Intent i = new Intent(getActivity(), NewProfileActivity.class);
+                i.putExtra("user_id",userId);
+                getActivity().startActivity(i);
+
+
                 break;
             case R.id.btn_follow:
                 Button button = (Button) v;

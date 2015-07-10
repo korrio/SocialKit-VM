@@ -1,11 +1,11 @@
 package co.aquario.socialkit.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -43,7 +43,7 @@ import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
-public class PostStatusActivity extends AppCompatActivity {
+public class PostStatusActivity extends Activity {
 
     String statusText;
 
@@ -185,7 +185,7 @@ public class PostStatusActivity extends AppCompatActivity {
         });
     }
 
-    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
 
     public void postStatus() {
@@ -316,7 +316,7 @@ public class PostStatusActivity extends AppCompatActivity {
 
 
 
-                //entity.addPart("photos[]", new FileBody(sourceFile));
+                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

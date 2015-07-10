@@ -5,14 +5,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
 import android.text.Html;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.squareup.otto.Subscribe;
 
@@ -26,7 +21,7 @@ import co.aquario.socialkit.util.PrefManager;
 public abstract class BaseFragment extends Fragment {
 
     public PrefManager prefManager;
-    public boolean mSearchCheck;
+    public boolean mSearchCheck = false;
     private Object mActivityResultSubscriber = new Object() {
         @Subscribe
         public void onActivityResultReceived(ActivityResultEvent event) {
@@ -37,21 +32,7 @@ public abstract class BaseFragment extends Fragment {
         }
     };
     private Bundle savedState;
-    private SearchView.OnQueryTextListener onQuerySearchView = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String s) {
-            ((SearchListener) getActivity()).onSearchQuery(s);
-            return true;
-        }
 
-        @Override
-        public boolean onQueryTextChange(String s) {
-            if (mSearchCheck) {
-                // implement your search here
-            }
-            return false;
-        }
-    };
 
     public BaseFragment() {
         super();
@@ -100,6 +81,7 @@ public abstract class BaseFragment extends Fragment {
         // Save State Here
         saveStateToArguments();
     }
+
 
     ////////////////////
     // Don't Touch !!
@@ -184,35 +166,7 @@ public abstract class BaseFragment extends Fragment {
 
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Auto-generated method stub
-        super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.menu_search, menu);
-
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-
-        //if(Utils.isTablet(getActivity()))
-        //  searchView.setQueryHint("Search Friends, Videos, Tags.");
-        //else
-        //  searchView.setQueryHint("Search everything.");
-
-        MenuItem search = menu.findItem(R.id.action_search);
-        search.setActionView(searchView);
-        search.setIcon(R.drawable.ic_search);
-        search.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
-                | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-
-        ((EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text))
-                .setHintTextColor(getResources().getColor(android.R.color.white));
-        searchView.setOnQueryTextListener(onQuerySearchView);
-
-        //search.findItem(R.id.menu_add).setVisible(true);
-        menu.findItem(R.id.action_search).setVisible(true);
-        mSearchCheck = false;
-
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -310,7 +310,7 @@ public class SettingFragment extends BaseFragment {
                 entity.addPart("hometown", new StringBody(homeTown.getText().toString(), chars));
                 entity.addPart("timezone", new StringBody(timeZone.getText().toString(), chars));
 
-                //entity.addPart("photos[]", new FileBody(sourceFile));
+                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

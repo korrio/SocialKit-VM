@@ -8,11 +8,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,9 +37,8 @@ import java.util.Map;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.CommentsActivity;
+import co.aquario.socialkit.activity.DragableActivity;
 import co.aquario.socialkit.activity.LiveFragment;
-import co.aquario.socialkit.activity.WatchDragableActivity;
-import co.aquario.socialkit.fragment.PhotoZoomFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.interfaces.TagClick;
@@ -48,6 +49,7 @@ import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
 import co.aquario.socialkit.widget.TagSelectingTextview;
 import co.aquario.socialkit.widget.URLImageParser;
+import me.iwf.photopicker.PhotoPagerActivity;
 
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> implements TagClick {
@@ -195,12 +197,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
         holder.nShare.setText(item.shareCount + "");
         holder.ago.setText(ago);
 
+        holder.btnShare.setText(item.shareCount + "");
+        holder.btnLove.setText(item.loveCount + "");
+        holder.btnComment.setText(item.commentCount + "");
+
 
         Picasso.with(mActivity)
                 .load(item.author.getAvatarPath())
                 .centerCrop()
-                .resize(100, 100)
-                .transform(new RoundedTransformation(50, 4))
+                .resize(200, 200)
+                .transform(new RoundedTransformation(100, 4))
                 .into(holder.avatar);
 
 
@@ -208,10 +214,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
             holder.msg.setVisibility(View.GONE);
         } else {
             holder.msg.setMovementMethod(LinkMovementMethod.getInstance());
+            /*
             if (item.text.trim().length() < 200)
                 holder.msg.setText(Html.fromHtml("" + Utils.bbcode(item.text) + ""));
             else
                 holder.msg.setText(Html.fromHtml("" + Utils.bbcode(item.text).substring(0, 200) + " ..." + ""));
+                */
 
             TagSelectingTextview mTagSelectingTextview = new TagSelectingTextview();
 
@@ -232,7 +240,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
             holder.msg.setTextSize(18.0f);
 
             /*
-            URLImageParser parser = new URLImageParser(holder.msg, mActivity,2);
+            URLImageParser parser = toolbar URLImageParser(holder.msg, mActivity,2);
             Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
             holder.msg.setText(htmlSpan);
             */
@@ -248,7 +256,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
         } else if (item.type.equals("photo")) {
             Picasso.with(mActivity)
-                    .load(item.media.getFullUrl())
+                    //.load(item.media.getFullUrl())
+                    .load(item.media.getThumbUrl())
                     .error(R.drawable.default_offline)
                     .fit().centerCrop()
                     .into(holder.thumb);
@@ -409,7 +418,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
             transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
             transaction.commit();
         } else if(tag.startsWith("#")) {
-
+            FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1));
+            FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+            transaction.commit();
         }
 
     }
@@ -465,6 +478,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
         RelativeLayout feedThumb;
 
+        Toolbar toolbar;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -505,6 +520,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
             tvName2 = (TextView) comment2.findViewById(R.id.tvName);
             tvComment2 = (TextView) comment2.findViewById(R.id.tvComment);
 
+            toolbar = (Toolbar) view.findViewById(R.id.card_toolbar);
+            if (toolbar != null) {
+                //inflate your menu
+                toolbar.inflateMenu(R.menu.menu_card);
+                toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        return true;
+                    }
+                });
+            }
+
             thumb.setOnClickListener(this);
             avatar.setOnClickListener(this);
             btnComment.setOnClickListener(this);
@@ -526,179 +553,91 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
             switch (v.getId()) {
                 case R.id.thumb:
-                    if (postType.equals("photo")) {
-                        String url = post.media.getFullUrl();
-                        String name = post.author.name;
+                    switch (postType) {
+                        case "photo":
+                            String url = post.media.getFullUrl();
+                            String name = post.author.name;
 
-                        String text = post.text;
-                        if(text == null)
-                            text = "";
-                        else {
-                            text = Html.fromHtml("" + list.get(clickedPos).text + "").toString();
-                            if (text.trim().length() >= 200)
-                                text = text.substring(0, 200);
-                        }
+                            String text = post.text;
+                            if(text == null)
+                                text = "";
+                            else {
+                                text = Html.fromHtml("" + list.get(clickedPos).text + "").toString();
+                                if (text.trim().length() >= 200)
+                                    text = text.substring(0, 200);
+                            }
 
+                            ArrayList<String> urls = new ArrayList<>();
+                            urls.add(0,url);
 
-                        //PhotoZoomFragment fragment = new PhotoZoomFragment();
+                            Intent intent = new Intent(mActivity, PhotoPagerActivity.class);
 
+                            intent.putExtra("current_item", 1);
+                            intent.putStringArrayListExtra("photos", urls);
 
+                            mActivity.startActivity(intent);
 
-                        PhotoZoomFragment fragment = new PhotoZoomFragment().newInstance(url,name,text);
-                        FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
-                        FragmentTransaction transaction = manager.beginTransaction();
-                        transaction.add(R.id.sub_container, fragment).addToBackStack(null);
-                        transaction.commit();
+                            /*
+                            PhotoZoomFragment fragment = new PhotoZoomFragment().newInstance(url,name,text);
+                            FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.add(R.id.sub_container, fragment).addToBackStack(null);
+                            transaction.commit();
+                            */
+                            break;
+                        case "clip":
+                            //String sample = "https://stream-1.vdomax.com/vod/__definst__/mp4:110559/110559_720p.mp4/playlist.m3u8";
+                            String clipURL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:"+post.clip.id+"/"+post.clip.id+"_720p.mp4/playlist.m3u8";
+                            Log.e("fromFeedAdapter", clipURL);
 
-                        /*
-                        Intent i = new Intent(mActivity, PhotoActivity.class);
-                        i.putExtra("url", url);
-                        i.putExtra("name", name);
-                        i.putExtra("desc", text);
-                        mActivity.startActivity(i);
-                        */
+                            Video clip = new Video("clip",post.postId, post.author.name, "@"+post.author.username, clipURL, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
 
+                            Intent intentClip = new Intent(mActivity, DragableActivity.class);
+                            Bundle bundleClip = new Bundle();
+                            bundleClip.putParcelable("obj", Parcels.wrap(clip));
 
+                            intentClip.putExtras(bundleClip);
+                            mActivity.startActivity(intentClip);
+                            break;
+                        case "youtube":
+                            Video item = new Video("youtube",post.postId, post.youtube.title, post.youtube.desc, post.youtube.id, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
 
-                    } else if (postType.equals("clip")) {
+                            Intent i2 = new Intent(mActivity, DragableActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelable("obj", Parcels.wrap(item));
 
-                        Log.e("fromFeedAdapter",post.clip.url);
+                            i2.putExtras(bundle);
+                            mActivity.startActivity(i2);
+                            break;
+                        case "soundcloud":
+                            if (mFragment != null) {
+                                mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
+                                //Log.e("heysoundcloud", post.soundCloud.streamUrl);
+                            }
+                            break;
+                        case "live":
+                            String userId = post.author.id;
+                            String liveName = post.author.name;
+                            String username = post.author.username;
+                            String avatar = post.author.getAvatarPath();
+                            String cover = post.author.getCoverPath();
+                            String liveCover = post.author.liveCover;
+                            String gender = "male";
+                            boolean liveStatus = true;
 
-                        Video item = new Video("clip",post.postId, post.author.name, "@"+post.author.username, post.clip.url, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
+                            Channel channel = new Channel(userId, liveName, username, cover, avatar, liveCover, "male", liveStatus);
 
-                        Intent i2 = new Intent(mActivity, WatchDragableActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("obj", Parcels.wrap(item));
-
-                        i2.putExtras(bundle);
-                        mActivity.startActivity(i2);
-
-                        /*
-                        Intent i = new Intent(mActivity, VideoViewNativeActivity.class);
-                        i.putExtra("url", post.clip.url);
-                        i.putExtra("userId", post.author.id);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("cover", post.author.getCoverPath());
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("username", post.author.username);
-                        mActivity.startActivity(i);
-                        */
-
-
-
-                        /*
-                        Intent i = new Intent(mActivity,VitamioActivity.class);
-                        i.putExtra("id",post.clip.url);
-                        i.putExtra("name",post.author.name);
-                        i.putExtra("avatar",post.author.getAvatarPath());
-                        i.putExtra("cover",post.author.getCoverPath());
-                        i.putExtra("title",post.text);
-                        i.putExtra("desc","@"+post.author.username);
-                        i.putExtra("userId",post.author.id);
-                        mActivity.startActivity(i);
-
-                        */
-
-                       // VideoPlayerActivity.startActivity(mActivity,post.clip.url);
-
-                    } else if (postType.equals("youtube")) {
-
-
-                        //String location = "https://www.youtube.com/watch?v=SvDMZFfwmgo";
-                        //String location = "https://www.youtube.com/watch?v=" + post.youtube.id;
-
-                        //String location = post.youtube.id;
-                        //if (YouTubeData.isYouTubeUrl(location)) {
-                            //Intent i = new Intent(mActivity, VideoTrailerPlayerActivity.class);
-                            //i.putExtra(VideoTrailerPlayerActivity.LOCATION, post.youtube.id);
-                            //mActivity.startActivity(i);
-                        //}
-
-                        //Intent lVideoIntent = new Intent(null, Uri.parse("ytv://" + post.youtube.id), mActivity, OpenYouTubePlayerActivity.class);
-                        //mActivity.startActivity(lVideoIntent);
-
-
-
-    /*
-                        Intent i = new Intent(mActivity, YoutubeActivity.class);
-                        i.putExtra("id", post.youtube.id);
-                        i.putExtra("title", post.youtube.title);
-                        i.putExtra("desc", post.youtube.desc);
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("ago", post.getAgoText());
-
-                        mActivity.startActivity(i);
-                        */
-
-                        Video item = new Video("youtube",post.postId, post.youtube.title, post.youtube.desc, post.youtube.id, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
-
-                        Intent i2 = new Intent(mActivity, WatchDragableActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable("obj", Parcels.wrap(item));
-
-                        i2.putExtras(bundle);
-                        mActivity.startActivity(i2);
-
-
-
-
-                    } else if (postType.equals("soundcloud")) {
-                        if (mFragment != null) {
-                            mFragment.playTrack(post.soundCloud.streamUrl,post.soundCloud.title);
-                            //Log.e("heysoundcloud", post.soundCloud.streamUrl);
-                        }
-
-
-                    } else if(postType.equals("live")) {
-
-                        String userId = post.author.id;
-                        String name = post.author.name;
-                        String username = post.author.username;
-                        String avatar = post.author.getAvatarPath();
-                        String cover = post.author.getCoverPath();
-                        String liveCover = post.author.liveCover;
-                        String gender = "male";
-                        boolean liveStatus = true;
-
-                        Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, "male", liveStatus);
-
-                        LiveFragment fragment = LiveFragment.newInstance(channel);
-                        ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
-
-                        /*
-
-                        Intent i = new Intent(mActivity, VitamioActivity.class);
-                        i.putExtra("id", "rtmp://150.107.31.6:1935/live/" + post.author.username);
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("cover", post.author.getCoverPath());
-                        i.putExtra("title", post.text);
-                        i.putExtra("desc", "@" + post.author.username);
-                        i.putExtra("userId", post.author.id);
-                        mActivity.startActivity(i);
-                        */
-
-                        /*
-                        Intent i = new Intent(mActivity,VideoViewFragment.class);
-                        i.putExtra("url", post.author.liveUrl);
-                        i.putExtra("userId", post.author.id);
-                        i.putExtra("avatar", post.author.getAvatarPath());
-                        i.putExtra("cover", post.author.getCoverPath());
-                        i.putExtra("name", post.author.name);
-                        i.putExtra("username", post.author.username);
-                        mActivity.startActivity(i);
-
-                        */
-
-                        //VideoPlayerActivity.startActivity(mActivity,post.author.liveUrl);
+                            LiveFragment liveFragment = LiveFragment.newInstance(channel);
+                            ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, liveFragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+                            break;
                     }
+
+
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(v, getPosition());
                     }
                     break;
                 case R.id.btn_comment:
-
                     final Intent intent = new Intent(mActivity, CommentsActivity.class);
                     int[] startingLocation = new int[2];
                     v.getLocationOnScreen(startingLocation);
@@ -707,10 +646,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                     intent.putExtra("POST_ID", post.postId);
                     mActivity.startActivity(intent);
                     mActivity.overridePendingTransition(0, 0);
-
                     break;
                 case R.id.profile_name:
-                case R.id.avatar:
+                case R.id.profile_avatar:
                     FeedFragment fragment = new FeedFragment().newInstance(post.author.id, false);
                     FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
                     FragmentTransaction transaction = manager.beginTransaction();
@@ -761,8 +699,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                         //Log.e("heysoundcloud", post.soundCloud.streamUrl);
                     }
                     break;
-
-
 
             }
         }

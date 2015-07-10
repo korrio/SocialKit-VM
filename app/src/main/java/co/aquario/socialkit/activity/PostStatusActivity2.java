@@ -51,7 +51,7 @@ import github.ankushsachdeva.emojicon.emoji.Emojicon;
 public class PostStatusActivity2 extends Activity {
 
 
-    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
     String statusText;
     ToolTipRelativeLayout toolTipRelativeLayout;
@@ -400,7 +400,7 @@ public class PostStatusActivity2 extends Activity {
                 entity.addPart("recipient_id", new StringBody(""));
                 entity.addPart("text", new StringBody(statusText, chars));
 
-                //entity.addPart("photos[]", new FileBody(sourceFile));
+                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

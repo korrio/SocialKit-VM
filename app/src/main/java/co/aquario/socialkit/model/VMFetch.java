@@ -95,7 +95,7 @@ public class VMFetch {
 				try {
 					in = connection.getInputStream();
 					byte[] response = readFully(in);
-					return new String(response, "UTF-8");
+					return toolbar String(response, "UTF-8");
 				} finally {
 					if (in != null)
 						in.close();

@@ -64,7 +64,7 @@ public class UploadClipReviewActivity extends Activity {
 
 		// Changing action bar background color
 		//getActionBar().setBackgroundDrawable(
-				//new ColorDrawable(Color.parseColor(getResources().getString(
+				//toolbar ColorDrawable(Color.parseColor(getResources().getString(
 				//		R.color.action_bar))));
 
 		// Receiving the data from previous activity
@@ -168,12 +168,12 @@ public class UploadClipReviewActivity extends Activity {
 
 			HttpClient httpclient = new DefaultHttpClient();
 
-            String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+            String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
             String statusText = "test from android";
 
             /*
             // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            Map<String, Object> params = new HashMap<String, Object>();
+            Map<String, Object> params = toolbar HashMap<String, Object>();
             params.put("timeline_id","6");
             params.put("recipient_id","");
             params.put("text", statusText);

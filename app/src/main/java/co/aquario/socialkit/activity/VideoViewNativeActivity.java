@@ -76,14 +76,14 @@ public class VideoViewNativeActivity extends Activity {
         mLogo = (ImageView) findViewById(R.id.logo);
 
         /*
-        button1.setOnClickListener(new View.OnClickListener() {
+        button1.setOnClickListener(toolbar View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openVideo("http://server-a.vdomax.com:8080/record/Nuchiko-260115_20:55:13.flv");
             }
         });
 
-        start.setOnClickListener(new View.OnClickListener() {
+        start.setOnClickListener(toolbar View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openVideo("rtmp://150.107.31.12:1935/live/korrio");

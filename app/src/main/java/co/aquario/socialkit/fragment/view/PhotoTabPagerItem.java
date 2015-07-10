@@ -2,7 +2,7 @@ package co.aquario.socialkit.fragment.view;
 
 import android.support.v4.app.Fragment;
 
-import co.aquario.socialkit.fragment.main.PhotoFreeFlowFragment;
+import co.aquario.socialkit.fragment.main.PhotoGridFragment;
 
 public class PhotoTabPagerItem {
 
@@ -17,9 +17,9 @@ public class PhotoTabPagerItem {
         //this.userId = userId;
 
         listFragments = new Fragment[] {
-                new PhotoFreeFlowFragment().newInstance("N"),
-                new PhotoFreeFlowFragment().newInstance("V"),
-                new PhotoFreeFlowFragment().newInstance("L")};
+                new PhotoGridFragment().newInstance("N"),
+                new PhotoGridFragment().newInstance("V"),
+                new PhotoGridFragment().newInstance("L")};
 
     }
 

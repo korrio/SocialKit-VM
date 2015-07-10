@@ -5,6 +5,7 @@ import org.parceler.ParcelConstructor;
 
 @Parcel
 public class Video extends BaseModel {
+    public String postType;
     public String postId;
     public String title;
     public String desc;
@@ -24,7 +25,8 @@ public class Video extends BaseModel {
 
     }
     @ParcelConstructor
-    public Video(String postId, String title, String desc, String youtubeId, String text, String timestamp, String view, String pUserId, String pName, String pAvatar, int nLove, int nComment, int nShare) {
+    public Video(String postType, String postId, String title, String desc, String youtubeId, String text, String timestamp, String view, String pUserId, String pName, String pAvatar, int nLove, int nComment, int nShare) {
+        this.postType = postType;
         this.postId = postId;
         this.title = title;
         this.desc = desc;
@@ -38,6 +40,14 @@ public class Video extends BaseModel {
         this.nLove = nLove;
         this.nComment = nComment;
         this.nShare = nShare;
+    }
+
+    public String getPostType() {
+        return postType;
+    }
+
+    public void setPostType(String postType) {
+        this.postType = postType;
     }
 
     public String getPostId() {

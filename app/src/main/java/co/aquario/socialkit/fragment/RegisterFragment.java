@@ -83,7 +83,7 @@ public class RegisterFragment extends BaseFragment {
                     String mobile = etPhone.getText().toString().trim();
                     Toast.makeText(getActivity().getApplicationContext(),"OTP is sent to "+mobile,Toast.LENGTH_SHORT).show();
                 }
-                    //ApiBus.getInstance().post(new RequestOtpEvent("0917366196",""));
+                    //ApiBus.getInstance().post(toolbar RequestOtpEvent("0917366196",""));
             }
         });
 

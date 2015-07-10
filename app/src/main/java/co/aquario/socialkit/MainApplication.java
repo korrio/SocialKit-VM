@@ -2,6 +2,7 @@ package co.aquario.socialkit;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -14,7 +15,6 @@ import com.google.gson.JsonParseException;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,19 +24,16 @@ import java.util.Date;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.handler.ApiHandlerVM;
 import co.aquario.socialkit.handler.ApiServiceVM;
-import co.aquario.socialkit.model.UserProfile;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.StorageUtils;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
-/**
- * Created by Mac on 3/2/15.
- */
+
 public class MainApplication extends Application {
 
-    private static final String ENDPOINT = "http://api.vdomax.com";
+    public static final String ENDPOINT = "http://api.vdomax.com";
     
     public static final String APP_ID = "391414774312517";
     public static final String APP_SECRET ="f486294a7603127e78833e54f17cbc51";
@@ -45,10 +42,16 @@ public class MainApplication extends Application {
 
     public static PrefManager prefManager;
     public static String USER_TOKEN;
-    public static UserProfile user;
+
 
     private ApiHandlerVM loginApiHandler;
     private static OkHttpClient sHttpClient;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     public static MainApplication get(Context context) {
         return (MainApplication) context.getApplicationContext();
@@ -69,20 +72,17 @@ public class MainApplication extends Application {
             sHttpClient = new OkHttpClient();
 
             int cacheSize = 10 * 1024 * 1024;
-            try {
-                File cacheLocation = new File(StorageUtils.getIdealCacheDirectory(MainApplication.getAppContext()).toString());
-                cacheLocation.mkdirs();
-                com.squareup.okhttp.Cache cache = new com.squareup.okhttp.Cache(cacheLocation, cacheSize);
-                sHttpClient.setCache(cache);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            File cacheLocation = new File(StorageUtils.getIdealCacheDirectory(MainApplication.getAppContext()).toString());
+            cacheLocation.mkdirs();
+            com.squareup.okhttp.Cache cache = new com.squareup.okhttp.Cache(cacheLocation, cacheSize);
+            sHttpClient.setCache(cache);
         }
         return sHttpClient;
     }
 
     @Override public void onCreate() {
         super.onCreate();
+        //LeakCanary.install(this);
         sContext = this;
 
         loginApiHandler = new ApiHandlerVM(this, buildLoginApi(),

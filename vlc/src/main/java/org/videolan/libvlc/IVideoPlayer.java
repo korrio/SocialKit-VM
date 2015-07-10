@@ -24,7 +24,7 @@ import android.view.Surface;
 
 public interface IVideoPlayer {
     /**
-     * This method is called by native vout to request a new layout.
+     * This method is called by native vout to request a toolbar layout.
      * @param width Frame width
      * @param height Frame height
      * @param visible_width Visible frame width

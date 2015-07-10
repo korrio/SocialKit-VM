@@ -155,7 +155,7 @@ public class CommentStory implements Parcelable {
         dest.writeLong(mId);
         dest.writeString(mText);
         dest.writeString(mEmoticonizedText);
-        dest.writeParcelable(mUser, flags);
+        //dest.writeParcelable(mUser, flags);
         dest.writeTypedList(mLoves);
         dest.writeString(mTimestamp);
         dest.writeInt(mLoveCount);

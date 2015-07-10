@@ -121,6 +121,11 @@
 
             </LinearLayout>
 
+            <include
+                layout="@layout/item_social_buttons_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -190,7 +195,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="More videos"
+                android:text="@string/more_video"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#666" />
 

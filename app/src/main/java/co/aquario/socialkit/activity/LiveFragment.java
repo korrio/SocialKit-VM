@@ -18,7 +18,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.chat.ChatFragment;
-import co.aquario.socialkit.fragment.VideoViewFragment;
+import co.aquario.socialkit.fragment.SurfaceFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.model.Channel;
 
@@ -64,7 +64,7 @@ public class LiveFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             channel = Parcels.unwrap(getArguments().getParcelable("KEY_CHANNEL"));
-            VIDEO_PATH = "rtmp://150.107.31.6:1935/live/" + channel.username;
+            VIDEO_PATH = "http://150.107.31.13:1935/live/"+channel.username+"/playlist.m3u8";
             profileName = channel.name;
             title = channel.name;
             userProfile = channel.getAvatarUrl();
@@ -85,9 +85,6 @@ public class LiveFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.activity_watch_dragable, container, false);
 
         ButterKnife.inject(this,rootView);
-
-
-
 
         initializeVideoPlayerFragment();
         initializeDraggablePanel();
@@ -117,14 +114,14 @@ public class LiveFragment extends BaseFragment {
 
 //        Log.e("location",mLocation);
 
-        //mVideoPlayerFragment = new VideoPlayerFragment();
+        //mVideoPlayerFragment = VideoPlayerFragment();
         //mVideoPlayerFragment.loadMediaUrl(mLocation);
 
     }
 
     private void initializeDraggablePanel() {
         Bundle data2 = new Bundle();
-        VideoViewFragment oneFragment = new VideoViewFragment();
+        SurfaceFragment oneFragment = new SurfaceFragment();
         data2.putString("PATH", VIDEO_PATH);
         oneFragment.setArguments(data2);
 
@@ -132,8 +129,8 @@ public class LiveFragment extends BaseFragment {
         draggablePanel.setTopFragment(oneFragment);
 
 /*
-        Bundle data = new Bundle();
-        LivePosterFragment moviePosterFragment = new LivePosterFragment();
+        Bundle data = toolbar Bundle();
+        LivePosterFragment moviePosterFragment = toolbar LivePosterFragment();
         moviePosterFragment.setPoster(cover);
         moviePosterFragment.setPosterTitle("DUMMY");
         data.putString("name",profileName);

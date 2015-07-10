@@ -66,10 +66,12 @@
     </style>
 
     <style name="CustomTheme" parent="MaterialDrawerTheme.TranslucentStatus">
+
+
         <!-- ...and here we setting appcompat’s color theme attrs -->
         <item name="colorPrimary">@color/indigo_700</item>
         <item name="colorPrimaryDark">@color/indigo_500</item>
-        <item name="colorAccent">@color/cpb_white</item>
+        <item name="colorAccent">@color/accent</item>
 
         <!-- MaterialDrawer specific values -->
         <item name="material_drawer_background">@color/material_drawer_dark_background</item>
@@ -85,144 +87,15 @@
             @color/material_drawer_dark_primary_text
         </item>
 
-        <!--
-        All dialogs will default to Theme.DARK with this set to true.
-    -->
-        <item name="md_dark_theme">true</item>
-
-        <!--
-            This overrides the default dark or light dialog background color.
-            Note that if you use a dark color here, you should set md_dark_theme to
-            true so text and selectors look visible
-        -->
-        <item name="md_background_color">@color/indigo_700</item>
-
-        <!--
-            Applies an icon next to the title in all dialogs.
-        -->
-        <item name="md_icon">@drawable/ic_launcher</item>
-
-
-
-        <!--
-            By default, the title text color is derived from the
-            ?android:textColorPrimary system attribute.
-        -->
-        <item name="md_title_color">#fff</item>
-
-
-        <!--
-            By default, the content text color is derived from the
-            ?android:textColorSecondary system attribute.
-        -->
-        <item name="md_content_color">#eee</item>
-
-
-        <!--
-            By default, the positive action text color is derived
-            from the colorAccent attribute of AppCompat or android:colorAccent
-            attribute of the Material theme.
-        -->
-        <item name="md_positive_color">#fff</item>
-
-        <!--
-            By default, the neutral action text color is derived
-            from the colorAccent attribute of AppCompat or android:colorAccent
-            attribute of the Material theme.
-        -->
-        <item name="md_neutral_color">#eee</item>
-
-        <!--
-            By default, the negative action text color is derived
-            from the colorAccent attribute of AppCompat or android:colorAccent
-            attribute of the Material theme.
-        -->
-        <item name="md_negative_color">#ddd</item>
-
-        <!--
-            By default, a progress dialog's progress bar, check boxes, and radio buttons
-            have a color that is derived from the colorAccent attribute of AppCompat or
-            android:colorAccent attribute of the Material theme.
-        -->
-        <item name="md_widget_color">@color/indigo_500</item>
-
-        <!--
-            By default, the list item text color is black for the light
-            theme and white for the dark theme.
-        -->
-        <item name="md_item_color">@color/indigo_500</item>
-
-        <!--
-            This overrides the color used for the top and bottom dividers used when
-            content is scrollable
-        -->
-        <item name="md_divider_color">#eee</item>
-
-        <!--
-            This overrides the selector used on list items.
-        -->
-        <item name="md_list_selector">@drawable/follow_button_selector</item>
-
-        <!--
-            This overrides the selector used on stacked action buttons.
-        -->
-        <item name="md_btn_stacked_selector">@drawable/follow_button_selector</item>
-
-        <!--
-            This overrides the background selector used on the positive action button.
-        -->
-        <item name="md_btn_positive_selector">@drawable/follow_button_selector</item>
-
-        <!--
-            This overrides the background selector used on the neutral action button.
-        -->
-        <item name="md_btn_neutral_selector">@drawable/follow_button_selector</item>
-
-        <!--
-            This overrides the background selector used on the negative action button.
-        -->
-        <item name="md_btn_negative_selector">@drawable/follow_button_selector</item>
-
-        <!--
-            This sets the gravity used while displaying the dialog title, defaults to start.
-            Can be start, center, or end.
-        -->
-        <item name="md_title_gravity">start</item>
-
-        <!--
-            This sets the gravity used while displaying the dialog content, defaults to start.
-            Can be start, center, or end.
-        -->
-        <item name="md_content_gravity">start</item>
-
-        <!--
-            This sets the gravity used while displaying the list items (not including custom adapters), defaults to start.
-            Can be start, center, or end.
-        -->
-        <item name="md_items_gravity">start</item>
-
-        <!--
-            This sets the gravity used while displaying the dialog action buttons, defaults to start.
-
-            START (Default)    Neutral     Negative    Positive
-            CENTER:            Negative    Neutral     Positive
-            END:               Positive    Negative    Neutral
-        -->
-        <item name="md_buttons_gravity">start</item>
-
-        <!--
-            This sets the gravity used while displaying the stacked action buttons, defaults to end.
-            Can be start, center, or end.
-        -->
-        <item name="md_btnstacked_gravity">end</item>
-
-
-
         <!-- CAB :D -->
         <item name="windowActionModeOverlay">true</item>
     </style>
 
-    <style name="FullscreenTheme" parent="MaterialDrawerTheme.Light.DarkToolbar.TranslucentStatus"></style>
+    <style name="CustomTheme.WithoutActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 
     <style name="Theme.Transparent" parent="android:Theme">
         <item name="android:windowIsTranslucent">true</item>
@@ -251,6 +124,11 @@
     <style name="RevealTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+
+    <style name="FullHeightDialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
 </resources>

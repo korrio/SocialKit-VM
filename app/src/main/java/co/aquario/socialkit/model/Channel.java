@@ -3,11 +3,15 @@ package co.aquario.socialkit.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 import co.aquario.socialkit.util.EndpointManager;
 
 /**
  * Created by root1 on 2/6/15.
  */
+@Parcel
 public class Channel extends BaseModel {
 
     @Expose
@@ -30,6 +34,7 @@ public class Channel extends BaseModel {
     @Expose
     public boolean online;
 
+    @ParcelConstructor
     public Channel(String id, String name, String username, String cover, String avatar, String liveCover, String gender, boolean online) {
         this.id = id;
         this.name = name;

@@ -197,6 +197,21 @@ public class PostVideoActivity extends Activity {
         });
 	}
 
+    public String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
     private void launchUploadActivity(boolean isImage){
         Intent i = new Intent(PostVideoActivity.this, UploadClipReviewActivity.class);
         i.putExtra("filePath", getRealPathFromURI(mFileUri));
@@ -241,7 +256,7 @@ public class PostVideoActivity extends Activity {
 
 	private void videoPost(String message, String desc, File file) {
 
-        String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+        String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
         statusText = "test from android";
 
         // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -296,7 +311,7 @@ public class PostVideoActivity extends Activity {
 		 * MyProgressBar mProgressBar = (MyProgressBar)
 		 * findViewById(R.id.progress);
 		 * 
-		 * mProgressBar.setOnProgressListener(new OnProgressListener() {
+		 * mProgressBar.setOnProgressListener(toolbar OnProgressListener() {
 		 * 
 		 * @Override public void onProgress(int max, int progress) {
 		 * 

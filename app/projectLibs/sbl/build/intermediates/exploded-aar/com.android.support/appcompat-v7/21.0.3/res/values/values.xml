@@ -70,7 +70,7 @@
 
             <!-- Normal static title text -->
             <enum name="normal" value="0" />
-            <!-- The action bar will use a selection list for navigation. -->
+            <!-- The action bar will use a selection listStory for navigation. -->
             <enum name="listMode" value="1" />
             <!-- The action bar will use a series of horizontal tabs for navigation. -->
             <enum name="tabMode" value="2" />
@@ -180,7 +180,7 @@
     </declare-styleable>
     <declare-styleable name="ActivityChooserView">
 
-        <!-- The maximal number of items initially shown in the activity list. -->
+        <!-- The maximal number of items initially shown in the activity listStory. -->
         <attr name="initialActivityCount" format="string" />
         <!--
              The drawable to show in the button for expanding the activities overflow popup.
@@ -658,7 +658,7 @@
         </attr>
         <!-- Custom divider drawable to use for elements in the action bar. -->
         <attr name="actionBarDivider" format="reference" />
-        <!-- Custom item state list drawable background for action bar items. -->
+        <!-- Custom item state listStory drawable background for action bar items. -->
         <attr name="actionBarItemBackground" format="reference" />
         <!--
              TextAppearance style that will be applied to text that
@@ -790,25 +790,25 @@
         <!-- =========== -->
         <eat-comment />
 
-        <!-- The preferred list item height. -->
+        <!-- The preferred listStory item height. -->
         <attr name="listPreferredItemHeight" format="dimension" />
-        <!-- A smaller, sleeker list item height. -->
+        <!-- A smaller, sleeker listStory item height. -->
         <attr name="listPreferredItemHeightSmall" format="dimension" />
-        <!-- A larger, more robust list item height. -->
+        <!-- A larger, more robust listStory item height. -->
         <attr name="listPreferredItemHeightLarge" format="dimension" />
 
-        <!-- The preferred padding along the left edge of list items. -->
+        <!-- The preferred padding along the left edge of listStory items. -->
         <attr name="listPreferredItemPaddingLeft" format="dimension" />
-        <!-- The preferred padding along the right edge of list items. -->
+        <!-- The preferred padding along the right edge of listStory items. -->
         <attr name="listPreferredItemPaddingRight" format="dimension" />
 
         <!-- ListPopupWindow compatibility -->
         <attr name="dropDownListViewStyle" format="reference" />
         <attr name="listPopupWindowStyle" format="reference" />
 
-        <!-- The preferred TextAppearance for the primary text of list items. -->
+        <!-- The preferred TextAppearance for the primary text of listStory items. -->
         <attr name="textAppearanceListItem" format="reference" />
-        <!-- The preferred TextAppearance for the primary text of small list items. -->
+        <!-- The preferred TextAppearance for the primary text of small listStory items. -->
         <attr name="textAppearanceListItemSmall" format="reference" />
 
         <!-- ============ -->
@@ -822,7 +822,7 @@
         <attr name="panelMenuListWidth" format="dimension" />
         <!-- Default Panel Menu style. -->
         <attr name="panelMenuListTheme" format="reference" />
-        <!-- Drawable used as a background for selected list items. -->
+        <!-- Drawable used as a background for selected listStory items. -->
         <attr name="listChoiceBackgroundIndicator" format="reference" />
 
         <!-- ============= -->
@@ -854,7 +854,7 @@
         <!-- The color applied to framework controls in their activated (ex. checked) state. -->
         <attr name="colorControlActivated" format="color" />
 
-        <!-- The color applied to framework control highlights (ex. ripples, list selectors). -->
+        <!-- The color applied to framework control highlights (ex. ripples, listStory selectors). -->
         <attr name="colorControlHighlight" format="color" />
 
         <!-- The color applied to framework buttons in their normal state. -->

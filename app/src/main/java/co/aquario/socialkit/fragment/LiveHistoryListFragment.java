@@ -1,7 +1,6 @@
 package co.aquario.socialkit.fragment;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -21,8 +20,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import co.aquario.socialkit.ExoSimplePlayerActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.VitamioActivity;
 import co.aquario.socialkit.adapter.AdapterListLiveFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.model.Live;
@@ -138,7 +137,11 @@ public class LiveHistoryListFragment extends BaseFragment {
             public void onItemClick(View view, int position) {
                 Live liveItem = artistList.get(position);
 
-                Intent i = new Intent(getActivity(),VitamioActivity.class);
+                ExoSimplePlayerActivity.startActivity(getActivity(), liveItem.getUrlLive());
+
+                /*
+
+                Intent i = toolbar Intent(getActivity(),VitamioActivity.class);
                 i.putExtra("id",liveItem.getUrlLive());
                 i.putExtra("name",liveItem.getNameLive());
                 i.putExtra("avatar",liveItem.getAvatar());
@@ -148,6 +151,7 @@ public class LiveHistoryListFragment extends BaseFragment {
                 i.putExtra("userId",liveItem.getUserId());
                 getActivity().startActivity(i);
                 //getActivity().finish();
+                */
 
             }
         });

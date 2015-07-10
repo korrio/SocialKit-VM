@@ -1,6 +1,5 @@
 package co.aquario.socialkit.fragment.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.VitamioActivity;
+import co.aquario.socialkit.activity.LiveFragment;
 import co.aquario.socialkit.adapter.ChannelAdapter;
 import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.util.Utils;
@@ -117,8 +116,14 @@ public class ChannelFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if (tabNo == 0) {
+
+                    LiveFragment fragment = LiveFragment.newInstance(liveChannelList.get(position));
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+
+
+                    /*
                     // intent to profile page with live streaming
-                    Intent i = new Intent(getActivity(), VitamioActivity.class);
+                    Intent i = toolbar Intent(getActivity(), VitamioActivity.class);
                     i.putExtra("id", "rtmp://150.107.31.6:1935/live/" + liveChannelList.get(position).username);
                     i.putExtra("name", liveChannelList.get(position).name);
                     i.putExtra("avatar", liveChannelList.get(position).getAvatarUrl());
@@ -127,8 +132,14 @@ public class ChannelFragment extends BaseFragment {
                     i.putExtra("desc", "@" + liveChannelList.get(position).username);
                     i.putExtra("userId", liveChannelList.get(position).id);
                     startActivity(i);
+                    */
                 } else if (tabNo == 1) {
                     // intent to profile page w/o live streaming
+                    LiveFragment fragment = LiveFragment.newInstance(mostFollowerList.get(position));
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+
+
+
 
                 }
 

@@ -1,10 +1,8 @@
 package co.aquario.socialkit.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -20,8 +18,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.event.FollowRegisterEvent;
-import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.User;
 import co.aquario.socialkit.widget.RoundedTransformation;
@@ -51,11 +49,16 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             @Override
             public void onItemClick(View view, int position) {
 
-                FeedFragment fragment = new FeedFragment().newInstance(list.get(position).getId(), false);
+                Intent i = new Intent(mActivity, NewProfileActivity.class);
+                i.putExtra("user_id",list.get(position).getId());
+                mActivity.startActivity(i);
+/*
+                FeedFragment fragment = toolbar FeedFragment().newInstance(listStory.get(position).getId(), false);
                 FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
                 transaction.commit();
+                */
             }
 
             @Override
@@ -101,8 +104,8 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
         Picasso.with(mActivity)
                 .load(user.getAvatarUrl())
                 .centerCrop()
-                .resize(100, 100)
-                .transform(new RoundedTransformation(50, 4))
+                .resize(200, 200)
+                .transform(new RoundedTransformation(100, 4))
                 .into(holder.avatar);
 
         holder.initButton(user.getIsFollowing(), holder.btnFollow);

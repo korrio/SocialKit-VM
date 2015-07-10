@@ -3,7 +3,7 @@ package co.aquario.socialkit.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import co.aquario.socialkit.MainActivity;
@@ -15,7 +15,7 @@ import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.model.UserProfile;
 import co.aquario.socialkit.util.PrefManager;
 
-public class LoginActivity extends ActionBarActivity {
+public class LoginActivity extends AppCompatActivity {
 
     public PrefManager prefManager;
     public boolean isLogin;
@@ -36,7 +36,6 @@ public class LoginActivity extends ActionBarActivity {
         } else {
             Intent main = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(main);
-            // Updrate drawer
             ActivityResultBus.getInstance().postQueue(new UpdateProfileEvent(new UserProfile()));
             finish();
 

@@ -46,8 +46,8 @@ public class LiveDialogFragment extends DialogFragment  {
 //
 //    public static LiveDialogFragment newInstance(String title,
 //                                                 String desc) {
-//        LiveDialogFragment fragment = new LiveDialogFragment();
-//        Bundle args = new Bundle();
+//        LiveDialogFragment fragment = toolbar LiveDialogFragment();
+//        Bundle args = toolbar Bundle();
 //        args.putString("title",title);
 //        args.putString("desc",desc);
 //        fragment.setArguments(args);
@@ -84,13 +84,13 @@ public class LiveDialogFragment extends DialogFragment  {
 //
 //		/*
 //		 * Display display = getWindowManager().getDefaultDisplay(); Point size
-//		 * = new Point(); display.getSize(size); imageWidth = (int) (size.x *
+//		 * = toolbar Point(); display.getSize(size); imageWidth = (int) (size.x *
 //		 * 0.5); imageHeight = (int) (imageWidth * 0.75);
 //		 */
 //
 //
 //
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        AlertDialog.Builder builder = toolbar AlertDialog.Builder(getActivity());
 //        view = getActivity().getLayoutInflater().inflate(R.layout.activity_main2, null);
 //        builder.setView(view);
 //        ;
@@ -133,11 +133,11 @@ public class LiveDialogFragment extends DialogFragment  {
 //    public void postLive() {
 //        String url = "https://www.armymax.com/api/?action=postLive";
 //
-//        Map<String, Object> params = new HashMap<String, Object>();
+//        Map<String, Object> params = toolbar HashMap<String, Object>();
 //
 //
 //
-//        AQuery aq = new AQuery(context);
+//        AQuery aq = toolbar AQuery(context);
 //
 //        aq.ajax(url, params, JSONObject.class, this, "liveCb");
 //
@@ -184,15 +184,15 @@ public class LiveDialogFragment extends DialogFragment  {
 //
 //
 //        resSetting = (TextView) viewControl.findViewById(R.id.setting);
-//        resSetting.setOnClickListener(new View.OnClickListener() {
+//        resSetting.setOnClickListener(toolbar View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                final Dialog dialog = new Dialog(getActivity());
+//                final Dialog dialog = toolbar Dialog(getActivity());
 //                dialog.setContentView(R.layout.item_resolution);
 //                radioGroup = (RadioGroup) dialog.findViewById(R.id.myRadioGroup);
 //                dialog.setTitle("Set resolution");
 //
-//                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//                radioGroup.setOnCheckedChangeListener(toolbar RadioGroup.OnCheckedChangeListener() {
 //                    @Override
 //                    public void onCheckedChanged(RadioGroup group, int checkedId) {
 //                        group.findViewById(checkedId).setSelected(true);
@@ -243,10 +243,10 @@ public class LiveDialogFragment extends DialogFragment  {
 //        mainLayout = (RelativeLayout) viewControl.findViewById(R.id.record_layout);
 //        feature = (LinearLayout) viewControl.findViewById(R.id.feature_layout);
 //
-//        cameraView = new CameraView(getActivity());
+//        cameraView = toolbar CameraView(getActivity());
 //
 //        RelativeLayout.LayoutParams rLParams =
-//                new RelativeLayout.LayoutParams(
+//                toolbar RelativeLayout.LayoutParams(
 //                        ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
 //        //rLParams.addRule(RelativeLayout.BELOW, feature.getId());
 //        cameraView.setLayoutParams(rLParams);
@@ -261,14 +261,14 @@ public class LiveDialogFragment extends DialogFragment  {
 //        mainLayout = (RelativeLayout) view.findViewById(R.id.record_layout);
 //
 //        recordButton = (Button) view.findViewById(R.id.recordButton);
-//        // recordButton = new Button(this);
+//        // recordButton = toolbar Button(this);
 //        // recordButton.setText("Start");
 //        recordButton.setOnClickListener(this);
 //
-//        animation = new AlphaAnimation(1, 0); // Change alpha from fully visible
+//        animation = toolbar AlphaAnimation(1, 0); // Change alpha from fully visible
 //        // to invisible
 //        animation.setDuration(300); // duration - half a second
-//        animation.setInterpolator(new LinearInterpolator()); // do not alter
+//        animation.setInterpolator(toolbar LinearInterpolator()); // do not alter
 //        // animation
 //        // rate
 //        animation.setRepeatCount(Animation.INFINITE); // Repeat animation
@@ -279,10 +279,10 @@ public class LiveDialogFragment extends DialogFragment  {
 //
 //        liveLabel = (TextView) view.findViewById(R.id.status);
 //
-//        cameraView = new CameraView(getActivity());
+//        cameraView = toolbar CameraView(getActivity());
 //        // cameraView = (CameraView) findViewById(R.id.surface_camera);
 //
-//        LinearLayout.LayoutParams layoutParam = new LinearLayout.LayoutParams(
+//        LinearLayout.LayoutParams layoutParam = toolbar LinearLayout.LayoutParams(
 //                imageWidth , imageHeight);
 //        //FrameLayout liveFrame = (FrameLayout) view.findViewById(R.id.live_frame);
 //        //liveFrame.addView(cameraView, 0, layoutParam);
@@ -304,7 +304,7 @@ public class LiveDialogFragment extends DialogFragment  {
 //            Log.v(LOG_TAG, "IplImage.create");
 //        }
 //
-//        recorder = new FFmpegFrameRecorder(ffmpeg_link, imageWidth,
+//        recorder = toolbar FFmpegFrameRecorder(ffmpeg_link, imageWidth,
 //                imageHeight, 1);
 //        Log.v(LOG_TAG, "FFmpegFrameRecorder: " + ffmpeg_link + " imageWidth: "
 //                + imageWidth + " imageHeight " + imageHeight);
@@ -320,8 +320,8 @@ public class LiveDialogFragment extends DialogFragment  {
 //        Log.v(LOG_TAG, "recorder.setFrameRate(frameRate)");
 //
 //        // Create audio recording thread
-//        audioRecordRunnable = new AudioRecordRunnable();
-//        audioThread = new Thread(audioRecordRunnable);
+//        audioRecordRunnable = toolbar AudioRecordRunnable();
+//        audioThread = toolbar Thread(audioRecordRunnable);
 //    }
 //
 //    // Start the capture
@@ -431,12 +431,12 @@ public class LiveDialogFragment extends DialogFragment  {
 //            bufferSize = AudioRecord.getMinBufferSize(sampleAudioRateInHz,
 //                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
 //                    AudioFormat.ENCODING_PCM_16BIT);
-//            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+//            audioRecord = toolbar AudioRecord(MediaRecorder.AudioSource.MIC,
 //                    sampleAudioRateInHz,
 //                    AudioFormat.CHANNEL_CONFIGURATION_MONO,
 //                    AudioFormat.ENCODING_PCM_16BIT, bufferSize);
 //
-//            audioData = new short[bufferSize];
+//            audioData = toolbar short[bufferSize];
 //
 //            Log.d(LOG_TAG, "audioRecord.startRecording()");
 //            audioRecord.startRecording();
@@ -538,7 +538,7 @@ public class LiveDialogFragment extends DialogFragment  {
 //				 * Log.v(LOG_TAG,"Creating previewBuffer size: " + imageWidth *
 //				 * imageHeight *
 //				 * ImageFormat.getBitsPerPixel(currentParams.getPreviewFormat
-//				 * ())/8); previewBuffer = new byte[imageWidth * imageHeight *
+//				 * ())/8); previewBuffer = toolbar byte[imageWidth * imageHeight *
 //				 * ImageFormat
 //				 * .getBitsPerPixel(currentParams.getPreviewFormat())/8];
 //				 * camera.addCallbackBuffer(previewBuffer);
@@ -640,10 +640,10 @@ public class LiveDialogFragment extends DialogFragment  {
 //				 * bitmap.copyPixelsFromBuffer(yuvIplimage.getByteBuffer());
 //				 * //bitmap.setPixel(10,10,Color.MAGENTA);
 //				 *
-//				 * canvas = new Canvas(bitmap); Paint paint = new Paint();
+//				 * canvas = toolbar Canvas(bitmap); Paint paint = toolbar Paint();
 //				 * paint.setColor(Color.GREEN); float leftx = 20; float topy =
 //				 * 20; float rightx = 50; float bottomy = 100; RectF rectangle =
-//				 * new RectF(leftx,topy,rightx,bottomy);
+//				 * toolbar RectF(leftx,topy,rightx,bottomy);
 //				 * canvas.drawRect(rectangle, paint);
 //				 *
 //				 * bitmap.copyPixelsToBuffer(yuvIplimage.getByteBuffer());

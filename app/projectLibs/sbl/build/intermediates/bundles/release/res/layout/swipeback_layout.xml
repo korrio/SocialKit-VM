@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<me.imid.swipebacklayout.lib.SwipeBackLayout
-    android:id="@+id/swipe"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
-    
-<!-- From: file:/Users/Mac/Desktop/android.2015/android.studio/SocialKit-VM-emoticon/app/projectLibs/sbl/src/main/res/layout/swipeback_layout.xml -->

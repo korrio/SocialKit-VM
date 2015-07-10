@@ -20,6 +20,7 @@ import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.event.LoadFriendListEvent;
 import co.aquario.socialkit.event.LoadFriendListSuccessEvent;
+import co.aquario.socialkit.event.LoadHashtagStoryEvent;
 import co.aquario.socialkit.event.LoadPhotoListEvent;
 import co.aquario.socialkit.event.LoadPhotoListSuccessEvent;
 import co.aquario.socialkit.event.LoadTimelineEvent;
@@ -101,6 +102,7 @@ public class ApiHandlerVM {
         });
     }
 
+
     @Subscribe public void onFbLoginEvent(FbAuthEvent event) {
 
         Map<String, String> options = new HashMap<String, String>();
@@ -174,6 +176,29 @@ public class ApiHandlerVM {
             public void success(StoryDataResponse storyDataResponse, Response response) {
                 GetStorySuccessEvent event = new GetStorySuccessEvent(storyDataResponse.getPost());
                 ApiBus.getInstance().post(event);
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("error", error.toString());
+            }
+
+        });
+
+    }
+
+    @Subscribe public void onGetHashtagStory(LoadHashtagStoryEvent event) {
+
+        Map<String, String> options = new HashMap<String, String>();
+
+        options.put("q", event.getQ());
+
+        api.getHashtagStory(options, new Callback<TimelineDataResponse>() {
+            @Override
+            public void success(TimelineDataResponse timelineDataResponse, Response response) {
+
+                ApiBus.getInstance().post(new LoadTimelineSuccessEvent(timelineDataResponse));
 
             }
 
@@ -315,12 +340,9 @@ public class ApiHandlerVM {
                 Log.e("photoListDataResponse", photoListDataResponse.status);
                 if (photoListDataResponse.status.equals("1")) {
                     //Log.e("timelineDataResponse", response.getBody().toString());
-                    ApiBus.getInstance().post(new LoadPhotoListSuccessEvent(photoListDataResponse, photoListDataResponse.sort));
+                    if(photoListDataResponse != null)
+                        ApiBus.getInstance().post(new LoadPhotoListSuccessEvent(photoListDataResponse, photoListDataResponse.sort));
 
-                } else {
-                    //MainApplication.get(this).getPrefManager().isLogin().put(false);
-                    Log.e("LOGOUT!", "LOG OUT LAEW");
-                    ApiBus.getInstance().post(new LogoutEvent());
                 }
             }
 

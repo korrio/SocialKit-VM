@@ -17,5 +17,4 @@ public class UpdateProfileEvent {
         return user;
     }
 
-
 }

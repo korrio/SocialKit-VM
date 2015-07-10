@@ -27,6 +27,7 @@
         android:layout_marginEnd="@dimen/md_dialog_frame_margin"
         android:layout_marginRight="@dimen/md_dialog_frame_margin"
         android:layout_marginTop="4dp"
+        android:background="@drawable/bg_share_button"
         android:text="Share" />
 
 </RelativeLayout>

@@ -41,6 +41,14 @@ public interface ApiServiceVM {
     public void getUserTimeline(@Path("id") int id,@QueryMap Map<String, String> options,
                                 Callback<TimelineDataResponse> responseJson);
 
+    @GET("/story/{id}")
+    public void getStory(@Path("id") int id,
+                         Callback<StoryDataResponse> responseJson);
+
+    @GET("/search/hashtag")
+    public void getHashtagStory(@QueryMap Map<String, String> options,
+                         Callback<TimelineDataResponse> responseJson);
+
     @POST("/1.0/follow/{id}")
     public void followUser(@Path("id") int id,Callback<FollowUserResponse> responseJson);
 
@@ -70,9 +78,7 @@ public interface ApiServiceVM {
     public void getPhoto(@QueryMap Map<String, String> options,
                           Callback<PhotoListDataResponse> responseJson);
 
-    @GET("/story/{id}")
-    public void getStory(@Path("id") int id,
-                         Callback<StoryDataResponse> responseJson);
+
 
     @GET("/1.0/user/{id}")
     public void getProfile(@Path("id") int id,

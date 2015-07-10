@@ -45,7 +45,7 @@ public class MessagesListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		/**
-		 * The following list not implemented reusable list items as list items
+		 * The following listStory not implemented reusable listStory items as listStory items
 		 * are showing incorrect data Add the solution if you have one
 		 * */
 

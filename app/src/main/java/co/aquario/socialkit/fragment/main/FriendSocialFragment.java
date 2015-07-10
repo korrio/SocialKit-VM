@@ -104,7 +104,7 @@ public class FriendSocialFragment extends BaseFragment {
         recyclerView.setLayoutManager(manager);
 
 
-        //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        //LinearLayoutManager linearLayoutManager = toolbar LinearLayoutManager(getActivity());
         //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
@@ -126,18 +126,18 @@ public class FriendSocialFragment extends BaseFragment {
 
         /*
         //gridView = (ObservableGridView) rootView.findViewById(R.id.scroll);
-        adapter = new FriendAdapter(getActivity(), list);
+        adapter = toolbar FriendAdapter(getActivity(), listStory);
         gridView.setAdapter(adapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(toolbar AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
-                i.putExtra("userId",list.get(position).id);
-                i.putExtra("avatarUrl",list.get(position).getAvatarUrl());
-                i.putExtra("cover",list.get(position).getCoverUrl());
-                i.putExtra("nameUser",list.get(position).nameUser);
-                i.putExtra("username",list.get(position).username);
+                Intent i = toolbar Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
+                i.putExtra("userId",listStory.get(position).id);
+                i.putExtra("avatarUrl",listStory.get(position).getAvatarUrl());
+                i.putExtra("cover",listStory.get(position).getCoverUrl());
+                i.putExtra("nameUser",listStory.get(position).nameUser);
+                i.putExtra("username",listStory.get(position).username);
                 getActivity().startActivity(i);
             }
         });

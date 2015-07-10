@@ -97,7 +97,7 @@ public class YouTubeData {
 
         //Find out the URI string from the parameters
 
-        //Populate the list of formats for the video
+        //Populate the listStory of formats for the video
         String fmtList = URLDecoder.decode(argMap.get("fmt_list"), "utf-8");
         ArrayList<co.aquario.socialkit.util.Format> formats = new ArrayList<co.aquario.socialkit.util.Format>();
         if (null != fmtList) {
@@ -109,7 +109,7 @@ public class YouTubeData {
             }
         }
 
-        //Populate the list of streams for the video
+        //Populate the listStory of streams for the video
         String streamList = argMap.get("url_encoded_fmt_stream_map");
         if (null != streamList) {
             String streamStrs[] = streamList.split(",");
@@ -119,7 +119,7 @@ public class YouTubeData {
                 streams.add(lStream);
             }
 
-            //Search for the given format in the list of video formats
+            //Search for the given format in the listStory of video formats
             // if it is there, select the corresponding stream
             // otherwise if fallback is requested, check for next lower format
             int formatId = Integer.parseInt(quality);
@@ -143,7 +143,7 @@ public class YouTubeData {
 
         }
         //Return the URI string. It may be null if the format (or a fallback format if enabled)
-        // is not found in the list of formats for the video
+        // is not found in the listStory of formats for the video
         return uriStr;
     }
 

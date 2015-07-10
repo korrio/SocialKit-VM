@@ -29,15 +29,13 @@ import android.widget.TextView;
 
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
-import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
-import com.nispok.snackbar.Snackbar;
 import com.soundcloud.android.crop.Crop;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -48,19 +46,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.aquario.socialkit.activity.LoginActivity;
-import co.aquario.socialkit.activity.NewProfileActivity;
 import co.aquario.socialkit.activity.PostPhotoActivity;
 import co.aquario.socialkit.activity.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
+import co.aquario.socialkit.event.toolbar.SubTitleEvent;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.PhotoFragmentGrid;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
-import co.aquario.socialkit.fragment.main.ChannelViewPagerFragment;
-import co.aquario.socialkit.fragment.main.HomeViewPagerFragment;
-import co.aquario.socialkit.fragment.main.PhotoViewPagerFragment;
-import co.aquario.socialkit.fragment.main.SocialViewPagerFragment;
-import co.aquario.socialkit.fragment.main.VideoViewPagerFragment;
+import co.aquario.socialkit.fragment.tabpager.ChannelViewPagerFragment;
+import co.aquario.socialkit.fragment.tabpager.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.tabpager.PhotoViewPagerFragment;
+import co.aquario.socialkit.fragment.tabpager.SocialViewPagerFragment;
+import co.aquario.socialkit.fragment.tabpager.VideoViewPagerFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PathManager;
@@ -82,7 +81,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     public DrawerLayout mDrawer;
     List<WeakReference<Fragment>> fragList = new ArrayList<>();
     File tempFile;
-    private Drawer.Result result = null;
+    private Drawer result = null;
     private Context mContext;
     private Activity mActivity;
     private String userId;
@@ -393,23 +392,9 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     }
 
     public void initDrawer(Bundle savedInstanceState) {
-        AccountHeader headerResult = new AccountHeader()
-                .withActivity(this)
-                //.withHeaderBackground(R.drawable.header_bg)
-                .withCompactStyle(true)
-                .addProfiles(
-                        new ProfileDrawerItem().withName("Mike Penz").withEmail("mikepenz@gmail.com").withIcon(getResources().getDrawable(R.drawable.profile))
-                )
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                })
-                .withSavedInstance(savedInstanceState);
 
         View header = LayoutInflater.from(getApplication()).inflate(R.layout.header_drawer, null);
-        result = new Drawer()
+        result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
 
@@ -419,10 +404,10 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 .withTranslucentStatusBar(true)
                 //.withAnimateDrawerItems(true)
 //                .addStickyDrawerItems(
-//                        new PrimaryDrawerItem().withName("Channels").withIcon(FontAwesome.Icon.faw_terminal),
-//                        new PrimaryDrawerItem().withName("Social").withIcon(FontAwesome.Icon.faw_users),
-//                        new PrimaryDrawerItem().withName("Videos").withIcon(FontAwesome.Icon.faw_video_camera),
-//                        new PrimaryDrawerItem().withName("Photos").withIcon(FontAwesome.Icon.faw_camera_retro)
+//                        toolbar PrimaryDrawerItem().withName("Channels").withIcon(FontAwesome.Icon.faw_terminal),
+//                        toolbar PrimaryDrawerItem().withName("Social").withIcon(FontAwesome.Icon.faw_users),
+//                        toolbar PrimaryDrawerItem().withName("Videos").withIcon(FontAwesome.Icon.faw_video_camera),
+//                        toolbar PrimaryDrawerItem().withName("Photos").withIcon(FontAwesome.Icon.faw_camera_retro)
 //                        )
                 .addDrawerItems(
 
@@ -438,10 +423,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-                        if (drawerItem instanceof Nameable) {
-                            Snackbar.with(getApplicationContext()).text(((Nameable) drawerItem).getName()).show(mActivity);
-                        }
+                    public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
 
                         if (((Nameable) drawerItem).getName().equals("Channels")) {
 
@@ -466,14 +448,14 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             //GalleryFragment fragment = GalleryFragment.newInstance("","","");
                             //getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
 
-//                            PhotoFragmentGrid fragment = new PhotoFragmentGrid();
+//                            PhotoFragmentGrid fragment = toolbar PhotoFragmentGrid();
 //
 //                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //                            transaction.replace(R.id.sub_container, fragment, "PHOTO_MAIN");
 //                            transaction.addToBackStack(null);
 //                            transaction.commit();
 
-                            // Intent i = new Intent(MainActivity.this, PhotoDetailActivity.class);
+                            // Intent i = toolbar Intent(MainActivity.this, PhotoDetailActivity.class);
                             //startActivity(i);
                         } else if (((Nameable) drawerItem).getName().equals("Home")) {
 
@@ -500,7 +482,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             finish();
                         }
 
-
+                        return true;
                     }
                 })
                 .withTranslucentActionBarCompatibility(false)
@@ -510,31 +492,33 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         toggle = result.getActionBarDrawerToggle();
         mDrawer = result.getDrawerLayout();
 
-
-
-
         ImageView channelMenu = (ImageView) result.getHeader().findViewById(R.id.channel_menu);
         ImageView sociallMenu = (ImageView) result.getHeader().findViewById(R.id.social_menu);
         ImageView videoMenu = (ImageView) result.getHeader().findViewById(R.id.video_menu);
         ImageView photoMenu = (ImageView) result.getHeader().findViewById(R.id.photo_menu);
 
         ImageView avatarMenu = (ImageView) result.getHeader().findViewById(R.id.header_avatar);
+        TextView nameMenu = (TextView) result.getHeader().findViewById(R.id.header_name);
         TextView usernameMenu = (TextView) result.getHeader().findViewById(R.id.header_username);
 
         Picasso.with(this).load(EndpointManager.getAvatarPath(pref.avatar().getOr(""))).placeholder(R.drawable.avatar_default).centerCrop()
                 .resize(100, 100).transform(new RoundedTransformation(50, 4)).into(avatarMenu);
         usernameMenu.setText("@" + pref.username().getOr("null"));
+        nameMenu.setText(pref.name().getOr("null"));
 
         avatarMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectImage();
+                Intent i = new Intent(mActivity, NewProfileActivity.class);
+                i.putExtra("user_id", pref.userId().getOr("0"));
+                mActivity.startActivity(i);
+
             }
         });
 
 
         getToolbar().setTitle("VDOMAX");
-        getToolbar().setSubtitle("@" + pref.username().getOr("null"));
+        //getToolbar().setSubtitle("@" + pref.username().getOr("null"));
 
         channelMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -587,5 +571,15 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 result.closeDrawer();
             }
         });
+    }
+
+    @Subscribe
+    public void onSetTitle(TitleEvent event) {
+        getToolbar().setTitle(event.str);
+    }
+
+    @Subscribe public void onSetTitle(SubTitleEvent event) {
+        getToolbar().setSubtitle(event.str);
+
     }
 }

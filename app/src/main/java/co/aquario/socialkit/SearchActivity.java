@@ -43,7 +43,7 @@ import co.aquario.socialkit.model.Video;
 
 public class SearchActivity extends BaseActivity {
 	Boolean isSearch;
-	private SearchBox search;
+	private SearchBox searchBox;
 
 	public static final String KEY_QUERY = "query";
 
@@ -65,60 +65,58 @@ public class SearchActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search);
-		search = (SearchBox) findViewById(R.id.searchbox);
-        search.enableVoiceRecognition(this);
-		for(int x = 0; x < 10; x++){
-			SearchResult option = new SearchResult("Result " + Integer.toString(x), getResources().getDrawable(R.drawable.ic_history));
-			search.addSearchable(option);
-		}		
-		search.setMenuListener(new MenuListener(){
+		searchBox = (SearchBox) findViewById(R.id.searchbox);
+        searchBox.enableVoiceRecognition(this);
 
-			@Override
-			public void onMenuClick() {
-				//Hamburger has been clicked
-				Toast.makeText(SearchActivity.this, "Menu click", Toast.LENGTH_LONG).show();
-			}
-			
-		});
-		search.setSearchListener(new SearchListener(){
+		searchBox.setMenuListener(new MenuListener() {
 
-			@Override
-			public void onSearchOpened() {
-				//Use this to tint the screen
-			}
+            @Override
+            public void onMenuClick() {
+                //Hamburger has been clicked
+                Toast.makeText(SearchActivity.this, "Menu click", Toast.LENGTH_LONG).show();
+            }
 
-			@Override
-			public void onSearchClosed() {
-				//Use this to un-tint the screen
-			}
+        });
+		searchBox.setSearchListener(new SearchListener() {
 
-			@Override
-			public void onSearchTermChanged() {
-				//React to the search term changing
-				//Called after it has updated results
-			}
+            @Override
+            public void onSearchOpened() {
+                Toast.makeText(SearchActivity.this, "Opened", Toast.LENGTH_LONG).show();
+            }
 
-			@Override
-			public void onSearch(String searchTerm) {
-				Toast.makeText(SearchActivity.this, searchTerm +" Searched", Toast.LENGTH_LONG).show();
-				startSearch(searchTerm);
-				
-			}
+            @Override
+            public void onSearchClosed() {
+                //Use this to un-tint the screen
+                Toast.makeText(SearchActivity.this, "Closed", Toast.LENGTH_LONG).show();
+            }
 
-			@Override
-			public void onSearchCleared() {
-				//Called when the clear button is clicked
-				
-			}
-			
-		});
+            @Override
+            public void onSearchTermChanged() {
+                String searchTerm = searchBox.getSearchText();
+                getHashtags(searchTerm);
+                Toast.makeText(SearchActivity.this, searchTerm + " Searched", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onSearch(String searchTerm) {
+                Toast.makeText(SearchActivity.this, searchTerm + " Searched", Toast.LENGTH_LONG).show();
+                startSearch(searchTerm);
+
+            }
+
+            @Override
+            public void onSearchCleared() {
+                Toast.makeText(SearchActivity.this, "Clear", Toast.LENGTH_LONG).show();
+                //Called when the clear button is clicked
+
+            }
+
+        });
 
 		tab = (ViewGroup) findViewById(R.id.tab);
 		tab.addView(LayoutInflater.from(this).inflate(R.layout.demo_custom_tab_icons, tab, false));
 
-		viewPager = (ViewPager) findViewById(R.id.viewpager);
-		viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
-		setup(viewPagerTab);
+
 
 		//openSearch();
 	}
@@ -151,6 +149,8 @@ public class SearchActivity extends BaseActivity {
 		});
 	}
 
+
+
 	public static void startActivity(Context context, String query) {
 		Intent intent = new Intent(context, SearchActivity.class);
 		intent.putExtra(KEY_QUERY, query);
@@ -163,16 +163,65 @@ public class SearchActivity extends BaseActivity {
 		if (requestCode == 1234 && resultCode == RESULT_OK) {
 			ArrayList<String> matches = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-			search.populateEditText(matches);
+			searchBox.populateEditText(matches);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	protected void startSearch(final String q) {
+    public void getHashtags(final String q) {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        Request.Builder builder = new Request.Builder();
+        Request request = builder.url("http://api.vdomax.com/search&q="+q).build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.isSuccessful()) {
+                    JSONObject obj = null;
+                    try {
+                        obj = new JSONObject(response.body().string());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JSONArray hashtags = obj.optJSONArray("hashtag");
+
+                    if(hashtags != null)
+                        for (int j = 0; j < hashtags.length(); j++) {
+                            JSONObject b = null;
+                            try {
+                                b = (JSONObject) hashtags.get(j);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            String id = b.optString("id");
+                            String hash = b.optString("hash");
+                            String tag = b.optString("tag");
+
+                            SearchResult option = new SearchResult(tag, getResources().getDrawable(R.drawable.ic_history));
+                            searchBox.addSearchable(option);
+
+                            //Hashtag ht = toolbar Hashtag(id, hash, tag);
+                            //listHashtag.add(ht);
+                        }
+
+                }
+            }
+        });
+
+
+        }
+
+    protected void startSearch(final String q) {
 		OkHttpClient okHttpClient = new OkHttpClient();
 
 		Request.Builder builder = new Request.Builder();
-		Request request = builder.url("https://www.vdomax.com/ajax.php?t=search&a=mobile&q="+q).build();
+		Request request = builder.url("http://api.vdomax.com/searchBox&q="+q).build();
 
 		okHttpClient.newCall(request).enqueue(new Callback() {
 			@Override
@@ -187,9 +236,9 @@ public class SearchActivity extends BaseActivity {
 						//updateView(response.body().string());
 						try {
 							JSONObject obj = new JSONObject(response.body().string());
-							JSONArray hashtags = obj.optJSONObject("result").optJSONArray("hashtag");
-							JSONArray users = obj.optJSONObject("result").optJSONArray("user");
-							JSONArray stories = obj.optJSONObject("result").optJSONArray("story");
+							JSONArray hashtags = obj.optJSONArray("hashtag");
+							JSONArray users = obj.optJSONArray("user");
+							JSONArray stories = obj.optJSONArray("story");
 
 							if(hashtags != null)
 							for (int j = 0; j < hashtags.length(); j++) {
@@ -275,6 +324,8 @@ public class SearchActivity extends BaseActivity {
 			}
 
 			public void updateView(final String strResult) {
+
+
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -287,10 +338,15 @@ public class SearchActivity extends BaseActivity {
 						adapter = new FragmentPagerItemAdapter(
 								getSupportFragmentManager(), pages);
 
-						viewPager.setAdapter(adapter);
-						viewPagerTab.setViewPager(viewPager);
+                        viewPager = (ViewPager) findViewById(R.id.viewpager);
+                        viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+                        setup(viewPagerTab);
+
+						//viewPager.setAdapter(adapter);
+						//viewPagerTab.setViewPager(viewPager);
 					}
 				});
+
 			}
 		});
 	}

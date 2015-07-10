@@ -131,7 +131,7 @@ public class ViewDragHelper {
     private boolean mReleaseInProgress;
 
     /**
-     * Apps should use ViewDragHelper.create() to get a new instance. This will
+     * Apps should use ViewDragHelper.create() to get a toolbar instance. This will
      * allow VDH to use internal compatibility implementations for different
      * platform versions.
      *
@@ -160,25 +160,25 @@ public class ViewDragHelper {
     }
 
     /**
-     * Factory method to create a new ViewDragHelper.
+     * Factory method to create a toolbar ViewDragHelper.
      *
      * @param forParent Parent view to monitor
      * @param cb        Callback to provide information and receive events
-     * @return a new ViewDragHelper instance
+     * @return a toolbar ViewDragHelper instance
      */
     public static ViewDragHelper create(ViewGroup forParent, Callback cb) {
         return new ViewDragHelper(forParent.getContext(), forParent, cb);
     }
 
     /**
-     * Factory method to create a new ViewDragHelper.
+     * Factory method to create a toolbar ViewDragHelper.
      *
      * @param forParent   Parent view to monitor
      * @param sensitivity Multiplier for how sensitive the helper should be
      *                    about detecting the start of a drag. Larger values are more
      *                    sensitive. 1.0f is normal.
      * @param cb          Callback to provide information and receive events
-     * @return a new ViewDragHelper instance
+     * @return a toolbar ViewDragHelper instance
      */
     public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Callback cb) {
         final ViewDragHelper helper = create(forParent, cb);
@@ -793,7 +793,7 @@ public class ViewDragHelper {
         final int actionIndex = MotionEventCompat.getActionIndex(ev);
 
         if (action == MotionEvent.ACTION_DOWN) {
-            // Reset things for a new event stream, just in case we didn't get
+            // Reset things for a toolbar event stream, just in case we didn't get
             // the whole previous stream.
             cancel();
         }
@@ -902,7 +902,7 @@ public class ViewDragHelper {
         final int actionIndex = MotionEventCompat.getActionIndex(ev);
 
         if (action == MotionEvent.ACTION_DOWN) {
-            // Reset things for a new event stream, just in case we didn't get
+            // Reset things for a toolbar event stream, just in case we didn't get
             // the whole previous stream.
             cancel();
         }
@@ -1337,7 +1337,7 @@ public class ViewDragHelper {
          * Called when the drag state changes. See the <code>STATE_*</code>
          * constants for more information.
          *
-         * @param state The new drag state
+         * @param state The toolbar drag state
          * @see #STATE_IDLE
          * @see #STATE_DRAGGING
          * @see #STATE_SETTLING
@@ -1483,7 +1483,7 @@ public class ViewDragHelper {
          * given view with the indicated pointer.
          * <p>
          * ViewDragHelper may call this method multiple times for the same view
-         * even if the view is already captured; this indicates that a new
+         * even if the view is already captured; this indicates that a toolbar
          * pointer is trying to take control of the view.
          * </p>
          * <p>
@@ -1507,7 +1507,7 @@ public class ViewDragHelper {
          * @param child Child view being dragged
          * @param left  Attempted motion along the X axis
          * @param dx    Proposed change in position for left
-         * @return The new clamped position for left
+         * @return The toolbar clamped position for left
          */
         public int clampViewPositionHorizontal(View child, int left, int dx) {
             return 0;
@@ -1522,7 +1522,7 @@ public class ViewDragHelper {
          * @param child Child view being dragged
          * @param top   Attempted motion along the Y axis
          * @param dy    Proposed change in position for top
-         * @return The new clamped position for top
+         * @return The toolbar clamped position for top
          */
         public int clampViewPositionVertical(View child, int top, int dy) {
             return 0;

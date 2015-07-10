@@ -30,7 +30,7 @@ package co.aquario.socialkit.activity;
 //    private VideoPlayerFragment mVideoPlayerFragment;
 //
 //    public static Intent startActivity(Activity activity, String youTubeUrl) {
-//        Intent i = new Intent(activity, VideoPlayerActivity.class);
+//        Intent i = toolbar Intent(activity, VideoPlayerActivity.class);
 //        //i.putExtra(DATA, data);
 //        i.putExtra(LOCATION, youTubeUrl);
 //        activity.startActivity(i);
@@ -52,7 +52,7 @@ package co.aquario.socialkit.activity;
 //        mVideoPlayerFragment = (VideoPlayerFragment) getSupportFragmentManager().findFragmentById(R.id.video_fragment);
 //        mVideoPlayerFragment.enableSubsButton(false);
 //
-//        QueryYouTubeTask youTubeTask = new QueryYouTubeTask();
+//        QueryYouTubeTask youTubeTask = toolbar QueryYouTubeTask();
 //        //youTubeTask.execute(YouTubeData.getYouTubeVideoId(youTubeUrl));
 //        youTubeTask.execute(youTubeId);
 //    }
@@ -150,7 +150,7 @@ package co.aquario.socialkit.activity;
 //                    return;
 //
 //                if (result == null) {
-//                    throw new RuntimeException("Invalid NULL Url.");
+//                    throw toolbar RuntimeException("Invalid NULL Url.");
 //                }
 //
 //                mLocation = URLDecoder.decode(result.toString());
@@ -166,12 +166,12 @@ package co.aquario.socialkit.activity;
 //
 //        private void showErrorAlert() {
 //            try {
-//                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VideoTrailerPlayerActivity.this);
+//                AlertDialog.Builder alertDialogBuilder = toolbar AlertDialog.Builder(VideoTrailerPlayerActivity.this);
 //                alertDialogBuilder.setTitle(R.string.comm_error);
 //                alertDialogBuilder.setCancelable(false);
 //                alertDialogBuilder.setMessage(R.string.comm_message);
 //
-//                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                alertDialogBuilder.setPositiveButton("OK", toolbar DialogInterface.OnClickListener() {
 //                    @Override
 //                    public void onClick(DialogInterface dialog, int which) {
 //                        VideoTrailerPlayerActivity.this.finish();

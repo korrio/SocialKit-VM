@@ -1,2 +1,2 @@
-include ':app', ':layouts', ':core', ':vlc', ':emojicon', ':bookends', ':app:projectLibs:sbl', ':cvlibrary'
+include ':app', ':emojicon', ':bookends', ':cvlibrary', ':androidwebsocketsmaster', ':drawer', ':iconic', ':PhotoPickerLib'
 project(':emojicon').projectDir = new File('emoji')

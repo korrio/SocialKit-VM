@@ -39,15 +39,15 @@ public class ApiHandler {
         options.put("key2", Integer.toString(event.getVar2()));
 
     /*
-        api.getRandomImage2(options,new Callback<SomeData>() {
+        api.getRandomImage2(options,toolbar Callback<SomeData>() {
             @Override
             public void success(SomeData randomImage, Response response) {
-                apiBus.post(new SuccessEvent(randomImage));
+                apiBus.post(toolbar SuccessEvent(randomImage));
             }
 
             @Override
             public void failure(RetrofitError error) {
-                apiBus.post(new FailedEvent());
+                apiBus.post(toolbar FailedEvent());
             }
         });
         */

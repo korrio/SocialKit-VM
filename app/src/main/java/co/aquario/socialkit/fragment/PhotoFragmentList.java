@@ -34,7 +34,7 @@ package co.aquario.socialkit.fragment;
 //    //private String type = "";
 //    private String userId = "";
 //
-//    ArrayList<PostStory> list = new ArrayList<>();
+//    ArrayList<PostStory> listStory = toolbar ArrayList<>();
 //
 //    FeedAdapterPhotoList adapter2;
 //
@@ -46,8 +46,8 @@ package co.aquario.socialkit.fragment;
 //    private static final int PER_PAGE = 20;
 //
 //    public static PhotoFragmentList newInstance(String text,String userId){
-//        PhotoFragmentList mFragment = new PhotoFragmentList();
-//        Bundle mBundle = new Bundle();
+//        PhotoFragmentList mFragment = toolbar PhotoFragmentList();
+//        Bundle mBundle = toolbar Bundle();
 //        mBundle.putString(LOAD_TYPE, text);
 //        mBundle.putString(USER_ID,userId);
 //        mFragment.setArguments(mBundle);
@@ -65,26 +65,26 @@ package co.aquario.socialkit.fragment;
 //        if(!TYPE.equals("")) {
 //            if(userId.equals(""))
 //                userId = prefManager.userId().getOr("1301");
-//            ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+//            ApiBus.getInstance().post(toolbar LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
 //        }
 //    }
 //
 //    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 //        View rootView = inflater.inflate(R.layout.layout_photo_fragment_list, container, false);
 //
-//        recyclerView = (TwoWayView) rootView.findViewById(R.id.list);
+//        recyclerView = (TwoWayView) rootView.findViewById(R.id.listStory);
 //        recyclerView.setHasFixedSize(true);
-//        adapter2 = new FeedAdapterPhotoList(getActivity(),list);
+//        adapter2 = toolbar FeedAdapterPhotoList(getActivity(),listStory);
 //        recyclerView.setAdapter(adapter2);
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+//        LinearLayoutManager linearLayoutManager = toolbar LinearLayoutManager(getActivity());
 //        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+//        recyclerView.setOnScrollListener(toolbar EndlessRecyclerOnScrollListener(linearLayoutManager) {
 //            @Override
 //            public void onLoadMore(int page) {
 //                Log.e("scrollBottom","laew na");
 //                refresh = true;
-//                ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
-//                //ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),current_page,15));
+//                ApiBus.getInstance().post(toolbar LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
+//                //ApiBus.getInstance().post(toolbar LoadFriendListEvent(type,Integer.parseInt(userId),current_page,15));
 //            }
 //        });
 //
@@ -93,18 +93,18 @@ package co.aquario.socialkit.fragment;
 //
 //        /*
 //        //gridView = (ObservableGridView) rootView.findViewById(R.id.scroll);
-//        adapter = new FriendAdapter(getActivity(), list);
+//        adapter = toolbar FriendAdapter(getActivity(), listStory);
 //        gridView.setAdapter(adapter);
 //
-//        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        gridView.setOnItemClickListener(toolbar AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent i = new Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
-//                i.putExtra("userId",list.get(position).id);
-//                i.putExtra("avatar",list.get(position).getAvatarUrl());
-//                i.putExtra("cover",list.get(position).getCoverUrl());
-//                i.putExtra("name",list.get(position).name);
-//                i.putExtra("username",list.get(position).username);
+//                Intent i = toolbar Intent(getActivity(), SlidingUpRecyclerViewActivity.class);
+//                i.putExtra("userId",listStory.get(position).id);
+//                i.putExtra("avatar",listStory.get(position).getAvatarUrl());
+//                i.putExtra("cover",listStory.get(position).getCoverUrl());
+//                i.putExtra("name",listStory.get(position).name);
+//                i.putExtra("username",listStory.get(position).username);
 //                getActivity().startActivity(i);
 //            }
 //        });
@@ -137,15 +137,15 @@ package co.aquario.socialkit.fragment;
 //        Log.e("MYTYPE",TYPE);
 //
 //        if(refresh)
-//            list.clear();
-//        list.addAll(event.getTimelineData().getPosts());
+//            listStory.clear();
+//        listStory.addAll(event.getTimelineData().getPosts());
 //        adapter2.notifyDataSetChanged();
 //
 //    }
 //
 //    @Subscribe public void onLogout(LogoutEvent event) {
 //        MainApplication.logout();
-//        Intent login = new Intent(getActivity(), LoginActivity.class);
+//        Intent login = toolbar Intent(getActivity(), LoginActivity.class);
 //        startActivity(login);
 //        getActivity().finish();
 //    }

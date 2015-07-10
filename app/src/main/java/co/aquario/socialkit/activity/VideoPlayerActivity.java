@@ -14,7 +14,7 @@ package co.aquario.socialkit.activity;
 //    }
 //
 //    public static Intent startActivity(Activity activity, String streamUrl, String quality,  long resumePosition) {
-//        Intent i = new Intent(activity, VideoPlayerActivity.class);
+//        Intent i = toolbar Intent(activity, VideoPlayerActivity.class);
 //        //i.putExtra(DATA, data);
 //        i.putExtra(QUALITY, quality);
 //        //i.putExtra(SUBTITLES, subtitleLanguage);
@@ -60,7 +60,7 @@ package co.aquario.socialkit.activity;
 //    }
 //
 //    private void showExitDialog() {
-//        OptionDialogFragment.show(getFragmentManager(), getString(R.string.leave_videoplayer_title), String.format(getString(R.string.leave_videoplayer_message), ""), getString(android.R.string.yes), getString(android.R.string.no), new OptionDialogFragment.Listener() {
+//        OptionDialogFragment.show(getFragmentManager(), getString(R.string.leave_videoplayer_title), String.format(getString(R.string.leave_videoplayer_message), ""), getString(android.R.string.yes), getString(android.R.string.no), toolbar OptionDialogFragment.Listener() {
 //            @Override
 //            public void onSelectionPositive() {
 //                finish();

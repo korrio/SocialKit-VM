@@ -35,7 +35,7 @@ public abstract class EndlessListOnScrollListener implements AbsListView.OnScrol
     public void onScroll(AbsListView view,int firstVisibleItem,int visibleItemCount,int totalItemCount)
     {
         // If the total item count is zero and the previous isn't, assume the
-        // list is invalidated and should be reset back to initial state
+        // listStory is invalidated and should be reset back to initial state
         if (totalItemCount < previousTotalItemCount) {
             this.currentPage = this.startingPageIndex;
             this.previousTotalItemCount = totalItemCount;

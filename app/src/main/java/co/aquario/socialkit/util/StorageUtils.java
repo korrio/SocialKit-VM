@@ -66,7 +66,7 @@ public class StorageUtils {
                         String element = lineElements[1];
 
                         // don't add the default mount path
-                        // it's already in the list.
+                        // it's already in the listStory.
                         if (!element.equals("/mnt/sdcard"))
                             mMounts.add(element);
                     }
