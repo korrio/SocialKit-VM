@@ -97,6 +97,10 @@ public class NewProfileActivity extends BaseActivity {
         tabs.setDividerColor(getResources().getColor(android.R.color.transparent));
         pager = (ViewPager) findViewById(R.id.pager);
 
+        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(adapter);
+        tabs.setViewPager(pager);
+
 
         //final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
        // pager.setPageMargin(pageMargin);
@@ -279,10 +283,6 @@ public class NewProfileActivity extends BaseActivity {
 
         if(event.getUser().isLive) {
             LivePagerAdapter adapter = new LivePagerAdapter(getSupportFragmentManager(),channel);
-            pager.setAdapter(adapter);
-
-        } else {
-            MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
             pager.setAdapter(adapter);
 
         }

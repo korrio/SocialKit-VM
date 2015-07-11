@@ -387,7 +387,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     @Override
     public void onSearchQuery(String query) {
         Utils.hideKeyboard(this);
-        SearchActivity.startActivity(getApplicationContext(),query);
+        //SearchActivity.startActivity(getApplicationContext(),query);
 
     }
 
