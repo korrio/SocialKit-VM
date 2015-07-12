@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.adapter.CommentsAdapter;
 import co.aquario.socialkit.event.GetStoryEvent;
@@ -88,7 +88,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
         postId = getIntent().getStringExtra("POST_ID");
         ApiBus.getInstance().post(new GetStoryEvent(postId));
         //commentList = getIntent().getParcelableArrayListExtra(ARG_COMMENT_LIST);
-        pref = MainApplication.get(this).getPrefManager();
+        pref = VMApplication.get(this).getPrefManager();
         userId = pref.userId().getOr("3");
         avatar = pref.avatar().getOr("TEST");
         name = pref.name().getOr("TEST");

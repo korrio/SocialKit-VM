@@ -17,10 +17,13 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.chat.ChatFragment;
+import co.aquario.socialkit.chat.SimpleChatFragment;
 import co.aquario.socialkit.fragment.SurfaceFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.model.Video;
+
+
+
 
 /**
  * Sample activity created to show a video from YouTube using a YouTubePlayer.
@@ -145,8 +148,8 @@ public class ClipFragment extends BaseFragment {
         draggablePanel.setBottomFragment(moviePosterFragment);
         */
 
-        ChatFragment chatFragment = ChatFragment.newInstance(profileName);
-        draggablePanel.setBottomFragment(chatFragment);
+        SimpleChatFragment simpleChatFragment = SimpleChatFragment.newInstance(profileName);
+        draggablePanel.setBottomFragment(simpleChatFragment);
         draggablePanel.initializeView();
         Picasso.with(getActivity())
                 .load(cover)

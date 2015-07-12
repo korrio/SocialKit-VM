@@ -13,7 +13,7 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.adapter.FeedAdapter;
@@ -54,7 +54,7 @@ public class PhotoFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefManager = MainApplication.get(getActivity()).getPrefManager();
+        prefManager = VMApplication.get(getActivity()).getPrefManager();
         if (getArguments() != null) {
             TYPE = getArguments().getString(LOAD_TYPE);
             userId = getArguments().getString(USER_ID);
@@ -143,7 +143,7 @@ public class PhotoFragment extends BaseFragment {
     }
 
     @Subscribe public void onLogout(LogoutEvent event) {
-        MainApplication.logout();
+        VMApplication.logout();
         Intent login = new Intent(getActivity(), LoginActivity.class);
         startActivity(login);
         getActivity().finish();

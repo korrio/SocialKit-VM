@@ -86,9 +86,9 @@ public class ApiHandlerVM {
                 Log.e("response", response.getBody().toString());
 
                 if (loginData.status.equals("1"))
-                    apiBus.post(new LoginSuccessEvent(loginData));
+                    ApiBus.getInstance().post(new LoginSuccessEvent(loginData));
                 else
-                    apiBus.post(new LoginFailedAuthEvent());
+                    ApiBus.getInstance().post(new LoginFailedAuthEvent());
 
                 Log.e("POSTBACK", "post response back to LoginFragment");
             }

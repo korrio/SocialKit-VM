@@ -11,7 +11,8 @@
         android:layout_height="@dimen/tab_layout_height"
         android:background="?attr/colorPrimary"
         app:pstsIndicatorColor="@android:color/white"
-        app:pstsIndicatorHeight="3dp"/>
+        app:pstsIndicatorHeight="3dp"
+        app:pstsTabPaddingLeftRight="14dp"/>
 
     <!--
     <View

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.squareup.otto.Subscribe;
 
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.FbAuthEvent;
 import co.aquario.socialkit.event.LoadFbProfileEvent;
@@ -31,7 +31,7 @@ public class FbAuthFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        prefManager = MainApplication.get(getActivity().getApplicationContext()).getPrefManager();
+        prefManager = VMApplication.get(getActivity().getApplicationContext()).getPrefManager();
         Log.e("FB_SEND_VM_API",prefManager.fbToken().getOr(""));
         Log.e("FB_SEND_VM_API",prefManager.fbId().getOr(""));
 

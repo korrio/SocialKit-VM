@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.LiveFragment;
 import co.aquario.socialkit.adapter.ChannelAdapter;
 import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.util.Utils;

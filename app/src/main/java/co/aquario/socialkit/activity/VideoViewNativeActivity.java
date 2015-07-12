@@ -19,7 +19,7 @@ import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PrefManager;
@@ -91,7 +91,7 @@ public class VideoViewNativeActivity extends Activity {
         });
         */
 
-        PrefManager pref = MainApplication.get(this).getPrefManager();
+        PrefManager pref = VMApplication.get(this).getPrefManager();
 
         String avatarUrl = pref.avatar().getOr("");
         String coverUrl = pref.cover().getOr("");

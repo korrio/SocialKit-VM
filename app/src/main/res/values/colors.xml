@@ -59,12 +59,39 @@
     <color name="player_overlay">#55000000</color>
 
     <!-- Chat Color -->
+    <color name="username0">#e21400</color>
+    <color name="username1">#91580f</color>
+    <color name="username2">#f8a700</color>
+    <color name="username3">#f78b00</color>
+    <color name="username4">#58dc00</color>
+    <color name="username5">#287b00</color>
+    <color name="username6">#a8f07a</color>
+    <color name="username7">#4ae8c4</color>
+    <color name="username8">#3b88eb</color>
+    <color name="username9">#3824aa</color>
+    <color name="username10">#a700ff</color>
+    <color name="username11">#d300e7</color>
+
+    <array name="username_colors">
+        <item>@color/username0</item>
+        <item>@color/username1</item>
+        <item>@color/username2</item>
+        <item>@color/username3</item>
+        <item>@color/username4</item>
+        <item>@color/username5</item>
+        <item>@color/username6</item>
+        <item>@color/username7</item>
+        <item>@color/username8</item>
+        <item>@color/username9</item>
+        <item>@color/username10</item>
+        <item>@color/username11</item>
+    </array>
+
     <color name="actionbar">#3cb879</color>
     <color name="body_background">#e8e8e8</color>
     <color name="body_background_green">#82e783</color>
     <color name="server_status_bar">#2b2b2b</color>
     <color name="title_gray">#434343</color>
-
     <color name="bg_msg_you">#5eb964</color>
     <color name="bg_msg_from">#e5e7eb</color>
     <color name="msg_border_color">#a1a1a1</color>

@@ -35,7 +35,7 @@ public class NameActivity extends Activity {
 					String name = txtName.getText().toString().trim();
 
 					Intent intent = new Intent(NameActivity.this,
-							ChatActivity.class);
+							SimpleChatActivity.class);
 					intent.putExtra("name", name);
 
 					startActivity(intent);

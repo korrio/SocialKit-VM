@@ -16,7 +16,7 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.adapter.FriendRecyclerAdapter;
@@ -67,7 +67,7 @@ public class FriendSocialFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefManager = MainApplication.get(getActivity()).getPrefManager();
+        prefManager = VMApplication.get(getActivity()).getPrefManager();
         adapter2 = new FriendRecyclerAdapter(getActivity(),list);
 
         if (getArguments() != null) {
@@ -186,7 +186,7 @@ public class FriendSocialFragment extends BaseFragment {
     }
 
     @Subscribe public void onLogout(LogoutEvent event) {
-        MainApplication.logout();
+        VMApplication.logout();
         Intent login = new Intent(getActivity(), LoginActivity.class);
         startActivity(login);
         getActivity().finish();

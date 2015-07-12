@@ -24,7 +24,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
 
 /**
@@ -238,7 +238,7 @@ public class Utils {
     }
 
     public static void showToast(String iMessage) {
-        Toast.makeText(MainApplication.getAppContext(), iMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(VMApplication.getAppContext(), iMessage, Toast.LENGTH_SHORT).show();
     }
 
     public static boolean isNumeric(String str)

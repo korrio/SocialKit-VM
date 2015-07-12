@@ -47,17 +47,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.aquario.chatapp.ChatActivity;
 import co.aquario.socialkit.MainActivity;
-import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.TakePhotoActivity2;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.activity.PostStatusActivity2;
 import co.aquario.socialkit.activity.SCSearchActivity;
 import co.aquario.socialkit.activity.YtSearchActivity;
 import co.aquario.socialkit.adapter.ButtonItemAdapter;
 import co.aquario.socialkit.adapter.FeedAdapter;
-import co.aquario.socialkit.chat.ChatActivity;
 import co.aquario.socialkit.event.FollowRegisterEvent;
 import co.aquario.socialkit.event.FollowUserSuccessEvent;
 import co.aquario.socialkit.event.GetUserProfileEvent;
@@ -75,7 +75,7 @@ import co.aquario.socialkit.event.RefreshEvent;
 import co.aquario.socialkit.event.UnfollowUserSuccessEvent;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
-import co.aquario.socialkit.fragment.tabpager.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.pager.HomeViewPagerFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.search.soundcloud.SoundCloudService;
@@ -114,12 +114,13 @@ public class FeedFragment extends BaseFragment {
     ImageView cover;
     TextView titleTv;
     TextView usernameTv;
-    TextView bioTv;
+    //TextView bioTv;
     TextView countPost;
     TextView countFollowing;
     TextView countFollower;
     TextView countFriend;
     Button btnFollow;
+    Button btnMessage;
     String imageTitle;
     String nameTitle;
     String coverUrl;
@@ -168,7 +169,7 @@ public class FeedFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        pref = MainApplication.get(getActivity().getApplicationContext()).getPrefManager();
+        pref = VMApplication.get(getActivity().getApplicationContext()).getPrefManager();
 
         if (getArguments() != null) {
 
@@ -185,8 +186,8 @@ public class FeedFragment extends BaseFragment {
                 userId = getArguments().getString(USER_ID);
                 isHomeTimeline = getArguments().getBoolean(IS_HOMETIMELINE);
 
-                if(!Utils.isNumeric(userId))
-                    username = userId;
+                //if(!Utils.isNumeric(userId))
+                  //  username = userId;
             }
 
 
@@ -436,52 +437,7 @@ public class FeedFragment extends BaseFragment {
 
                 pShare = position;
 
-                new MaterialDialog.Builder(getActivity())
-                        .title("Share to")
-                        .adapter(new ButtonItemAdapter(getActivity(),R.array.socialNetworks),
-                                new MaterialDialog.ListCallback() {
-                                    @Override
-                                    public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                        //Toast.makeText(getActivity(), "Clicked item " + which, Toast.LENGTH_SHORT).show();
-                                        switch (which) {
-                                            case 0:
-                                                // Share to vdomax
-                                                ApiBus.getInstance().post(new PostShareEvent(pref.userId().getOr("6"), list.get(pShare).postId));
-
-                                                break;
-                                            case 1:
-                                                Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-                                                shareIntent.setType("text/plain");
-                                                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,  "https://www.vdomax.com/story/" + list.get(pShare).id);
-                                                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, list.get(pShare).text);
-                                                shareIntent.putExtra(Intent.EXTRA_STREAM, "https://www.vdomax.com/story/" + list.get(pShare).id);
-
-                                                PackageManager pm = getActivity().getPackageManager();
-                                                List<ResolveInfo> activityList = pm.queryIntentActivities(shareIntent, 0);
-                                                for (final ResolveInfo app : activityList)
-                                                {
-                                                    if ((app.activityInfo.name).contains("facebook"))
-                                                    {
-                                                        final ActivityInfo activity = app.activityInfo;
-                                                        final ComponentName name = new ComponentName(activity.applicationInfo.packageName, activity.name);
-                                                        shareIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                                                        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                                                        shareIntent.setComponent(name);
-                                                        getActivity().startActivity(shareIntent);
-                                                        break;
-                                                    }
-                                                }
-                                                break;
-                                            default:
-                                                break;
-
-                                        }
-                                        dialog.dismiss();
-
-                                    }
-                                })
-                        .theme(Theme.LIGHT)
-                        .show();
+                // buildShareDialog();
 
                 //ApiBus.getInstance().post(toolbar PostShareEvent(pref.userId().getOr("6"), listStory.get(position).postId));
             }
@@ -596,6 +552,55 @@ public class FeedFragment extends BaseFragment {
         return rootView;
     }
 
+    public void buildShareDialog() {
+        new MaterialDialog.Builder(getActivity())
+                .title("Share to")
+                .adapter(new ButtonItemAdapter(getActivity(),R.array.socialNetworks),
+                        new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                                //Toast.makeText(getActivity(), "Clicked item " + which, Toast.LENGTH_SHORT).show();
+                                switch (which) {
+                                    case 0:
+                                        // Share to vdomax
+                                        ApiBus.getInstance().post(new PostShareEvent(pref.userId().getOr("6"), list.get(pShare).postId));
+
+                                        break;
+                                    case 1:
+                                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                                        shareIntent.setType("text/plain");
+                                        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,  "https://www.vdomax.com/story/" + list.get(pShare).id);
+                                        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, list.get(pShare).text);
+                                        shareIntent.putExtra(Intent.EXTRA_STREAM, "https://www.vdomax.com/story/" + list.get(pShare).id);
+
+                                        PackageManager pm = getActivity().getPackageManager();
+                                        List<ResolveInfo> activityList = pm.queryIntentActivities(shareIntent, 0);
+                                        for (final ResolveInfo app : activityList)
+                                        {
+                                            if ((app.activityInfo.name).contains("facebook"))
+                                            {
+                                                final ActivityInfo activity = app.activityInfo;
+                                                final ComponentName name = new ComponentName(activity.applicationInfo.packageName, activity.name);
+                                                shareIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+                                                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                                                shareIntent.setComponent(name);
+                                                getActivity().startActivity(shareIntent);
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    default:
+                                        break;
+
+                                }
+                                dialog.dismiss();
+
+                            }
+                        })
+                .theme(Theme.LIGHT)
+                .show();
+    }
+
     public void showMenuBar() {
         AnimatorSet animSet = new AnimatorSet();
 
@@ -684,7 +689,7 @@ public class FeedFragment extends BaseFragment {
     }
 
     @Subscribe public void onLogout(LogoutEvent event) {
-        MainApplication.logout();
+        VMApplication.logout();
         Intent login = new Intent(getActivity(), LoginActivity.class);
         startActivity(login);
         getActivity().finish();
@@ -714,24 +719,28 @@ public class FeedFragment extends BaseFragment {
             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
 
         btnFollow = (Button) myHeader.findViewById(R.id.btn_follow);
+        btnMessage = (Button) myHeader.findViewById(R.id.btn_message);
 
         avatar = (ImageView) myHeader.findViewById(R.id.user_avatar);
         cover = (ImageView) myHeader.findViewById(R.id.user_cover);
 
         titleTv = (TextView) myHeader.findViewById(R.id.user_name);
         //usernameTv = (TextView) myHeader.findViewById(R.id.user_username);
-        bioTv = (TextView) myHeader.findViewById(R.id.user_des);
+        //bioTv = (TextView) myHeader.findViewById(R.id.user_des);
 
+        /*
         if(Utils.isTablet(getActivity()))
             bioTv.setVisibility(View.VISIBLE);
         else
             bioTv.setVisibility(View.GONE);
+            */
 
         profileName = event.getUser().getName();
+        username = event.getUser().getUsername();
 
         titleTv.setText(Html.fromHtml(event.getUser().getName()));
         //usernameTv.setText("@" + event.getUser().getUsername());
-        bioTv.setText(Html.fromHtml(event.getUser().getAbout()));
+//        bioTv.setText(Html.fromHtml(event.getUser().getAbout()));
 
         if (Html.fromHtml(event.getUser().getName()).toString().length() >= 0) {
             ApiBus.getInstance().postQueue(new TitleEvent(event.getUser().getName()));
@@ -790,6 +799,13 @@ public class FeedFragment extends BaseFragment {
                 }
                 ApiBus.getInstance().post(new FollowRegisterEvent(event.getUser().getId()));
                 isFollowing = !isFollowing;
+            }
+        });
+
+        btnMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChatActivity.startChatActivity(getActivity(), Integer.parseInt(pref.userId().getOr("0")), Integer.parseInt(userId),0);
             }
         });
 
@@ -954,15 +970,7 @@ public class FeedFragment extends BaseFragment {
                 TYPE = "live";
                 break;
 
-            case R.id.action_message:
-                String name = profileName;
 
-                Intent intent = new Intent(getActivity(),
-                        ChatActivity.class);
-                intent.putExtra("name", name);
-
-                startActivity(intent);
-                break;
             default:
                 //isRefresh = true;
                 break;

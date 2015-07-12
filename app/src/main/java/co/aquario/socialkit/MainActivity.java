@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,10 +34,14 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.mikepenz.materialdrawer.model.interfaces.OnCheckedChangeListener;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
 import com.soundcloud.android.crop.Crop;
-import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -49,17 +55,16 @@ import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.activity.PostPhotoActivity;
 import co.aquario.socialkit.activity.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
-import co.aquario.socialkit.event.toolbar.SubTitleEvent;
-import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.PhotoFragmentGrid;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
-import co.aquario.socialkit.fragment.tabpager.ChannelViewPagerFragment;
-import co.aquario.socialkit.fragment.tabpager.HomeViewPagerFragment;
-import co.aquario.socialkit.fragment.tabpager.PhotoViewPagerFragment;
-import co.aquario.socialkit.fragment.tabpager.SocialViewPagerFragment;
-import co.aquario.socialkit.fragment.tabpager.VideoViewPagerFragment;
+import co.aquario.socialkit.fragment.main.FeedFragment;
+import co.aquario.socialkit.fragment.pager.ChannelViewPagerFragment;
+import co.aquario.socialkit.fragment.pager.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.pager.PhotoViewPagerFragment;
+import co.aquario.socialkit.fragment.pager.SocialViewPagerFragment;
+import co.aquario.socialkit.fragment.pager.VideoViewPagerFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PathManager;
@@ -87,38 +92,33 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     private String userId;
     private Uri mFileURI = null;
 
-    public PrefManager pref;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getToolbar().setTitle("VDOMAX");
-        getToolbar().setSubtitle("@" + pref.username().getOr("null"));
-    }
+    PrefManager mPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        super.setContentView(R.layout.activity_main);
         mContext = this;
         mActivity = this;
 
-        pref = getPref(getApplicationContext());
-        userId = pref.userId().getOr("0");
+        mPref = getPref(getApplicationContext());
+        userId = mPref.userId().getOr("0");
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setElevation(0);
-        }
-        setSupportActionBar(toolbar);
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("user_id", Integer.parseInt(mPref.userId().getOr("0")));
+        installation.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                String deviceToken = (String) ParseInstallation.getCurrentInstallation().get("deviceToken");
+                Log.e("deviceToken",deviceToken + "+++");
 
-        toolbar.setOnClickListener(new View.OnClickListener() {
+            }
+        });
+
+        getToolbar().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(mActivity, NewProfileActivity.class);
-                i.putExtra("user_id",userId);
-                startActivity(i);
-
+                NewProfileActivity.startProfileActivity(mActivity, userId);
             }
         });
 
@@ -133,9 +133,9 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         initDrawer(savedInstanceState);
     }
 
-    public Toolbar getToolbar() {
-        return toolbar;
-    }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -172,6 +172,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         return ret;
     }
 
+    /*
     @Override
     public void onAttachFragment(Fragment fragment) {
         fragList.add(new WeakReference<Fragment>(fragment));
@@ -183,6 +184,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         if (fragList.size() == 0)
             finish();
     }
+    */
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -387,17 +389,33 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     @Override
     public void onSearchQuery(String query) {
         Utils.hideKeyboard(this);
+        FeedFragment fragment = new FeedFragment().newInstance(query);
+        FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+        transaction.commit();
+
         //SearchActivity.startActivity(getApplicationContext(),query);
 
     }
+
+    private OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+            if (drawerItem instanceof Nameable) {
+                Log.i("material-drawer", "DrawerItem: " + ((Nameable) drawerItem).getName() + " - toggleChecked: " + isChecked);
+            } else {
+                Log.i("material-drawer", "toggleChecked: " + isChecked);
+            }
+        }
+    };
 
     public void initDrawer(Bundle savedInstanceState) {
 
         View header = LayoutInflater.from(getApplication()).inflate(R.layout.header_drawer, null);
         result = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(toolbar)
-
+                .withToolbar(getToolbar())
                 .withHeader(header)
                 //.withAccountHeader(headerResult.build())
                 .withActionBarDrawerToggle(true)
@@ -412,14 +430,19 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 .addDrawerItems(
 
                         new SectionDrawerItem().withName("Menu"),
-                        new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home),
-                        new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history),
-                        new SecondaryDrawerItem().withName("Setting").withIcon(FontAwesome.Icon.faw_cog),
-                        new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc),
-                        new SecondaryDrawerItem().withName("Tattoo Store").withIcon(FontAwesome.Icon.faw_shopping_cart).setEnabled(false),
-                        new SecondaryDrawerItem().withName("Term & Policies").withIcon(FontAwesome.Icon.faw_terminal),
-                        new SecondaryDrawerItem().withName("Log Out").withIcon(FontAwesome.Icon.faw_sign_out)
+                        new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home).withIdentifier(0),
+                        new SecondaryDrawerItem().withName("Chat").withIcon(FontAwesome.Icon.faw_medium).withIdentifier(1),
+                        new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history).withIdentifier(2),
+                        new SecondaryDrawerItem().withName("Setting").withIcon(FontAwesome.Icon.faw_cog).withIdentifier(3),
+                        new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc).withIdentifier(4),
+                        new SecondaryDrawerItem().withName("Tattoo Store").withIcon(FontAwesome.Icon.faw_shopping_cart).withIdentifier(5).setEnabled(false),
+                        new SecondaryDrawerItem().withName("Term & Policies").withIcon(FontAwesome.Icon.faw_terminal).withIdentifier(6)
+                        //new SecondaryDrawerItem().withName("Log Out").withIcon(FontAwesome.Icon.faw_sign_out)
 
+                )
+                .addStickyDrawerItems(
+                        new SwitchDrawerItem().withName(R.string.action_notification).withIcon(FontAwesome.Icon.faw_newspaper_o).withIdentifier(9).withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
+                        new SecondaryDrawerItem().withName(R.string.action_logout).withIcon(FontAwesome.Icon.faw_sign_out).withIdentifier(10)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -476,7 +499,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SETTINGS").addToBackStack(null).commit();
 
                         } else if (((Nameable) drawerItem).getName().equals("Log Out")) {
-                            MainApplication.logout();
+                            VMApplication.logout();
                             Intent login = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(login);
                             finish();
@@ -501,24 +524,24 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         TextView nameMenu = (TextView) result.getHeader().findViewById(R.id.header_name);
         TextView usernameMenu = (TextView) result.getHeader().findViewById(R.id.header_username);
 
-        Picasso.with(this).load(EndpointManager.getAvatarPath(pref.avatar().getOr(""))).placeholder(R.drawable.avatar_default).centerCrop()
+        Picasso.with(this).load(EndpointManager.getAvatarPath(mPref.avatar().getOr(""))).placeholder(R.drawable.avatar_default).centerCrop()
                 .resize(100, 100).transform(new RoundedTransformation(50, 4)).into(avatarMenu);
-        usernameMenu.setText("@" + pref.username().getOr("null"));
-        nameMenu.setText(pref.name().getOr("null"));
+        usernameMenu.setText("@" + mPref.username().getOr("null"));
+        nameMenu.setText(mPref.name().getOr("null"));
 
         avatarMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(mActivity, NewProfileActivity.class);
-                i.putExtra("user_id", pref.userId().getOr("0"));
-                mActivity.startActivity(i);
-
+                NewProfileActivity.startProfileActivity(mActivity,mPref.userId().getOr("0"));
             }
         });
 
-
-        getToolbar().setTitle("VDOMAX");
-        //getToolbar().setSubtitle("@" + pref.username().getOr("null"));
+        avatarMenu.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                return false;
+            }
+        });
 
         channelMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -573,13 +596,4 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         });
     }
 
-    @Subscribe
-    public void onSetTitle(TitleEvent event) {
-        getToolbar().setTitle(event.str);
-    }
-
-    @Subscribe public void onSetTitle(SubTitleEvent event) {
-        getToolbar().setSubtitle(event.str);
-
-    }
 }

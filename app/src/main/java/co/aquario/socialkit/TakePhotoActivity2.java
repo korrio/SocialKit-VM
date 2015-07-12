@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -55,7 +56,7 @@ import me.isming.tools.cvfilter.library.ImageData;
 /**
  * Created by Miroslaw Stanek on 08.02.15.
  */
-public class TakePhotoActivity2 extends BaseActivity implements RevealBackgroundView.OnStateChangeListener,
+public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackgroundView.OnStateChangeListener,
         CameraHostProvider {
 
     private Bitmap mOriginBitmap, mResultBitmap;
@@ -168,10 +169,6 @@ public class TakePhotoActivity2 extends BaseActivity implements RevealBackground
 
     }
 
-    @Override
-    protected boolean shouldInstallDrawer() {
-        return false;
-    }
 
     @Override
     protected void onResume() {

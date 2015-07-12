@@ -5,11 +5,8 @@
 
     <item
         android:id="@+id/action_message"
+        android:title="MESSAGE"
         android:icon="@drawable/ic_message_white"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/action_follow"
-        android:title="+ FOLLOW"
-        app:showAsAction="always" />
 </menu>

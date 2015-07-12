@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/ChatWidget/ChatWidget.iml" filepath="$PROJECT_DIR$/ChatWidget/ChatWidget.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ParseLoginUI/ParseLoginUI.iml" filepath="$PROJECT_DIR$/ParseLoginUI/ParseLoginUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/PhotoPickerLib/PhotoPickerLib.iml" filepath="$PROJECT_DIR$/PhotoPickerLib/PhotoPickerLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/SocialKit-VM-emoticon.iml" filepath="$PROJECT_DIR$/SocialKit-VM-emoticon.iml" />
       <module fileurl="file://$PROJECT_DIR$/androidwebsocketsmaster/androidwebsocketsmaster.iml" filepath="$PROJECT_DIR$/androidwebsocketsmaster/androidwebsocketsmaster.iml" />

@@ -15,7 +15,7 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.io.InputStream;
 
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 
 public class URLImageParser implements Html.ImageGetter {
     Context c;
@@ -107,7 +107,7 @@ public class URLImageParser implements Html.ImageGetter {
         }
 
         private InputStream fetch(String urlString) throws  IOException {
-            OkHttpClient client = MainApplication.getHttpClient();
+            OkHttpClient client = VMApplication.getHttpClient();
             Request request = new Request.Builder().url(urlString).build();
             Response response = client.newCall(request).execute();
 

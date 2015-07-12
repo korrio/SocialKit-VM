@@ -1,11 +1,14 @@
 package co.aquario.socialkit;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -17,42 +20,44 @@ import android.widget.Button;
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.otto.Subscribe;
 
-import co.aquario.socialkit.activity.LiveFragment;
-import co.aquario.socialkit.event.FollowRegisterEvent;
+import co.aquario.chatapp.ChatActivity;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
+import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.FriendFragment;
+import co.aquario.socialkit.fragment.main.LiveFragment;
 import co.aquario.socialkit.fragment.main.PhotoGridProfileFragment;
-import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.util.PrefManager;
 
-/**
- * Created by Mac on 6/3/15.
- */
 public class NewProfileActivity extends BaseActivity {
     private PagerSlidingTabStrip tabs;
     private ViewPager pager;
 
-    Button btnFollow;
     String userId;
 
     PrefManager pref;
     Toolbar toolbar;
 
+    public static void startProfileActivity(Activity mActivity, String userId) {
+        Intent i = new Intent(mActivity,NewProfileActivity.class);
+        i.putExtra("USER_ID",userId);
+        mActivity.startActivity(i);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_appcompat);
+        super.setContentView(R.layout.activity_appcompat);
 
         pref = getPref(getApplicationContext());
 
         if(getIntent() != null)
-            userId = getIntent().getStringExtra("user_id");
+            userId = getIntent().getStringExtra("USER_ID");
         else
-            userId = MainApplication.get(getApplicationContext()).getPrefManager().userId().getOr("0");
+            userId = pref.userId().getOr("0");
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -84,10 +89,10 @@ public class NewProfileActivity extends BaseActivity {
 //    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        tabs.setAllCaps(true);
+        tabs.setAllCaps(false);
         tabs.setShouldExpand(true);
         tabs.setFillViewport(true);
-        tabs.setTextColor(getResources().getColor(R.color.white));
+        tabs.setTextColor(getResources().getColor(android.R.color.white));
 
         //mSlidingTabLayout.setDistributeEvenly(true);
 
@@ -166,13 +171,15 @@ public class NewProfileActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item)
     {
         switch (item.getItemId()) {
-            case R.id.action_follow:
-                isFollowing = !isFollowing;
-                ApiBus.getInstance().post(new FollowRegisterEvent(userId));
-                if(isFollowing)
-                    item.setTitle("FOLLOWING");
-                else
-                    item.setTitle("+ FOLLOW");
+            case R.id.action_message:
+                ChatActivity.startChatActivity(this, Integer.parseInt(pref.userId().getOr("0")), Integer.parseInt(userId),0);
+                break;
+            case R.id.action_edit_profile:
+                SettingFragment fragment = SettingFragment.newInstance(userId);
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.add(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commit();
                 break;
             case android.R.id.home:
                 this.finish();
@@ -188,7 +195,7 @@ public class NewProfileActivity extends BaseActivity {
 
     private class MyPagerAdapter extends FragmentPagerAdapter
     {
-        private final String[] TITLES = { "Feed","Photo","Live History", "Followers","Followings","Friends"};
+        private final String[] TITLES = { "Feed","Live History", "Followers","Followings","Friends","Pages"};
 
 
         public MyPagerAdapter(FragmentManager fm)
@@ -202,12 +209,12 @@ public class NewProfileActivity extends BaseActivity {
         {
             Fragment[] listFragments = new Fragment[] {
                     new FeedFragment().newInstance(userId, false),
-                    new PhotoGridProfileFragment().newInstance(userId),
+                    //new PhotoGridProfileFragment().newInstance(userId),
                     new LiveHistoryFragment().newInstance(userId),
                     new FriendFragment().newInstance("FOLLOWER",userId),
                     new FriendFragment().newInstance("FOLLOWING",userId),
                     new FriendFragment().newInstance("FRIEND",userId),
-                    //new FriendFragment().newInstance("PAGE",userId)
+                    new FriendFragment().newInstance("PAGE",userId)
                     };
 
             return listFragments[position];

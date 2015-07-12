@@ -20,11 +20,15 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 
+import com.squareup.otto.Subscribe;
+
 import butterknife.ButterKnife;
+import co.aquario.socialkit.event.toolbar.SubTitleEvent;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PrefManager;
@@ -34,18 +38,30 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final int NUM_OF_ITEMS_FEW = 3;
     private PrefManager mPref;
     private Context mContext;
+    private Toolbar toolbar;
 
     public static PrefManager getPref(Context context) {
-        return MainApplication.get(context).getPrefManager();
+        return VMApplication.get(context).getPrefManager();
     }
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         ButterKnife.inject(this);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setElevation(0);
+        }
+        setSupportActionBar(toolbar);
+
         if (shouldInstallDrawer()) {
             //setupDrawer();
         }
+    }
+
+    public Toolbar getToolbar() {
+        return toolbar;
     }
 
     protected boolean shouldInstallDrawer() {
@@ -68,7 +84,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         mContext = this;
-        mPref = MainApplication.get(mContext).getPrefManager();
+        mPref = VMApplication.get(mContext).getPrefManager();
     }
 
     @Override
@@ -76,6 +92,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         ActivityResultBus.getInstance().register(this);
         ApiBus.getInstance().register(this);
+        getToolbar().setTitle("VDOMAX");
+        //getToolbar().setTitle("@" + VMApplication.get(mContext).getPrefManager().username());
     }
 
     @Override
@@ -97,6 +115,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected int getScreenHeight() {
         return findViewById(android.R.id.content).getHeight();
+    }
+
+
+    @Subscribe
+    public void onSetTitle(TitleEvent event) {
+        getToolbar().setTitle(event.str);
+    }
+
+    @Subscribe public void onSetTitle(SubTitleEvent event) {
+        getToolbar().setSubtitle(event.str);
     }
 
 

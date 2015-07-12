@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
-import com.androidquery.auth.FacebookHandle;
 import com.androidquery.callback.AjaxStatus;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -35,8 +34,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
 import co.aquario.socialkit.MainActivity;
-import co.aquario.socialkit.MainApplication;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.event.FailedNetworkEvent;
 import co.aquario.socialkit.event.LoadFbProfileEvent;
 import co.aquario.socialkit.event.LoginEvent;
@@ -50,11 +49,13 @@ import co.aquario.socialkit.model.UserProfile;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 
+//import com.androidquery.auth.FacebookHandle;
+
 public class LoginFragment extends BaseFragment {
 
     public PrefManager prefManager;
     private AQuery aq;
-    private FacebookHandle handle;
+   // private FacebookHandle handle;
     private FbProfile profile;
     private MaterialEditText userEt;
     private MaterialEditText passEt;
@@ -74,7 +75,7 @@ public class LoginFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         aq = new AQuery(getActivity());
-        prefManager = MainApplication.get(getActivity()).getPrefManager();
+        prefManager = VMApplication.get(getActivity()).getPrefManager();
 
         try {
             PackageInfo info = getActivity().getPackageManager().getPackageInfo(
@@ -100,9 +101,9 @@ public class LoginFragment extends BaseFragment {
         loginBg = (ImageView) rootView.findViewById(R.id.imageView);
 
         if(Utils.isTablet(getActivity()))
-            Glide.with(this).load(MainApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=600").into(loginBg);
+            Glide.with(this).load(VMApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=600").into(loginBg);
         else
-            Glide.with(this).load(MainApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=360").into(loginBg);
+            Glide.with(this).load(VMApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=360").into(loginBg);
 
         userEt = (MaterialEditText) rootView.findViewById(R.id.et_user);
         passEt = (MaterialEditText) rootView.findViewById(R.id.et_pass);
@@ -173,8 +174,8 @@ public class LoginFragment extends BaseFragment {
             Log.e("FB_JSON", jo.toString());
             Gson gson = new Gson();
             profile = gson.fromJson(jo.toString(), FbProfile.class);
-            facebookToken = handle.getToken();
-            Log.e("FB_AUTHED", handle.authenticated() + "");
+            //facebookToken = handle.getToken();
+            //Log.e("FB_AUTHED", handle.authenticated() + "");
 
             /*
             Snackbar.with(getActivity().getApplicationContext())
@@ -183,7 +184,7 @@ public class LoginFragment extends BaseFragment {
             */
 
             prefManager
-                    .fbToken().put(facebookToken)
+             //       .fbToken().put(facebookToken)
                     .fbId().put(profile.id).commit();
             getFragmentManager().beginTransaction().add(R.id.login_container, new FbAuthFragment()).commit();
             ApiBus.getInstance().post(new LoadFbProfileEvent(profile,facebookToken));
@@ -194,8 +195,8 @@ public class LoginFragment extends BaseFragment {
 
     @Subscribe
     public void onLoginSuccess(LoginSuccessEvent event) {
-        MainApplication.USER_TOKEN = event.getLoginData().token;
-        Log.e("ARAIWA",MainApplication.USER_TOKEN);
+        VMApplication.USER_TOKEN = event.getLoginData().token;
+        Log.e("ARAIWA", VMApplication.USER_TOKEN);
 
         prefManager
                 .name().put(event.getLoginData().user.name)
@@ -206,6 +207,8 @@ public class LoginFragment extends BaseFragment {
                 .avatar().put(event.getLoginData().user.avatar)
                 .isLogin().put(true)
                 .commit();
+
+
 
         //Snackbar.with(getActivity().getApplicationContext()).text(event.getLoginData().token).show(getActivity());
 

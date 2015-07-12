@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent" />
 
-    <com.astuetz.PagerSlidingTabStrip
+    <com.jialin.chat.widget.CustomPagerSlidingTabStrip
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="@dimen/tab_layout_height"

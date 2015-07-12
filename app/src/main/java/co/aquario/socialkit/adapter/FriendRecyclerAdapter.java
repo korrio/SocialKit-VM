@@ -50,7 +50,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             public void onItemClick(View view, int position) {
 
                 Intent i = new Intent(mActivity, NewProfileActivity.class);
-                i.putExtra("user_id",list.get(position).getId());
+                i.putExtra("USER_ID",list.get(position).getId());
                 mActivity.startActivity(i);
 /*
                 FeedFragment fragment = toolbar FeedFragment().newInstance(listStory.get(position).getId(), false);

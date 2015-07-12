@@ -16,6 +16,8 @@
         android:src="@drawable/default_cover" />
 
 
+
+
     <FrameLayout
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -33,16 +35,14 @@
             <RelativeLayout
                 android:id="@+id/scroll_view_head"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="240dp"
                 android:orientation="vertical">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="105dp"
-                    android:layout_marginTop="27dp"
-                    android:background="@drawable/card_avatar_bar"
+                    android:layout_height="wrap_content"
                     android:id="@+id/relativeLayout2"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
 
 
@@ -62,7 +62,7 @@
                         android:textStyle="bold" />
 
                     <Button
-                        android:id="@+id/button2"
+                        android:id="@+id/btn_message"
                         android:layout_width="96dp"
                         android:layout_height="36dp"
                         android:layout_alignTop="@+id/btn_follow"
@@ -76,7 +76,8 @@
                         android:paddingTop="5dp"
                         android:text="MESSAGE"
                         android:textSize="13dp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
 
 
                 </RelativeLayout>
@@ -107,28 +108,6 @@
                     android:textSize="20sp"
                     android:layout_below="@+id/user_avatar"
                     android:layout_centerHorizontal="true" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="visible"
-                    android:layout_alignTop="@+id/relativeLayout2"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toRightOf="@+id/user_avatar"
-                    android:layout_toEndOf="@+id/user_avatar"
-                    android:id="@+id/linearLayout2">
-
-                    <TextView
-                        android:id="@+id/user_des"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="3dp"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:textColor="#B1B1B1"
-                        android:textSize="12sp" />
-                </LinearLayout>
 
 
             </RelativeLayout>

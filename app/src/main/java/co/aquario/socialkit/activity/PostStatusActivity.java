@@ -33,7 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import co.aquario.socialkit.MainActivity;
-import co.aquario.socialkit.MainApplication;
+import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.util.AndroidMultiPartEntity;
 import co.aquario.socialkit.util.PrefManager;
@@ -300,7 +300,7 @@ public class PostStatusActivity extends Activity {
 
                 //File sourceFile = tempFile;
 
-                PrefManager pref = MainApplication.get(getApplicationContext()).getPrefManager();
+                PrefManager pref = VMApplication.get(getApplicationContext()).getPrefManager();
                 String userId = pref.userId().getOr("3");
 
                 statusText = Utils.emoticonize(statusText);

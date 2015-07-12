@@ -43,6 +43,8 @@ public class PrefManager extends PrettySharedPreferences<PrefManager> {
         return getStringEditor("avatar");
     }
 
+
+
     public StringEditor<PrefManager> fbToken() {
         return getStringEditor("fbToken");
     }
@@ -69,8 +71,6 @@ public class PrefManager extends PrettySharedPreferences<PrefManager> {
     public IntegerEditor<PrefManager> integerValue() {
         return getIntegerEditor("integerValue");
     }
-
-
 
     public LongEditor<PrefManager> longValue() {
         return getLongEditor("longValue");
