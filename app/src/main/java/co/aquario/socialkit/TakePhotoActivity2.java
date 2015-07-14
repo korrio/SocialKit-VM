@@ -118,6 +118,7 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_photo2);
+        ButterKnife.inject(this);
         updateStatusBarColor();
         updateState(STATE_TAKE_PHOTO);
         setupRevealBackground(savedInstanceState);
