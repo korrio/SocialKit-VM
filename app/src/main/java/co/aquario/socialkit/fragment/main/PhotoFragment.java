@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.LoginActivity;
+import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.adapter.FeedAdapter;
 import co.aquario.socialkit.event.LoadTimelineEvent;
 import co.aquario.socialkit.event.LoadTimelineSuccessEvent;

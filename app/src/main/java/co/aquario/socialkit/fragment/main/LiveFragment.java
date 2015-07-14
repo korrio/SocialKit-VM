@@ -144,7 +144,9 @@ public class LiveFragment extends BaseFragment {
         */
 
         //SimpleChatFragment simpleChatFragment = SimpleChatFragment.newInstance(profileName);
+
         ChatWidgetFragment chatFragment = ChatWidgetFragment.newInstance(Integer.parseInt(prefManager.userId().getOr("0")),Integer.parseInt(userId),1);
+
         draggablePanel.setBottomFragment(chatFragment);
         draggablePanel.initializeView();
         Picasso.with(getActivity())

@@ -38,9 +38,7 @@ import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialdrawer.model.interfaces.OnCheckedChangeListener;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
-import com.parse.SaveCallback;
+import com.parse.ParseAnalytics;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.Picasso;
 
@@ -51,12 +49,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.aquario.socialkit.activity.LoginActivity;
 import co.aquario.socialkit.activity.PostPhotoActivity;
 import co.aquario.socialkit.activity.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
-import co.aquario.socialkit.fragment.PhotoFragmentGrid;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
@@ -101,19 +97,10 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         mContext = this;
         mActivity = this;
 
+        ParseAnalytics.trackAppOpenedInBackground(getIntent());
+
         mPref = getPref(getApplicationContext());
         userId = mPref.userId().getOr("0");
-
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put("user_id", Integer.parseInt(mPref.userId().getOr("0")));
-        installation.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                String deviceToken = (String) ParseInstallation.getCurrentInstallation().get("deviceToken");
-                Log.e("deviceToken",deviceToken + "+++");
-
-            }
-        });
 
         getToolbar().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -448,39 +435,29 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                     @Override
                     public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
 
-                        if (((Nameable) drawerItem).getName().equals("Channels")) {
 
-                            ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
 
-                        } else if (((Nameable) drawerItem).getName().equals("Social")) {
-
-                            SocialViewPagerFragment fragment = new SocialViewPagerFragment();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
-
-                        } else if (((Nameable) drawerItem).getName().equals("Videos")) {
-
-                            VideoViewPagerFragment fragment = new VideoViewPagerFragment();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
-
-                        } else if (((Nameable) drawerItem).getName().equals("Photos")) {
-
-                            PhotoFragmentGrid fragment = new PhotoFragmentGrid();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
-
-                            //GalleryFragment fragment = GalleryFragment.newInstance("","","");
-                            //getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
-
-//                            PhotoFragmentGrid fragment = toolbar PhotoFragmentGrid();
+//                        if (((Nameable) drawerItem).getName().equals("Channels")) {
 //
-//                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//                            transaction.replace(R.id.sub_container, fragment, "PHOTO_MAIN");
-//                            transaction.addToBackStack(null);
-//                            transaction.commit();
+//                            ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
+//                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
+//
+//                        } else if (((Nameable) drawerItem).getName().equals("Social")) {
+//
+//                            SocialViewPagerFragment fragment = new SocialViewPagerFragment();
+//                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
+//
+//                        } else if (((Nameable) drawerItem).getName().equals("Videos")) {
+//
+//                            VideoViewPagerFragment fragment = new VideoViewPagerFragment();
+//                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
+//
+//                        } else if (((Nameable) drawerItem).getName().equals("Photos")) {
+//
+//
+//                        } else
 
-                            // Intent i = toolbar Intent(MainActivity.this, PhotoDetailActivity.class);
-                            //startActivity(i);
-                        } else if (((Nameable) drawerItem).getName().equals("Home")) {
+                        if (drawerItem.getIdentifier() == 0) {
 
                             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
                             FragmentManager manager = getSupportFragmentManager();
@@ -488,17 +465,26 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             transaction.replace(R.id.sub_container, fragment);
                             transaction.commit();
 
-                        } else if (((Nameable) drawerItem).getName().equals("Live History")) {
+                        } else if (drawerItem.getIdentifier() == 2) {
 
                             LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "LIVE_HISTORY").addToBackStack(null).commit();
 
-                        } else if (((Nameable) drawerItem).getName().equals("Setting")) {
+                        } else if (drawerItem.getIdentifier() == 3) {
 
                             SettingFragment fragment = SettingFragment.newInstance(userId);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SETTINGS").addToBackStack(null).commit();
 
-                        } else if (((Nameable) drawerItem).getName().equals("Log Out")) {
+                        } else if (drawerItem.getIdentifier() == 4) {
+                            // Maxpoint
+
+                        } else if(drawerItem.getIdentifier() == 5){
+                            // Tattoo Store
+
+                        } else if(drawerItem.getIdentifier() == 6){
+                            // Tattoo Store
+
+                        } else if(drawerItem.getIdentifier() == 10) {
                             VMApplication.logout();
                             Intent login = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(login);

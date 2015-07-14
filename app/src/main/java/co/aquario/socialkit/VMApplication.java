@@ -14,7 +14,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParsePush;
+import com.parse.SaveCallback;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
@@ -103,8 +105,20 @@ public class VMApplication extends Application {
         //PushService.startServiceIfRequired(getApplicationContext());
         //PushService.setDefaultPushCallback(this, ManagePush.class);
 
-        ParsePush.subscribeInBackground("EN");
+        ParsePush.subscribeInBackground("EN", new SaveCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    Log.d("com.parse.push", "successfully subscribed to the broadcast channel.");
+                } else {
+                    Log.e("com.parse.push", "failed to subscribe for push", e);
+                }
+            }
+
+        });
         ParseFacebookUtils.initialize(this);
+
+
 
         loginApiHandler = new ApiHandlerVM(this, buildLoginApi(),
                 ApiBus.getInstance());
@@ -129,6 +143,12 @@ public class VMApplication extends Application {
         boolean isLogin = prefManager.isLogin().getOr(false);
         ParsePush.unsubscribeInBackground("EN");
         Log.e("isLogin",":::"+isLogin);
+    }
+
+    public static void updateParseInstallation(int userId) {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("user_id", userId);
+        installation.saveInBackground();
     }
 
     //@Override

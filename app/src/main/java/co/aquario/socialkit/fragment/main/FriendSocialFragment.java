@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.LoginActivity;
+import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.adapter.FriendRecyclerAdapter;
 import co.aquario.socialkit.event.FollowUserSuccessEvent;
 import co.aquario.socialkit.event.LoadFriendListEvent;

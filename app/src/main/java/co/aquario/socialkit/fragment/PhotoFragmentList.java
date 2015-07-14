@@ -16,7 +16,7 @@ package co.aquario.socialkit.fragment;
 //
 //import co.aquario.socialkit.MainApplication;
 //import co.aquario.socialkit.R;
-//import co.aquario.socialkit.activity.LoginActivity;
+//import co.aquario.socialkit.LoginActivity;
 //import co.aquario.socialkit.adapter.FeedAdapterPhotoList;
 //import co.aquario.socialkit.event.LoadTimelineEvent;
 //import co.aquario.socialkit.event.LoadTimelineSuccessEvent;

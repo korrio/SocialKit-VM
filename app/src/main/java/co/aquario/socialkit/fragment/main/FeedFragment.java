@@ -52,7 +52,7 @@ import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.TakePhotoActivity2;
 import co.aquario.socialkit.VMApplication;
-import co.aquario.socialkit.activity.LoginActivity;
+import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.activity.PostStatusActivity2;
 import co.aquario.socialkit.activity.SCSearchActivity;
 import co.aquario.socialkit.activity.YtSearchActivity;

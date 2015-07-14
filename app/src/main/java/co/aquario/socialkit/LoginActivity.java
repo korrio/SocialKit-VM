@@ -1,4 +1,4 @@
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,9 +27,6 @@ import co.aquario.chatapp.ChatApp;
 import co.aquario.chatapp.event.login.LoginFailedAuthEvent;
 import co.aquario.chatapp.event.login.LoginSuccessEvent;
 import co.aquario.chatapp.model.login.LoginData;
-import co.aquario.socialkit.MainActivity;
-import co.aquario.socialkit.R;
-import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.event.UpdateProfileEvent;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
@@ -123,6 +120,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
 
+
+
             }
 
 
@@ -161,7 +160,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.e("USER_TOKEN", ChatApp.USER_TOKEN);
 
                         user.put("user_id",Integer.parseInt(event.getLoginData().user.id));
-                        user.put("name",event.getLoginData().user.name);
+                        user.put("name", event.getLoginData().user.name);
                         user.setUsername(event.getLoginData().user.username);
                         user.setEmail(event.getLoginData().user.email);
 
@@ -180,6 +179,8 @@ public class LoginActivity extends AppCompatActivity {
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
+
+                        VMApplication.updateParseInstallation(Integer.parseInt(event.getLoginData().user.id));
 
                         Intent main = new Intent(mActivity,MainActivity.class);
                         startActivity(main);
@@ -256,6 +257,8 @@ public class LoginActivity extends AppCompatActivity {
                             .fbId().put(fbId).commit();
 
                     Log.e("VM_PROFILE", event.getLoginData().user.toString());
+
+                    VMApplication.updateParseInstallation(Integer.parseInt(event.getLoginData().user.id));
 
                     Intent main = new Intent(mActivity,MainActivity.class);
                     startActivity(main);

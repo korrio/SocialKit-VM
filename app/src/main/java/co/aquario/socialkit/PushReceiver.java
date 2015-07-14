@@ -11,7 +11,7 @@ import co.aquario.chatapp.push.ManagePush;
 /**
  * Created by Mac on 7/12/15.
  */
-public class Receiver extends ParsePushBroadcastReceiver {
+public class PushReceiver extends ParsePushBroadcastReceiver {
 
     @Override
     public void onPushOpen(Context context, Intent intent) {
