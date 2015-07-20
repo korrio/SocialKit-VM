@@ -15,7 +15,6 @@ import com.google.gson.JsonParseException;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
-import com.parse.ParsePush;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
@@ -27,6 +26,8 @@ import java.util.Date;
 
 import co.aquario.chatapp.handler.ChatApiHandler;
 import co.aquario.chatapp.handler.ChatApiService;
+import co.aquario.chatapp.handler.NotiApiHandler;
+import co.aquario.chatapp.handler.NotiApiService;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.handler.ApiHandlerVM;
 import co.aquario.socialkit.handler.ApiServiceVM;
@@ -40,6 +41,7 @@ import retrofit.converter.GsonConverter;
 public class VMApplication extends Application {
 
     public static final String ENDPOINT = "http://api.vdomax.com";
+    public static final String NOTI_ENDPOINT = "http://chat.vdomax.com/noti";
     public static final String CHAT_ENDPOINT = "https://chat.vdomax.com:1314/api";
     public static final String CHAT_SERVER = "https://chat.vdomax.com:1314";
     
@@ -48,12 +50,13 @@ public class VMApplication extends Application {
     public static final String APP_NAMESPACE = "vdomaxsocial";
     public static final String APP_PERMISSIONS = "email,public_profile,user_friends";
 
-    public static PrefManager prefManager;
+    public static PrefManager mPref;
     public static String USER_TOKEN;
 
 
     private ApiHandlerVM loginApiHandler;
     private ChatApiHandler chatApiHandler;
+    private NotiApiHandler notiApiHandler;
     private static OkHttpClient sHttpClient;
 
     @Override
@@ -97,16 +100,17 @@ public class VMApplication extends Application {
 
         Parse.enableLocalDatastore(this);
         Parse.initialize(this);
-        Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
+        //PushService.setDefaultPushCallback(getApplicationContext(), PushManage.class);
+        //Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
 
 
         //PushService.startServiceIfRequired(getApplicationContext());
-        //PushService.setDefaultPushCallback(this, ManagePush.class);
+        //PushService.setDefaultPushCallback(this, PushManage.class);
 
-        ParsePush.subscribeInBackground("EN");
+        //ParsePush.subscribeInBackground("test");
+        //ParseInstallation.getCurrentInstallation().saveInBackground();
+
         ParseFacebookUtils.initialize(this);
-
-
 
         loginApiHandler = new ApiHandlerVM(this, buildLoginApi(),
                 ApiBus.getInstance());
@@ -116,25 +120,32 @@ public class VMApplication extends Application {
                 ApiBus.getInstance());
         chatApiHandler.registerForEvents();
 
-        prefManager = new PrefManager(getSharedPreferences("App", MODE_PRIVATE));
+        notiApiHandler = new NotiApiHandler(this, buildNotiApi(),
+                ApiBus.getInstance());
+        notiApiHandler.registerForEvents();
+
+        mPref = new PrefManager(getSharedPreferences("App", MODE_PRIVATE));
+        mPref.isNoti().put(true).commit();
+
 
 
     }
 
     public PrefManager getPrefManager() {
-        return prefManager;
+        return mPref;
     }
 
     public static void logout() {
-        prefManager.isLogin().put(false).commit();
-        prefManager.clear().commit();
-        boolean isLogin = prefManager.isLogin().getOr(false);
-        ParsePush.unsubscribeInBackground("EN");
+        mPref.isLogin().put(false).commit();
+        mPref.clear().commit();
+        boolean isLogin = mPref.isLogin().getOr(false);
+//        ParsePush.unsubscribeInBackground("EN");
         Log.e("isLogin",":::"+isLogin);
     }
 
     public static void updateParseInstallation(int userId) {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("badge", userId);
         installation.put("user_id", userId);
         installation.saveInBackground();
     }
@@ -142,6 +153,7 @@ public class VMApplication extends Application {
     //@Override
     //public void onLowMemory() {
         //super.onLowMemory();
+
     //}
 
     //@Override
@@ -163,6 +175,22 @@ public class VMApplication extends Application {
 
                 .build()
                 .create(ChatApiService.class);
+    }
+
+    NotiApiService buildNotiApi() {
+        return new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .setEndpoint(NOTI_ENDPOINT)
+
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override public void intercept(RequestFacade request) {
+                        //request.addQueryParam("p1", "var1");
+                        //request.addQueryParam("p2", "");
+                    }
+                })
+
+                .build()
+                .create(NotiApiService.class);
     }
 
     ApiServiceVM buildLoginApi() {
@@ -192,9 +220,9 @@ public class VMApplication extends Application {
                     @Override
                     public void intercept(RequestFacade request) {
                         request.addHeader("Accept", "application/json;versions=1");
-                        request.addHeader("X-Auth-Token",prefManager.token().getOr(""));
-                        if(!prefManager.token().getOr("").equals("")){
-                            //request.addHeader("X-Auth-Token",prefManager.token().getOr(""));
+                        request.addHeader("X-Auth-Token", mPref.token().getOr(""));
+                        if(!mPref.token().getOr("").equals("")){
+                            //request.addHeader("X-Auth-Token",mPref.token().getOr(""));
                         }
                     }
                 })

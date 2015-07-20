@@ -110,6 +110,9 @@ public class ChatApiHandler {
     }
 
     @Subscribe public void onGetConversationGroup(ConversationGroupEvent event) {
+
+        Log.e("event.liveUserId",event.liveUserId + "");
+
         api.getConversationGroupPublic(event.liveUserId, new Callback<ConversationId>() {
             @Override
             public void success(ConversationId conversationId, Response response) {

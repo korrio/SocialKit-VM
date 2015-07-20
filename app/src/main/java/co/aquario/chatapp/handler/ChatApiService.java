@@ -49,8 +49,7 @@ public interface ChatApiService {
              //,@Header("Content-Type") String contentType
                     , Callback<ConversationId> responseJson);
 
-    @FormUrlEncoded
-    @POST("/chat/public/channel/{id}")
+    @GET("/chat/public/channel/{id}")
     public void getConversationGroupPublic
             (@Path("id") int id
                     , Callback<ConversationId> responseJson);

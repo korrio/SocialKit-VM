@@ -1,17 +1,13 @@
 package co.aquario.socialkit;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -28,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
@@ -36,7 +33,6 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialdrawer.model.interfaces.OnCheckedChangeListener;
 import com.parse.ParseAnalytics;
 import com.soundcloud.android.crop.Crop;
@@ -49,11 +45,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import co.aquario.socialkit.activity.PostPhotoActivity;
-import co.aquario.socialkit.activity.PostVideoActivity;
+import co.aquario.socialkit.activity.post.PostPhotoActivity;
+import co.aquario.socialkit.activity.post.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
+import co.aquario.socialkit.fragment.NotiFragment;
 import co.aquario.socialkit.fragment.SettingFragment;
+import co.aquario.socialkit.fragment.WebViewFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.pager.ChannelViewPagerFragment;
@@ -73,10 +71,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int REQUEST_CHOOSE_PHOTO = 2;
-    private static final int RESULT_PICK_VIDEO = 4;
-    private static final int RESULT_VIDEO_CAP = 5;
-    private static final int PHOTO_SIZE_WIDTH = 100;
-    private static final int PHOTO_SIZE_HEIGHT = 100;
+
     public Toolbar toolbar;
     public ActionBarDrawerToggle toggle;
     public DrawerLayout mDrawer;
@@ -101,6 +96,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
         mPref = getPref(getApplicationContext());
         userId = mPref.userId().getOr("0");
+        VMApplication.updateParseInstallation(Integer.parseInt(userId));
 
         getToolbar().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,8 +115,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
         initDrawer(savedInstanceState);
     }
-
-
 
 
 
@@ -172,6 +166,9 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             finish();
     }
     */
+
+    private static final int RESULT_PICK_VIDEO = 4;
+    private static final int RESULT_VIDEO_CAP = 5;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -265,113 +262,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         }
     }
 
-    public void selectImage() {
-        final CharSequence[] items = {"Take Photo", "Choose from Library",
-                "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("Change avatar!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("Take Photo")) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    File f = new File(android.os.Environment
-                            .getExternalStorageDirectory(), "temp.jpg");
-
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
-                    // intent.putExtra("crop", "true");
-                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-                } else if (items[item].equals("Choose from Library")) {
-
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setDataAndType(
-                            MediaStore.Images.Media.INTERNAL_CONTENT_URI,
-                            "image/*");
-                    intent.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent.setType("image/*");
-                    // intent.putExtra("crop", "true");
-                    intent.putExtra("scale", true);
-                    intent.putExtra("aspectX", 1);
-                    intent.putExtra("aspectY", 1);
-                    intent.putExtra("outputX", PHOTO_SIZE_WIDTH);
-                    intent.putExtra("outputY", PHOTO_SIZE_HEIGHT);
-                    startActivityForResult(intent, REQUEST_CHOOSE_PHOTO);
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();
-    }
-
-    private void startCropImage(String path) {
-
-        //Crop.of(path, path).asSquare().start(activity);
-    }
-
-    public void selectVideo() {
-        final CharSequence[] items = {"Record Video", "Choose from Library",
-                "Cancel"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Video!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("Record Video")) {
-                    recordVideo();
-                } else if (items[item].equals("Choose from Library")) {
-                    pickFile();
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                }
-            }
-        });
-        builder.show();
-    }
-
-    public void pickFile() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("video/*");
-        startActivityForResult(intent, RESULT_PICK_VIDEO);
-    }
-
-    public void recordVideo() {
-        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-        startActivityForResult(intent, RESULT_VIDEO_CAP);
-    }
-
-    public int getCameraPhotoOrientation(String imagePath) {
-        int rotate = 0;
-        try {
-            File imageFile = new File(imagePath);
-
-            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
-            int orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    rotate = 270;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    rotate = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    rotate = 90;
-                    break;
-            }
-
-            Log.i("RotateImage", "Exif orientation: " + orientation);
-            Log.i("RotateImage", "Rotate value: " + rotate);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return rotate;
-    }
 
     @Override
     public void onSearchQuery(String query) {
@@ -383,16 +274,19 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         transaction.commit();
 
         //SearchActivity.startActivity(getApplicationContext(),query);
-
     }
 
     private OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
-            if (drawerItem instanceof Nameable) {
-                Log.i("material-drawer", "DrawerItem: " + ((Nameable) drawerItem).getName() + " - toggleChecked: " + isChecked);
-            } else {
-                Log.i("material-drawer", "toggleChecked: " + isChecked);
+            if (isChecked){
+                mPref.isNoti().put(true).commit();
+
+                Toast.makeText(MainActivity.this, "turn on notification", Toast.LENGTH_SHORT).show();
+            } else{
+                mPref.isNoti().put(false).commit();
+
+                Toast.makeText(MainActivity.this, "turn off notification", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -418,11 +312,11 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                         new SectionDrawerItem().withName("Menu"),
                         new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home).withIdentifier(0),
-                        new SecondaryDrawerItem().withName("Chat").withIcon(FontAwesome.Icon.faw_medium).withIdentifier(1),
+                        new SecondaryDrawerItem().withName("Chat").withIcon(FontAwesome.Icon.faw_envelope).withIdentifier(1),
                         new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history).withIdentifier(2),
                         new SecondaryDrawerItem().withName("Setting").withIcon(FontAwesome.Icon.faw_cog).withIdentifier(3),
-                        new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc).withIdentifier(4),
-                        new SecondaryDrawerItem().withName("Tattoo Store").withIcon(FontAwesome.Icon.faw_shopping_cart).withIdentifier(5).setEnabled(false),
+                       // new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc).withIdentifier(4),
+                        new SecondaryDrawerItem().withName("Tattoo Store").withIcon(FontAwesome.Icon.faw_shopping_cart).withIdentifier(5),
                         new SecondaryDrawerItem().withName("Term & Policies").withIcon(FontAwesome.Icon.faw_terminal).withIdentifier(6)
                         //new SecondaryDrawerItem().withName("Log Out").withIcon(FontAwesome.Icon.faw_sign_out)
 
@@ -467,10 +361,16 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                         } else if (drawerItem.getIdentifier() == 2) {
 
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Live History");
+
                             LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "LIVE_HISTORY").addToBackStack(null).commit();
 
                         } else if (drawerItem.getIdentifier() == 3) {
+
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Setting");
 
                             SettingFragment fragment = SettingFragment.newInstance(userId);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SETTINGS").addToBackStack(null).commit();
@@ -482,7 +382,21 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             // Tattoo Store
 
                         } else if(drawerItem.getIdentifier() == 6){
-                            // Tattoo Store
+                            // Term & Policy
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Term & Policy");
+                            String termUrl = "https://www.vdomax.com/ajax.php?t=getDisclaimer&lang=en";
+
+                            WebViewFragment fragment = WebViewFragment.newInstance(termUrl);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "TERM_POLICY").addToBackStack(null).commit();
+
+                        } else if(drawerItem.getIdentifier() == 9) {
+
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Notification");
+
+                            NotiFragment fragment = NotiFragment.newInstance(userId,"ALL");
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "NOTIFICATION").addToBackStack(null).commit();
 
                         } else if(drawerItem.getIdentifier() == 10) {
                             VMApplication.logout();
@@ -490,6 +404,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             startActivity(login);
                             finish();
                         }
+
+                        result.closeDrawer();
 
                         return true;
                     }

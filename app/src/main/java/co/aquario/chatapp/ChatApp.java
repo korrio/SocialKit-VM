@@ -9,7 +9,7 @@ import com.parse.PushService;
 
 import co.aquario.chatapp.handler.ChatApiHandler;
 import co.aquario.chatapp.handler.ChatApiService;
-import co.aquario.chatapp.push.ManagePush;
+import co.aquario.chatapp.push.PushManage;
 import co.aquario.chatapp.util.PrefManager;
 import co.aquario.socialkit.handler.ApiBus;
 import retrofit.RequestInterceptor;
@@ -43,7 +43,7 @@ public class ChatApp extends Application {
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
 
         PushService.startServiceIfRequired(getApplicationContext());
-        PushService.setDefaultPushCallback(this, ManagePush.class);
+        PushService.setDefaultPushCallback(this, PushManage.class);
 
         ParseFacebookUtils.initialize(this);
         //FacebookSdk.sdkInitialize(getApplicationContext());

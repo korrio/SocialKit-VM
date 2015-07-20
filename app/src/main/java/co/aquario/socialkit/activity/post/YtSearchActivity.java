@@ -1,11 +1,11 @@
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit.activity.post;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -28,7 +28,7 @@ import co.aquario.socialkit.connections.ServiceTask;
 import co.aquario.socialkit.util.Utils;
 
 
-public class YtSearchActivity extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemClickListener, ServerResponseListener {
+public class YtSearchActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, ServerResponseListener {
 
     boolean executing = false;
     private EditText mYtVideoEdt = null;

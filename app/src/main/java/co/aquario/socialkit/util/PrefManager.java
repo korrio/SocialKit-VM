@@ -57,6 +57,10 @@ public class PrefManager extends PrettySharedPreferences<PrefManager> {
         return getBooleanEditor("isLogin");
     }
 
+    public BooleanEditor<PrefManager> isNoti() {
+        return getBooleanEditor("isNoti");
+    }
+
     public LongEditor<PrefManager> resumePosition() {
         return getLongEditor("resume_position");
     }

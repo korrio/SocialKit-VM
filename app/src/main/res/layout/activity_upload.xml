@@ -5,16 +5,16 @@
     android:layout_height="fill_parent"
 
     android:orientation="vertical"
-    android:padding="10dp" >
+    >
 
-    
+    <include layout="@layout/tool_bar" />
 
     <!-- To display picture taken -->
 
     <ImageView
         android:id="@+id/imgPreview"
         android:layout_width="wrap_content"
-        android:layout_height="460dp"
+        android:layout_height="200dp"
         android:visibility="gone" 
         android:layout_marginTop="15dp"
         android:layout_gravity="center_horizontal" />
@@ -24,7 +24,7 @@
     <VideoView
         android:id="@+id/videoPreview"
         android:layout_width="wrap_content"
-        android:layout_height="460dp"
+        android:layout_height="200dp"
         android:visibility="gone" 
         android:layout_marginTop="15dp"
         android:layout_gravity="center_horizontal" />

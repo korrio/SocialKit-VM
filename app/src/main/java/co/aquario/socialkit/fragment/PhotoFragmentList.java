@@ -57,14 +57,14 @@ package co.aquario.socialkit.fragment;
 //    @Override
 //    public void onCreate(Bundle savedInstanceState) {
 //        super.onCreate(savedInstanceState);
-//        prefManager = MainApplication.get(getActivity()).getPrefManager();
+//        mPref = MainApplication.get(getActivity()).getPrefManager();
 //        if (getArguments() != null) {
 //            TYPE = getArguments().getString(LOAD_TYPE);
 //            userId = getArguments().getString(USER_ID);
 //        }
 //        if(!TYPE.equals("")) {
 //            if(userId.equals(""))
-//                userId = prefManager.userId().getOr("1301");
+//                userId = mPref.userId().getOr("1301");
 //            ApiBus.getInstance().post(toolbar LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
 //        }
 //    }

@@ -30,9 +30,9 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
-import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.adapter.CommentsAdapter;
+import co.aquario.socialkit.VMApplication;
+import co.aquario.socialkit.adapter.CommentAdapter;
 import co.aquario.socialkit.event.GetStoryEvent;
 import co.aquario.socialkit.event.GetStorySuccessEvent;
 import co.aquario.socialkit.event.PostCommentEvent;
@@ -58,30 +58,34 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     LinearLayout contentRoot;
     @InjectView(R.id.rvComments)
     RecyclerView rvComments;
+
     @InjectView(R.id.llAddComment)
     LinearLayout llAddComment;
     @InjectView(R.id.comment_box)
     EmojiconEditText etComment;
     @InjectView(R.id.btnSendComment)
     SendCommentButton btnSendComment;
-    ArrayList<CommentStory> commentList;
+
+    ArrayList<CommentStory> commentList = new ArrayList<>();
     PrefManager pref;
     String avatar;
     String name;
     String postId;
     String userId;
-    private CommentsAdapter commentsAdapter;
+    private CommentAdapter commentsAdapter;
     private int drawingStartLocation;
+
+    @InjectView(R.id.root_view)
+    View rootView;
+    @InjectView(R.id.emoji_btn)
+    ImageView emojiButton;
+    EmojiconsPopup popup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
         ButterKnife.inject(this);
-
-        final View rootView = findViewById(R.id.root_view);
-        final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
-        final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
 
         ApiBus.getInstance().register(this);
 
@@ -93,13 +97,9 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
         avatar = pref.avatar().getOr("TEST");
         name = pref.name().getOr("TEST");
 
-        if(commentList == null)
-            commentList  = new ArrayList<CommentStory>();
-
         setupComments();
         setupSendCommentButton();
-
-
+        setupEmojiWidget();
 
         drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
         if (savedInstanceState == null) {
@@ -112,6 +112,27 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
                 }
             });
         }
+
+        etComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v("emojiText", s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void setupEmojiWidget() {
+        popup = new EmojiconsPopup(rootView, this);
 
         popup.setSizeForSoftKeyboard();
         popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
@@ -208,23 +229,6 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
                 }
             }
         });
-
-        etComment.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.v("emojiText", s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     private void setupComments() {
@@ -232,7 +236,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
         rvComments.setLayoutManager(linearLayoutManager);
         rvComments.setHasFixedSize(true);
 
-        commentsAdapter = new CommentsAdapter(this,commentList);
+        commentsAdapter = new CommentAdapter(this,commentList);
         rvComments.setAdapter(commentsAdapter);
         rvComments.setOverScrollMode(View.OVER_SCROLL_NEVER);
         rvComments.setOnScrollListener(new RecyclerView.OnScrollListener() {

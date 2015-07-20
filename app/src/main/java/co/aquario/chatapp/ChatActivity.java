@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import co.aquario.chatapp.event.ActivityResultEvent;
-import co.aquario.chatapp.fragment.ChatWidgetFragment;
+import co.aquario.chatapp.fragment.ChatWidgetFragmentClient;
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.handler.ApiBus;
@@ -20,7 +20,7 @@ public class ChatActivity extends BaseActivity {
         super.setContentView(R.layout.activity_chat);
 
         if(getIntent() != null) {
-            ChatWidgetFragment fragment = new ChatWidgetFragment();
+            ChatWidgetFragmentClient fragment = new ChatWidgetFragmentClient();
             fragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.container, fragment, "CHAT_MAIN").commit();
         }

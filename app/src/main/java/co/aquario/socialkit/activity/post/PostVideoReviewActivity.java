@@ -1,4 +1,4 @@
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit.activity.post;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,7 +38,7 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.util.AndroidMultiPartEntity;
 
 
-public class UploadClipReviewActivity extends Activity {
+public class PostVideoReviewActivity extends Activity {
 	// LogCat tag
 	private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -169,7 +169,7 @@ public class UploadClipReviewActivity extends Activity {
 			HttpClient httpclient = new DefaultHttpClient();
 
             String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
-            String statusText = "test from android";
+            String statusText = "";
 
             /*
             // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -196,9 +196,10 @@ public class UploadClipReviewActivity extends Activity {
 
 				File sourceFile = new File(filePath);
 
-                entity.addPart("clips[]", new FileBody(sourceFile));
                 entity.addPart("timeline_id",
                         new StringBody("6"));
+                entity.addPart("clips[]", new FileBody(sourceFile));
+
                 entity.addPart("recipient_id", new StringBody(""));
                 entity.addPart("text", new StringBody(statusText));
 
@@ -246,7 +247,7 @@ public class UploadClipReviewActivity extends Activity {
             }
 
             showAlert("อัพโหลดสำเร็จแล้ว");
-            Intent intent = new Intent(UploadClipReviewActivity.this,
+            Intent intent = new Intent(PostVideoReviewActivity.this,
                     MainActivity.class);
             startActivity(intent);
 

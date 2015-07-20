@@ -16,7 +16,7 @@ import org.parceler.Parcels;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import co.aquario.chatapp.fragment.ChatWidgetFragment;
+import co.aquario.chatapp.fragment.ChatWidgetFragmentClient;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.SurfaceFragment;
 import co.aquario.socialkit.model.Channel;
@@ -145,7 +145,11 @@ public class LiveFragment extends BaseFragment {
 
         //SimpleChatFragment simpleChatFragment = SimpleChatFragment.newInstance(profileName);
 
-        ChatWidgetFragment chatFragment = ChatWidgetFragment.newInstance(Integer.parseInt(prefManager.userId().getOr("0")),Integer.parseInt(userId),1);
+        ChatWidgetFragmentClient chatFragment = ChatWidgetFragmentClient.newInstance(Integer.parseInt(prefManager.userId().getOr("0")),Integer.parseInt(userId),1);
+
+
+
+        //chatFragment.setArguments(chatBundle);
 
         draggablePanel.setBottomFragment(chatFragment);
         draggablePanel.initializeView();

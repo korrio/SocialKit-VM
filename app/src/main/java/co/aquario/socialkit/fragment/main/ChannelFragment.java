@@ -193,9 +193,11 @@ public class ChannelFragment extends BaseFragment {
                 String cover = obj.optString("cover_url");
                 String liveCover = obj.optString("live_cover");
                 String gender = obj.optString("gender");
+                if(gender == null)
+                    gender = "male";
                 boolean liveStatus = obj.optBoolean("status");
 
-                Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, "male", liveStatus);
+                Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, gender, liveStatus);
                 if(tabNo == 0)
                     liveChannelList.add(channel);
                 else

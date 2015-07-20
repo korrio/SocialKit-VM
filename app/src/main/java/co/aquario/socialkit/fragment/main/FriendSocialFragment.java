@@ -71,7 +71,7 @@ public class FriendSocialFragment extends BaseFragment {
         adapter2 = new FriendRecyclerAdapter(getActivity(),list);
 
         if (getArguments() != null) {
-            //userId = prefManager.userId().getOr("0");
+            //userId = mPref.userId().getOr("0");
             type = getArguments().getString(LOAD_TYPE);
             userId = getArguments().getString(USER_ID);
             if(userId.equals(""))

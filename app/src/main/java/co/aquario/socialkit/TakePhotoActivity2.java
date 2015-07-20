@@ -45,7 +45,7 @@ import java.io.OutputStream;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import co.aquario.socialkit.activity.PostPhotoActivity;
+import co.aquario.socialkit.activity.post.PostPhotoActivity;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.view.RevealBackgroundView;
@@ -61,6 +61,7 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
 
     private Bitmap mOriginBitmap, mResultBitmap;
     private ImageData mImageData;
+    private boolean isTakenPhoto = false;
     public boolean filterSelected = false;
 
     private static boolean USE_FFC = false;
@@ -186,6 +187,7 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
 
     @OnClick(R.id.btnTakePhoto)
     public void onTakePhotoClick() {
+        isTakenPhoto = true;
         btnTakePhoto.setEnabled(false);
         cameraView.takePicture(true, true);
         animateShutter();
@@ -221,6 +223,7 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
 
     @OnClick(R.id.btnChoosePhoto)
     public void onChoosePhotoClick() {
+        isTakenPhoto = false;
         choosePhoto();
         //animateShutter();
     }
@@ -259,8 +262,8 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
             Uri selectedImageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-                showTakenPicture(bitmap);
                 photoPath = new File(PathManager.getPath(getApplicationContext(), selectedImageUri));
+                showTakenPicture(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -345,7 +348,6 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
                 @Override
                 public void run() {
                     try {
-
                         showTakenPicture(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -364,6 +366,10 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
     private void showTakenPicture(Bitmap bitmap) throws IOException {
         vUpperPanel.showNext();
         vLowerPanel.showNext();
+
+        if(!isTakenPhoto)
+        bitmap = ImageData.decodeSampledBitmapFromBitmap(photoPath.getPath(),400,600);
+
         ivTakenPhoto.setImageBitmap(bitmap);
 
         mOriginBitmap = bitmap;
@@ -408,6 +414,8 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
         }
     }
 
+
+
     public class PhotoFiltersAdapter extends RecyclerView.Adapter<PhotoFiltersAdapter.ViewHolder> {
 
         private Context mContext;
@@ -447,6 +455,9 @@ public class TakePhotoActivity2 extends AppCompatActivity implements RevealBackg
                 public void onClick(View v) {
                     mSelectItem = nowItem;
                     mCurrentFilterPosition = nowItem;
+
+
+                    // memory leak
                     ImageData d = filterContent.convert(mImageData);
                     d.createResult();
                     mResultBitmap = d.getResult();

@@ -109,4 +109,7 @@
 
     <string name="more_video">More videos</string>
 
+    <string name="uploading">Uploading</string>
+    <string name="waiting">Please wait a while,</string>
+
 </resources>

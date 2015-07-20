@@ -19,7 +19,7 @@ import com.parse.PushService;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import co.aquario.chatapp.push.ManagePush;
+import co.aquario.chatapp.push.PushManage;
 import co.aquario.socialkit.R;
 
 
@@ -88,7 +88,7 @@ public class LandingActivity extends AppCompatActivity {
 //        bubblesManager.addBubble(bubbleView, 60, 20);
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
-        PushService.subscribe(getApplication(), "VMCHATENGINE", ManagePush.class);
+        PushService.subscribe(getApplication(), "VMCHATENGINE", PushManage.class);
 
         new Thread(new Runnable() {
             @Override

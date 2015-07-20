@@ -1,5 +1,7 @@
 package co.aquario.socialkit.fragment.main;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
@@ -29,6 +31,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -48,14 +52,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.aquario.chatapp.ChatActivity;
+import co.aquario.socialkit.BaseActivity;
+import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.TakePhotoActivity2;
 import co.aquario.socialkit.VMApplication;
-import co.aquario.socialkit.LoginActivity;
-import co.aquario.socialkit.activity.PostStatusActivity2;
-import co.aquario.socialkit.activity.SCSearchActivity;
-import co.aquario.socialkit.activity.YtSearchActivity;
+import co.aquario.socialkit.activity.post.LiveStreamingActivity;
+import co.aquario.socialkit.activity.post.PostStatusActivity2;
+import co.aquario.socialkit.activity.post.SCSearchActivity;
+import co.aquario.socialkit.activity.post.YtSearchActivity;
 import co.aquario.socialkit.adapter.ButtonItemAdapter;
 import co.aquario.socialkit.adapter.FeedAdapter;
 import co.aquario.socialkit.event.FollowRegisterEvent;
@@ -81,11 +87,8 @@ import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.search.soundcloud.SoundCloudService;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
-import co.aquario.socialkit.view.TitanicTextView;
 import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
-import co.aquario.socialkit.widget.HidingScrollListener;
 import co.aquario.socialkit.widget.RoundedTransformation;
-import co.aquario.socialkit.widget.Titanic;
 
 
 public class FeedFragment extends BaseFragment {
@@ -138,6 +141,7 @@ public class FeedFragment extends BaseFragment {
     private boolean isHomeTimeline = false;
     private boolean isHashtag = false;
     private SwipeRefreshLayout swipeLayout;
+    private FloatingActionButton postLive;
     private FloatingActionButton postPhotoBtn;
     private FloatingActionButton postVideoBtn;
     private FloatingActionButton postYoutubeBtn;
@@ -147,6 +151,9 @@ public class FeedFragment extends BaseFragment {
     private MediaPlayer mMediaPlayer;
     private ImageView mPlayerStateButton;
     private ProgressBar mProgressBar;
+
+    // animation
+
 
     public static FeedFragment newInstance(String userId, boolean isHomeTimeline) {
         FeedFragment mFragment = new FeedFragment();
@@ -173,7 +180,6 @@ public class FeedFragment extends BaseFragment {
 
         if (getArguments() != null) {
 
-
             if(getArguments().getString(HASHTAG) != null) {
                 isHashtag = true;
                 HASHTAG_QUERY = getArguments().getString(HASHTAG);
@@ -198,99 +204,44 @@ public class FeedFragment extends BaseFragment {
         }
     }
 
-    Titanic titanic;
-    TitanicTextView myTitanicTextView;
+    //Titanic titanic;
+    //TitanicTextView myTitanicTextView;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         if(!isHashtag) {
-
-            swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-
-            swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    isRefresh = true;
-                    ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
-                    //String loadMoreUrl = "http://api.vdomax.com/search/channel/a?from=0&limit=10";
-                    //aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
-                    //Log.e("5555","onRefresh");
-
-                }
-            });
-
             if (!isHomeTimeline) {
                 if (Utils.isNumeric(userId))
                     ApiBus.getInstance().post(new GetUserProfileEvent(userId));
                 else
                     ApiBus.getInstance().post(new GetUserProfileEvent(username, true));
             }
-
-        }
-
-
-    }
-
-    private void toggleSongState() {
-        if (mMediaPlayer.isPlaying()){
-            mMediaPlayer.pause();
-            mPlayerStateButton.setImageResource(R.drawable.ic_play);
-        }else{
-            mMediaPlayer.start();
-            toggleProgressBar();
-            mPlayerStateButton.setImageResource(R.drawable.ic_pause);
         }
     }
 
-    private void toggleProgressBar() {
-        if (mMediaPlayer.isPlaying()){
-            mProgressBar.setVisibility(View.INVISIBLE);
-            mPlayerStateButton.setVisibility(View.VISIBLE);
-        }else{
-            mProgressBar.setVisibility(View.VISIBLE);
-            mPlayerStateButton.setVisibility(View.INVISIBLE);
-        }
+    //animation
+    View rootViewAnimation;
+    int drawingStartLocation = 0;
+    private void startIntroAnimation() {
+        //ViewCompat.setElevation(getToolbar(), 0);
+        swipeLayout.setScaleY(0.1f);
+        swipeLayout.setPivotY(drawingStartLocation);
+        showFloatingButton();
+
+        swipeLayout.animate()
+                .scaleY(1)
+                .setDuration(200)
+                .setInterpolator(new AccelerateInterpolator())
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        //ViewCompat.setElevation(getToolbar(), Utils.dpToPx(8));
+                        //animateContent();
+                    }
+                })
+                .start();
     }
-
-    public void playTrack(String uri,String title) {
-        mPlayerToolbar.setVisibility(View.VISIBLE);
-
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.stop();
-        }
-        mMediaPlayer.reset();
-        toggleProgressBar();
-
-        try {
-            mMediaPlayer.setDataSource(uri + "?client_id=" + SoundCloudService.CLIENT_ID);
-            mMediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(mMediaPlayer != null){
-            if(mMediaPlayer.isPlaying()){
-                mMediaPlayer.stop();
-            }
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
-    }
-
-    public void setEmptyText(CharSequence emptyText) {
-        //mEmptyView.setText(emptyText);
-    }
-
-    //Toolbar mToolbar;
-    int mToolbarHeight;
-    View mToolbarContainer;
 
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -298,12 +249,40 @@ public class FeedFragment extends BaseFragment {
         // TODO Auto-generated method stub
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
 
+        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                isRefresh = true;
+                ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+
+            }
+        });
+
+        swipeLayout.setRefreshing(true);
+
+        fabLayout = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
+
+        // animation
+        rootViewAnimation = rootView.findViewById(R.id.root_view);
+        if (savedInstanceState == null) {
+            swipeLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    swipeLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+                    startIntroAnimation();
+                    return true;
+                }
+            });
+        }
+
         //mToolbar = ((MainActivity) getActivity()).getToolbar();
         //mToolbarContainer = mToolbar;
 
         //mToolbarHeight = mToolbar.getHeight();
         // Create your views, whatever they may be
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.scroll);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvFeed);
         mRecyclerView.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -311,21 +290,20 @@ public class FeedFragment extends BaseFragment {
 
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.activity_profile2, mRecyclerView, false);
+        myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.fragment_profile, mRecyclerView, false);
 
         setEmptyText(getString(R.string.no_story));
 
-        myTitanicTextView = (TitanicTextView) rootView.findViewById(R.id.titanic_tv);
-        //myTitanicTextView.setTypeface(Typefaces.get(getActivity(), "Satisfy-Regular.ttf"));
-
-        titanic = new Titanic();
-        titanic.start(myTitanicTextView);
-        myTitanicTextView.setVisibility(View.VISIBLE);
+//        myTitanicTextView = (TitanicTextView) rootView.findViewById(R.id.titanic_tv);
+//        //myTitanicTextView.setTypeface(Typefaces.get(getActivity(), "Satisfy-Regular.ttf"));
+//
+//        titanic = new Titanic();
+//        titanic.start(myTitanicTextView);
+//        myTitanicTextView.setVisibility(View.VISIBLE);
 
         btnLove = (Button) rootView.findViewById(R.id.btn_love);
         btnShare = (Button) rootView.findViewById(R.id.btn_share);
 
-        fabLayout = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
         mPlayerToolbar = (Toolbar) rootView.findViewById(R.id.player_toolbar);
         mPlayerStateButton = (ImageView)rootView.findViewById(R.id.player_state);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.player_progress);
@@ -356,11 +334,21 @@ public class FeedFragment extends BaseFragment {
             }
         });
 
+
+        postLive = (FloatingActionButton) fabLayout.findViewById(R.id.action_live_stream);
         postPhotoBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_photo);
         postVideoBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_video);
         postYoutubeBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_youtube);
         postSoundCloudBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_soundcloud);
         postStatusBtn = (FloatingActionButton) fabLayout.findViewById(R.id.action_write_post);
+
+        postLive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), LiveStreamingActivity.class);
+                startActivity(i);
+            }
+        });
 
         postSoundCloudBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -400,7 +388,7 @@ public class FeedFragment extends BaseFragment {
         postVideoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).selectVideo();
+                ((BaseActivity) getActivity()).selectVideo();
             }
         });
 
@@ -433,7 +421,7 @@ public class FeedFragment extends BaseFragment {
             public void onItemClick(View view, int position) {
 
                 //if (isHomeTimeline)
-                  //  position--;
+                //  position--;
 
                 pShare = position;
 
@@ -457,33 +445,6 @@ public class FeedFragment extends BaseFragment {
                 Log.e("thispageis", page + "");
             }
         });
-
-        mRecyclerView.addOnScrollListener(new HidingScrollListener(getActivity()) {
-            @Override
-            public void onMoved(int distance) {
-
-                //mToolbarContainer.setTranslationY(-distance);
-            }
-
-            @Override
-            public void onShow() {
-                //mToolbarContainer.animate().translationY(0).setInterpolator(toolbar DecelerateInterpolator(2)).start();
-            }
-
-            @Override
-            public void onHide() {
-                //mToolbarContainer.animate().translationY(-mToolbarHeight).setInterpolator(toolbar AccelerateInterpolator(2)).start();
-            }
-        });
-
-        /*
-        mRecyclerView.setPadding(
-                mRecyclerView.getPaddingLeft(),
-                mRecyclerView.getPaddingTop() + Utils.dpToPx(48), // + tabs height
-                mRecyclerView.getPaddingRight(),
-                mRecyclerView.getPaddingBottom()
-        );
-        */
 
         mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
 
@@ -538,17 +499,14 @@ public class FeedFragment extends BaseFragment {
         }
 
 
+
         if(Utils.isNumeric(userId) && !isHashtag)
             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
 
         if(isHashtag)
             ApiBus.getInstance().post(new LoadHashtagStoryEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline,HASHTAG_QUERY));
-            //ApiBus.getInstance().post(toolbar LoadTimelineEvent(32,"photo",1,50));
-        //aq.ajax(urlMain, JSONObject.class, this, "getJson");
 
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-
-        //MaterialViewPagerHelper.registerRecyclerView(getActivity(), mRecyclerView, null);
         return rootView;
     }
 
@@ -678,13 +636,14 @@ public class FeedFragment extends BaseFragment {
         if(isRefresh)
             list.clear();
         isRefresh = false;
+        swipeLayout.setRefreshing(false);
         list.addAll(event.getTimelineData().getPosts());
         bAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
         if(!isHashtag)
             swipeLayout.setRefreshing(false);
         isLoadding = false;
-        myTitanicTextView.setVisibility(View.GONE);
+       // myTitanicTextView.setVisibility(View.GONE);
 
     }
 
@@ -930,6 +889,61 @@ public class FeedFragment extends BaseFragment {
 
     }
 
+    private void toggleSongState() {
+        if (mMediaPlayer.isPlaying()){
+            mMediaPlayer.pause();
+            mPlayerStateButton.setImageResource(R.drawable.ic_play);
+        }else{
+            mMediaPlayer.start();
+            toggleProgressBar();
+            mPlayerStateButton.setImageResource(R.drawable.ic_pause);
+        }
+    }
+
+    private void toggleProgressBar() {
+        if (mMediaPlayer.isPlaying()){
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mPlayerStateButton.setVisibility(View.VISIBLE);
+        }else{
+            mProgressBar.setVisibility(View.VISIBLE);
+            mPlayerStateButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void playTrack(String uri,String title) {
+        mPlayerToolbar.setVisibility(View.VISIBLE);
+
+        if (mMediaPlayer.isPlaying()) {
+            mMediaPlayer.stop();
+        }
+        mMediaPlayer.reset();
+        toggleProgressBar();
+
+        try {
+            mMediaPlayer.setDataSource(uri + "?client_id=" + SoundCloudService.CLIENT_ID);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mMediaPlayer != null){
+            if(mMediaPlayer.isPlaying()){
+                mMediaPlayer.stop();
+            }
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
+    public void setEmptyText(CharSequence emptyText) {
+        //mEmptyView.setText(emptyText);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -997,11 +1011,9 @@ public class FeedFragment extends BaseFragment {
                 list.clear();
                 bAdapter.notifyDataSetChanged();
                 adapter.notifyDataSetChanged();
-
                 if(!isHashtag)
-                swipeLayout.setRefreshing(true);
+                    swipeLayout.setRefreshing(true);
                 ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
-
                 break;
         }
 

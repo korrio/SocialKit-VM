@@ -16,15 +16,24 @@
 
 package co.aquario.socialkit;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.squareup.otto.Subscribe;
+
+import java.io.File;
 
 import butterknife.ButterKnife;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
@@ -127,5 +136,123 @@ public abstract class BaseActivity extends AppCompatActivity {
         getToolbar().setSubtitle(event.str);
     }
 
+    public void selectVideo() {
+        final CharSequence[] items = {"Record Video", "Choose from Library",
+                "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Video!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Record Video")) {
+                    recordVideo();
+                } else if (items[item].equals("Choose from Library")) {
+                    pickFile();
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_CHOOSE_PHOTO = 2;
+
+    private static final int RESULT_PICK_VIDEO = 4;
+    private static final int RESULT_VIDEO_CAP = 5;
+
+    private static final int PHOTO_SIZE_WIDTH = 100;
+    private static final int PHOTO_SIZE_HEIGHT = 100;
+
+    public void pickFile() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("video/*");
+        startActivityForResult(intent, RESULT_PICK_VIDEO);
+    }
+
+    public void recordVideo() {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        startActivityForResult(intent, RESULT_VIDEO_CAP);
+    }
+
+    public void selectImage() {
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        //builder.setTitle("Change avatar!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Take Photo")) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    File f = new File(android.os.Environment
+                            .getExternalStorageDirectory(), "temp.jpg");
+
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
+                    // intent.putExtra("crop", "true");
+                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+                } else if (items[item].equals("Choose from Library")) {
+
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setDataAndType(
+                            MediaStore.Images.Media.INTERNAL_CONTENT_URI,
+                            "image/*");
+                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent.setType("image/*");
+                    // intent.putExtra("crop", "true");
+                    intent.putExtra("scale", true);
+                    intent.putExtra("aspectX", 1);
+                    intent.putExtra("aspectY", 1);
+                    intent.putExtra("outputX", PHOTO_SIZE_WIDTH);
+                    intent.putExtra("outputY", PHOTO_SIZE_HEIGHT);
+                    startActivityForResult(intent, REQUEST_CHOOSE_PHOTO);
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void startCropImage(String path) {
+
+        //Crop.of(path, path).asSquare().start(activity);
+    }
+
+
+
+    public int getCameraPhotoOrientation(String imagePath) {
+        int rotate = 0;
+        try {
+            File imageFile = new File(imagePath);
+
+            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+            int orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    rotate = 270;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    rotate = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    rotate = 90;
+                    break;
+            }
+
+            Log.i("RotateImage", "Exif orientation: " + orientation);
+            Log.i("RotateImage", "Rotate value: " + rotate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return rotate;
+    }
 
 }

@@ -1,4 +1,4 @@
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit.activity.post;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -213,7 +213,7 @@ public class PostVideoActivity extends Activity {
     }
 
     private void launchUploadActivity(boolean isImage){
-        Intent i = new Intent(PostVideoActivity.this, UploadClipReviewActivity.class);
+        Intent i = new Intent(PostVideoActivity.this, PostVideoReviewActivity.class);
         i.putExtra("filePath", getRealPathFromURI(mFileUri));
         i.putExtra("isImage", isImage);
         i.putExtra("title", statusText.toString());
@@ -257,7 +257,7 @@ public class PostVideoActivity extends Activity {
 	private void videoPost(String message, String desc, File file) {
 
         String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
-        statusText = "test from android";
+        statusText = "";
 
         // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 
@@ -274,8 +274,8 @@ public class PostVideoActivity extends Activity {
 		dialog.setCancelable(true);
 		dialog.setInverseBackgroundForced(false);
 		dialog.setCanceledOnTouchOutside(false);
-		dialog.setTitle("Uploading video...");
-		dialog.setMessage("กำลังโพสวิดีโอ...");
+        dialog.setTitle(getString(R.string.uploading));
+        dialog.setMessage(getString(R.string.waiting));
 		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		dialog.setIndeterminate(false);
 		dialog.setMax(100);

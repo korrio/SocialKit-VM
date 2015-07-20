@@ -15,9 +15,6 @@
         android:scaleType="centerCrop"
         android:src="@drawable/default_cover" />
 
-
-
-
     <FrameLayout
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
@@ -120,7 +117,8 @@
                 android:paddingBottom="6dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="6dp">
+                android:paddingTop="6dp"
+                android:id="@+id/count_layout">
 
                 <LinearLayout
                     android:layout_width="fill_parent"

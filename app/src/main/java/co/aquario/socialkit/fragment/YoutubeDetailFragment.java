@@ -148,7 +148,7 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
                 .load(videoPosterThumbnail)
                 .into(thumbnailImageView);
 
-        ObservableScrollView scrollView = (ObservableScrollView) view.findViewById(R.id.scroll);
+        ObservableScrollView scrollView = (ObservableScrollView) view.findViewById(R.id.rvFeed);
         scrollView.setScrollViewCallbacks(this);
 
         VideoFragment fragment = VideoFragment.newInstance(keyword,"N");

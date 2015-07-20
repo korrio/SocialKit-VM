@@ -8,11 +8,12 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import com.facebook.CallbackManager;
 import com.google.gson.Gson;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.ui.ParseLoginBuilder;
 import com.parse.ui.ParseLoginFragment;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Request;
@@ -20,7 +21,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import co.aquario.chatapp.ChatApp;
@@ -28,6 +28,7 @@ import co.aquario.chatapp.event.login.LoginFailedAuthEvent;
 import co.aquario.chatapp.event.login.LoginSuccessEvent;
 import co.aquario.chatapp.model.login.LoginData;
 import co.aquario.socialkit.event.UpdateProfileEvent;
+import co.aquario.socialkit.fragment.LoginFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.UserProfile;
@@ -43,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public ParseUser user;
 
+    CallbackManager callbackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,10 @@ public class LoginActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         prefManager = VMApplication.get(this).getPrefManager();
         setContentView(R.layout.activity_login);
+
+        callbackManager = CallbackManager.Factory.create();
+
+
         mActivity = this;
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -59,23 +66,24 @@ public class LoginActivity extends AppCompatActivity {
             isLogin = prefManager.isLogin().getOr(false);
 
         if (savedInstanceState == null && !isLogin) {
-            //getSupportFragmentManager().beginTransaction().add(R.id.login_container, new LoginFragment()).commit();
-            ParseLoginBuilder loginBuilder = new ParseLoginBuilder(
-                    LoginActivity.this);
-            Intent parseLoginIntent = loginBuilder.setParseLoginEnabled(true)
-                    .setParseLoginButtonText("Login")
-                    .setParseSignupButtonText("Register")
-                    .setParseLoginHelpText("Forgot password?")
-                    .setParseLoginInvalidCredentialsToastText("You email and/or password is not correct")
-                    .setParseLoginEmailAsUsername(true)
-                    .setParseSignupSubmitButtonText("Submit registration")
-                    .setFacebookLoginEnabled(true)
-                    .setFacebookLoginButtonText("Facebook")
-                    .setFacebookLoginPermissions(Arrays.asList("user_status", "read_stream"))
-                    .setTwitterLoginEnabled(false)
-                            //.setTwitterLoginButtontext("Twitter")
-                    .build();
-            startActivityForResult(parseLoginIntent, 12123);
+            getSupportFragmentManager().beginTransaction().add(R.id.login_container, new LoginFragment()).commit();
+
+//            ParseLoginBuilder loginBuilder = new ParseLoginBuilder(
+//                    LoginActivity.this);
+//            Intent parseLoginIntent = loginBuilder.setParseLoginEnabled(true)
+//                    .setParseLoginButtonText("Login")
+//                    .setParseSignupButtonText("Register")
+//                    .setParseLoginHelpText("Forgot password?")
+//                    .setParseLoginInvalidCredentialsToastText("You email and/or password is not correct")
+//                    .setParseLoginEmailAsUsername(true)
+//                    .setParseSignupSubmitButtonText("Submit registration")
+//                    .setFacebookLoginEnabled(true)
+//                    .setFacebookLoginButtonText("Facebook")
+//                    .setFacebookLoginPermissions(Arrays.asList("user_status", "read_stream"))
+//                    .setTwitterLoginEnabled(false)
+//                            //.setTwitterLoginButtontext("Twitter")
+//                    .build();
+//            startActivityForResult(parseLoginIntent, 12123);
         } else {
             Intent main = new Intent(LoginActivity.this,MainActivity.class);
             startActivity(main);
@@ -86,13 +94,17 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    public static CallbackManager getFbCallbackManager() {
+        return CallbackManager.Factory.create();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        getFbCallbackManager().onActivityResult(requestCode, resultCode, data);
 
         setResult(resultCode);
         Log.e("asdf555", requestCode + " " + resultCode);
-
 
         if(resultCode == RESULT_OK) {
             user = ParseUser.getCurrentUser();
@@ -100,8 +112,6 @@ public class LoginActivity extends AppCompatActivity {
             if(user != null) {
 
                 HashMap fbObj = (HashMap) user.get("authData");
-
-
 
                 if(fbObj != null) {
                     HashMap facebook = (HashMap) fbObj.get("facebook");
@@ -116,7 +126,10 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } else {
                     //Log.e("normalLogin",user.getEmail() + " "  +   user.getUsername());
-                    authVM(ParseLoginFragment.HACKUSERNAME,ParseLoginFragment.HACKPASSWORD);
+                    if(ParseLoginFragment.HACKUSERNAME != null && ParseLoginFragment.HACKPASSWORD != null)
+                        authVM(ParseLoginFragment.HACKUSERNAME,ParseLoginFragment.HACKPASSWORD);
+
+                    Toast.makeText(mActivity,"no fb data for this user",Toast.LENGTH_SHORT).show();
                 }
 
 

@@ -37,7 +37,7 @@ import java.io.IOException;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
-import co.aquario.socialkit.activity.PostPhotoActivity;
+import co.aquario.socialkit.activity.post.PostPhotoActivity;
 import co.aquario.socialkit.fragment.view.PhotoFiltersAdapter;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.view.RevealBackgroundView;

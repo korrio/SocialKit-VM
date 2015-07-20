@@ -55,6 +55,12 @@
         android:icon="@drawable/ic_launcher"
         android:theme="@style/CustomTheme">
 
+        <activity
+            android:name=".activity.post.LiveStreamingActivity"
+            android:screenOrientation="landscape"
+            android:label="STREAM TO FLV" >
+        </activity>
+
         <activity android:name="me.iwf.photopicker.PhotoPickerActivity"
                   android:theme="@style/Theme.AppCompat.NoActionBar"
             />
@@ -128,17 +134,17 @@
             android:theme="@style/AppCompatTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
-            android:name=".activity.PostPhotoActivity"
+            android:name=".activity.post.PostPhotoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
-            android:name=".activity.PostVideoActivity"
+            android:name=".activity.post.PostVideoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
-            android:name=".activity.UploadClipReviewActivity"
+            android:name=".activity.post.PostVideoReviewActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
@@ -150,17 +156,17 @@
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <activity
-            android:name=".activity.PostYoutubeActivity"
+            android:name=".activity.post.PostYoutubeActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme" />
 
         <activity
-            android:name=".activity.SCSearchActivity"
+            android:name=".activity.post.SCSearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
-            android:name=".activity.YtSearchActivity"
+            android:name=".activity.post.YtSearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme"
             android:windowSoftInputMode="adjustResize|stateHidden" />
@@ -171,15 +177,15 @@
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <activity
-            android:name=".activity.PostStatusActivity"
+            android:name=".activity.post.PostStatusActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme"></activity>
         <activity
-            android:name=".activity.PostStatusActivity2"
+            android:name=".activity.post.PostStatusActivity2"
             android:screenOrientation="portrait"
             android:theme="@style/AppCompatTheme" />
         <activity
-            android:name=".activity.PostSoundCloudActivity"
+            android:name=".activity.post.PostSoundCloudActivity"
             android:theme="@style/AppCompatTheme" />
 
         <activity
@@ -227,7 +233,7 @@
         </activity>
 
         <activity
-            android:name="co.aquario.chatapp.push.ManagePush"
+            android:name="co.aquario.chatapp.push.PushManage"
             >
         </activity>
         <activity
@@ -235,12 +241,14 @@
             >
         </activity>
 
-
         <activity android:name="com.facebook.FacebookActivity"
                   android:configChanges=
                       "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
+        <provider android:authorities="com.facebook.app.FacebookContentProvider1234"
+                  android:name="com.facebook.FacebookContentProvider"
+                  android:exported="true"/>
 
 
         <meta-data
@@ -280,7 +288,7 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
                 <!-- IMPORTANT: Change "com.codemobiles.cmapppush" to match your app's package name. -->
-                <category android:name="co.aquario.socialkit" />
+                <category android:name="co.aquario.socialkit.debug" />
             </intent-filter>
         </receiver>
 

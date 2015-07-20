@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +17,15 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import co.aquario.chatapp.model.Noti;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.model.CommentStory;
-import co.aquario.socialkit.model.User;
 import co.aquario.socialkit.widget.RoundedTransformation;
-import co.aquario.socialkit.widget.URLImageParser;
 
 
 /**
  * Created by froger_mcs on 11.11.14.
  */
-public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NotiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private int itemsCount = 0;
@@ -39,9 +35,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private boolean animationsLocked = false;
     private boolean delayEnterAnimation = true;
 
-    ArrayList<CommentStory> mList = new ArrayList<CommentStory>();
+    ArrayList<Noti> mList = new ArrayList<Noti>();
 
-    public CommentsAdapter(Context context,ArrayList<CommentStory> mList) {
+    public NotiAdapter(Context context, ArrayList<Noti> mList) {
         this.context = context;
         this.mList = mList;
         avatarSize = context.getResources().getDimensionPixelSize(R.dimen.comment_avatar_size);
@@ -49,37 +45,28 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false);
+        final View view = LayoutInflater.from(context).inflate(R.layout.item_noti, parent, false);
         return new CommentViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
-        CommentStory comment = mList.get(position);
+        Noti noti = mList.get(position);
 
         runEnterAnimation(viewHolder.itemView, position);
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
-        holder.tvComment.setText(comment.getText());
-        holder.tvName.setText(comment.getUser().getName());
 
-        String textEmoticonized = comment.getmEmoticonizedText();
+        holder.tvName.setText(noti.from_name);
+        holder.tvComment.setText(noti.msg);
 
-        if (comment.getText() != null) {
 
-            if (textEmoticonized != null) {
-                URLImageParser parser = new URLImageParser(holder.tvComment, context,1);
-                Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
+        holder.tvAgo.setText(noti.ago);
 
-                holder.tvComment.setText(htmlSpan);
-            }
 
-        } else {
-            holder.tvComment.setVisibility(View.GONE);
-        }
-
+        if(noti.getAvatarUrl() != null)
         Picasso.with(context)
-                .load(comment.getUser().getAvatarUrl())
+                .load(noti.getAvatarUrl())
                 .centerCrop()
                 .resize(avatarSize, avatarSize)
                 .transform(new RoundedTransformation(avatarSize/2,4))
@@ -119,17 +106,17 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
-    public void addItem(String mCommentText,String avatar, String name) {
-        CommentStory comment = new CommentStory();
-        comment.setText(mCommentText);
-        User user = new User();
-        user.setAvatar(avatar);
-        user.setName(name);
-        comment.setUser(user);
-        mList.add(comment);
-        itemsCount++;
-        notifyItemInserted(itemsCount - 1);
-    }
+//    public void addItem(String mCommentText,String avatar, String name) {
+//        Noti noti = new Noti();
+//        comment.setText(mCommentText);
+//        User user = new User();
+//        user.setAvatar(avatar);
+//        user.setName(name);
+//        comment.setUser(user);
+//        mList.add(comment);
+//        itemsCount++;
+//        notifyItemInserted(itemsCount - 1);
+//    }
 
     public void setAnimationsLocked(boolean animationsLocked) {
         this.animationsLocked = animationsLocked;
@@ -146,6 +133,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         TextView tvComment;
         @InjectView(R.id.tvName)
         TextView tvName;
+        @InjectView(R.id.tvAgo)
+        TextView tvAgo;
 
         public CommentViewHolder(View view) {
             super(view);

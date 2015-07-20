@@ -6,17 +6,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -42,6 +47,7 @@ import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.AndroidMultiPartEntity;
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.widget.RoundedTransformation;
 
 /**
  * Created by Mac on 5/20/15.
@@ -94,6 +100,8 @@ public class SettingFragment extends BaseFragment {
         updateProfile();
     }
 
+    View myHeader;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,8 +109,16 @@ public class SettingFragment extends BaseFragment {
             userId = getArguments().getString(USER_ID);
         }
 
+        ApiBus.getInstance().post(new GetUserProfileEvent(userId));
+
         mActivity = getActivity();
     }
+
+    ImageView avatar;
+    ImageView cover;
+    TextView titleTv;
+    LinearLayout countLayout;
+    Button btnFollow;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -110,6 +126,14 @@ public class SettingFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
         ButterKnife.inject(this, rootView);
+
+        btnFollow = (Button) rootView.findViewById(R.id.btn_follow);
+        btnFollow.setVisibility(View.GONE);
+        countLayout = (LinearLayout) rootView.findViewById(R.id.count_layout);
+        countLayout.setVisibility(View.GONE);
+        avatar = (ImageView) rootView.findViewById(R.id.user_avatar);
+        cover = (ImageView) rootView.findViewById(R.id.user_cover);
+        titleTv = (TextView) rootView.findViewById(R.id.user_name);
 
         checkedId = radioGroupGender.getCheckedRadioButtonId();
         radioGender = (RadioButton) radioGroupGender.findViewById(checkedId);
@@ -185,6 +209,8 @@ public class SettingFragment extends BaseFragment {
         return rootView;
     }
 
+    String profileName = "";
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -199,6 +225,21 @@ public class SettingFragment extends BaseFragment {
 
     @Subscribe
     public void onGetUserProfile(GetUserProfileSuccessEvent event) {
+
+        titleTv.setText(Html.fromHtml(event.getUser().getName()));
+
+        Picasso.with(getActivity())
+                .load(event.getUser().getCoverUrl())
+                .fit().centerCrop()
+                .into(cover);
+
+        Picasso.with(getActivity())
+                .load(event.getUser().getAvatarUrl())
+                .centerCrop()
+                .resize(200, 200)
+                .transform(new RoundedTransformation(100, 2))
+                .into(avatar);
+
         userId = event.getUser().getId();
         url = "http://api.vdomax.com/user/update/" + userId + "";
 

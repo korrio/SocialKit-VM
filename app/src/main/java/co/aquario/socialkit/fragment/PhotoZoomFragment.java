@@ -99,4 +99,5 @@ public class PhotoZoomFragment extends BaseFragment {
                 .load(event.getUrl())
                 .into(imageView);
     }
+
 }

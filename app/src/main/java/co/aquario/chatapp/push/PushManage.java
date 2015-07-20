@@ -21,7 +21,7 @@ import co.aquario.chatapp.LandingActivity;
 import co.aquario.socialkit.R;
 
 
-public class ManagePush extends Activity {
+public class PushManage extends Activity {
 
 	private String TAG = "MANAGE PUST";
 	// public static $hostPath = "https://www.vdomax.com/noti/";
@@ -73,7 +73,7 @@ public class ManagePush extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_empty);
-		this.startService(new Intent(this, ManagePush.class));
+		this.startService(new Intent(this, PushManage.class));
 		aq = new AQuery(this);
 		currentActivity = "";
 		getPush();
@@ -96,7 +96,7 @@ public class ManagePush extends Activity {
 
 	void doBindService() {
 		if (!mIsBound) {
-			bindService(new Intent(ManagePush.this, DialogService.class),
+			bindService(new Intent(PushManage.this, DialogService.class),
 					mConnection, Context.BIND_AUTO_CREATE);
 			mIsBound = true;
 		}
@@ -212,9 +212,9 @@ public class ManagePush extends Activity {
 	void intentManage(int type) {
 		Intent toDetail = null;
 		if (type == CATEGORYS_common) {
-			toDetail = new Intent(ManagePush.this, null);
+			toDetail = new Intent(PushManage.this, null);
 		} else if (type == CATEGORYS_chat) {
-			toDetail = new Intent(ManagePush.this, null);
+			toDetail = new Intent(PushManage.this, null);
 		} else if (type == TYPES_likeFeed) {
 			Intent routeIntent = new Intent(this, LandingActivity.class);
 			routeIntent.putExtra("type", "post");
@@ -253,25 +253,25 @@ public class ManagePush extends Activity {
 		} else if (type == TYPES_confCreate || type == TYPES_confJoin
 				|| type == TYPES_confInvite) {
 			// intent Lobby
-			toDetail = new Intent(ManagePush.this,
+			toDetail = new Intent(PushManage.this,
                     LandingActivity.class);
 			toDetail.putExtra("roomName", roomName);
 			startActivity(toDetail);
 
 		} else if (type == TYPES_chatFreeCall) {
 			// intent XWalk
-			toDetail = new Intent(ManagePush.this, LandingActivity.class);
+			toDetail = new Intent(PushManage.this, LandingActivity.class);
 			toDetail.putExtra("roomUrl", freeCallUrl);
 			toDetail.putExtra("friendName", fromName);
 			startActivity(toDetail);
 		} else if (type == TYPES_chatVideoCall) {
 			// intent XWalk
-			toDetail = new Intent(ManagePush.this, LandingActivity.class);
+			toDetail = new Intent(PushManage.this, LandingActivity.class);
 			toDetail.putExtra("roomUrl", videoCallUrl);
 			toDetail.putExtra("friendName", fromName);
 			startActivity(toDetail);
 		} else if (type == TYPES_chatInviteGroup) {
-			toDetail = new Intent(ManagePush.this, LandingActivity.class);
+			toDetail = new Intent(PushManage.this, LandingActivity.class);
 			toDetail.putExtra("url", groupChatUrl);
 			toDetail.putExtra("title", fromName);
 			startActivity(toDetail);

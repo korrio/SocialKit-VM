@@ -1,4 +1,4 @@
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit.activity.post;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -17,6 +15,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,41 +44,58 @@ import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
-public class PostStatusActivity extends Activity {
+public class PostSoundCloudActivity extends Activity {
 
+    String sid;
+    String title;
+    String thumbUrl;
     String statusText;
 
+    ImageView thumb;
     EmojiconEditText etStatus;
     Button btnPost;
     ProgressDialog dialog;
 
+    TextView trackTitle;
+
     Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_status);
+        setContentView(R.layout.activity_post_soundcloud);
         final View rootView = findViewById(R.id.root_view);
         final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
         context = this;
 
+        thumb = (ImageView) findViewById(R.id.track_thumbnail);
+        trackTitle = (TextView) findViewById(R.id.track_title);
         etStatus = (EmojiconEditText) findViewById(R.id.comment_box);
         btnPost = (Button) findViewById(R.id.button_recent);
 
         btnPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postStatus();
+                postSoundCloud();
             }
         });
 
+        if(getIntent()!=null) {
+            sid = getIntent().getStringExtra("soundcloud_uri");
+            title = getIntent().getStringExtra("soundcloud_title");
+            thumbUrl = getIntent().getStringExtra("artwork_url");
+
+            Picasso.with(this).load(thumbUrl).into(thumb);
+            trackTitle.setText(title);
+        }
         popup.setSizeForSoftKeyboard();
         popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
 
             @Override
             public void onEmojiconClicked(Emojicon emojicon) {
-                etStatus.append(emojicon.getEmoji());
+                btnPost.append(emojicon.getEmoji());
             }
         });
 
@@ -155,7 +173,7 @@ public class PostStatusActivity extends Activity {
                         etStatus.requestFocus();
                         popup.showAtBottomPending();
                         final InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.showSoftInput(etStatus, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        inputMethodManager.showSoftInput(btnPost, InputMethodManager.HIDE_IMPLICIT_ONLY);
                         changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
                     }
                 }
@@ -167,36 +185,14 @@ public class PostStatusActivity extends Activity {
             }
         });
 
-        etStatus.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.v("emojiText",s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
     }
 
     public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
 
-    public void postStatus() {
+    public void postSoundCloud() {
         statusText = etStatus.getText().toString()
                 .replace("\n", "%0A");
-
-        Log.e("statusFinal",statusText);
-
-
-
-
         //statusText.toString().trim().replaceAll("\\s+", " ");
 
         Pattern pattern = Pattern.compile("\\s");
@@ -216,17 +212,13 @@ public class PostStatusActivity extends Activity {
         dialog.setCancelable(false);
         dialog.setInverseBackgroundForced(false);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Uploading");
-        dialog.setMessage("กำลังอัพโหลดข้อความ..");
+        dialog.setTitle(getString(R.string.uploading));
+        dialog.setMessage(getString(R.string.waiting));
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialog.setIndeterminate(false);
         dialog.setMax(100);
 
         new UploadFileToServer().execute();
-    }
-
-    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
-        iconToBeChanged.setImageResource(drawableResourceId);
     }
 
 
@@ -250,6 +242,10 @@ public class PostStatusActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
+        iconToBeChanged.setImageResource(drawableResourceId);
     }
 
 
@@ -301,7 +297,7 @@ public class PostStatusActivity extends Activity {
                 //File sourceFile = tempFile;
 
                 PrefManager pref = VMApplication.get(getApplicationContext()).getPrefManager();
-                String userId = pref.userId().getOr("3");
+                String userId = pref.userId().getOr("1301");
 
                 statusText = Utils.emoticonize(statusText);
 
@@ -310,12 +306,10 @@ public class PostStatusActivity extends Activity {
                 entity.addPart("recipient_id", new StringBody(""));
                 entity.addPart("text",
                         new StringBody(statusText,chars));
-
-
-
-
-
-
+                entity.addPart("soundcloud_title",
+                        new StringBody(title,chars));
+                entity.addPart("soundcloud_uri",
+                        new StringBody(sid,chars));
                 //entity.addPart("photos[]", toolbar FileBody(sourceFile));
 
                 totalSize = entity.getContentLength();
@@ -350,7 +344,7 @@ public class PostStatusActivity extends Activity {
 
             // showing the server response in an alert dialog
             dialog.dismiss();
-            Intent i = new Intent(PostStatusActivity.this,MainActivity.class);
+            Intent i = new Intent(PostSoundCloudActivity.this,MainActivity.class);
             startActivity(i);
             finish();
             //showAlert(result);

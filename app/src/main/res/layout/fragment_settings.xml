@@ -5,18 +5,21 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        >
 
+        <include layout="@layout/fragment_profile" />
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/et_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
+            android:hint="Username"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
             android:textSize="13dp"
@@ -28,7 +31,7 @@
             android:id="@+id/et_fullname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Fullname"
+            android:hint="Full Name"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
             android:textSize="13dp"

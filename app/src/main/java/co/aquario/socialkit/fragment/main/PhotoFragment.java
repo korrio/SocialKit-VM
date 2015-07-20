@@ -69,7 +69,7 @@ public class PhotoFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview_observable, container, false);
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.scroll);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.rvFeed);
         //recyclerView.setHasFixedSize(true);
         adapter = new FeedAdapter(getActivity(),list);
         recyclerView.setAdapter(adapter);

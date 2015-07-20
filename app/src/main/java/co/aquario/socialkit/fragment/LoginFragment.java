@@ -2,6 +2,7 @@ package co.aquario.socialkit.fragment;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -19,8 +20,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.androidquery.auth.FacebookHandle;
 import com.androidquery.callback.AjaxStatus;
 import com.bumptech.glide.Glide;
+import com.facebook.AccessToken;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.otto.Produce;
@@ -31,8 +39,10 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApplication;
@@ -49,13 +59,11 @@ import co.aquario.socialkit.model.UserProfile;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 
-//import com.androidquery.auth.FacebookHandle;
-
 public class LoginFragment extends BaseFragment {
 
     public PrefManager prefManager;
     private AQuery aq;
-   // private FacebookHandle handle;
+    private FacebookHandle handle;
     private FbProfile profile;
     private MaterialEditText userEt;
     private MaterialEditText passEt;
@@ -93,10 +101,44 @@ public class LoginFragment extends BaseFragment {
         }
     }
 
+    View rootView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_login, container, false);
+        rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        FacebookSdk.sdkInitialize(this.getActivity());
+
+        loginButton = (LoginButton) rootView.findViewById(R.id.login_button);
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends"));
+        // If using in a fragment
+        loginButton.setFragment(this);
+
+
+        // Callback registration
+        loginButton.registerCallback(((LoginActivity)getActivity()).getFbCallbackManager(), new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                Log.e("fbAccessToken", accessToken.getToken());
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.e("onCancle","laew");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Log.e("onError",exception.getLocalizedMessage());
+                // App code
+            }
+        });
+        // Other app specific specialization
+
 
         loginBg = (ImageView) rootView.findViewById(R.id.imageView);
 
@@ -150,21 +192,26 @@ public class LoginFragment extends BaseFragment {
         return rootView;
     }
 
+    LoginButton loginButton;
+
     public void authFacebook() {
 
 
 
-//        handle = toolbar FacebookHandle(getActivity(), MainApplication.APP_ID, MainApplication.APP_PERMISSIONS);
-//        String url = "https://graph.facebook.com/me";
-//        ProgressDialog dialog = toolbar ProgressDialog(getActivity());
-//        dialog.setIndeterminate(true);
-//        dialog.setCancelable(true);
-//        dialog.setInverseBackgroundForced(false);
-//        dialog.setCanceledOnTouchOutside(true);
-//        dialog.setTitle("Authenicating...");
-//
-//        aq.auth(handle).progress(dialog)
-//                .ajax(url, JSONObject.class, this, "facebookCb");
+
+
+        
+        handle = new FacebookHandle(getActivity(), VMApplication.APP_ID, VMApplication.APP_PERMISSIONS);
+        String url = "https://graph.facebook.com/me";
+        ProgressDialog dialog = new ProgressDialog(getActivity());
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(true);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle("Authenicating...");
+
+        aq.auth(handle).progress(dialog)
+                .ajax(url, JSONObject.class, this, "facebookCb");
     }
 
     public void facebookCb(String url, JSONObject jo, AjaxStatus status)
@@ -174,17 +221,11 @@ public class LoginFragment extends BaseFragment {
             Log.e("FB_JSON", jo.toString());
             Gson gson = new Gson();
             profile = gson.fromJson(jo.toString(), FbProfile.class);
-            //facebookToken = handle.getToken();
-            //Log.e("FB_AUTHED", handle.authenticated() + "");
-
-            /*
-            Snackbar.with(getActivity().getApplicationContext())
-                    .text(profile.id)
-                    .show(getActivity());
-            */
+            facebookToken = handle.getToken();
+            Log.e("FB_AUTHED", handle.authenticated() + "");
 
             prefManager
-             //       .fbToken().put(facebookToken)
+                    .fbToken().put(facebookToken)
                     .fbId().put(profile.id).commit();
             getFragmentManager().beginTransaction().add(R.id.login_container, new FbAuthFragment()).commit();
             ApiBus.getInstance().post(new LoadFbProfileEvent(profile,facebookToken));
@@ -233,7 +274,7 @@ public class LoginFragment extends BaseFragment {
         Log.e("ARAIWA", "onLoginFailedAuth");
         Toast.makeText(getActivity().getApplicationContext(), "Wrong username or password", Toast.LENGTH_SHORT).show();
 
-        //prefManager.clear();
+        //mPref.clear();
     }
 
     @Produce

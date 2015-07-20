@@ -17,4 +17,6 @@ public class Clip extends BaseModel {
     @Expose
     @SerializedName("thumbnail")
     public String thumb;
+    @Expose
+    public String type;
 }

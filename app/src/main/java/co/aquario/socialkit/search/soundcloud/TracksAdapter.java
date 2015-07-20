@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.PostSoundCloudActivity;
+import co.aquario.socialkit.activity.post.PostSoundCloudActivity;
 
 /**
  * Created by kevin on 2/22/15.
@@ -41,7 +41,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_track, viewGroup, false);
+                .inflate(R.layout.item_sc_track, viewGroup, false);
         return new ViewHolder(v);
     }
 

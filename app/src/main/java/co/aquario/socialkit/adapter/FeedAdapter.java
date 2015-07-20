@@ -1,5 +1,7 @@
 package co.aquario.socialkit.adapter;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -92,6 +95,41 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
         int position = list.indexOf(item);
         list.remove(position);
         notifyItemRemoved(position);
+    }
+
+    private int lastAnimatedPosition = -1;
+
+    private boolean animationsLocked = false;
+    private boolean delayEnterAnimation = true;
+
+    private void runEnterAnimation(View view, int position) {
+        if (animationsLocked) return;
+
+        if (position > lastAnimatedPosition) {
+            lastAnimatedPosition = position;
+            view.setTranslationY(100);
+            view.setAlpha(0.f);
+            view.animate()
+                    .translationY(0).alpha(1.f)
+                    .setStartDelay(delayEnterAnimation ? 20 * (position) : 0)
+                    .setInterpolator(new DecelerateInterpolator(2.f))
+                    .setDuration(300)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            animationsLocked = true;
+                        }
+                    })
+                    .start();
+        }
+    }
+
+    public void setAnimationsLocked(boolean animationsLocked) {
+        this.animationsLocked = animationsLocked;
+    }
+
+    public void setDelayEnterAnimation(boolean delayEnterAnimation) {
+        this.delayEnterAnimation = delayEnterAnimation;
     }
 
 
@@ -268,11 +306,22 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
         } else if (item.type.equals("clip")) {
 
-            Picasso.with(mActivity)
-                    .load(item.clip.thumb)
-                    .error(R.drawable.default_offline)
-                    .fit().centerCrop()
-                    .into(holder.thumb);
+            if (item.clip.type.equals("livestreaming")) {
+                Picasso.with(mActivity)
+                        .load(item.author.liveCover)
+                        .error(R.drawable.default_offline)
+                        .placeholder(R.drawable.default_offline)
+                        .fit().centerCrop()
+                        .into(holder.thumb);
+            } else {
+                Picasso.with(mActivity)
+                        .load(item.clip.thumb)
+                        .error(R.drawable.default_offline)
+                        .fit().centerCrop()
+                        .into(holder.thumb);
+            }
+
+
 
             Picasso.with(mActivity).load(R.drawable.ic_clip).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
@@ -310,13 +359,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
             Picasso.with(mActivity).load(R.drawable.ic_clip).into(holder.typeIcon);
             holder.nView.setText(item.view + " views");
-        } else if (item.type.equals("live")) {
-            Picasso.with(mActivity)
-                    .load(item.author.liveCover)
-                    .error(R.drawable.default_offline)
-                    .placeholder(R.drawable.default_offline)
-                    .fit().centerCrop()
-                    .into(holder.thumb);
         } else if (item.type.equals("map")) {
             String mapUrl = null;
             try {
@@ -340,17 +382,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
         if (item.comment != null) {
             if (item.comment.size() >= 1) {
 
-                if (item.comment.get(0).getmEmoticonizedText() != null) {
+                if (item.comment.get(0).emoticonized != null) {
                     URLImageParser parser = new URLImageParser(holder.tvComment1, mActivity,1);
-                    Spanned htmlSpan = Html.fromHtml(item.comment.get(0).getmEmoticonizedText(), parser, null);
+                    Spanned htmlSpan = Html.fromHtml(item.comment.get(0).emoticonized, parser, null);
                     holder.tvComment1.setText(htmlSpan);
                 }
 
 
                 //holder.tvComment1.setText(item.comment.get(0).getText());
-                holder.tvName1.setText(item.comment.get(0).getUser().getName());
+                holder.tvName1.setText(item.comment.get(0).user.getName());
                 Picasso.with(mActivity)
-                        .load(item.comment.get(0).getUser().getAvatarUrl())
+                        .load(item.comment.get(0).user.getAvatarUrl())
                         .centerCrop()
                         .resize(100, 100)
                         .transform(new RoundedTransformation(50, 4))
@@ -361,15 +403,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
             }
 
             if (item.comment.size() >= 2) {
-                if (item.comment.get(1).getmEmoticonizedText() != null) {
+                if (item.comment.get(1).emoticonized != null) {
                     URLImageParser parser = new URLImageParser(holder.tvComment2, mActivity,1);
-                    Spanned htmlSpan = Html.fromHtml(item.comment.get(1).getmEmoticonizedText(), parser, null);
+                    Spanned htmlSpan = Html.fromHtml(item.comment.get(1).emoticonized, parser, null);
                     holder.tvComment2.setText(htmlSpan);
                 }
                 // holder.tvComment2.setText(item.comment.get(1).getText());
-                holder.tvName2.setText(item.comment.get(1).getUser().getName());
+                holder.tvName2.setText(item.comment.get(1).user.getName());
                 Picasso.with(mActivity)
-                        .load(item.comment.get(1).getUser().getAvatarUrl())
+                        .load(item.comment.get(1).user.getAvatarUrl())
                         .centerCrop()
                         .resize(100, 100)
                         .transform(new RoundedTransformation(50, 4))
@@ -588,18 +630,40 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                             */
                             break;
                         case "clip":
-                            //String sample = "https://stream-1.vdomax.com/vod/__definst__/mp4:110559/110559_720p.mp4/playlist.m3u8";
-                            String clipURL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:"+post.clip.id+"/"+post.clip.id+"_720p.mp4/playlist.m3u8";
-                            Log.e("fromFeedAdapter", clipURL);
+                            if(post.clip.type.equals("livestreaming")) {
 
-                            Video clip = new Video("clip",post.postId, post.author.name, "@"+post.author.username, clipURL, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
+                                String userId = post.author.id;
+                                String liveName = post.author.name;
+                                String username = post.author.username;
+                                String avatar = post.author.getAvatarPath();
+                                String cover = post.author.getCoverPath();
+                                String liveCover = post.author.liveCover;
+                                String gender = "male";
+                                boolean liveStatus = true;
 
-                            Intent intentClip = new Intent(mActivity, DragableActivity.class);
-                            Bundle bundleClip = new Bundle();
-                            bundleClip.putParcelable("obj", Parcels.wrap(clip));
+                                Channel channel = new Channel(userId, liveName, username, cover, avatar, liveCover, "male", liveStatus);
 
-                            intentClip.putExtras(bundleClip);
-                            mActivity.startActivity(intentClip);
+                                LiveFragment liveFragment = LiveFragment.newInstance(channel);
+                                ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, liveFragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+
+                            } else {
+
+                                //String sample = "https://stream-1.vdomax.com/vod/__definst__/mp4:110559/110559_720p.mp4/playlist.m3u8";
+                                String clipURL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:"+post.clip.id+"/"+post.clip.id+"_720p.mp4/playlist.m3u8";
+                                Log.e("fromFeedAdapter", clipURL);
+
+                                Video clip = new Video("clip",post.postId, post.author.name, "@"+post.author.username, clipURL, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
+
+                                Intent intentClip = new Intent(mActivity, DragableActivity.class);
+                                Bundle bundleClip = new Bundle();
+                                bundleClip.putParcelable("obj", Parcels.wrap(clip));
+
+                                intentClip.putExtras(bundleClip);
+                                mActivity.startActivity(intentClip);
+
+
+                        }
+
                             break;
                         case "youtube":
                             Video item = new Video("youtube",post.postId, post.youtube.title, post.youtube.desc, post.youtube.id, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
@@ -618,19 +682,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                             }
                             break;
                         case "live":
-                            String userId = post.author.id;
-                            String liveName = post.author.name;
-                            String username = post.author.username;
-                            String avatar = post.author.getAvatarPath();
-                            String cover = post.author.getCoverPath();
-                            String liveCover = post.author.liveCover;
-                            String gender = "male";
-                            boolean liveStatus = true;
 
-                            Channel channel = new Channel(userId, liveName, username, cover, avatar, liveCover, "male", liveStatus);
-
-                            LiveFragment liveFragment = LiveFragment.newInstance(channel);
-                            ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, liveFragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
                             break;
                     }
 
