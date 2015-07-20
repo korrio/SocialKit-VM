@@ -89,6 +89,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_main);
+
         mContext = this;
         mActivity = this;
 
@@ -328,28 +329,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-
-
-
-//                        if (((Nameable) drawerItem).getName().equals("Channels")) {
-//
-//                            ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
-//                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
-//
-//                        } else if (((Nameable) drawerItem).getName().equals("Social")) {
-//
-//                            SocialViewPagerFragment fragment = new SocialViewPagerFragment();
-//                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
-//
-//                        } else if (((Nameable) drawerItem).getName().equals("Videos")) {
-//
-//                            VideoViewPagerFragment fragment = new VideoViewPagerFragment();
-//                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
-//
-//                        } else if (((Nameable) drawerItem).getName().equals("Photos")) {
-//
-//
-//                        } else
 
                         if (drawerItem.getIdentifier() == 0) {
 

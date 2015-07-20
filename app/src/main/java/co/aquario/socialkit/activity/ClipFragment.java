@@ -16,8 +16,8 @@ import org.parceler.Parcels;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import co.aquario.chatapp.fragment.ChatWidgetFragmentClient;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.chat.SimpleChatFragment;
 import co.aquario.socialkit.fragment.SurfaceFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.model.Video;
@@ -148,7 +148,7 @@ public class ClipFragment extends BaseFragment {
         draggablePanel.setBottomFragment(moviePosterFragment);
         */
 
-        SimpleChatFragment simpleChatFragment = SimpleChatFragment.newInstance(profileName);
+        ChatWidgetFragmentClient simpleChatFragment = ChatWidgetFragmentClient.newInstance(0,Integer.parseInt(userId),2);
         draggablePanel.setBottomFragment(simpleChatFragment);
         draggablePanel.initializeView();
         Picasso.with(getActivity())
