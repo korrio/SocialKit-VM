@@ -1,4 +1,4 @@
-package co.aquario.socialkit.activity;
+package co.aquario.socialkit.activity.post;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -94,8 +94,8 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
         //commentList = getIntent().getParcelableArrayListExtra(ARG_COMMENT_LIST);
         pref = VMApp.get(this).getPrefManager();
         userId = pref.userId().getOr("3");
-        avatar = pref.avatar().getOr("TEST");
-        name = pref.name().getOr("TEST");
+        avatar = pref.avatar().getOr("");
+        name = pref.name().getOr("");
 
         setupComments();
         setupSendCommentButton();
@@ -173,7 +173,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
 
             @Override
             public void onKeyboardClose() {
-                if(popup.isShowing())
+                if (popup.isShowing())
                     popup.dismiss();
             }
         });
@@ -204,16 +204,16 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
             public void onClick(View v) {
 
                 //If popup is not showing => emoji keyboard is not visible, we need to show it
-                if(!popup.isShowing()){
+                if (!popup.isShowing()) {
 
                     //If keyboard is visible, simply show the emoji popup
-                    if(popup.isKeyBoardOpen()){
+                    if (popup.isKeyBoardOpen()) {
                         popup.showAtBottom();
                         changeEmojiKeyboardIcon(emojiButton, R.drawable.ic_action_keyboard);
                     }
 
                     //else, open the text keyboard first and immediately after that show the emoji popup
-                    else{
+                    else {
                         etComment.setFocusableInTouchMode(true);
                         etComment.requestFocus();
                         popup.showAtBottomPending();
@@ -224,7 +224,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
                 }
 
                 //If popup is showing, simply dismiss it to show the undelying text keyboard
-                else{
+                else {
                     popup.dismiss();
                 }
             }
@@ -306,6 +306,8 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     @Override
     public void onSendClickListener(View v) {
 
+        hidekeyboard();
+
         if (validateComment()) {
 
             String commentText = etComment.getText().toString();
@@ -333,6 +335,15 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     @Subscribe public void onPostCommentSuccess(PostCommentSuccessEvent event) {
         //ApiBus.getInstance().post(toolbar RefreshEvent());
         Toast.makeText(getApplicationContext(),"Success comment",Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void hidekeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Subscribe public void onGetStorySuccess(GetStorySuccessEvent event) {

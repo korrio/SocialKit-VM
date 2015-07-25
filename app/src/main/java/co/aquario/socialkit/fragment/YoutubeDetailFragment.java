@@ -30,7 +30,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.CommentsActivity;
+import co.aquario.socialkit.activity.post.CommentsActivity;
 import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;

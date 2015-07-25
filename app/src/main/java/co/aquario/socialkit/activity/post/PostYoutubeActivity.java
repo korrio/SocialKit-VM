@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
@@ -52,15 +54,45 @@ public class PostYoutubeActivity extends Activity {
     TextView descView;
     Context context;
 
+    View rootView;
+    ImageView emojiButton;
+    EmojiconsPopup popup;
+
+    private Toolbar toolbar;
+    void setupToolbar() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        if(toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setTitle("Post to Timeline");
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+
+
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_youtube);
-        final View rootView = findViewById(R.id.root_view);
-        final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
-        final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
+
+        rootView = findViewById(R.id.root_view);
+        emojiButton = (ImageView) findViewById(R.id.emoji_btn);
+        popup = new EmojiconsPopup(rootView, this);
         context = this;
 
+        context = this;
+
+        setupToolbar();
         prepareDialog();
 
         thumb = (ImageView) findViewById(R.id.video_thumbnail_imv);
@@ -82,7 +114,13 @@ public class PostYoutubeActivity extends Activity {
 
         titleView.setText(title);
         descView.setText(Html.fromHtml(desc));
+        Picasso.with(this).load(getIntent().getStringExtra("thumb")).into(thumb);
 
+        initTattoo();
+
+    }
+
+    void initTattoo() {
         popup.setSizeForSoftKeyboard();
         popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
 
@@ -177,8 +215,6 @@ public class PostYoutubeActivity extends Activity {
                 }
             }
         });
-        Picasso.with(this).load(getIntent().getStringExtra("thumb")).into(thumb);
-
     }
 
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
@@ -241,9 +277,10 @@ public class PostYoutubeActivity extends Activity {
             throws JSONException {
         Log.e("hahahaha", jo.toString(4));
         if(jo.optInt("status") == 200) {
-            Intent backIntent = new Intent();
-            setResult(-1, backIntent);
-            //startActivity(backIntent);
+            Intent backIntent = new Intent(context, MainActivity.class
+            );
+            //setResult(-1, backIntent);
+            startActivity(backIntent);
             finish();
         }
 

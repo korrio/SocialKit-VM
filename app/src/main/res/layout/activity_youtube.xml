@@ -185,7 +185,7 @@
             android:layout_height="fill_parent">
 
             <include
-                layout="@layout/item_social_buttons"
+                layout="@layout/inc_social_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

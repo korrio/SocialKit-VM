@@ -1,7 +1,13 @@
 package co.aquario.socialkit.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -24,8 +30,8 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 
 /**
  * Created by froger_mcs on 05.11.14.
@@ -241,6 +247,19 @@ public class Utils {
         Toast.makeText(VMApp.getAppContext(), iMessage, Toast.LENGTH_SHORT).show();
     }
 
+    public static void showAlert(Context context,String title,String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message).setTitle(title)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     public static boolean isNumeric(String str)
     {
         try
@@ -252,6 +271,33 @@ public class Utils {
             return false;
         }
         return true;
+    }
+
+    public static void notify(Context context,String ticker, String title, String message,
+                        Intent intent) {
+
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
+
+        int icon = R.drawable.ic_vm;
+        long when = System.currentTimeMillis();
+
+        Notification notification = new Notification(icon, ticker, when);
+
+        notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_AUTO_CANCEL;
+
+        int id = 123;
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, id,
+                intent, 0);
+
+        notification.setLatestEventInfo(context, title, message,
+                contentIntent);
+
+        mNotificationManager.cancelAll();
+
+        mNotificationManager.notify(id, notification);
+
     }
 
 }

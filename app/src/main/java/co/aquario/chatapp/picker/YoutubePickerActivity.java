@@ -1,11 +1,11 @@
 package co.aquario.chatapp.picker;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,7 +29,7 @@ import co.aquario.socialkit.search.youtube.ServiceTask;
 import co.aquario.socialkit.search.youtube.YtSearchResultAdapter;
 
 
-public class YoutubePickerActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, ServerResponseListener {
+public class YoutubePickerActivity extends Activity implements View.OnClickListener, AdapterView.OnItemClickListener, ServerResponseListener {
 
     boolean executing = false;
     private EditText mYtVideoEdt = null;
@@ -41,12 +41,36 @@ public class YoutubePickerActivity extends AppCompatActivity implements View.OnC
     private Context context;
     private SearchView mSearchView;
 
+
     private String from;
+
+    private Toolbar toolbar;
+    void setupToolbar() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        if(toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setTitle("Find Youtube");
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_youtube);
+        setupToolbar();
 
         if(getIntent() !=null) {
             from = getIntent().getAction();
@@ -128,6 +152,8 @@ public class YoutubePickerActivity extends AppCompatActivity implements View.OnC
         // Service to search video
         mYtServiceTask = new ServiceTask(1);
         mYtServiceTask.setmServerResponseListener(this);
+
+        mYtServiceTask.execute("bodyslam");
     }
 
     @Override
@@ -185,7 +211,7 @@ public class YoutubePickerActivity extends AppCompatActivity implements View.OnC
     @Override
     public void prepareRequest(Object... objects) {
 
-        executing = false;
+        //executing = false;
         // Parse the response based upon type of request
         Integer reqCode = (Integer) objects[0];
 
@@ -231,6 +257,8 @@ public class YoutubePickerActivity extends AppCompatActivity implements View.OnC
                     mYtSearchResultAdapter.setmVideoList((List<SearchResult>) objects[1]);
                     mYtSearchResultAdapter.notifyDataSetChanged();
                 }
+
+                executing = false;
 
                 break;
         }

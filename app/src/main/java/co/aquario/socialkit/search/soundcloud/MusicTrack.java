@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by kevin on 2/22/15.
  */
-public class Track {
+public class MusicTrack {
     @SerializedName("title")
     public String mTitle;
 

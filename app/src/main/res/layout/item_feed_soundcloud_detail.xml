@@ -8,7 +8,7 @@
 
 
     <include
-        layout="@layout/item_feed_header"
+        layout="@layout/inc_feed_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

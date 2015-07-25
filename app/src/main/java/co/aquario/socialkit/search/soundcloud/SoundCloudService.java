@@ -14,12 +14,12 @@ public interface SoundCloudService {
     String CLIENT_ID = "954240dcf4b7c0a46e59369a69db7215";
 
     @GET("/tracks?client_id=" + CLIENT_ID)
-    void searchSongs(@Query("q") String query, Callback<List<Track>> cb);
+    void searchSongs(@Query("q") String query, Callback<List<MusicTrack>> cb);
 
     @GET("/tracks?client_id=" + CLIENT_ID)
-    void getRecentSongs(@Query("created_at[from]") String date, Callback<List<Track>> cb);
+    void getRecentSongs(@Query("created_at[from]") String date, Callback<List<MusicTrack>> cb);
 
-    void songsAfter(@Query("created_at[to]") String date, Callback<List<Track>> cb);
+    void songsAfter(@Query("created_at[to]") String date, Callback<List<MusicTrack>> cb);
 
-    void bpmFrom(@Query("bpm[from]") String date, Callback<List<Track>> cb);
+    void bpmFrom(@Query("bpm[from]") String date, Callback<List<MusicTrack>> cb);
 }

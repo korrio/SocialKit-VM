@@ -18,7 +18,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black_translucent">
+            android:background="@drawable/bg_tattoo">
 
             <View
                 android:layout_width="match_parent"
@@ -30,8 +30,8 @@
                 android:id="@+id/et_emoticon"
                 android:layout_width="120sp"
                 android:layout_height="120sp"
-                android:layout_gravity="center_horizontal|bottom"
-                emojicon:emojiconSize="150sp"
+                android:layout_gravity="center"
+                emojicon:emojiconSize="120sp"
                 android:background="#00000000"
                 android:cursorVisible="false"/>
         </FrameLayout>
@@ -43,7 +43,7 @@
             android:elevation="@dimen/default_elevation"
             android:gravity="center_vertical">
             <include
-                layout="@layout/inc_post_story"
+                layout="@layout/inc_post_box"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

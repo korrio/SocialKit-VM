@@ -41,7 +41,7 @@ import java.util.Map;
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.CommentsActivity;
+import co.aquario.socialkit.activity.post.CommentsActivity;
 import co.aquario.socialkit.activity.DragableActivity;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.LiveFragment;

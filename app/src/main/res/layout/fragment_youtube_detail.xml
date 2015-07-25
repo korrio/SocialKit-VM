@@ -122,7 +122,7 @@
             </LinearLayout>
 
             <include
-                layout="@layout/item_social_buttons_number"
+                layout="@layout/inc_social_buttons_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

@@ -23,11 +23,11 @@ import co.aquario.socialkit.R;
  */
 public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder> {
 
-    private List<Track> mTracks;
+    private List<MusicTrack> mMusicTracks;
     private Context mContext;
     private AdapterView.OnItemClickListener mOnItemClickListener;
-    public TracksAdapter(Context context, List<Track> tracks) {
-        mTracks = tracks;
+    public TracksAdapter(Context context, List<MusicTrack> musicTracks) {
+        mMusicTracks = musicTracks;
         mContext = context;
     }
 
@@ -45,28 +45,28 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int i) {
-        Track track = mTracks.get(i);
-        holder.titleTextView.setText(track.mTitle);
-        Picasso.with(mContext).load(track.user.avatarUrl).into(holder.thumbImageView);
-        Picasso.with(mContext).load(track.getArtworkURL()).into(holder.imgTrack);
+        MusicTrack musicTrack = mMusicTracks.get(i);
+        holder.titleTextView.setText(musicTrack.mTitle);
+        Picasso.with(mContext).load(musicTrack.user.avatarUrl).into(holder.thumbImageView);
+        Picasso.with(mContext).load(musicTrack.getArtworkURL()).into(holder.imgTrack);
 
 
         holder.tvDuration.setText(String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(track.duration),
-                TimeUnit.MILLISECONDS.toSeconds(track.duration) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(track.duration))
+                TimeUnit.MILLISECONDS.toMinutes(musicTrack.duration),
+                TimeUnit.MILLISECONDS.toSeconds(musicTrack.duration) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(musicTrack.duration))
         ));
 
         DecimalFormat formatter = new DecimalFormat("#,###");
-        holder.tvPlaycount.setText(track.playbackCount);
+        holder.tvPlaycount.setText(musicTrack.playbackCount);
 
-        holder.tvUsername.setText(track.user.username);
-        holder.tvPermalink.setText(track.user.permalink);
+        holder.tvUsername.setText(musicTrack.user.username);
+        holder.tvPermalink.setText(musicTrack.user.permalink);
     }
 
     @Override
     public int getItemCount() {
-        return mTracks.size();
+        return mMusicTracks.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

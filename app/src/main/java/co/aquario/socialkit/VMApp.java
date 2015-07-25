@@ -34,6 +34,8 @@ import co.aquario.chatapp.handler.NotiApiService;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.handler.ApiHandlerVM;
 import co.aquario.socialkit.handler.ApiServiceVM;
+import co.aquario.socialkit.handler.PostUploadHandler;
+import co.aquario.socialkit.handler.PostUploadService;
 import co.aquario.socialkit.push.PushManage;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.StorageUtils;
@@ -64,6 +66,7 @@ public class VMApp extends Application {
     private ApiHandlerVM loginApiHandler;
     private ChatApiHandler chatApiHandler;
     private NotiApiHandler notiApiHandler;
+    private PostUploadHandler uploadApiHandler;
     private static OkHttpClient sHttpClient;
 
     private static FacebookHandle handle;
@@ -144,6 +147,10 @@ public class VMApp extends Application {
         notiApiHandler = new NotiApiHandler(this, buildNotiApi(),
                 ApiBus.getInstance());
         notiApiHandler.registerForEvents();
+
+        uploadApiHandler = new PostUploadHandler(this, buildUploadApi(),
+                ApiBus.getInstance());
+        uploadApiHandler.registerForEvents();
 
         mPref = new PrefManager(getSharedPreferences("App", MODE_PRIVATE));
         mPref.isNoti().put(true).commit();
@@ -254,6 +261,24 @@ public class VMApp extends Application {
                 .setConverter(new GsonConverter(gson))
                 .build()
                 .create(ApiServiceVM.class);
+    }
+
+    PostUploadService buildUploadApi() {
+        String BASE_URL = "https://www.vdomax.com";
+
+        return new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(BASE_URL)
+
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override
+                    public void intercept(RequestFacade request) {
+                        //request.addQueryParam("p1", "var1");
+                        //request.addQueryParam("p2", "");
+                    }
+                })
+                .build()
+                .create(PostUploadService.class);
     }
 
 }

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
@@ -39,6 +41,8 @@ public class PostSoundCloudActivity extends Activity {
 
     String sid;
     String title;
+    String subtitle;
+
     String thumbUrl;
     String statusText;
 
@@ -48,23 +52,52 @@ public class PostSoundCloudActivity extends Activity {
     ProgressDialog dialog;
 
     TextView trackTitle;
-
+    TextView trackUsername;
     Context context;
+
+    View rootView;
+    ImageView emojiButton;
+    EmojiconsPopup popup;
+
+    private Toolbar toolbar;
+    void setupToolbar() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        if(toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setTitle("Post to Timeline");
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+
+
+        }
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_soundcloud);
-        final View rootView = findViewById(R.id.root_view);
-        final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
-        final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
+        rootView = findViewById(R.id.root_view);
+        emojiButton = (ImageView) findViewById(R.id.emoji_btn);
+        popup = new EmojiconsPopup(rootView, this);
         context = this;
 
+        setupToolbar();
         prepareDialog();
+        initTattoo();
 
-        thumb = (ImageView) findViewById(R.id.track_thumbnail);
+        thumb = (ImageView) findViewById(R.id.img_track);
         trackTitle = (TextView) findViewById(R.id.track_title);
+        trackUsername = (TextView) findViewById(R.id.tv_username);
         etStatus = (EmojiconEditText) findViewById(R.id.et_box);
         btnPost = (Button) findViewById(R.id.button_recent);
 
@@ -78,11 +111,19 @@ public class PostSoundCloudActivity extends Activity {
         if(getIntent()!=null) {
             sid = getIntent().getStringExtra("soundcloud_uri");
             title = getIntent().getStringExtra("soundcloud_title");
+            subtitle = getIntent().getStringExtra("soundcloud_subtitle");
             thumbUrl = getIntent().getStringExtra("artwork_url");
 
             Picasso.with(this).load(thumbUrl).into(thumb);
             trackTitle.setText(title);
+            trackUsername.setText(subtitle);
         }
+
+
+
+    }
+
+    void initTattoo() {
         popup.setSizeForSoftKeyboard();
         popup.setOnEmojiconClickedListener(new EmojiconGridView.OnEmojiconClickedListener() {
 
@@ -177,7 +218,6 @@ public class PostSoundCloudActivity extends Activity {
                 }
             }
         });
-
     }
 
     public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
@@ -264,9 +304,10 @@ public class PostSoundCloudActivity extends Activity {
             throws JSONException {
         Log.e("hahahaha", jo.toString(4));
         if(jo.optInt("status") == 200) {
-            Intent backIntent = new Intent();
-            setResult(-1, backIntent);
-            //startActivity(backIntent);
+            Intent backIntent = new Intent(context, MainActivity.class
+            );
+            //setResult(-1, backIntent);
+            startActivity(backIntent);
             finish();
         }
 

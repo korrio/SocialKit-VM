@@ -1,10 +1,6 @@
 package co.aquario.socialkit.activity.post;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,20 +21,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxStatus;
 
-import org.json.JSONObject;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.util.Utils;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
@@ -51,32 +40,47 @@ public class PostVideoActivity extends Activity {
 	MediaController mc;
 
 	Button uploadButton;
-	EditText status;
 	EditText photoText;
 
 	AQuery aq;
-	String POST_ID;
-
     String statusText;
-    String descText;
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(toolbar != null) {
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+                    finish();
+                    //Toast.makeText(getApplicationContext(), "Hello wolrd", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_post_video);
 
 		context = this;
 		aq = new AQuery(context);
 
-		//getActionBar().setDisplayHomeAsUpEnabled(true);
-		setContentView(R.layout.activity_post_video);
+
 		uploadButton = (Button) findViewById(R.id.button_recent);
-		status = (EditText) findViewById(R.id.comment);
+		//status = (EditText) findViewById(R.id.comment);
         photoText = (EditText) findViewById(R.id.et_box);
+
+        setupToolbar();
 
         final View rootView = findViewById(R.id.root_view);
         final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
-
 
 		Intent intent = getIntent();
 		if (Intent.ACTION_VIEW.equals(intent.getAction())) {
@@ -89,8 +93,8 @@ public class PostVideoActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-                statusText = status.getText().toString().replace("\n", "%0A");
-                descText = photoText.getText().toString().replace("\n", "%0A");
+                //statusText = status.getText().toString().replace("\n", "%0A");
+                statusText = photoText.getText().toString().replace("\n", "%0A");
 
                 launchUploadActivity(false);
 
@@ -216,8 +220,8 @@ public class PostVideoActivity extends Activity {
         Intent i = new Intent(PostVideoActivity.this, PostVideoReviewActivity.class);
         i.putExtra("filePath", getRealPathFromURI(mFileUri));
         i.putExtra("isImage", isImage);
-        i.putExtra("title", statusText.toString());
-        i.putExtra("desc", descText.toString());
+        i.putExtra("title", statusText);
+        i.putExtra("desc", statusText);
         startActivity(i);
     }
 
@@ -252,131 +256,12 @@ public class PostVideoActivity extends Activity {
 		return cursor.getString(column_index);
 	}
 	
-	ProgressDialog dialog;
 
-	private void videoPost(String message, String desc, File file) {
-
-        String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
-        statusText = "";
-
-        // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-
-        statusText = Utils.emoticonize(statusText);
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("timeline_id","6");
-        params.put("recipient_id","");
-        params.put("text", statusText);
-        params.put("clips[]", file);
-
-		dialog = new ProgressDialog(context);
-		dialog.setIndeterminate(true);
-		dialog.setCancelable(true);
-		dialog.setInverseBackgroundForced(false);
-		dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle(getString(R.string.uploading));
-        dialog.setMessage(getString(R.string.waiting));
-		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		dialog.setIndeterminate(false);
-		dialog.setMax(100);
-		
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				int incr;
-				// Do the "lengthy" operation 20 times
-				for (incr = 0; incr <= 100; incr += 20) {
-					// Sets the progress indicator to a max value, the
-					// current completion percentage, and "determinate"
-					// state
-					dialog.setIndeterminate(false);
-					dialog.setMax(100);
-					dialog.setProgress((int) incr);
-					
-					try {
-						// Sleep for 5 seconds
-						Thread.sleep(5 * 1000);
-					} catch (InterruptedException e) {
-						Log.d("LOGME", "sleep failure");
-					}
-				}
-				// When the loop is finished, updates the notification
-			
-			}
-		}
-		// Starts the thread by calling the run() method in its Runnable
-		).start();
-
-		/*
-		 * MyProgressBar mProgressBar = (MyProgressBar)
-		 * findViewById(R.id.progress);
-		 * 
-		 * mProgressBar.setOnProgressListener(toolbar OnProgressListener() {
-		 * 
-		 * @Override public void onProgress(int max, int progress) {
-		 * 
-		 * } });
-		 */
-		aq.progress(dialog)
-				.ajax(url, params, JSONObject.class, this, "videoCb");
-		// Toast.makeText(context,
-		// "Uploading video. See notification when finish",Toast.LENGTH_LONG).show();
-	}
-	
-	
-
-	private void uploaded(String postId) {
-
-
-	}
 
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId){
         iconToBeChanged.setImageResource(drawableResourceId);
     }
 
-
-	private void notify(String ticker, String title, String message,
-			Intent intent) {
-
-		String ns = Context.NOTIFICATION_SERVICE;
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-
-		int icon = R.drawable.ic_launcher;
-		long when = System.currentTimeMillis();
-
-		Notification notification = new Notification(icon, ticker, when);
-
-		int id = getNotifyId();
-
-		PendingIntent contentIntent = PendingIntent.getActivity(this, id,
-                intent, 0);
-
-		notification.setLatestEventInfo(context, title, message,
-				contentIntent);
-
-		mNotificationManager.cancelAll();
-
-		mNotificationManager.notify(id, notification);
-
-	}
-
-	private int getNotifyId() {
-		return 123;
-	}
-
-	public void videoCb(String url, JSONObject jo, AjaxStatus status) {
-		
-		if( jo.optInt("status") == 4001) {
-			dialog.setProgress(100);
-			POST_ID = jo.optInt("id") + "";
-			uploaded(POST_ID);
-			
-			Toast.makeText(context, "อัพโหลดสำเร็จแล้ว", Toast.LENGTH_SHORT).show();
-			finish();
-		}
-		
-
-	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

@@ -1,9 +1,7 @@
 package co.aquario.socialkit.activity.post;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,13 +24,10 @@ import java.io.File;
 
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.handler.PostUploadService;
-import co.aquario.socialkit.model.UploadPostCallback;
+import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.event.upload.ClipPostUploadEvent;
+import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.Utils;
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import retrofit.mime.TypedFile;
 
 
@@ -96,6 +91,8 @@ public class PostVideoReviewActivity extends Activity {
 			@Override
 			public void onClick(View v) {
                 btnUpload.setEnabled(false);
+                String fromUserId = VMApp.mPref.userId().getOr("0");
+                uploadPost(title, fromUserId, "");
 				// uploading the file to server
                 //btnUpload.setProgress(30);
 
@@ -150,43 +147,23 @@ public class PostVideoReviewActivity extends Activity {
 
     }
 
-    PostUploadService buildUploadApi() {
-        String BASE_URL = "https://www.vdomax.com";
 
-        return new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .setEndpoint(BASE_URL)
-
-                .setRequestInterceptor(new RequestInterceptor() {
-                    @Override public void intercept(RequestFacade request) {
-                        //request.addQueryParam("p1", "var1");
-                        //request.addQueryParam("p2", "");
-                    }
-                })
-                .build()
-                .create(PostUploadService.class);
-    }
 
     private void uploadPostRetrofit(File file, String text, String fromUserId, String toUserId) {
         //FileUploadService service = ServiceGenerator.createService(FileUpload.class, FileUpload.BASE_URL);
 
-        PostUploadService service = buildUploadApi();
+        //PostUploadService service = VMApp.buildUploadApi();
         TypedFile typedFile = new TypedFile("multipart/form-data", file);
+        ApiBus.getInstance().postQueue(new ClipPostUploadEvent(text, fromUserId, toUserId, typedFile));
 
-        service.uploadPostClip(text, fromUserId, toUserId, typedFile, new retrofit.Callback<UploadPostCallback>() {
-            @Override
-            public void success(UploadPostCallback uploadCallback, Response response) {
-                if (uploadCallback.status == 200)
-                    Utils.showToast("Post success");
-                else
-                    Utils.showToast("Post failed");
-            }
+        Utils.showToast("Uploading video. See notification when finish");
 
-            @Override
-            public void failure(RetrofitError error) {
+        //finishPosting();
 
-            }
-        });
+            Intent intent = new Intent(PostVideoReviewActivity.this,
+                    MainActivity.class);
+            startActivity(intent);
+
     }
 
 	/**
@@ -345,17 +322,6 @@ public class PostVideoReviewActivity extends Activity {
 	/**
 	 * Method to show alert dialog
 	 * */
-	private void showAlert(String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(message).setTitle("Response from Servers")
-				.setCancelable(false)
-				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						// do nothing
-					}
-				});
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
+
 
 }

@@ -1,6 +1,7 @@
 package co.aquario.socialkit.activity.post;
 
-import android.annotation.SuppressLint;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.androidquery.AQuery;
@@ -68,6 +70,27 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
     private Uri photoUri;
     private int photoSize;
 
+    @Override
+    public void onBackPressed() {
+
+        //ViewCompat.setElevation(getToolbar(), 0);
+        finishPosting();
+    }
+
+    private void finishPosting() {
+        contentRoot.animate()
+                .translationY(Utils.getScreenHeight(this))
+                .setDuration(200)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        PostPhotoActivity.super.onBackPressed();
+                        overridePendingTransition(0, 0);
+                    }
+                })
+                .start();
+    }
+
 
     public static void openWithPhotoUri(Activity openingActivity, Uri photoUri) {
         Intent intent = new Intent(openingActivity, PostPhotoActivity.class);
@@ -81,36 +104,47 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
         outState.putParcelable(ARG_TAKEN_PHOTO_URI, photoUri);
     }
 
-    @SuppressLint("NewApi")
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(toolbar != null) {
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+                    finish();
+                    //Toast.makeText(getApplicationContext(), "Hello wolrd", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+
+    public LinearLayout contentRoot;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_photo);
         final View rootView = findViewById(R.id.root_view);
+
         final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
+        contentRoot = (LinearLayout) findViewById(R.id.contentRoot);
 
         context = this;
 
         prepareDialog();
+        setupToolbar();
         //String path = getIntent().getExtras().getString("photo");
         //String rotate = getIntent().getExtras().getString("rotate");
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(getResources().getDrawable(android.R.drawable.ic_media_previous));
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
-                finish();
-                //Toast.makeText(getApplicationContext(), "Hello wolrd", Toast.LENGTH_SHORT).show();
-            }
-        });
+
         boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         if (tabletSize) {
             photoSize = getResources().getDimensionPixelSize(R.dimen.publish_photo_thumbnail_size_tablet);;
         } else {
-            photoSize = getResources().getDimensionPixelSize(R.dimen.publish_photo_thumbnail_size_tablet);;
+            photoSize = getResources().getDimensionPixelSize(R.dimen.publish_photo_thumbnail_size);;
         }
 
         if (savedInstanceState == null) {
@@ -340,9 +374,9 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
     private void uploadPost(String text,String fromUserId, String toUserId) {
         //String url = "http://chat.vdomax.com/upload";
 
-        TypedFile typedFile = new TypedFile("multipart/form-data", tempFile);
+       // TypedFile typedFile = new TypedFile("multipart/form-data", tempFile);
 
-        uploadPostRetrofit(tempFile,text,fromUserId,toUserId);
+        uploadPostRetrofit(tempFile, text, fromUserId, toUserId);
 
 //        Map<String, Object> params = new HashMap<String, Object>();
 //        params.put("text", text);
@@ -393,9 +427,14 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
             @Override
             public void success(UploadPostCallback uploadCallback, Response response) {
                 if(uploadCallback.status == 200)
-                    Utils.showToast("Post success");
+                    Utils.showToast("Post photo success");
                 else
-                    Utils.showToast("Post failed");
+                    Utils.showToast("Post photo failed");
+
+                Intent i = new Intent(PostPhotoActivity.this,MainActivity.class);
+                startActivity(i);
+                finish();
+
             }
 
             @Override
@@ -404,6 +443,39 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
             }
         });
     }
+
+//    private class SendFileTask extends AsyncTask<String, Integer, ApiResult> {
+//        private ProgressListener listener;
+//        private String filePath;
+//        private FileType fileType;
+//
+//        public SendFileTask(String filePath, FileType fileType) {
+//            this.filePath = filePath;
+//            this.fileType = fileType;
+//        }
+//
+//        @Override
+//        protected ApiResult doInBackground(String... params) {
+//            File file = new File(filePath);
+//            totalSize = file.length();
+//            Logger.d("Upload FileSize[%d]", totalSize);
+//            listener = new ProgressListener() {
+//                @Override
+//                public void transferred(long num) {
+//                    publishProgress((int) ((num / (float) totalSize) * 100));
+//                }
+//            };
+//            String _fileType = FileType.VIDEO.equals(fileType) ? "video/mp4" : (FileType.IMAGE.equals(fileType) ? "image/jpeg" : "*/*");
+//            return MyRestAdapter.getService().uploadFile(new CountingTypedFile(_fileType, file, listener), "/Mobile Uploads");
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            Logger.d(String.format("progress[%d]", values[0]));
+//            //do something with values[0], its the percentage so you can easily do
+//            //progressBar.setProgress(values[0]);
+//        }
+//    }
 
 //    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 //        @Override

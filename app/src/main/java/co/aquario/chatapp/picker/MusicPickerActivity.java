@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -30,9 +32,9 @@ import java.util.List;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.post.PostSoundCloudActivity;
+import co.aquario.socialkit.search.soundcloud.MusicTrack;
 import co.aquario.socialkit.search.soundcloud.SoundCloud;
 import co.aquario.socialkit.search.soundcloud.SoundCloudService;
-import co.aquario.socialkit.search.soundcloud.Track;
 import co.aquario.socialkit.search.soundcloud.TracksAdapter;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -43,7 +45,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
 
 
     private TracksAdapter mAdapter;
-    private List<Track> mTracks;
+    private List<MusicTrack> mMusicTracks;
     private TextView mSelectedTitle;
     private TextView mSelectedSubtitle;
     private ImageView mSelectedThumbnail;
@@ -52,15 +54,40 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
     private ImageView mPlayerStateButton;
     private ProgressBar mProgressBar;
     private SearchView mSearchView;
-    private List<Track> mPreviousTracks;
+    private List<MusicTrack> mPreviousMusicTracks;
     String from;
 
     Context context;
+    SoundCloudService service ;
+
+    private Toolbar toolbar;
+    void setupToolbar() {
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        if(toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setTitle("Find Music");
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_soundcloud);
+
+        setupToolbar();
 
         context = this;
 
@@ -68,6 +95,17 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
             from = getIntent().getAction();
             Log.e("from",from);
         }
+
+        final Button btnSearch = (Button) findViewById(R.id.sc_search_btn);
+        final EditText searchEt = (EditText) findViewById(R.id.sc_query);
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String query = searchEt.getText().toString();
+                searchTrack(query);
+            }
+        });
 
         mPlayerToolbar = (Toolbar)findViewById(R.id.player_toolbar);
         mMediaPlayer = new MediaPlayer();
@@ -101,17 +139,18 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.songs_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mTracks = new ArrayList<Track>();
-        mAdapter = new TracksAdapter(this, mTracks);
+        mMusicTracks = new ArrayList<MusicTrack>();
+        mAdapter = new TracksAdapter(this, mMusicTracks);
 
         recyclerView.setAdapter(mAdapter);
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(context, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        Track selectedTrack = mTracks.get(position);
-                        mSelectedTitle.setText(selectedTrack.mTitle);
-                        mSelectedSubtitle.setText(selectedTrack.user.username);
-                        Picasso.with(MusicPickerActivity.this).load(selectedTrack.getArtworkURL()).into(mSelectedThumbnail);
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        MusicTrack selectedMusicTrack = mMusicTracks.get(position);
+                        mSelectedTitle.setText(selectedMusicTrack.mTitle);
+                        mSelectedSubtitle.setText(selectedMusicTrack.user.username);
+                        Picasso.with(MusicPickerActivity.this).load(selectedMusicTrack.getArtworkURL()).into(mSelectedThumbnail);
 
                         if (mMediaPlayer.isPlaying()) {
                             mMediaPlayer.stop();
@@ -121,7 +160,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
                         mPlayerToolbar.setVisibility(View.VISIBLE);
 
                         try {
-                            mMediaPlayer.setDataSource(selectedTrack.mStreamURL + "?client_id=" + SoundCloudService.CLIENT_ID);
+                            mMediaPlayer.setDataSource(selectedMusicTrack.mStreamURL + "?client_id=" + SoundCloudService.CLIENT_ID);
                             mMediaPlayer.prepareAsync();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -129,16 +168,18 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
 
                         if (from.equals("post")) {
                             Intent i = new Intent(getApplicationContext(), PostSoundCloudActivity.class);
-                            i.putExtra("soundcloud_uri", selectedTrack.mStreamURL);
-                            i.putExtra("soundcloud_title", selectedTrack.mTitle);
-                            i.putExtra("artwork_url", selectedTrack.getArtworkURL());
+                            i.putExtra("soundcloud_uri", selectedMusicTrack.mStreamURL);
+                            i.putExtra("soundcloud_title", selectedMusicTrack.mTitle);
+                            i.putExtra("soundcloud_subtitle", selectedMusicTrack.user.username);
+                            i.putExtra("artwork_url", selectedMusicTrack.getArtworkURL());
+
                             startActivity(i);
                             finish();
-                        } else if (from.equals("chat")) {
+                        } else {
                             Intent i = new Intent();
-                            i.putExtra("soundcloud_uri", selectedTrack.mStreamURL);
-                            i.putExtra("soundcloud_title", selectedTrack.mTitle);
-                            i.putExtra("artwork_url", selectedTrack.getArtworkURL());
+                            i.putExtra("soundcloud_uri", selectedMusicTrack.mStreamURL);
+                            i.putExtra("soundcloud_title", selectedMusicTrack.mTitle);
+                            i.putExtra("artwork_url", selectedMusicTrack.getArtworkURL());
                             //i.putExtra("LOCATION",marker.)
                             setResult(-1, i);
                             finish();
@@ -147,18 +188,8 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
                 })
         );
 
-        SoundCloudService service = SoundCloud.getService();
-        service.searchSongs("cityscape", new Callback<List<Track>>() {
-            @Override
-            public void success(List<Track> tracks, Response response) {
-                updateTracks(tracks);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("fail", "Failed call: " + error.toString());
-            }
-        });
+        service = SoundCloud.getService();
+        searchTrack("bodyslam");
 
         /*
         service.getRecentSongs(toolbar SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(toolbar Date()), toolbar Callback<List<Track>>() {
@@ -175,11 +206,25 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
         */
     }
 
-    private void updateTracks(List<Track> tracks){
-        mTracks.clear();
-        mTracks.addAll(tracks);
+    public void searchTrack(String query) {
+        service.searchSongs(query, new Callback<List<MusicTrack>>() {
+            @Override
+            public void success(List<MusicTrack> musicTracks, Response response) {
+                updateTracks(musicTracks);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("fail", "Failed call: " + error.toString());
+            }
+        });
+    }
+
+    private void updateTracks(List<MusicTrack> musicTracks){
+        mMusicTracks.clear();
+        mMusicTracks.addAll(musicTracks);
         mAdapter.notifyDataSetChanged();
-        Log.e("heyhey",mTracks.size() + "");
+        Log.e("heyhey", mMusicTracks.size() + "");
     }
 
 
@@ -207,10 +252,10 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
     @Override
     public boolean onQueryTextSubmit(String query) {
         mSearchView.clearFocus();
-        SoundCloud.getService().searchSongs(query, new Callback<List<Track>>() {
+        SoundCloud.getService().searchSongs(query, new Callback<List<MusicTrack>>() {
             @Override
-            public void success(List<Track> tracks, Response response) {
-                updateTracks(tracks);
+            public void success(List<MusicTrack> musicTracks, Response response) {
+                updateTracks(musicTracks);
             }
 
             @Override
@@ -249,7 +294,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                mPreviousTracks = new ArrayList<Track>(mTracks);
+                mPreviousMusicTracks = new ArrayList<MusicTrack>(mMusicTracks);
                 mSearchView.setIconified(false);
                 mSearchView.requestFocus();
                 Log.d("expand ", " expand" + mSearchView.isFocused());
@@ -258,7 +303,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                updateTracks(mPreviousTracks);
+                updateTracks(mPreviousMusicTracks);
                 mSearchView.clearFocus();
                 Log.d("collapse ", " expand" + mSearchView.isFocused());
                 return true;

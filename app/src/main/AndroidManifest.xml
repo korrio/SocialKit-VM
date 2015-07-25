@@ -253,7 +253,7 @@
             android:theme="@style/AppTheme.WithoutActionBar" />
 
         <activity
-            android:name=".activity.CommentsActivity"
+            android:name=".activity.post.CommentsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
@@ -294,18 +294,12 @@
         <activity
             android:name="co.aquario.chatapp.picker.MusicPickerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.WithoutActionBar"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
+            android:theme="@style/AppTheme.WithoutActionBar"/>
         <activity
             android:name="co.aquario.chatapp.picker.YoutubePickerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.WithoutActionBar"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:theme="@style/AppTheme.WithoutActionBar"/>
 
-        <activity
-            android:name=".activity.YoutubeActivity"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <activity
             android:name=".activity.post.PostStatusActivity"
@@ -317,10 +311,16 @@
             android:theme="@style/AppTheme.WithoutActionBar" />
         <activity
             android:name=".activity.post.PostSoundCloudActivity"
-            android:theme="@style/AppTheme" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.WithoutActionBar" />
 
         <activity
             android:name=".search.youtube.OpenYouTubePlayerActivity"/>
+
+        <activity
+            android:name=".activity.YoutubeActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <!--
         <activity

@@ -27,7 +27,8 @@
             android:ems="10"
             android:layout_weight="1"
             android:gravity="top"
-            android:textColor="#252525" />
+            android:textColor="#252525"
+            android:hint="What's in your mind ?" />
 
             <Button
                 android:layout_weight="3"

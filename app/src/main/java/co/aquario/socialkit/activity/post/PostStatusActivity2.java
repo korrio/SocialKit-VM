@@ -1,5 +1,7 @@
 package co.aquario.socialkit.activity.post;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,13 +12,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.androidquery.AQuery;
@@ -33,8 +35,10 @@ import java.util.regex.Pattern;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.util.Utils;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconUtil;
@@ -63,6 +67,8 @@ public class PostStatusActivity2 extends Activity {
 
     @InjectView(R.id.root_view)
     public View rootView;
+    @InjectView(R.id.contentRoot)
+    public LinearLayout contentRoot;
     @InjectView(R.id.emoji_btn)
     public ImageView emojiButton;
 
@@ -84,14 +90,13 @@ public class PostStatusActivity2 extends Activity {
 //
 //            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setTitle("Post status");
+            toolbar.setSubtitle("Or share tattoo");
             toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent backIntent = new Intent();
-                    setResult(-1, backIntent);
-                    //startActivity(backIntent);
-                    finish();
+                    onBackPressed();
                 }
             });
 
@@ -100,10 +105,24 @@ public class PostStatusActivity2 extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the search; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_post_youtube, menu);
-        return true;
+    public void onBackPressed() {
+
+        //ViewCompat.setElevation(getToolbar(), 0);
+        finishPosting();
+    }
+
+    private void finishPosting() {
+        contentRoot.animate()
+                .translationY(Utils.getScreenHeight(this))
+                .setDuration(200)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        PostStatusActivity2.super.onBackPressed();
+                        overridePendingTransition(0, 0);
+                    }
+                })
+                .start();
     }
 
     @Override
@@ -375,9 +394,10 @@ public class PostStatusActivity2 extends Activity {
             throws JSONException {
         Log.e("hahahaha", jo.toString(4));
         if(jo.optInt("status") == 200) {
-            Intent backIntent = new Intent();
-            setResult(-1, backIntent);
-            //startActivity(backIntent);
+            Intent backIntent = new Intent(context, MainActivity.class
+            );
+            //setResult(-1, backIntent);
+            startActivity(backIntent);
             finish();
         }
 
