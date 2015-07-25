@@ -12,8 +12,7 @@
         android:layout_marginRight="-20dp"
         android:layout_marginTop="-60dp"
         android:contentDescription="@null"
-        android:scaleType="centerCrop"
-        android:src="@drawable/default_cover" />
+        android:scaleType="centerCrop"/>
 
 
     <FrameLayout
@@ -42,7 +41,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="105dp"
                     android:layout_marginTop="27dp"
-                    android:background="@drawable/card_avatar_bar"
                     android:id="@+id/relativeLayout2">
 
 

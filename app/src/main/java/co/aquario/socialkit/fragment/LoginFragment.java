@@ -14,7 +14,6 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,13 +22,14 @@ import com.androidquery.AQuery;
 import com.androidquery.auth.FacebookHandle;
 import com.androidquery.callback.AjaxStatus;
 import com.bumptech.glide.Glide;
-import com.facebook.AccessToken;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.flaviofaria.kenburnsview.KenBurnsView;
+import com.flaviofaria.kenburnsview.Transition;
 import com.google.gson.Gson;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -39,14 +39,13 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.VMApplication;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.FailedNetworkEvent;
+import co.aquario.socialkit.event.FbAuthEvent;
 import co.aquario.socialkit.event.LoadFbProfileEvent;
 import co.aquario.socialkit.event.LoginEvent;
 import co.aquario.socialkit.event.LoginFailedAuthEvent;
@@ -61,6 +60,8 @@ import co.aquario.socialkit.util.Utils;
 
 public class LoginFragment extends BaseFragment {
 
+
+
     public PrefManager prefManager;
     private AQuery aq;
     private FacebookHandle handle;
@@ -68,10 +69,12 @@ public class LoginFragment extends BaseFragment {
     private MaterialEditText userEt;
     private MaterialEditText passEt;
 
-    private ImageView loginBg;
+    //private ImageView loginBg;
 
     private TextView loginBtn;
     private TextView registerBtn;
+
+    private TextView versionTv;
 
     private LinearLayout fbBtn;
     private String facebookToken;
@@ -83,7 +86,7 @@ public class LoginFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         aq = new AQuery(getActivity());
-        prefManager = VMApplication.get(getActivity()).getPrefManager();
+        prefManager = VMApp.get(getActivity()).getPrefManager();
 
         try {
             PackageInfo info = getActivity().getPackageManager().getPackageInfo(
@@ -99,6 +102,8 @@ public class LoginFragment extends BaseFragment {
         } catch (NoSuchAlgorithmException e) {
 
         }
+
+
     }
 
     View rootView;
@@ -110,42 +115,56 @@ public class LoginFragment extends BaseFragment {
 
         FacebookSdk.sdkInitialize(this.getActivity());
 
-        loginButton = (LoginButton) rootView.findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends"));
-        // If using in a fragment
-        loginButton.setFragment(this);
-
-
-        // Callback registration
-        loginButton.registerCallback(((LoginActivity)getActivity()).getFbCallbackManager(), new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                Log.e("fbAccessToken", accessToken.getToken());
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.e("onCancle","laew");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                Log.e("onError",exception.getLocalizedMessage());
-                // App code
-            }
-        });
+//        loginButton = (LoginButton) rootView.findViewById(R.id.login_button);
+//        loginButton.setReadPermissions(Arrays.asList("public_profile", "user_friends"));
+//        // If using in a fragment
+//        loginButton.setFragment(this);
+//
+//
+//        // Callback registration
+//        loginButton.registerCallback(CallbackManager.Factory.create(), new FacebookCallback<LoginResult>() {
+//            @Override
+//            public void onSuccess(LoginResult loginResult) {
+//                // App code
+//                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+//                Log.e("fbAccessToken", accessToken.getToken());
+//            }
+//
+//            @Override
+//            public void onCancel() {
+//                // App code
+//                Log.e("onCancle","laew");
+//            }
+//
+//            @Override
+//            public void onError(FacebookException exception) {
+//                Log.e("onError",exception.getLocalizedMessage());
+//                // App code
+//            }
+//        });
         // Other app specific specialization
 
+        versionTv = (TextView) rootView.findViewById(R.id.version);
+        versionTv.setText(VMApp.VERSION);
 
-        loginBg = (ImageView) rootView.findViewById(R.id.imageView);
+
+        //loginBg = (ImageView) rootView.findViewById(R.id.imageView);
+        KenBurnsView loginBg = (KenBurnsView) rootView.findViewById(R.id.imageView);
+        loginBg.setTransitionListener(new KenBurnsView.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+
+            }
+            @Override
+            public void onTransitionEnd(Transition transition) {
+
+            }
+        });
 
         if(Utils.isTablet(getActivity()))
-            Glide.with(this).load(VMApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=600").into(loginBg);
+            Glide.with(this).load(VMApp.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=800").into(loginBg);
         else
-            Glide.with(this).load(VMApplication.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=360").into(loginBg);
+            Glide.with(this).load(VMApp.ENDPOINT+"/imgd.php?src=img/default_bg_login.png&width=480").into(loginBg);
 
         userEt = (MaterialEditText) rootView.findViewById(R.id.et_user);
         passEt = (MaterialEditText) rootView.findViewById(R.id.et_pass);
@@ -157,6 +176,7 @@ public class LoginFragment extends BaseFragment {
         fbBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends"));
                 authFacebook();
             }
         });
@@ -196,12 +216,7 @@ public class LoginFragment extends BaseFragment {
 
     public void authFacebook() {
 
-
-
-
-
-        
-        handle = new FacebookHandle(getActivity(), VMApplication.APP_ID, VMApplication.APP_PERMISSIONS);
+        handle = new FacebookHandle(getActivity(), VMApp.APP_ID, VMApp.APP_PERMISSIONS);
         String url = "https://graph.facebook.com/me";
         ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setIndeterminate(true);
@@ -222,22 +237,25 @@ public class LoginFragment extends BaseFragment {
             Gson gson = new Gson();
             profile = gson.fromJson(jo.toString(), FbProfile.class);
             facebookToken = handle.getToken();
-            Log.e("FB_AUTHED", handle.authenticated() + "");
+            Log.e("FB_AUTHED_TOKEN", facebookToken + "");
 
             prefManager
                     .fbToken().put(facebookToken)
                     .fbId().put(profile.id).commit();
-            getFragmentManager().beginTransaction().add(R.id.login_container, new FbAuthFragment()).commit();
-            ApiBus.getInstance().post(new LoadFbProfileEvent(profile,facebookToken));
+            //getFragmentManager().beginTransaction().add(R.id.login_container, new FbAuthFragment()).commit();
+            //ApiBus.getInstance().post(new LoadFbProfileEvent(profile,facebookToken));
+            ApiBus.getInstance().post(new FbAuthEvent(facebookToken));
 
             Log.e("POSTED", "SENT POST");
         }
     }
 
+    String deviceToken;
+
     @Subscribe
     public void onLoginSuccess(LoginSuccessEvent event) {
-        VMApplication.USER_TOKEN = event.getLoginData().token;
-        Log.e("ARAIWA", VMApplication.USER_TOKEN);
+        VMApp.USER_TOKEN = event.getLoginData().token;
+        Log.e("ARAIWA", VMApp.USER_TOKEN);
 
         prefManager
                 .name().put(event.getLoginData().user.name)
@@ -250,6 +268,23 @@ public class LoginFragment extends BaseFragment {
                 .commit();
 
 
+        final ParseInstallation installation = ParseInstallation
+                .getCurrentInstallation();
+
+
+
+        installation.put("user_id", Integer.parseInt(event.getLoginData().user.id));
+        installation.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    System.out.println("ok");
+                    //deviceToken = installation.get("deviceToken").toString();
+                    //System.out.println(deviceToken);
+                } else {
+                    System.out.println("not ok" + e.getLocalizedMessage());
+                }
+            }
+        });
 
         //Snackbar.with(getActivity().getApplicationContext()).text(event.getLoginData().token).show(getActivity());
 
@@ -260,6 +295,8 @@ public class LoginFragment extends BaseFragment {
 
         UserProfile user = event.getLoginData().user;
         ApiBus.getInstance().post(new UpdateProfileEvent(user));
+
+        getActivity().finish();
     }
 
     @Subscribe

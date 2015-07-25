@@ -2,11 +2,11 @@ package co.aquario.socialkit.activity.post;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,26 +16,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.androidquery.callback.AjaxStatus;
 import com.dd.CircularProgressButton;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.util.AndroidMultiPartEntity;
+import co.aquario.socialkit.handler.PostUploadService;
+import co.aquario.socialkit.model.UploadPostCallback;
+import co.aquario.socialkit.util.Utils;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedFile;
 
 
 public class PostVideoReviewActivity extends Activity {
@@ -50,6 +48,7 @@ public class PostVideoReviewActivity extends Activity {
 	private ImageView imgPreview;
 	private VideoView vidPreview;
 	private CircularProgressButton btnUpload;
+    ProgressDialog dialog;
 	long totalSize = 0;
 
 	@Override
@@ -61,6 +60,8 @@ public class PostVideoReviewActivity extends Activity {
 		progressBar = (ProgressBar) findViewById(R.id.progressBar);
 		imgPreview = (ImageView) findViewById(R.id.imgPreview);
 		vidPreview = (VideoView) findViewById(R.id.videoPreview);
+
+        prepareDialog();
 
 		// Changing action bar background color
 		//getActionBar().setBackgroundDrawable(
@@ -97,11 +98,96 @@ public class PostVideoReviewActivity extends Activity {
                 btnUpload.setEnabled(false);
 				// uploading the file to server
                 //btnUpload.setProgress(30);
-				new UploadFileToServer().execute();
+
+				//new UploadFileToServer().execute();
 			}
 		});
 
 	}
+
+    void prepareDialog() {
+        dialog = new ProgressDialog(getApplicationContext());
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(false);
+        //dialog.setTitle(getString(R.string.uploading));
+        //dialog.setMessage(getString(R.string.waiting));
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setIndeterminate(false);
+        dialog.setMax(100);
+    }
+
+    String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+
+    private void uploadPost(String text,String fromUserId, String toUserId) {
+        //String url = "http://chat.vdomax.com/upload";
+        File sourceFile = new File(filePath);
+        uploadPostRetrofit(sourceFile,text,fromUserId,toUserId);
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        File sourceFile = new File(filePath);
+//        TypedFile typedFile = new TypedFile("multipart/form-data", sourceFile);
+//
+//        params.put("timeline_id", fromUserId);
+//        params.put("recipient_id", toUserId);
+//        params.put("clips[]", typedFile);
+//        params.put("text",text);
+//
+//
+//        AQuery aq = new AQuery(getApplicationContext());
+//        aq.progress(dialog).ajax(url, params, JSONObject.class, this, "uploadCb");
+    }
+
+    public void uploadCb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        Log.e("hahahaha", jo.toString(4));
+        if(jo.optInt("status") == 200) {
+            Intent backIntent = new Intent();
+            setResult(-1, backIntent);
+            //startActivity(backIntent);
+            finish();
+        }
+
+    }
+
+    PostUploadService buildUploadApi() {
+        String BASE_URL = "https://www.vdomax.com";
+
+        return new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(BASE_URL)
+
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override public void intercept(RequestFacade request) {
+                        //request.addQueryParam("p1", "var1");
+                        //request.addQueryParam("p2", "");
+                    }
+                })
+                .build()
+                .create(PostUploadService.class);
+    }
+
+    private void uploadPostRetrofit(File file, String text, String fromUserId, String toUserId) {
+        //FileUploadService service = ServiceGenerator.createService(FileUpload.class, FileUpload.BASE_URL);
+
+        PostUploadService service = buildUploadApi();
+        TypedFile typedFile = new TypedFile("multipart/form-data", file);
+
+        service.uploadPostClip(text, fromUserId, toUserId, typedFile, new retrofit.Callback<UploadPostCallback>() {
+            @Override
+            public void success(UploadPostCallback uploadCallback, Response response) {
+                if (uploadCallback.status == 200)
+                    Utils.showToast("Post success");
+                else
+                    Utils.showToast("Post failed");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
 
 	/**
 	 * Displaying captured image/video on the screen
@@ -133,128 +219,128 @@ public class PostVideoReviewActivity extends Activity {
 	/**
 	 * Uploading the file to server
 	 * */
-	private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
-
-
-
-        @Override
-		protected void onPreExecute() {
-			// setting progress bar to zero
-			progressBar.setProgress(0);
-			super.onPreExecute();
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... progress) {
-			// Making progress bar visible
-			progressBar.setVisibility(View.VISIBLE);
-
-			// updating progress bar value
-			progressBar.setProgress(progress[0]);
-            btnUpload.setProgress(progress[0]);
-
-			// updating percentage value
-			txtPercentage.setText(String.valueOf(progress[0]) + "%");
-		}
-
-		@Override
-		protected String doInBackground(Void... params) {
-			return uploadFile();
-		}
-
-		@SuppressWarnings("deprecation")
-		private String uploadFile() {
-			String responseString = null;
-
-			HttpClient httpclient = new DefaultHttpClient();
-
-            String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
-            String statusText = "";
-
-            /*
-            // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            Map<String, Object> params = toolbar HashMap<String, Object>();
-            params.put("timeline_id","6");
-            params.put("recipient_id","");
-            params.put("text", statusText);
-            params.put("clips[]", sourceFile);
-            */
-
-			HttpPost httppost = new HttpPost(url);
-
-
-
-			try {
-				AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-						new AndroidMultiPartEntity.ProgressListener() {
-
-							@Override
-							public void transferred(long num) {
-								publishProgress((int) ((num / (float) totalSize) * 100));
-							}
-						});
-
-				File sourceFile = new File(filePath);
-
-                entity.addPart("timeline_id",
-                        new StringBody("6"));
-                entity.addPart("clips[]", new FileBody(sourceFile));
-
-                entity.addPart("recipient_id", new StringBody(""));
-                entity.addPart("text", new StringBody(statusText));
-
-				totalSize = entity.getContentLength();
-				httppost.setEntity(entity);
-
-				// Making server call
-				HttpResponse response = httpclient.execute(httppost);
-				HttpEntity r_entity = response.getEntity();
-
-				int statusCode = response.getStatusLine().getStatusCode();
-				if (statusCode == 200) {
-					// Server response
-					responseString = EntityUtils.toString(r_entity);
-				} else {
-					responseString = "Error occurred! Http Status Code: "
-							+ statusCode;
-				}
-
-			} catch (ClientProtocolException e) {
-				responseString = e.toString();
-			} catch (IOException e) {
-				responseString = e.toString();
-			}
-
-			return responseString;
-
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			Log.e(TAG, "Response from server: " + result);
-
-            //btnUpload.setProgress(100);
-
-			// showing the server response in an alert dialog
-			//showAlert(result);
-
-
-            JSONObject jo = null;
-            try {
-                jo = new JSONObject(result);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            showAlert("อัพโหลดสำเร็จแล้ว");
-            Intent intent = new Intent(PostVideoReviewActivity.this,
-                    MainActivity.class);
-            startActivity(intent);
-
-			super.onPostExecute(result);
-		}
-
-	}
+//	private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+//
+//
+//
+//        @Override
+//		protected void onPreExecute() {
+//			// setting progress bar to zero
+//			progressBar.setProgress(0);
+//			super.onPreExecute();
+//		}
+//
+//		@Override
+//		protected void onProgressUpdate(Integer... progress) {
+//			// Making progress bar visible
+//			progressBar.setVisibility(View.VISIBLE);
+//
+//			// updating progress bar value
+//			progressBar.setProgress(progress[0]);
+//            btnUpload.setProgress(progress[0]);
+//
+//			// updating percentage value
+//			txtPercentage.setText(String.valueOf(progress[0]) + "%");
+//		}
+//
+//		@Override
+//		protected String doInBackground(Void... params) {
+//			return uploadFile();
+//		}
+//
+//		@SuppressWarnings("deprecation")
+//		private String uploadFile() {
+//			String responseString = null;
+//
+//			HttpClient httpclient = new DefaultHttpClient();
+//
+//            String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+//            String statusText = "";
+//
+//            /*
+//            // Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+//            Map<String, Object> params = toolbar HashMap<String, Object>();
+//            params.put("timeline_id","6");
+//            params.put("recipient_id","");
+//            params.put("text", statusText);
+//            params.put("clips[]", sourceFile);
+//            */
+//
+//			HttpPost httppost = new HttpPost(url);
+//
+//
+//
+//			try {
+//				AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//						new AndroidMultiPartEntity.ProgressListener() {
+//
+//							@Override
+//							public void transferred(long num) {
+//								publishProgress((int) ((num / (float) totalSize) * 100));
+//							}
+//						});
+//
+//				File sourceFile = new File(filePath);
+//
+//                entity.addPart("timeline_id",
+//                        new StringBody("6"));
+//                entity.addPart("clips[]", new FileBody(sourceFile));
+//
+//                entity.addPart("recipient_id", new StringBody(""));
+//                entity.addPart("text", new StringBody(statusText));
+//
+//				totalSize = entity.getContentLength();
+//				httppost.setEntity(entity);
+//
+//				// Making server call
+//				HttpResponse response = httpclient.execute(httppost);
+//				HttpEntity r_entity = response.getEntity();
+//
+//				int statusCode = response.getStatusLine().getStatusCode();
+//				if (statusCode == 200) {
+//					// Server response
+//					responseString = EntityUtils.toString(r_entity);
+//				} else {
+//					responseString = "Error occurred! Http Status Code: "
+//							+ statusCode;
+//				}
+//
+//			} catch (ClientProtocolException e) {
+//				responseString = e.toString();
+//			} catch (IOException e) {
+//				responseString = e.toString();
+//			}
+//
+//			return responseString;
+//
+//		}
+//
+//		@Override
+//		protected void onPostExecute(String result) {
+//			Log.e(TAG, "Response from server: " + result);
+//
+//            //btnUpload.setProgress(100);
+//
+//			// showing the server response in an alert dialog
+//			//showAlert(result);
+//
+//
+//            JSONObject jo = null;
+//            try {
+//                jo = new JSONObject(result);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            showAlert("อัพโหลดสำเร็จแล้ว");
+//            Intent intent = new Intent(PostVideoReviewActivity.this,
+//                    MainActivity.class);
+//            startActivity(intent);
+//
+//			super.onPostExecute(result);
+//		}
+//
+//	}
 
 	/**
 	 * Method to show alert dialog

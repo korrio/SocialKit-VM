@@ -64,16 +64,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_offline" />
+            android:scaleType="centerCrop"/>
 
         <ImageView
             android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:scaleType="centerInside"
-            android:src="@drawable/overlay_clip" />
+            android:scaleType="centerInside"/>
 
 
         <RelativeLayout

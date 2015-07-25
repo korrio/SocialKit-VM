@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MainActivity -->
+    <string name="txtNavigationBar_Message">Message</string>
+    <string name="txtNavigationBar_Tattoo">Tattoo</string>
+    <string name="txtNavigationBar_Chat">Chat</string>
+    <string name="txtNavigationBar_Contact">Contact</string>
+    <string name="txt_EdtHint">Search for peple and groups</string>
+
+    <!-- Fragment ContactList -->
+    <string name="txtContact_CreateGroup">Create Group</string>
+    <string name="txtContact_createConference">Create Conference</string>
+    <string name="txtContact_TabFriend">Friend</string>
+    <string name="txtContact_TabFollowing">Following</string>
+    <string name="txtContact_TabFollowers">Followers</string>
+
+    <!-- Dialog -->
+    <string name="txt_dialog_Block">Block</string>
+    <string name="txt_dialog_Follow">Follow</string>
+
+    <!-- Dialog LongClick -->
+    <string name="action_chat">Chat</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+
+    <string name="username_title">Username</string>
+    <string name="password_title">Password</string>
+    <string name="password_confirm_title">Confirm Password</string>
+    <string name="button_login">Login</string>
+    <string name="button_register">Register</string>
+    <string name="register">New User? Register here</string>
+
+    <string name="login_error_message">Username or Password is incorrect.</string>
+    <string name="register_error_message">Register failed, Try again!</string>
+    <string name="register_password_error">Password does not match</string>
+    <string name="register_success">Register Successful</string>
+
+    <string name="dialog_header_title">Title</string>
+    <string name="dialog_header_subtitle">Subtitle</string>
+
+    <string name="dialog_footer_title">Title</string>
+    <string name="dialog_footer_close">Close</string>
+    <string name="dialog_footer_confirm">Confirm</string>
+
+    <string name="add_from_qr">From QR Code</string>
+    <string name="add_from_id">From ID</string>
+
+    <string name="action_send_gift">Send Gift</string>
+    <string name="action_download">Download</string>
+
+    <string name="by">by</string>
+
+    <!-- Settings strings. -->
+    <string name="pref_room_key">room_preference</string>
+    <string name="pref_room_list_key">room_list_preference</string>
+
+    <string name="pref_videosettings_key">video_settings_key</string>
+    <string name="pref_videosettings_title">WebRTC video settings.</string>
+
+    <string name="pref_videocall_key">videocall_preference</string>
+    <string name="pref_videocall_title">Video call.</string>
+    <string name="pref_videocall_dlg">Enable video in a call.</string>
+    <string name="pref_videocall_default">true</string>
+
+    <string name="pref_resolution_key">resolution_preference</string>
+    <string name="pref_resolution_title">Video resolution.</string>
+    <string name="pref_resolution_dlg">Enter AppRTC local video resolution.</string>
+    <string name="pref_resolution_default">Default</string>
+
+    <string name="pref_fps_key">fps_preference</string>
+    <string name="pref_fps_title">Camera fps.</string>
+    <string name="pref_fps_dlg">Enter local camera fps.</string>
+    <string name="pref_fps_default">Default</string>
+
+    <string name="pref_startvideobitrate_key">startvideobitrate_preference</string>
+    <string name="pref_startvideobitrate_title">Start video bitrate setting.</string>
+    <string name="pref_startvideobitrate_dlg">Start video bitrate setting.</string>
+    <string name="pref_startvideobitrate_default">Default</string>
+
+    <string name="pref_startvideobitratevalue_key">startvideobitratevalue_preference</string>
+    <string name="pref_startvideobitratevalue_title">Video encoder start bitrate.</string>
+    <string name="pref_startvideobitratevalue_dlg">Enter video encoder start bitrate in kbps.</string>
+    <string name="pref_startvideobitratevalue_default">380</string>
+
+    <string name="pref_videocodec_key">videocodec_preference</string>
+    <string name="pref_videocodec_title">Default video codec.</string>
+    <string name="pref_videocodec_dlg">Select default video codec.</string>
+    <string name="pref_videocodec_default">VP8</string>
+
+    <string name="pref_hwcodec_key">hwcodec_preference</string>
+    <string name="pref_hwcodec_title">Video codec hardware acceleration.</string>
+    <string name="pref_hwcodec_dlg">Use hardware accelerated video codec (if available).</string>
+    <string name="pref_hwcodec_default">true</string>
+
+    <string name="pref_value_enabled">Enabled</string>
+    <string name="pref_value_disabled">Disabled</string>
+
+    <string name="pref_audiosettings_key">audio_settings_key</string>
+    <string name="pref_audiosettings_title">WebRTC audio settings.</string>
+
+    <string name="pref_startaudiobitrate_key">startaudiobitrate_preference</string>
+    <string name="pref_startaudiobitrate_title">Audio bitrate setting.</string>
+    <string name="pref_startaudiobitrate_dlg">Audio bitrate setting.</string>
+    <string name="pref_startaudiobitrate_default">Default</string>
+
+    <string name="pref_startaudiobitratevalue_key">startaudiobitratevalue_preference</string>
+    <string name="pref_startaudiobitratevalue_title">Audio codec bitrate.</string>
+    <string name="pref_startaudiobitratevalue_dlg">Enter audio codec bitrate in kbps.</string>
+    <string name="pref_startaudiobitratevalue_default">44</string>
+
+    <string name="pref_audiocodec_key">audiocodec_preference</string>
+    <string name="pref_audiocodec_title">Default audio codec.</string>
+    <string name="pref_audiocodec_dlg">Select default audio codec.</string>
+    <string name="pref_audiocodec_default">OPUS</string>
+
+    <string name="pref_noaudioprocessing_key">audioprocessing_preference</string>
+    <string name="pref_noaudioprocessing_title">Disable audio processing.</string>
+    <string name="pref_noaudioprocessing_dlg">Disable audio processing pipeline.</string>
+    <string name="pref_noaudioprocessing_default">false</string>
+
+    <string name="pref_miscsettings_key">misc_settings_key</string>
+    <string name="pref_miscsettings_title">Miscellaneous settings.</string>
+
+    <string name="pref_cpu_usage_detection_key">cpu_usage_detection</string>
+    <string name="pref_cpu_usage_detection_title">CPU overuse detection.</string>
+    <string name="pref_cpu_usage_detection_dlg">Adapt transmission to CPU status.</string>
+    <string name="pref_cpu_usage_detection_default" translatable="false">true</string>
+
+    <string name="pref_room_server_url_key">room_server_url_preference</string>
+    <string name="pref_room_server_url_title">Room server URL.</string>
+    <string name="pref_room_server_url_dlg">Enter a room server URL.</string>
+    <string name="pref_room_server_url_default" translatable="false">http://chat.vdomax.com:1314</string>
+
+    <string name="pref_displayhud_key">displayhud_preference</string>
+    <string name="pref_displayhud_title">Display call statistics.</string>
+    <string name="pref_displayhud_dlg">Display call statistics.</string>
+    <string name="pref_displayhud_default" translatable="false">false</string>
+</resources>

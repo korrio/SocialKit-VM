@@ -7,13 +7,7 @@
     android:id="@+id/sub_container"
     android:background="@color/white">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:transitionName="actionBar"/>
+    <include layout="@layout/tool_bar"/>
 
     <com.astuetz.PagerSlidingTabStrip
         android:id="@+id/tabs"

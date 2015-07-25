@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
@@ -19,11 +18,10 @@ import java.util.Random;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.model.Live;
-import de.hdodenhof.circleimageview.CircleImageView;
+import co.aquario.socialkit.widget.RoundedTransformation;
 
 
 public class LiveHistoryRecyclerAdapter extends RecyclerView.Adapter<LiveHistoryRecyclerAdapter.ViewHolder> {
-
 
     ArrayList<Live> list = new ArrayList<Live>();
     public static Context context;
@@ -66,11 +64,14 @@ public class LiveHistoryRecyclerAdapter extends RecyclerView.Adapter<LiveHistory
         Picasso.with(context)
                 .load(item.getPhotoLive())
                 .fit().centerCrop()
+
                 .into(holder.image_live);
 
         Picasso.with(context)
                 .load(item.getAvatar())
-                .fit().centerCrop()
+                .centerCrop()
+                .resize(200, 200)
+                .transform(new RoundedTransformation(100, 4))
                 .into(holder.image_profile);
     }
 
@@ -89,7 +90,7 @@ public class LiveHistoryRecyclerAdapter extends RecyclerView.Adapter<LiveHistory
         TextView txt_minutes;
 
         ImageView image_live;
-        CircleImageView image_profile;
+        ImageView image_profile;
 
         public ViewHolder(View view) {
             super(view);
@@ -98,14 +99,8 @@ public class LiveHistoryRecyclerAdapter extends RecyclerView.Adapter<LiveHistory
             txt_profile = (TextView) view.findViewById(R.id.txt_profile);
             txt_hours = (TextView) view.findViewById(R.id.txt_hours);
             txt_minutes = (TextView) view.findViewById(R.id.txt_minutes);
-
-
             image_live = (ImageView) view.findViewById(R.id.image_live);
-            image_profile = (CircleImageView) view.findViewById(R.id.image_profile);
-
-
-
-
+            image_profile = (ImageView) view.findViewById(R.id.image_profile);
             image_live.setOnClickListener(this);
 
             view.setOnClickListener(this);

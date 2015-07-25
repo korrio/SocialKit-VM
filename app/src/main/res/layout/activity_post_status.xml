@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout">
 
-        <include layout="@layout/edit_text"/>
+        <include layout="@layout/inc_post_story"/>
     </LinearLayout>
 
 

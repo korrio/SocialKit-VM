@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.VMApplication;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.adapter.CommentAdapter;
 import co.aquario.socialkit.event.GetStoryEvent;
 import co.aquario.socialkit.event.GetStorySuccessEvent;
@@ -61,7 +61,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
 
     @InjectView(R.id.llAddComment)
     LinearLayout llAddComment;
-    @InjectView(R.id.comment_box)
+    @InjectView(R.id.et_box)
     EmojiconEditText etComment;
     @InjectView(R.id.btnSendComment)
     SendCommentButton btnSendComment;
@@ -92,7 +92,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
         postId = getIntent().getStringExtra("POST_ID");
         ApiBus.getInstance().post(new GetStoryEvent(postId));
         //commentList = getIntent().getParcelableArrayListExtra(ARG_COMMENT_LIST);
-        pref = VMApplication.get(this).getPrefManager();
+        pref = VMApp.get(this).getPrefManager();
         userId = pref.userId().getOr("3");
         avatar = pref.avatar().getOr("TEST");
         name = pref.name().getOr("TEST");

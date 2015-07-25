@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:visibility="gone"
+                                   android:id="@+id/player_toolbar"
+                                   android:layout_width="match_parent"
+                                   android:layout_height="wrap_content"
+                                   android:layout_alignParentTop="true"
+                                   android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:background="@color/black_semi_transparent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        >
+        <ImageView
+            android:id="@+id/selected_thumbnail"
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
+        <RelativeLayout
+            android:id="@+id/player_control"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                />
+            <ImageView
+                android:id="@+id/player_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+            <ProgressBar
+                android:id="@+id/player_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/selected_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/player_control"
+            android:layout_toRightOf="@id/selected_thumbnail"
+            android:paddingLeft="8dp"
+            android:text="@string/hello_world"
+            android:textColor="#fff" />
+
+        <TextView
+            android:id="@+id/selected_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/selected_title"
+            android:layout_toEndOf="@+id/selected_thumbnail"
+            android:layout_toRightOf="@+id/selected_thumbnail"
+            android:paddingLeft="8dp"
+            android:text="@string/hello_world"
+            android:textColor="#fff"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</android.support.v7.widget.Toolbar>

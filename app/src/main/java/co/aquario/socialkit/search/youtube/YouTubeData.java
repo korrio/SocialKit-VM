@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import co.aquario.socialkit.VMApplication;
+import co.aquario.socialkit.VMApp;
 
 public class YouTubeData {
 
@@ -77,7 +77,7 @@ public class YouTubeData {
     public static String calculateYouTubeUrl(String quality, boolean fallback, String videoId) throws IOException {
 
         String uriStr = null;
-        OkHttpClient client = VMApplication.getHttpClient();
+        OkHttpClient client = VMApp.getHttpClient();
 
         Request.Builder request = new Request.Builder();
         request.url(YOUTUBE_VIDEO_INFORMATION_URL + videoId);

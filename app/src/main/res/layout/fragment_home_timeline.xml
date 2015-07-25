@@ -26,8 +26,7 @@
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/flexible_space_image_height"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_cover" />
+            android:scaleType="centerCrop"/>
 
         <!--<VideoView
             android:layout_width="wrap_content"

@@ -30,6 +30,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MenuItem;
 
 import com.squareup.otto.Subscribe;
 
@@ -50,7 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     public static PrefManager getPref(Context context) {
-        return VMApplication.get(context).getPrefManager();
+        return VMApp.get(context).getPrefManager();
     }
 
     @Override
@@ -60,12 +61,26 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (getSupportActionBar() != null) {
+            setSupportActionBar(toolbar);
             getSupportActionBar().setElevation(0);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        setSupportActionBar(toolbar);
+
 
         if (shouldInstallDrawer()) {
             //setupDrawer();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //handle the click on the back arrow click
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -93,7 +108,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
         super.onCreate(savedInstanceState, persistentState);
         mContext = this;
-        mPref = VMApplication.get(mContext).getPrefManager();
+        mPref = VMApp.get(mContext).getPrefManager();
     }
 
     @Override
@@ -141,14 +156,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                 "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Video!");
+        //builder.setTitle("Add Video!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
                 if (items[item].equals("Record Video")) {
                     recordVideo();
                 } else if (items[item].equals("Choose from Library")) {
-                    pickFile();
+                    pickVideo();
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
@@ -166,7 +181,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final int PHOTO_SIZE_WIDTH = 100;
     private static final int PHOTO_SIZE_HEIGHT = 100;
 
-    public void pickFile() {
+    public void pickVideo() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("video/*");
         startActivityForResult(intent, RESULT_PICK_VIDEO);

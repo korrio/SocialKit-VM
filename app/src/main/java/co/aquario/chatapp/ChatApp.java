@@ -10,7 +10,7 @@ import com.parse.PushService;
 import co.aquario.chatapp.handler.ChatApiHandler;
 import co.aquario.chatapp.handler.ChatApiService;
 import co.aquario.chatapp.push.PushManage;
-import co.aquario.chatapp.util.PrefManager;
+import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.handler.ApiBus;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;

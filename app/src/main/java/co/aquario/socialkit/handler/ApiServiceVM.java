@@ -2,6 +2,10 @@ package co.aquario.socialkit.handler;
 
 import java.util.Map;
 
+import co.aquario.chatui.model.UserMe;
+import co.aquario.chatui.model.follow_suggestion_model.FollowSuggestionModel;
+import co.aquario.chatui.model.followersmodel.FollowersModel;
+import co.aquario.chatui.model.friendmodel.FriendsModel;
 import co.aquario.socialkit.event.FollowUserResponse;
 import co.aquario.socialkit.event.FriendListDataResponse;
 import co.aquario.socialkit.event.PhotoListDataResponse;
@@ -12,6 +16,7 @@ import co.aquario.socialkit.event.UserProfileDataResponse;
 import co.aquario.socialkit.model.LoginData;
 import co.aquario.socialkit.model.RegisterData;
 import retrofit.Callback;
+import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Path;
@@ -105,6 +110,22 @@ public interface ApiServiceVM {
     void uploadImage(@Part("File") TypedFile file,
                      Callback<Response> callback);
                      */
+
+    // some social api used in chat:ui
+    @POST("/1.0/friends/{id}")
+    public void getFriends(@Body String body,@Path("id") int id, Callback<FriendsModel> responseJson);
+
+    @POST("/1.0/followings/{id}")
+    public void getFollowings(@Body String body, @Path("id") int id, Callback<FollowersModel> responseJson);
+
+    @POST("/1.0/followers/{id}")
+    public void getFollowers(@Body String body, @Path("id") int id,Callback<FollowersModel> responseJson);
+
+    @POST("/1.0/follow_suggestion")
+    public void getFollowSuggestion(@Body String body, Callback<FollowSuggestionModel> responseJson);
+
+    @GET("/user/{id}")
+    public void getUser(@Body String body, @Path("id") int id,Callback<UserMe> responseJson);
 
 
 }

@@ -31,7 +31,7 @@ public class CustomDialog extends Dialog implements
 		this.avatar = avatar;
 		this.context = context;
 
-		setContentView(R.layout.custom_dialog);
+		setContentView(R.layout.old_friend_dialog);
 		initDialog();
 
 		// show();

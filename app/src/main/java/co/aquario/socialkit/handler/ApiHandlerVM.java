@@ -2,12 +2,27 @@ package co.aquario.socialkit.handler;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import co.aquario.chatui.event.GetUserEvent;
+import co.aquario.chatui.event.GetUserEventSuccess;
+import co.aquario.chatui.event.retrofit.addfriend.GetFollowSuggestionEvent;
+import co.aquario.chatui.event.retrofit.addfriend.GetFollow_SuggestionSuccessEvent;
+import co.aquario.chatui.event.retrofit.followers.GetFollowersEvent;
+import co.aquario.chatui.event.retrofit.followers.GetFollowersSuccessEvent2;
+import co.aquario.chatui.event.retrofit.following.GetFollowingsEvent;
+import co.aquario.chatui.event.retrofit.following.GetFollowingsSuccessEvent;
+import co.aquario.chatui.event.retrofit.friend.GetFriendSuccessEvent;
+import co.aquario.chatui.event.retrofit.friend.GetFriendsEvent;
+import co.aquario.chatui.model.UserMe;
+import co.aquario.chatui.model.follow_suggestion_model.FollowSuggestionModel;
+import co.aquario.chatui.model.followersmodel.FollowersModel;
+import co.aquario.chatui.model.friendmodel.FriendsModel;
 import co.aquario.socialkit.event.FailedNetworkEvent;
 import co.aquario.socialkit.event.FbAuthEvent;
 import co.aquario.socialkit.event.FollowRegisterEvent;
@@ -340,7 +355,7 @@ public class ApiHandlerVM {
                 Log.e("photoListDataResponse", photoListDataResponse.status);
                 if (photoListDataResponse.status.equals("1")) {
                     //Log.e("timelineDataResponse", response.getBody().toString());
-                    if(photoListDataResponse != null)
+                    if (photoListDataResponse != null)
                         ApiBus.getInstance().post(new LoadPhotoListSuccessEvent(photoListDataResponse, photoListDataResponse.sort));
 
                 }
@@ -358,7 +373,7 @@ public class ApiHandlerVM {
 
         options.put("type", event.getType());
         options.put("page", Integer.toString(event.getPage()));
-        options.put("per_page",Integer.toString(event.getPerPage()));
+        options.put("per_page", Integer.toString(event.getPerPage()));
 
         if(event.getIsHome()) {
             api.getHomeTimeline(event.getUserId(),options,new Callback<TimelineDataResponse>() {
@@ -367,7 +382,7 @@ public class ApiHandlerVM {
                     //Log.e("timelineDataResponse",timelineDataResponse.getStatus().toString());
                     //Log.e("posts",timelineDataResponse.getPosts().toArray().toString());
                     if(timelineDataResponse.getStatus().equals("1")) {
-                        Log.e("timelineDataResponse",response.getBody().toString());
+                       // Log.e("timelineDataResponse",response.getBody().toString());
                         ApiBus.getInstance().post(new LoadTimelineSuccessEvent(timelineDataResponse));
 
                     } else {
@@ -387,10 +402,9 @@ public class ApiHandlerVM {
             api.getUserTimeline(event.getUserId(),options,new Callback<TimelineDataResponse>() {
                 @Override
                 public void success(TimelineDataResponse timelineDataResponse, Response response) {
-                    Log.e("timelineDataResponse",timelineDataResponse.getStatus().toString());
-                    Log.e("posts", timelineDataResponse.getPosts().toArray().toString());
+                   // Log.e("posts", timelineDataResponse.getPosts().toArray().toString());
                     if(timelineDataResponse.getStatus().equals("1")) {
-                        Log.e("timelineDataResponse",response.getBody().toString());
+                        //Log.e("timelineDataResponse",response.getBody().toString());
 
                         ApiBus.getInstance().post(new LoadTimelineSuccessEvent(timelineDataResponse));
 
@@ -417,7 +431,7 @@ public class ApiHandlerVM {
 
         //options.put("type", event.getType());
         options.put("page", Integer.toString(event.getPage()));
-        options.put("per_page",Integer.toString(event.getPerPage()));
+        options.put("per_page", Integer.toString(event.getPerPage()));
 
         switch (event.getType()) {
             case "FOLLOWING":
@@ -540,6 +554,82 @@ public class ApiHandlerVM {
         }
 
 
+    }
+
+    @Subscribe
+    public void getFriendsList(GetFriendsEvent data){
+
+        api.getFriends("", Integer.parseInt(data.getUserId()), new Callback<FriendsModel>() {
+            @Override
+            public void success(FriendsModel frindModel, Response response) {
+                apiBus.post(new GetFriendSuccessEvent(frindModel));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(context, "error " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Subscribe public void getFollowingsList(GetFollowingsEvent data){
+
+        api.getFollowings("", Integer.parseInt(data.getUserId()), new Callback<FollowersModel>() {
+            @Override
+            public void success(FollowersModel followingsModel, Response response) {
+                apiBus.post(new GetFollowingsSuccessEvent(followingsModel));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    @Subscribe public void getFollowersList(GetFollowersEvent data){
+
+        api.getFollowers("", Integer.parseInt(data.getUserId()), new Callback<FollowersModel>() {
+            @Override
+            public void success(FollowersModel followersModel, Response response) {
+                apiBus.post(new GetFollowersSuccessEvent2(followersModel));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(context, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    @Subscribe public void getFollowSuggestion(GetFollowSuggestionEvent event){
+
+        api.getFollowSuggestion("", new Callback<FollowSuggestionModel>() {
+            @Override
+            public void success(FollowSuggestionModel follow_suggestionModel, Response response) {
+                apiBus.post(new GetFollow_SuggestionSuccessEvent(follow_suggestionModel));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    @Subscribe public void getUser(GetUserEvent event) {
+        api.getUser("", event.id, new Callback<UserMe>() {
+            @Override
+            public void success(UserMe userMe, Response response) {
+                apiBus.post(new GetUserEventSuccess(userMe));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
     }
 
 

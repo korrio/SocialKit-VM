@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -20,86 +19,129 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 
-import com.nhaarman.supertooltips.ToolTip;
-import com.nhaarman.supertooltips.ToolTipRelativeLayout;
-import com.nhaarman.supertooltips.ToolTipView;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxStatus;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import co.aquario.socialkit.MainActivity;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.VMApplication;
-import co.aquario.socialkit.util.AndroidMultiPartEntity;
-import co.aquario.socialkit.util.PrefManager;
-import co.aquario.socialkit.util.Utils;
+import co.aquario.socialkit.VMApp;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
+import github.ankushsachdeva.emojicon.EmojiconUtil;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 public class PostStatusActivity2 extends Activity {
 
-
-    public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
-    String statusText;
-    ToolTipRelativeLayout toolTipRelativeLayout;
-    EmojiconEditText etStatusIcon;
-    EditText etStatus;
-    Button btnPost;
-    ProgressDialog dialog;
-    Context context;
-    private ToolTipView tool;
+    public String statusText;
+
+    public Context context;
+    public Activity mActivity;
+    public ProgressDialog dialog;
+
+    public EmojiconsPopup popup;
     private InputMethodManager im;
+
+    @InjectView(R.id.et_emoticon)
+    public EmojiconEditText etStatusIcon;
+    @InjectView(R.id.et_box)
+    public EditText etStatus;
+    @InjectView(R.id.button_recent)
+    public Button btnPost;
+
+    @InjectView(R.id.root_view)
+    public View rootView;
+    @InjectView(R.id.emoji_btn)
+    public ImageView emojiButton;
+
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @OnClick(R.id.button_recent)
+    public void onPost() {
+        postStatus();
+    }
+
+    String toUserId = "";
+    boolean isMyHometimeline;
+
+    void setupToolbar() {
+        if(toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent backIntent = new Intent();
+                    setResult(-1, backIntent);
+                    //startActivity(backIntent);
+                    finish();
+                }
+            });
+
+
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the search; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_post_youtube, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_status2);
-        final View rootView = findViewById(R.id.root_view);
-        final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
-        final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
         context = this;
-        toolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
-        etStatus = (EditText) findViewById(R.id.comment_box);
-        etStatusIcon = (EmojiconEditText) findViewById(R.id.comment_icon);
-        btnPost = (Button) findViewById(R.id.button_recent);
+        mActivity = this;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(getResources().getDrawable(android.R.drawable.ic_media_previous));
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(i);
-                finish();
-                //Toast.makeText(getApplicationContext(), "Hello wolrd", Toast.LENGTH_SHORT).show();
-            }
-        });
+        ButterKnife.inject(this);
+        setupToolbar();
+        prepareDialog();
+
+        if(getIntent().getExtras() != null) {
+            toUserId = getIntent().getExtras().getString("USER_ID");
+            isMyHometimeline = getIntent().getExtras().getBoolean("IS_MYHOMETIMELINE");
+            if(isMyHometimeline)
+                toUserId = "";
+        }
 
 
-        //addOrangeToolTipView();
-
-
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                postStatus();
-            }
-        });
-
+        popup = new EmojiconsPopup(rootView, this);
         popup.setSizeForSoftKeyboard();
         popup.setSize(150, 150);
         etStatusIcon.setEmojiconSize(150);
@@ -169,8 +211,6 @@ public class PostStatusActivity2 extends Activity {
                 etStatusIcon.append(emojicon.getEmoji());
                 //Toast.makeText(getApplicationContext(),"Check:"+emojicon.getEmoji(),Toast.LENGTH_SHORT).show();
                 etStatusIcon.setEmojiconSize(150);
-                addOrangeToolTipView();
-
 
             }
         });
@@ -239,6 +279,10 @@ public class PostStatusActivity2 extends Activity {
         });
     }
 
+
+
+
+
     public void postStatus() {
         statusText = etStatus.getText().toString().replace("\n", "%0A");
 
@@ -259,19 +303,11 @@ public class PostStatusActivity2 extends Activity {
 
         statusText = etStatus.getText().toString();
 
+        String fromUserId = VMApp.mPref.userId().getOr("0");
+        uploadPost(statusText, fromUserId, toUserId);
 
-        dialog = new ProgressDialog(context);
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle(getString(R.string.uploading));
-        dialog.setMessage(getString(R.string.waiting));
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setIndeterminate(false);
-        dialog.setMax(100);
 
-        new UploadFileToServer().execute();
+        //new UploadFileToServer().execute();
     }
 
     public void postIcon() {
@@ -291,22 +327,15 @@ public class PostStatusActivity2 extends Activity {
             Log.e("YEAH", statusText.length() + " " + statusText.trim() + " " + found + " " + isWhitespace);
         }
 
-
         statusText = etStatusIcon.getText().toString();
+        statusText = EmojiconUtil.emoticonize(statusText);
 
+        String fromUserId = VMApp.mPref.userId().getOr("0");
+        String toUserId = "";
 
-        dialog = new ProgressDialog(context);
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle(getString(R.string.uploading));
-        dialog.setMessage(getString(R.string.waiting));
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setIndeterminate(false);
-        dialog.setMax(100);
+        uploadPost(statusText, fromUserId, toUserId);
 
-        new UploadFileToServer().execute();
+        //new UploadFileToServer().execute();
     }
 
     private void changeEmojiKeyboardIcon(ImageView iconToBeChanged, int drawableResourceId) {
@@ -314,147 +343,141 @@ public class PostStatusActivity2 extends Activity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the search; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_post_youtube, menu);
-        return true;
+
+
+    void prepareDialog() {
+        dialog = new ProgressDialog(context);
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(false);
+        //dialog.setTitle(getString(R.string.uploading));
+        //dialog.setMessage(getString(R.string.waiting));
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setIndeterminate(false);
+        dialog.setMax(100);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void uploadPost(String text,String fromUserId, String toUserId) {
+        //String url = "http://chat.vdomax.com/upload";
+        Map<String, Object> params = new HashMap<String, Object>();
+        //TypedFile typedFile = new TypedFile("multipart/form-data", file);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sort) {
-            return true;
-        }
+        params.put("timeline_id", fromUserId);
+        params.put("recipient_id", toUserId);
+        params.put("text", text);
 
-        return super.onOptionsItemSelected(item);
+        AQuery aq = new AQuery(getApplicationContext());
+        aq.progress(dialog).ajax(url, params, JSONObject.class, this, "uploadCb");
     }
 
-    private void addOrangeToolTipView() {
-        ToolTip toolTip = new ToolTip()
-                .withText("กดเพื่อส่ง");
-
-        tool = toolTipRelativeLayout.showToolTipForView(toolTip, findViewById(R.id.tool));
-        tool.setOnToolTipViewClickedListener(new ToolTipView.OnToolTipViewClickedListener() {
-            @Override
-            public void onToolTipViewClicked(ToolTipView toolTipView) {
-
-                if (tool == null) {
-                    addOrangeToolTipView();
-                } else {
-                    tool.remove();
-                    tool = null;
-                }
-
-            }
-        });
-    }
-
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            dialog.show();
-            dialog.setProgress(0);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
-            //progressBar.setVisibility(View.VISIBLE);
-
-            // updating progress bar value
-            dialog.setProgress(progress[0]);
-
-            // updating percentage value
-            dialog.setTitle(String.valueOf(progress[0]) + "%");
-            //dialog.setText();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(url);
-
-            try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                //File sourceFile = tempFile;
-                statusText = Utils.emoticonize(statusText);
-
-
-                PrefManager pref = VMApplication.get(getApplicationContext()).getPrefManager();
-                String userId = pref.userId().getOr("3");
-
-                Charset chars = Charset.forName("UTF-8");
-                entity.addPart("timeline_id", new StringBody(userId));
-                entity.addPart("recipient_id", new StringBody(userId));
-                entity.addPart("text", new StringBody(statusText, chars));
-
-                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.e("HEYHEY", "Response from server: " + result);
-
-            // showing the server response in an alert dialog
-            dialog.dismiss();
-            Intent i = new Intent(PostStatusActivity2.this, MainActivity.class);
-            startActivity(i);
+    public void uploadCb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        Log.e("hahahaha", jo.toString(4));
+        if(jo.optInt("status") == 200) {
+            Intent backIntent = new Intent();
+            setResult(-1, backIntent);
+            //startActivity(backIntent);
             finish();
-            //showAlert(result);
-            super.onPostExecute(result);
         }
 
     }
+
+//    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            dialog.show();
+//            dialog.setProgress(0);
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... progress) {
+//            // Making progress bar visible
+//            //progressBar.setVisibility(View.VISIBLE);
+//
+//            // updating progress bar value
+//            dialog.setProgress(progress[0]);
+//
+//            // updating percentage value
+//            dialog.setTitle(String.valueOf(progress[0]) + "%");
+//            //dialog.setText();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(url);
+//
+//            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+//                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+//
+//                //File sourceFile = tempFile;
+//                statusText = Utils.emoticonize(statusText);
+//
+//                Charset chars = Charset.forName("UTF-8");
+//                entity.addPart("timeline_id", new StringBody(VMApp.mPref.userId().getOr("0")));
+//                entity.addPart("recipient_id", new StringBody(""));
+//                entity.addPart("text", new StringBody(statusText, chars));
+//
+//                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
+//
+//                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            Log.e("HEYHEY", "Response from server: " + result);
+//
+//            // showing the server response in an alert dialog
+//            dialog.dismiss();
+//            Intent i = new Intent(PostStatusActivity2.this, MainActivity.class);
+//            startActivity(i);
+//            finish();
+//            //showAlert(result);
+//            super.onPostExecute(result);
+//        }
+//
+//    }
 
 
 }

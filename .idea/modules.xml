@@ -7,9 +7,9 @@
       <module fileurl="file://$PROJECT_DIR$/PhotoPickerLib/PhotoPickerLib.iml" filepath="$PROJECT_DIR$/PhotoPickerLib/PhotoPickerLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/SocialKit-VM-emoticon.iml" filepath="$PROJECT_DIR$/SocialKit-VM-emoticon.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apprtc/apprtc.iml" filepath="$PROJECT_DIR$/apprtc/apprtc.iml" />
       <module fileurl="file://$PROJECT_DIR$/bookends/bookends.iml" filepath="$PROJECT_DIR$/bookends/bookends.iml" />
       <module fileurl="file://$PROJECT_DIR$/cvlibrary/cvlibrary.iml" filepath="$PROJECT_DIR$/cvlibrary/cvlibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/drawer/drawer.iml" filepath="$PROJECT_DIR$/drawer/drawer.iml" />
       <module fileurl="file://$PROJECT_DIR$/emoji/emojicon.iml" filepath="$PROJECT_DIR$/emoji/emojicon.iml" />
       <module fileurl="file://$PROJECT_DIR$/iconic/iconic.iml" filepath="$PROJECT_DIR$/iconic/iconic.iml" />
     </modules>

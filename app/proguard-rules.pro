@@ -21,3 +21,20 @@
 }
 
 -keep class org.parceler.Parceler$$Parcels
+
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.*
+
+-dontwarn rx.**
+
+-dontwarn com.squareup.okhttp.**
+-dontwarn java.nio.file.*
+
+-keepattributes *Annotation*
+-keep class retrofit.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit.http.* <methods>;
+}

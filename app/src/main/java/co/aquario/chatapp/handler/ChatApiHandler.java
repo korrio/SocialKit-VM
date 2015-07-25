@@ -8,6 +8,7 @@ import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
 
+import co.aquario.chatapp.event.request.BlockUserEvent;
 import co.aquario.chatapp.event.request.ConversationGroupEvent;
 import co.aquario.chatapp.event.request.ConversationOneToOneEvent;
 import co.aquario.chatapp.event.request.HistoryEvent;
@@ -19,6 +20,7 @@ import co.aquario.chatapp.event.response.HistoryEventSuccess;
 import co.aquario.chatapp.event.response.SuccessEvent;
 import co.aquario.chatapp.model.SomeData;
 import co.aquario.chatapp.model.conversation.ConversationId;
+import co.aquario.chatui.model.Block;
 import co.aquario.socialkit.handler.ApiBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -71,10 +73,13 @@ public class ChatApiHandler {
         opt.put("page",event.page);
         opt.put("size",event.size);
 
+        Log.i("getHistory",":" + event.cid);
+
         api.getHistory(event.cid,opt, new Callback<HistoryDataResponse>() {
             @Override
             public void success(HistoryDataResponse historyDataResponse, Response response) {
                 //if(historyDataResponse.content != null)
+                Log.i("historyContent",historyDataResponse.content.toString());
                 ApiBus.getInstance().post(new HistoryEventSuccess(historyDataResponse.content));
             }
 
@@ -118,6 +123,20 @@ public class ChatApiHandler {
             public void success(ConversationId conversationId, Response response) {
                 Log.e("conversationGroupPublic", conversationId.id + "");
                 ApiBus.getInstance().post(new ConversationEventSuccess(conversationId.id));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    @Subscribe public void onBlockUser(BlockUserEvent event) {
+        api.getฺBlock("", new Callback<Block>() {
+            @Override
+            public void success(Block block, Response response) {
+
             }
 
             @Override

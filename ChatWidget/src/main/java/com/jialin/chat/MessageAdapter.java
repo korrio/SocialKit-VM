@@ -120,8 +120,8 @@ public class MessageAdapter extends BaseAdapter {
 		}
 		
 		viewHolder.userNameTextView.setText(m.getFromUserName());
-		Picasso.with(mContext).load(m.getFromUserAvatar()).centerCrop().resize(100, 100)
-                .transform(new RoundedTransformation(50, 4)).into(viewHolder.userAvatarImageView);
+		Picasso.with(mContext).load(m.getFromUserAvatar()).centerCrop().resize(200,200)
+                .transform(new RoundedTransformation(100, 4)).into(viewHolder.userAvatarImageView);
 
 		JSONObject dataObj;
 		dataObj = null;
@@ -130,6 +130,8 @@ public class MessageAdapter extends BaseAdapter {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+
+        Log.e("dataObj["+position+"]",m.getData());
 
 		switch (m.getType()) {
 		case 0://text
@@ -169,26 +171,30 @@ public class MessageAdapter extends BaseAdapter {
 			
 			
 			break;
-		case 2://photo
+		case 2://photo & clip (attach file)
 			viewHolder.textTextView.setVisibility(View.GONE);
 			viewHolder.photoImageView.setVisibility(View.VISIBLE);
 			viewHolder.faceImageView.setVisibility(View.GONE);
 
 
-
-			//TODO set image
-			//int id = mContext.getResources().getIdentifier(m.getContent(), "drawable", mContext.getPackageName());
-			//viewHolder.photoImageView.setImageResource(id);
-
-
             if(dataObj != null) {
-                if((dataObj.optString("fileType").equals("image/jpeg") || dataObj.optString("fileType").equals("image/png"))) {
-                    String imageUrl = "https://chat.vdomax.com:1314" + dataObj.optString("url");
-                    Log.e("myurl",imageUrl);
-                    Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
+                // from chat history
 
+
+                if(((dataObj.optString("fileType").equals("image/jpeg") || dataObj.optString("fileType").equals("image/png"))) && dataObj.optString("thumb") != null) {
+                   // String imageUrl = "https://chat.vdomax.com:1314" + dataObj.optString("url");
+                    String imageUrl = dataObj.optString("thumb");
+                    Log.e("myurl", imageUrl);
+                    if(imageUrl != null && imageUrl.equals(""))
+                    Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
+                } else if((dataObj.optString("fileType").equals("video/mp4") || dataObj.optString("fileType").equals("video/quicktime")) && dataObj.optString("thumb") != null) {
+                    String imageUrl = dataObj.optString("thumb");
+                    Log.e("myurl", imageUrl);
+                    if(imageUrl != null && imageUrl.equals(""))
+                    Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
                 } else {
-                    String uriStr = dataObj.optString("imageUri");
+                    // from local photo taken or picked
+                    String uriStr = dataObj.optString("imageUriPhoto");
                     URI imageUri = null;
                     try {
                         imageUri = new URI(uriStr);
@@ -197,8 +203,9 @@ public class MessageAdapter extends BaseAdapter {
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
                     }
-
                 }
+
+
             }
 
 
@@ -282,13 +289,21 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder.photoImageView.setVisibility(View.VISIBLE);
                 viewHolder.faceImageView.setVisibility(View.GONE);
 
-                try {
-                    URI imageUri = new URI(dataObj.optString("imageUrl"));
-                    Bitmap myImg = BitmapFactory.decodeFile(imageUri.getPath());
-                    viewHolder.photoImageView.setImageBitmap(myImg);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
+                if(dataObj.optString("imageUriVdoThumb") == null) {
+                    String imageUrl = dataObj.optString("thumb");
+                    if(imageUrl != null && imageUrl.equals(""))
+                    Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
+                } else {
+                    try {
+                        URI imageUri = new URI(dataObj.optString("imageUriVdoThumb"));
+                        Bitmap myImg = BitmapFactory.decodeFile(imageUri.getPath());
+                        viewHolder.photoImageView.setImageBitmap(myImg);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+
                 }
+
 
 
                 //if(dataObj != null)

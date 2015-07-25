@@ -39,19 +39,6 @@
     <color name="background">#e5e5e5</color>
     <color name="half_black">#808080</color>
 
-    <color name="offline">#aaaaaa</color>
-    <color name="online">#02c754</color>
-
-    <color name="btn_default_light_normal">#00000000</color>
-    <color name="btn_default_light_pressed">#40ffffff</color>
-
-    <color name="btn_send_normal">#02c754</color>
-    <color name="btn_send_pressed">#006633</color>
-    <color name="btn_default_shadow">#99000000</color>
-    <color name="btn_context_menu_normal">#ffffff</color>
-    <color name="btn_context_menu_pressed">#40000000</color>
-    <color name="btn_context_menu_text_red">#ffff0000</color>
-
     <color name="fab_color_pressed">#007787</color>
     <color name="fab_color_shadow">#44000000</color>
 
@@ -99,4 +86,34 @@
     <color name="bg_msg_input">#e8e8e8</color>
     <color name="text_msg_input">#626262</color>
     <color name="lblFromName">#777777</color>
+
+    <color name="black">#000000</color>
+    <color name="vm_main_color">#000066</color>
+
+
+
+
+
+
+    <color name="offline">#aaaaaa</color>
+    <color name="online">#02c754</color>
+
+    <color name="btn_default_light_normal">#00000000</color>
+    <color name="btn_default_light_pressed">#40ffffff</color>
+
+    <color name="btn_send_normal">#02c754</color>
+    <color name="btn_send_pressed">#006633</color>
+    <color name="btn_default_shadow">#99000000</color>
+    <color name="btn_context_menu_normal">#ffffff</color>
+    <color name="btn_context_menu_pressed">#40000000</color>
+    <color name="btn_context_menu_text_red">#ffff0000</color>
+
+
+
+
+    <color name="fab_menu">#3296f6</color>
+    <color name="fab_chat">#fc9700</color>
+    <color name="fab_live_chat">#d31f10</color>
+    <color name="fab_group_chat">#363f46</color>
+    <color name="fab_conference">#4cae47</color>
 </resources>

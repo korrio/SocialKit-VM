@@ -21,8 +21,8 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
-import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.DragableActivity;
 import co.aquario.socialkit.adapter.VideoRecyclerAdapter;
 import co.aquario.socialkit.model.Video;
@@ -78,7 +78,7 @@ public class VideoFragment extends BaseFragment {
             keyword = getArguments().getString(KEYWORD_SEARCH);
         }
 
-        pref = VMApplication.get(getActivity().getApplicationContext()).getPrefManager();
+        pref = VMApp.get(getActivity().getApplicationContext()).getPrefManager();
     }
 
     @Override

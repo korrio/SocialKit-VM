@@ -11,8 +11,8 @@ import android.widget.Button;
 
 import com.squareup.otto.Subscribe;
 
-import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.ActivityResultEvent;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
@@ -40,7 +40,7 @@ public abstract class BaseFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefManager = VMApplication.get(getActivity()).getPrefManager();
+        prefManager = VMApp.get(getActivity()).getPrefManager();
     }
 
     @Override

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="@dimen/paddingCell"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="@dimen/profileSize"
+            android:layout_height="@dimen/profileSize"
+            android:id="@+id/picProfile"/>
+
+        <TextView
+
+            android:layout_marginLeft="@dimen/marginInCell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="User"
+            android:id="@+id/lbUser"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/picProfile"
+            android:layout_toLeftOf="@+id/linearLayout2"
+            android:layout_toStartOf="@+id/linearLayout2" />
+
+        <LinearLayout
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/linearLayout2">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView8" />
+
+            <TextView
+                android:textColor="@android:color/black"
+                android:layout_marginLeft="5dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Invite" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

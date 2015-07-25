@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,32 +18,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ToggleButton;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxStatus;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.InjectView;
 import butterknife.OnCheckedChanged;
+import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import co.aquario.socialkit.util.Utils;
+import retrofit.mime.TypedFile;
 
 
-/**
- * Created by Miroslaw Stanek on 21.02.15.
- */
 public class PublishActivity extends BaseActivity {
     public static final String ARG_TAKEN_PHOTO_URI = "arg_taken_photo_uri";
 
@@ -67,13 +59,15 @@ public class PublishActivity extends BaseActivity {
         openingActivity.startActivity(intent);
     }
 
-    ProgressDialog dialog;
     Button btnPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish);
+        CustomActivityOnCrash.setShowErrorDetails(true);
+        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+        CustomActivityOnCrash.install(this);
         //toolbar.setNavigationIcon(R.drawable.ic_arrow_back_grey600_24dp);
         photoSize = getResources().getDimensionPixelSize(R.dimen.publish_photo_thumbnail_size);
         btnPost = (Button) findViewById(R.id.btn_post);
@@ -166,8 +160,54 @@ public class PublishActivity extends BaseActivity {
         }
     }
 
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public long totalSize;
+    public ProgressDialog dialog;
+
     private void bringMainActivityToTop() {
-        new UploadFileToServer().execute();
+        prepareDialog();
+        String fromUserId = VMApp.mPref.userId().getOr("0");
+        uploadPost(etDesc.getText().toString(), fromUserId, "");
+        //new UploadFileToServer().execute();
+
+    }
+
+    void prepareDialog() {
+        dialog = new ProgressDialog(getApplicationContext());
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.setCanceledOnTouchOutside(false);
+        //dialog.setTitle(getString(R.string.uploading));
+        //dialog.setMessage(getString(R.string.waiting));
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setIndeterminate(false);
+        dialog.setMax(100);
+    }
+
+    private void uploadPost(String text,String fromUserId, String toUserId) {
+        //String url = "http://chat.vdomax.com/upload";
+        Map<String, Object> params = new HashMap<String, Object>();
+        File sourceFile = new File(photoUri.getPath());
+        TypedFile typedFile = new TypedFile("multipart/form-data", sourceFile);
+
+        params.put("timeline_id", fromUserId);
+        params.put("recipient_id", toUserId);
+        params.put("photos[]", sourceFile);
+
+        AQuery aq = new AQuery(getApplicationContext());
+        aq.progress(dialog).ajax(url, params, JSONObject.class, this, "uploadCb");
+    }
+
+    public void uploadCb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        Log.e("hahahaha", jo.toString(4));
+        if(jo.optInt("status") == 200) {
+            Intent backIntent = new Intent();
+            setResult(-1, backIntent);
+            //startActivity(backIntent);
+            finish();
+        }
 
     }
 
@@ -195,105 +235,105 @@ public class PublishActivity extends BaseActivity {
         }
     }
 
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
-
-        public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
-    public long totalSize = 0;
-
-        @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-            //dialog.show();
-            //dialog.setProgress(0);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
-            //progressBar.setVisibility(View.VISIBLE);
-
-            // updating progress bar value
-            //dialog.setProgress(progress[0]);
-
-            // updating percentage value
-            //dialog.setTitle(String.valueOf(progress[0]) + "%");
-            //dialog.setText();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(url);
-
-            try {
-                MultipartEntity entity = new MultipartEntity();
-
-                File sourceFile = new File(photoUri.getPath());
-
-                String userId = getPref(getApplicationContext()).userId().getOr("0");
-
-
-                Charset chars = Charset.forName("UTF-8");
-
-                String statusText = etDesc.getText().toString();
-
-                entity.addPart("timeline_id", new StringBody(userId));
-                entity.addPart("recipient_id", new StringBody(""));
-                entity.addPart("text",
-                        new StringBody(statusText,chars));
-                entity.addPart("photos[]", new FileBody(sourceFile));
-
-
-                //totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Log.e("HEYHEY", "Response from server: " + result);
-
-            // showing the server response in an alert dialog
-            dialog.dismiss();
-
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            //intent.setAction(MainActivity.ACTION_SHOW_LOADING_ITEM);
-            startActivity(intent);
-
-
-        }
-
-    }
+//    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+//
+//        public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+//    public long totalSize = 0;
+//
+//        @Override
+//        protected void onPreExecute() {
+//            // setting progress bar to zero
+//            //dialog.show();
+//            //dialog.setProgress(0);
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... progress) {
+//            // Making progress bar visible
+//            //progressBar.setVisibility(View.VISIBLE);
+//
+//            // updating progress bar value
+//            //dialog.setProgress(progress[0]);
+//
+//            // updating percentage value
+//            //dialog.setTitle(String.valueOf(progress[0]) + "%");
+//            //dialog.setText();
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            return uploadFile();
+//        }
+//
+//        @SuppressWarnings("deprecation")
+//        private String uploadFile() {
+//            String responseString = null;
+//
+//            HttpClient httpclient = new DefaultHttpClient();
+//            HttpPost httppost = new HttpPost(url);
+//
+//            try {
+//                MultipartEntity entity = new MultipartEntity();
+//
+//                File sourceFile = new File(photoUri.getPath());
+//
+//                String userId = getPref(getApplicationContext()).userId().getOr("0");
+//
+//
+//                Charset chars = Charset.forName("UTF-8");
+//
+//                String statusText = etDesc.getText().toString();
+//
+//                entity.addPart("timeline_id", new StringBody(userId));
+//                entity.addPart("recipient_id", new StringBody(""));
+//                entity.addPart("text",
+//                        new StringBody(statusText,chars));
+//                entity.addPart("photos[]", new FileBody(sourceFile));
+//
+//
+//                //totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+//
+//                // Making server call
+//                HttpResponse response = httpclient.execute(httppost);
+//                HttpEntity r_entity = response.getEntity();
+//
+//                int statusCode = response.getStatusLine().getStatusCode();
+//                if (statusCode == 200) {
+//                    // Server response
+//                    responseString = EntityUtils.toString(r_entity);
+//                } else {
+//                    responseString = "Error occurred! Http Status Code: "
+//                            + statusCode;
+//                }
+//
+//            } catch (ClientProtocolException e) {
+//                responseString = e.toString();
+//            } catch (IOException e) {
+//                responseString = e.toString();
+//            }
+//
+//            return responseString;
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            super.onPostExecute(result);
+//            Log.e("HEYHEY", "Response from server: " + result);
+//
+//            // showing the server response in an alert dialog
+//            dialog.dismiss();
+//
+//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//            //intent.setAction(MainActivity.ACTION_SHOW_LOADING_ITEM);
+//            startActivity(intent);
+//
+//
+//        }
+//
+//    }
 
 }

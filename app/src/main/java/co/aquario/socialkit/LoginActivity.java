@@ -23,6 +23,7 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.util.HashMap;
 
+import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import co.aquario.chatapp.ChatApp;
 import co.aquario.chatapp.event.login.LoginFailedAuthEvent;
 import co.aquario.chatapp.event.login.LoginSuccessEvent;
@@ -51,8 +52,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        prefManager = VMApplication.get(this).getPrefManager();
+        prefManager = VMApp.get(this).getPrefManager();
         setContentView(R.layout.activity_login);
+
+        CustomActivityOnCrash.setShowErrorDetails(true);
+        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+        CustomActivityOnCrash.install(this);
 
         callbackManager = CallbackManager.Factory.create();
 
@@ -106,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
         setResult(resultCode);
         Log.e("asdf555", requestCode + " " + resultCode);
 
+
         if(resultCode == RESULT_OK) {
             user = ParseUser.getCurrentUser();
 
@@ -131,14 +137,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     Toast.makeText(mActivity,"no fb data for this user",Toast.LENGTH_SHORT).show();
                 }
-
-
-
-
             }
-
-
-
         }
 
     }
@@ -159,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
                         .build();
                 Response response = null;
                 try {
-                    response = VMApplication.getHttpClient().newCall(request).execute();
+                    response = VMApp.getHttpClient().newCall(request).execute();
                     if (!response.isSuccessful()) {
                         ApiBus.getInstance().post(new LoginFailedAuthEvent());
                     } else {
@@ -193,7 +192,7 @@ public class LoginActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        VMApplication.updateParseInstallation(Integer.parseInt(event.getLoginData().user.id));
+                        //VMApp.updateParseInstallation(Integer.parseInt(event.getLoginData().user.id));
 
                         Intent main = new Intent(mActivity,MainActivity.class);
                         startActivity(main);
@@ -226,7 +225,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 Response response = null;
                 try {
-                    response = VMApplication.getHttpClient().newCall(request).execute();
+                    response = VMApp.getHttpClient().newCall(request).execute();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -271,7 +270,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     Log.e("VM_PROFILE", event.getLoginData().user.toString());
 
-                    VMApplication.updateParseInstallation(Integer.parseInt(event.getLoginData().user.id));
+                    //VMApp.updateParseInstallation(Integer.parseInt(event.getLoginData().user.id));
 
                     Intent main = new Intent(mActivity,MainActivity.class);
                     startActivity(main);
@@ -288,6 +287,15 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
+//    @Subscribe
+//    public void onLoginSuccess(co.aquario.socialkit.event.LoginSuccessEvent event) {
+//        ParseInstallation installation = ParseInstallation
+//                .getCurrentInstallation();
+//
+//        installation.put("user_id", Integer.parseInt(event.getLoginData().user.id));
+//        installation.saveInBackground();
+//    }
 
     @Override
     public void onBackPressed() {

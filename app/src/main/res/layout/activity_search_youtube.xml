@@ -5,7 +5,7 @@
     android:orientation="vertical"
               tools:mActivity=".MainActivity"
               android:padding="0dp"
-              style="@style/ChatAppTheme">
+    >
 
     <include layout="@layout/tool_bar" />
 
@@ -27,7 +27,6 @@
             android:id="@+id/yt_video_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_send_comment"
             android:text="Search"
             android:textColor="#fff" />
     </LinearLayout>

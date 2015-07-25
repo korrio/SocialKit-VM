@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,16 +46,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import co.aquario.chatapp.model.login.FbProfile;
-import co.aquario.chatapp.util.PrefManager;
 import co.aquario.socialkit.R;
-import de.hdodenhof.circleimageview.CircleImageView;
+import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.widget.RoundedTransformation;
 
 
 public class FbLoginActivity extends AppCompatActivity {
 
     public PrefManager prefManager;
 
-    CircleImageView mProfileImage;
+    ImageView mProfileImage;
     Button mBtnFb;
     TextView mUsername, mEmailID;
     Profile mFbProfile;
@@ -76,7 +77,7 @@ public class FbLoginActivity extends AppCompatActivity {
         prefManager = ChatApp.get(this).getPrefManager();
 
         mBtnFb = (Button) findViewById(R.id.btn_fb_login);
-        mProfileImage = (CircleImageView) findViewById(R.id.profile_image);
+        mProfileImage = (ImageView) findViewById(R.id.profile_image);
 
         mUsername = (TextView) findViewById(R.id.txt_name);
         mEmailID = (TextView) findViewById(R.id.txt_email);
@@ -168,8 +169,6 @@ public class FbLoginActivity extends AppCompatActivity {
 
     private void getUserDetailsFromFB() {
 
-
-
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me",
@@ -196,6 +195,9 @@ public class FbLoginActivity extends AppCompatActivity {
                             Picasso
                                     .with(getApplicationContext())
                                     .load(myFbProfilePic)
+                                    .centerCrop()
+                                    .resize(200, 200)
+                                    .transform(new RoundedTransformation(100, 4))
                                     .into(mProfileImage);
 
                             //saveNewUser();

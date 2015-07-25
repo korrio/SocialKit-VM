@@ -1,9 +1,7 @@
 package co.aquario.socialkit.search.soundcloud;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +17,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.post.PostSoundCloudActivity;
 
 /**
  * Created by kevin on 2/22/15.
@@ -37,6 +34,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
     public void setOnItemClickListener(AdapterView.OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -71,7 +69,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
         return mTracks.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView titleTextView;
         private final ImageView thumbImageView;
         private final ImageButton shareTrackBtn;
@@ -93,33 +91,9 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.ViewHolder
 
             imgTrack = (ImageView) v.findViewById(R.id.img_track);
 
-            v.setOnClickListener(this);
 
-            shareTrackBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String artworkURL = mTracks.get(getPosition()).getArtworkURL();
-                    String trackTitle = mTracks.get(getPosition()).mTitle;
-                    String trackUri = mTracks.get(getPosition()).uri;
-
-                    Log.e("myTrackUri", trackUri);
-
-                    Intent i = new Intent(mContext, PostSoundCloudActivity.class);
-                    i.putExtra("soundcloud_uri", trackUri);
-                    i.putExtra("soundcloud_title", trackTitle);
-                    i.putExtra("artwork_url", artworkURL);
-                    mContext.startActivity(i);
-                }
-            });
         }
 
-        @Override
-        public void onClick(View v) {
-            if (mOnItemClickListener != null) {
-                if (v.getId() != R.id.btn_track_share)
-                    mOnItemClickListener.onItemClick(null, v, getPosition(), 0);
-            }
-        }
     }
 
 }

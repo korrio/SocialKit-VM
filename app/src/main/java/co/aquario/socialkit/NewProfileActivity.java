@@ -20,6 +20,7 @@ import android.widget.Button;
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.otto.Subscribe;
 
+import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import co.aquario.chatapp.ChatActivity;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
@@ -46,11 +47,36 @@ public class NewProfileActivity extends BaseActivity {
         mActivity.startActivity(i);
     }
 
+    void setupToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(getSupportActionBar() != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent backIntent = new Intent();
+                    //backIntent.setAction("")
+                    setResult(-1, backIntent);
+                    //startActivity(backIntent);
+                    finish();
+                }
+            });
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_appcompat);
+
+        CustomActivityOnCrash.setShowErrorDetails(true);
+        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+        CustomActivityOnCrash.install(this);
+
+        setupToolbar();
 
         pref = getPref(getApplicationContext());
 
@@ -58,14 +84,6 @@ public class NewProfileActivity extends BaseActivity {
             userId = getIntent().getStringExtra("USER_ID");
         else
             userId = pref.userId().getOr("0");
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-
 
         /*
         btnFollow = (Button) findViewById(R.id.btn_follow);
@@ -86,7 +104,6 @@ public class NewProfileActivity extends BaseActivity {
         });
         */
 
-//    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setAllCaps(false);

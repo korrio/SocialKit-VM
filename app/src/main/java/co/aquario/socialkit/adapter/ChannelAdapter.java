@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.widget.RoundedTransformation;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class ChannelAdapter extends BaseAdapter {
@@ -56,24 +55,28 @@ public class ChannelAdapter extends BaseAdapter {
 
         ImageView liveCover;
         ImageView avatar;
-        CircleImageView status;
+        ImageView status;
 
         Channel channel = list.get(position);
 
         name = (TextView) row.findViewById(R.id.name);
         liveCover = (ImageView) row.findViewById(R.id.live_cover);
         avatar = (ImageView) row.findViewById(R.id.avatar);
-        status = (CircleImageView) row.findViewById(R.id.status);
+        status = (ImageView) row.findViewById(R.id.status);
 
         if(channel.online) {
             status.setBackgroundColor(Color.parseColor("#66ff33"));
             Picasso.with(context)
                     .load(R.color.online)
+                    .resize(10,10)
+                    .transform(new RoundedTransformation(5, 4))
                     .into(status);
         } else {
             status.setBackgroundColor(Color.parseColor("#aaaaaa"));
             Picasso.with(context)
                     .load(R.color.offline)
+                    .resize(10, 10)
+                    .transform(new RoundedTransformation(5, 4))
                     .into(status);
         }
 
@@ -88,8 +91,8 @@ public class ChannelAdapter extends BaseAdapter {
 
         Picasso.with(context)
                 .load(channel.avatar)
-                .transform(new RoundedTransformation(50, 4))
-                .resize(100, 100)
+                .resize(200, 200)
+                .transform(new RoundedTransformation(100, 4))
                 .into(avatar);
 
         return row;

@@ -32,7 +32,7 @@
         <requestFocus />
     </EditText>
 
-    <include layout="@layout/edit_text"
+    <include layout="@layout/inc_post_story"
              android:layout_height="wrap_content"
              android:layout_width="fill_parent"/>
 

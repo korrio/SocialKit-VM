@@ -46,16 +46,7 @@ public class SurfaceFragment extends Fragment implements MediaPlayer.OnBuffering
             path = getArguments().getString("PATH");
             //Log.e("onCreate", path);
         }
-
-
-        //if (!LibsChecker.checkVitamioLibs(getActivity()))
-            //return;
-
-//
-
     }
-
-
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_video_view, container, false);

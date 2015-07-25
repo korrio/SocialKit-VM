@@ -54,7 +54,7 @@
                 android:layout_alignParentLeft="true" />
 
             <github.ankushsachdeva.emojicon.EmojiconEditText
-                android:id="@+id/comment_box"
+                android:id="@+id/et_box"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:ems="10"

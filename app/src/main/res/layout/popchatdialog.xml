@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>  
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+   android:id="@+id/menuEditItemLayout"  
+   android:layout_width="match_parent"  
+   android:layout_height="match_parent"  
+   android:orientation="vertical" >
+
+   <LinearLayout
+       android:id="@+id/chat_dialog"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:gravity="center|left"
+       android:padding="10dp" >
+
+       <ImageView
+           android:id="@+id/avatar_img"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginLeft="10dp"/>
+
+       <LinearLayout
+           android:layout_width="wrap_content"
+           android:layout_height="match_parent"
+           android:orientation="vertical" >
+
+           <TextView
+               android:id="@+id/msg_tv"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Task"
+               android:textColor="@android:color/holo_blue_dark"
+               android:textSize="25sp" />
+
+           <TextView
+               android:id="@+id/chat_msg_coming"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="chat_msg_coming"
+               android:textAppearance="?android:attr/textAppearanceSmall"
+               android:textSize="24sp" />
+
+       </LinearLayout>
+  
+   </LinearLayout>
+
+   <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="48dp" >
+
+       <View
+           android:layout_width="match_parent"
+           android:layout_height="1dip"
+           android:layout_alignParentTop="true"
+           android:layout_marginLeft="4dip"
+           android:layout_marginRight="4dip"
+           android:background="?android:attr/dividerVertical" />
+
+       <Button
+           android:id="@+id/buttonOk"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_alignParentBottom="true"
+           android:layout_alignParentRight="true"
+           android:layout_alignParentTop="true"
+           android:layout_centerHorizontal="true"
+           android:text="ตอบ"
+           android:textColor="@android:color/white" />
+
+   </RelativeLayout>
+  
+ </LinearLayout>

@@ -30,6 +30,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.activity.CommentsActivity;
 import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
@@ -57,6 +58,7 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
     TextView shareCountView;
     TextView countFollowerView;
     //Intent
+    String postId = "";
     String name = "";
     String avatarUrl = "";
     String title = "";
@@ -77,6 +79,7 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
 
         video = Parcels.unwrap((Parcelable) getActivity().getIntent().getExtras().get("obj"));
 
+        postId = video.getPostId();
         userId = video.getpUserId();
         name = video.getpName();
         avatarUrl = video.getpAvatar();
@@ -102,9 +105,9 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
         initButton(isFollowing, btnFollow);
     }
 
-    /**
-     * Override method used to initialize the fragment.
-     */
+    Button btnLove;
+    Button btnComment;
+    Button btnShare;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -124,6 +127,20 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
         shareCountView = (TextView) view.findViewById(R.id.number3);
 
         btnFollow.setOnClickListener(this);
+
+
+
+        btnLove = (Button) view.findViewById(R.id.btn_love);
+        btnComment = (Button) view.findViewById(R.id.btn_comment);
+        btnShare = (Button) view.findViewById(R.id.btn_share);
+
+        btnLove.setOnClickListener(this);
+        btnComment.setOnClickListener(this);
+        btnShare.setOnClickListener(this);
+
+        btnLove.setText(countLove + "");
+        btnComment.setText(countComment + "");
+        btnShare.setText(countShare + "");
 
         loveCountView.setText(countLove + "");
         commentCountView.setText(countComment + "");
@@ -225,6 +242,36 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
                 isFollowing = !isFollowing;
 
                 Log.v("You ", "select: " + button.getText());
+                break;
+            case R.id.btn_love:
+                int oldLoveCount = 0;
+                if(Integer.parseInt(btnLove.getText().toString()) == countLove) {
+                    oldLoveCount = countLove;
+                    oldLoveCount++;
+                    btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red,0,0,0);
+
+                }
+                else {
+                    oldLoveCount = Integer.parseInt(btnLove.getText().toString());
+                    oldLoveCount--;
+                    btnLove.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                }
+
+                //post.isLoved = !post.isLoved;
+
+                btnLove.setText(oldLoveCount + "");
+                break;
+            case R.id.btn_comment:
+                final Intent intent = new Intent(getActivity(), CommentsActivity.class);
+                int[] startingLocation = new int[2];
+                v.getLocationOnScreen(startingLocation);
+                intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+                //intent.putParcelableArrayListExtra(CommentsActivity.ARG_COMMENT_LIST, Parcels.wrap(post.comment));
+                Log.i("postIdComment",postId);
+                intent.putExtra("POST_ID", postId);
+                getActivity().startActivity(intent);
+                getActivity().overridePendingTransition(0, 0);
+                //getActivity().finish();
                 break;
 
         }

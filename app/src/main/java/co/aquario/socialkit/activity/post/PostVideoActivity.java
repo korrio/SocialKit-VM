@@ -71,7 +71,7 @@ public class PostVideoActivity extends Activity {
 		setContentView(R.layout.activity_post_video);
 		uploadButton = (Button) findViewById(R.id.button_recent);
 		status = (EditText) findViewById(R.id.comment);
-        photoText = (EditText) findViewById(R.id.comment_box);
+        photoText = (EditText) findViewById(R.id.et_box);
 
         final View rootView = findViewById(R.id.root_view);
         final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);

@@ -153,10 +153,13 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
         this.mItemClickListener = mItemClickListener;
     }
 
+    public OnItemClickListener getmItemClickListener() {
+        return mItemClickListener;
+    }
 
     /*
-     * Snippet from http://stackoverflow.com/a/363692/1008278
-     */
+         * Snippet from http://stackoverflow.com/a/363692/1008278
+         */
     public static int randInt(int min, int max) {
         final Random rand = new Random();
         return rand.nextInt((max - min) + 1) + min;

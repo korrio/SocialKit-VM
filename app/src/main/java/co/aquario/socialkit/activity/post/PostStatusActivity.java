@@ -23,25 +23,26 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import co.aquario.socialkit.MainActivity;
-import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.util.AndroidMultiPartEntity;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
+
+
+
+//
 
 public class PostStatusActivity extends Activity {
 
@@ -62,7 +63,7 @@ public class PostStatusActivity extends Activity {
         final EmojiconsPopup popup = new EmojiconsPopup(rootView, this);
         context = this;
 
-        etStatus = (EmojiconEditText) findViewById(R.id.comment_box);
+        etStatus = (EmojiconEditText) findViewById(R.id.et_box);
         btnPost = (Button) findViewById(R.id.button_recent);
 
         btnPost.setOnClickListener(new View.OnClickListener() {
@@ -288,38 +289,38 @@ public class PostStatusActivity extends Activity {
             HttpPost httppost = new HttpPost(url);
 
             try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+//                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
 
                 //File sourceFile = tempFile;
 
-                PrefManager pref = VMApplication.get(getApplicationContext()).getPrefManager();
+                PrefManager pref = VMApp.get(getApplicationContext()).getPrefManager();
                 String userId = pref.userId().getOr("3");
 
                 statusText = Utils.emoticonize(statusText);
 
-                Charset chars = Charset.forName("UTF-8");
-                entity.addPart("timeline_id", new StringBody(userId));
-                entity.addPart("recipient_id", new StringBody(""));
-                entity.addPart("text",
-                        new StringBody(statusText,chars));
-
-
-
-
-
-
-                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
+//                Charset chars = Charset.forName("UTF-8");
+//                entity.addPart("timeline_id", new StringBody(userId));
+//                entity.addPart("recipient_id", new StringBody(""));
+//                entity.addPart("text",
+//                        new StringBody(statusText,chars));
+//
+//
+//
+//
+//
+//
+//                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
+//
+//                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
 
                 // Making server call
                 HttpResponse response = httpclient.execute(httppost);

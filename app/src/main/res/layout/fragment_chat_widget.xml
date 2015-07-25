@@ -5,6 +5,17 @@
     android:orientation="vertical"
     android:background="@drawable/bg_chat">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </RelativeLayout>
+
+    <include
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/inc_music_player"/>
+
     <ListView
         android:id="@+id/messageListview"
         android:layout_width="match_parent"

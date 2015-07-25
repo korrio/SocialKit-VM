@@ -10,9 +10,6 @@ import com.tale.prettysharedpreferences.LongEditor;
 import com.tale.prettysharedpreferences.PrettySharedPreferences;
 import com.tale.prettysharedpreferences.StringEditor;
 
-/**
- * Created by Mac on 3/3/15.
- */
 public class PrefManager extends PrettySharedPreferences<PrefManager> {
 
     public PrefManager(SharedPreferences sharedPreferences) {

@@ -4,22 +4,22 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.ComponentName;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -34,7 +34,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -42,26 +41,32 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxStatus;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 import com.tumblr.bookends.Bookends;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import co.aquario.chatapp.ChatActivity;
+import co.aquario.chatapp.picker.MusicPickerIntent;
+import co.aquario.chatapp.picker.YoutubePickerActivity;
 import co.aquario.socialkit.BaseActivity;
-import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.TakePhotoActivity2;
-import co.aquario.socialkit.VMApplication;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.post.LiveStreamingActivity;
 import co.aquario.socialkit.activity.post.PostStatusActivity2;
-import co.aquario.socialkit.activity.post.SCSearchActivity;
-import co.aquario.socialkit.activity.post.YtSearchActivity;
 import co.aquario.socialkit.adapter.ButtonItemAdapter;
 import co.aquario.socialkit.adapter.FeedAdapter;
 import co.aquario.socialkit.event.FollowRegisterEvent;
@@ -71,7 +76,6 @@ import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.event.LoadHashtagStoryEvent;
 import co.aquario.socialkit.event.LoadTimelineEvent;
 import co.aquario.socialkit.event.LoadTimelineSuccessEvent;
-import co.aquario.socialkit.event.LogoutEvent;
 import co.aquario.socialkit.event.PostCommentSuccessEvent;
 import co.aquario.socialkit.event.PostLoveEvent;
 import co.aquario.socialkit.event.PostLoveSuccessEvent;
@@ -108,9 +112,7 @@ public class FeedFragment extends BaseFragment {
     public RelativeLayout fabLayout;
     public RecyclerView mRecyclerView;
     PrefManager pref;
-    Button btnLove;
-    Button btnComment;
-    Button btnShare;
+
     int pShare;
     View myHeader;
     ImageView avatar;
@@ -147,6 +149,8 @@ public class FeedFragment extends BaseFragment {
     private FloatingActionButton postYoutubeBtn;
     private FloatingActionButton postSoundCloudBtn;
     private FloatingActionButton postStatusBtn;
+
+    // music player
     private Toolbar mPlayerToolbar;
     private MediaPlayer mMediaPlayer;
     private ImageView mPlayerStateButton;
@@ -172,11 +176,17 @@ public class FeedFragment extends BaseFragment {
         return mFragment;
     }
 
+    public FeedFragment() {
+        setHasOptionsMenu(true);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        pref = VMApplication.get(getActivity().getApplicationContext()).getPrefManager();
+        setHasOptionsMenu(true);
+
+        pref = VMApp.get(getActivity().getApplicationContext()).getPrefManager();
 
         if (getArguments() != null) {
 
@@ -301,9 +311,6 @@ public class FeedFragment extends BaseFragment {
 //        titanic.start(myTitanicTextView);
 //        myTitanicTextView.setVisibility(View.VISIBLE);
 
-        btnLove = (Button) rootView.findViewById(R.id.btn_love);
-        btnShare = (Button) rootView.findViewById(R.id.btn_share);
-
         mPlayerToolbar = (Toolbar) rootView.findViewById(R.id.player_toolbar);
         mPlayerStateButton = (ImageView)rootView.findViewById(R.id.player_state);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.player_progress);
@@ -353,16 +360,23 @@ public class FeedFragment extends BaseFragment {
         postSoundCloudBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), SCSearchActivity.class);
-                startActivity(i);
+//                Intent i = new Intent(getActivity(), MusicPickerActivity.class);
+//                startActivity(i);
+                MusicPickerIntent musicPickerIntent = new MusicPickerIntent(getActivity());
+                musicPickerIntent.setAction("post");
+                startActivityForResult(musicPickerIntent, 300);
+                //intent.setPhotoCount(9);
+                //intent.setShowCamera(true);
+                //getActivity().startActivityForResult(musicPickerIntent, 500);
             }
         });
 
         postYoutubeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), YtSearchActivity.class);
-                startActivity(i);
+                Intent youtubePicker = new Intent(getActivity(), YoutubePickerActivity.class);
+                youtubePicker.setAction("post");
+                startActivityForResult(youtubePicker, 400);
 
             }
         });
@@ -370,7 +384,7 @@ public class FeedFragment extends BaseFragment {
         postPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //((MainActivity) getActivity()).selectImage();
+                //((MainActivity) getActivity()).buildPhotoDialog();
                 int[] startingLocation = new int[2];
                 v.getLocationOnScreen(startingLocation);
                 startingLocation[0] += v.getWidth() / 2;
@@ -396,14 +410,12 @@ public class FeedFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), PostStatusActivity2.class);
-                startActivity(i);
+                i.putExtra("IS_MYHOMETIMELINE",(userId.equals(VMApp.mPref.userId().getOr("0"))));
+                i.putExtra("USER_ID",userId);
+                startActivityForResult(i,100);
 
             }
         });
-
-
-
-        //aq = toolbar AQuery(getActivity());
 
         adapter = new FeedAdapter(getActivity(), list, this, isHomeTimeline);
 
@@ -420,14 +432,12 @@ public class FeedFragment extends BaseFragment {
             @Override
             public void onItemClick(View view, int position) {
 
-                //if (isHomeTimeline)
-                //  position--;
-
                 pShare = position;
 
-                // buildShareDialog();
-
-                //ApiBus.getInstance().post(toolbar PostShareEvent(pref.userId().getOr("6"), listStory.get(position).postId));
+                Log.e("postId",pShare+"");
+                buildShare2Dialog();
+                //buildShareDialog();
+                //ApiBus.getInstance().post(new PostShareEvent(pref.userId().getOr("6"), list.get(position).postId));
             }
         });
 
@@ -439,7 +449,7 @@ public class FeedFragment extends BaseFragment {
             public void onLoadMore(int page) {
                 currentPage = page;
                 isRefresh = false;
-                if (!isLoadding && !isHashtag)
+                if (!isLoadding)
                     ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
                 isLoadding = true;
                 Log.e("thispageis", page + "");
@@ -510,6 +520,71 @@ public class FeedFragment extends BaseFragment {
         return rootView;
     }
 
+    @Subscribe public void onPostShareSuccess(PostShareSuccessEvent event) {
+        Utils.showToast("Post shared to your timeline");
+    }
+
+    public void buildShare2Dialog() {
+        final CharSequence[] items = {"Share to Facebook", "Share to VDOMAX",
+                "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        //builder.setTitle("Add Video!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                if (i == 0) {
+                    shareToFacebook(pShare + "");
+                    //recordVideo();
+                } else if (i == 1) {
+                    ApiBus.getInstance().postQueue(new PostShareEvent(userId, pShare + ""));
+                    //pickVideo();
+                } else if (i == 2) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+
+
+    private void shareToFacebook(String postId){
+
+        String url = "https://graph.facebook.com/me/photos";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("message", "Message from the Universe");
+        //params.put("link","https://www.vdomax.com/story/16693");
+        //https://www.vdomax.com/story/195854
+        params.put("link","https://www.vdomax.com/story/" + postId);
+
+        //Simply put a byte[] to the params, AQuery will detect it and treat it as a multi-part post
+        //byte[] data = getImageData(getResources().getDrawable(R.drawable.com_parse_ui_facebook_login_logo));
+        //params.put("source", data);
+
+        //Alternatively, put a File or InputStream instead of byte[]
+        //File file = getImageFile();
+        //params.put("source", file);
+
+        AQuery aq = new AQuery(getActivity());
+        aq.auth(VMApp.getFacebookHandle(getActivity())).ajax(url, params, JSONObject.class, this, "shareFb");
+    }
+
+    public void shareFb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        Log.e("hahaha", jo.toString(4));
+        Utils.showToast("Post shared to Facebook complete!");
+    }
+
+    public byte[] getImageData(Drawable d) {
+        Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bitmapdata = stream.toByteArray();
+        return bitmapdata;
+    }
+
     public void buildShareDialog() {
         new MaterialDialog.Builder(getActivity())
                 .title("Share to")
@@ -517,7 +592,6 @@ public class FeedFragment extends BaseFragment {
                         new MaterialDialog.ListCallback() {
                             @Override
                             public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                //Toast.makeText(getActivity(), "Clicked item " + which, Toast.LENGTH_SHORT).show();
                                 switch (which) {
                                     case 0:
                                         // Share to vdomax
@@ -525,27 +599,28 @@ public class FeedFragment extends BaseFragment {
 
                                         break;
                                     case 1:
-                                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-                                        shareIntent.setType("text/plain");
-                                        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,  "https://www.vdomax.com/story/" + list.get(pShare).id);
-                                        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, list.get(pShare).text);
-                                        shareIntent.putExtra(Intent.EXTRA_STREAM, "https://www.vdomax.com/story/" + list.get(pShare).id);
-
-                                        PackageManager pm = getActivity().getPackageManager();
-                                        List<ResolveInfo> activityList = pm.queryIntentActivities(shareIntent, 0);
-                                        for (final ResolveInfo app : activityList)
-                                        {
-                                            if ((app.activityInfo.name).contains("facebook"))
-                                            {
-                                                final ActivityInfo activity = app.activityInfo;
-                                                final ComponentName name = new ComponentName(activity.applicationInfo.packageName, activity.name);
-                                                shareIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                                                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                                                shareIntent.setComponent(name);
-                                                getActivity().startActivity(shareIntent);
-                                                break;
-                                            }
-                                        }
+                                        shareToFacebook(list.get(pShare).postId);
+//                                        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+//                                        shareIntent.setType("text/plain");
+//                                        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,  "https://www.vdomax.com/story/" + list.get(pShare).id);
+//                                        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, list.get(pShare).text);
+//                                        shareIntent.putExtra(Intent.EXTRA_STREAM, "https://www.vdomax.com/story/" + list.get(pShare).id);
+//
+//                                        PackageManager pm = getActivity().getPackageManager();
+//                                        List<ResolveInfo> activityList = pm.queryIntentActivities(shareIntent, 0);
+//                                        for (final ResolveInfo app : activityList)
+//                                        {
+//                                            if ((app.activityInfo.name).contains("facebook"))
+//                                            {
+//                                                final ActivityInfo activity = app.activityInfo;
+//                                                final ComponentName name = new ComponentName(activity.applicationInfo.packageName, activity.name);
+//                                                shareIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+//                                                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//                                                shareIntent.setComponent(name);
+//                                                getActivity().startActivity(shareIntent);
+//                                                break;
+//                                            }
+//                                        }
                                         break;
                                     default:
                                         break;
@@ -647,24 +722,24 @@ public class FeedFragment extends BaseFragment {
 
     }
 
-    @Subscribe public void onLogout(LogoutEvent event) {
-        VMApplication.logout();
-        Intent login = new Intent(getActivity(), LoginActivity.class);
-        startActivity(login);
-        getActivity().finish();
-    }
+//    @Subscribe public void onLogout(LogoutEvent event) {
+//        VMApp.logout();
+//        Intent login = new Intent(getActivity(), LoginActivity.class);
+//        startActivity(login);
+//        getActivity().finish();
+//    }
 
     @Subscribe public void onPostLoveSuccessEvent(PostLoveSuccessEvent event) {
-        //Toast.makeText(getActivity(), "Loved", Toast.LENGTH_SHORT).show();
+        Utils.showToast("Loved");
 
     }
 
     @Subscribe public void onPostShareSuccessEvent(PostShareSuccessEvent event) {
-        //Toast.makeText(getActivity(), "Shared", Toast.LENGTH_SHORT).show();
+        Utils.showToast("Shared");
     }
 
     @Subscribe public void onPostCommentSuccessEvent(PostCommentSuccessEvent event) {
-        //Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
+        Utils.showToast("Comment success.");
     }
 
     String profileName = "";
@@ -785,7 +860,6 @@ public class FeedFragment extends BaseFragment {
 
     }
 
-
     public void showFloatingButton() {
         AnimatorSet animSet = new AnimatorSet();
 
@@ -809,84 +883,34 @@ public class FeedFragment extends BaseFragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK)
+        if(requestCode == 100)
+            Utils.showToast("Post complete!");
+    }
+
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Subscribe
     public void onFollowSuccess(FollowUserSuccessEvent event) {
-
+        Utils.showToast("Follow " + event.getUserId() + " complete !");
     }
 
     @Subscribe
     public void onUnfollowSuccess(UnfollowUserSuccessEvent event) {
-
+        Utils.showToast("Unfollow " + event.getUserId() + " complete !");
     }
 
-    private SearchView.OnQueryTextListener onQuerySearchView = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String s) {
-            ((SearchListener) getActivity()).onSearchQuery(s);
-            return true;
-        }
 
-        @Override
-        public boolean onQueryTextChange(String s) {
-            if (mSearchCheck) {
-                // implement your search here
-            }
-            return false;
-        }
-    };
-
-    MenuItem menuItem;
-    Menu menu;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO here it is
-        super.onCreateOptionsMenu(menu, inflater);
-        this.menu = menu;
-
-        if (isHomeTimeline) {
-            inflater.inflate(R.menu.menu_main, menu);
-
-            SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-            MenuItem search = menu.findItem(R.id.action_search);
-            search.setActionView(searchView);
-            search.setIcon(R.drawable.ic_search);
-            search.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
-                    | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-            ((EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text))
-                    .setHintTextColor(getResources().getColor(android.R.color.white));
-            searchView.setOnQueryTextListener(onQuerySearchView);
-
-            //search.findItem(R.id.menu_add).setVisible(true);
-
-            menu.findItem(R.id.action_search).setVisible(true);
-            mSearchCheck = false;
-        } else {
-
-        }
-
-
-
-        //if(Utils.isTablet(getActivity()))
-        //  searchView.setQueryHint("Search Friends, Videos, Tags.");
-        //else
-        //  searchView.setQueryHint("Search everything.");
-
-       /* MenuItem sort = menu.findItem(R.id.action_sort);
-        sort.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS
-                | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-                */
-
-
-
-
-
+        getActivity().getMenuInflater().inflate(R.menu.menu_main, menu);
     }
 
     private void toggleSongState() {
@@ -948,6 +972,7 @@ public class FeedFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+
             case R.id.action_search:
                 mSearchCheck = true;
                 break;
@@ -965,7 +990,7 @@ public class FeedFragment extends BaseFragment {
                 break;
             case R.id.menu_sort_video:
                 isRefresh = true;
-                TYPE = "video";
+                TYPE = "clip";
                 break;
             case R.id.menu_sort_youtube:
                 isRefresh = true;

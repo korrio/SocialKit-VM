@@ -57,6 +57,8 @@ public class ChannelFragment extends BaseFragment {
         return mFragment;
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,10 +152,10 @@ public class ChannelFragment extends BaseFragment {
             public void onLoadMore(int page, int totalItemsCount) {
                 currentPage = page;
                 isRefresh = false;
-                String loadMoreUrl = endpoint + "/search/channel?sort=F&page="+page;
+                String loadMoreUrl = endpoint + "/search/channel?sort=F&page=" + page;
                 if (!isLoadding) {
                     aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
-                    Log.e("loadMoreUrl",loadMoreUrl);
+                    Log.e("loadMoreUrl", loadMoreUrl);
                 }
 
                 isLoadding = true;
@@ -162,21 +164,21 @@ public class ChannelFragment extends BaseFragment {
 
         aq = new AQuery(getActivity());
         if(tabNo == 0) {
-            aq.ajax(liveChannelUrl, JSONObject.class, this, "getJson");
+            aq.ajax(liveChannelUrl, JSONObject.class, this, "getJsonLive");
             Log.e("liveChannelUrl",liveChannelUrl);
         } else {
-            aq.ajax(channelUrl, JSONObject.class, this, "getJson");
+            aq.ajax(channelUrl, JSONObject.class, this, "getJsonMostFollower");
             Log.e("channelUrl", channelUrl);
         }
 
     }
 
-    public void getJson(String url, JSONObject jo, AjaxStatus status)
+    public void getJsonLive(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {
         AQUtility.debug("jo", jo);
         if (jo != null) {
             if (isRefresh) {
-                mostFollowerList.clear();
+                //mostFollowerList.clear();
                 liveChannelList.clear();
             }
 
@@ -198,10 +200,48 @@ public class ChannelFragment extends BaseFragment {
                 boolean liveStatus = obj.optBoolean("status");
 
                 Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, gender, liveStatus);
-                if(tabNo == 0)
                     liveChannelList.add(channel);
-                else
-                    mostFollowerList.add(channel);
+
+            }
+            channelAdapter.notifyDataSetChanged();
+            swipeLayout.setRefreshing(false);
+            isLoadding = false;
+            AQUtility.debug("done");
+
+        } else {
+            AQUtility.debug("error!");
+        }
+    }
+
+    public void getJsonMostFollower(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        AQUtility.debug("jo", jo);
+        if (jo != null) {
+            if (isRefresh) {
+                mostFollowerList.clear();
+                //liveChannelList.clear();
+            }
+
+            isRefresh = false;
+
+            JSONArray ja = jo.optJSONArray("channels");
+            for (int i = 0; i < ja.length(); i++) {
+                JSONObject obj = ja.optJSONObject(i);
+
+                String userId = obj.optString("id");
+                String name = obj.optString("name");
+                String username = obj.optString("username");
+                String avatar = obj.optString("avatar_url");
+                String cover = obj.optString("cover_url");
+                String liveCover = obj.optString("live_cover");
+                String gender = obj.optString("gender");
+                if(gender == null)
+                    gender = "male";
+                boolean liveStatus = obj.optBoolean("status");
+
+                Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, gender, liveStatus);
+                mostFollowerList.add(channel);
+
             }
             channelAdapter.notifyDataSetChanged();
             swipeLayout.setRefreshing(false);

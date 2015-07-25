@@ -19,11 +19,11 @@ import android.widget.VideoView;
 
 import com.squareup.picasso.Picasso;
 
-import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PrefManager;
-import de.hdodenhof.circleimageview.CircleImageView;
+import co.aquario.socialkit.widget.RoundedTransformation;
 
 
 public class VideoViewNativeActivity extends Activity {
@@ -35,7 +35,7 @@ public class VideoViewNativeActivity extends Activity {
     private EditText mEditText;
     private Button button1;
     private Button start;
-    private CircleImageView mProfileImageView;
+    private ImageView mProfileImageView;
     private ImageView mImageView;
     private TextView mProfileNameTextView;
     private ImageView mLogo;
@@ -65,7 +65,7 @@ public class VideoViewNativeActivity extends Activity {
                 //slideOnClick();
             }
         });
-        mProfileImageView = (CircleImageView) findViewById(R.id.profile_image);
+        mProfileImageView = (ImageView) findViewById(R.id.profile_image);
         mProfileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +91,7 @@ public class VideoViewNativeActivity extends Activity {
         });
         */
 
-        PrefManager pref = VMApplication.get(this).getPrefManager();
+        PrefManager pref = VMApp.get(this).getPrefManager();
 
         String avatarUrl = pref.avatar().getOr("");
         String coverUrl = pref.cover().getOr("");
@@ -101,7 +101,8 @@ public class VideoViewNativeActivity extends Activity {
         setTitle(name);
         //mTitle.setText(name);
         Picasso.with(this).load(EndpointManager.getAvatarPath(coverUrl)).into(mImageView);
-        Picasso.with(this).load(EndpointManager.getAvatarPath(avatarUrl)).into(mProfileImageView);
+        Picasso.with(this).load(EndpointManager.getAvatarPath(avatarUrl)).resize(200, 200)
+                .transform(new RoundedTransformation(100, 4)).into(mProfileImageView);
 
 
         mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {

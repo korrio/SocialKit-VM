@@ -123,4 +123,34 @@
 
     <dimen name="tabsHeight">48dp</dimen>
 
+    <dimen name="Nav_Height">48dp</dimen>
+    <dimen name="Nav_Padding">6dp</dimen>
+
+
+    <!-- Dialog LongClick -->
+    <dimen name="dialog_long_click_padding">20dp</dimen>
+
+
+    <dimen name="spacing">8dp</dimen>
+
+    <dimen name="profileSize">50dp</dimen>
+    <dimen name="paddingCell">10dp</dimen>
+    <dimen name="marginInCell">8dp</dimen>
+
+    <dimen name="padding_menu_bottom">15dp</dimen>
+
+    <dimen name="drawable_padding">5dp</dimen>
+
+
+
+
+
+    <!-- Dialog -->
+    <dimen name="margin">8dp</dimen>
+
+    <dimen name="header_text_size">20sp</dimen>
+    <dimen name="title_text_size">18sp</dimen>
+    <dimen name="button_text_size">16sp</dimen>
+    <dimen name="sample_text_size">12sp</dimen>
+
 </resources>

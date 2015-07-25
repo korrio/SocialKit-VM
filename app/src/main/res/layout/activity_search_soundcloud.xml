@@ -5,7 +5,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:mActivity=".SoundCloundActivity">
-    <include layout="@layout/tool_bar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/sc_query"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="textUri" />
+
+        <Button
+            android:id="@+id/sc_search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:textColor="#fff" />
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/songs_list"
@@ -15,59 +36,8 @@
         />
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            >
-            <ImageView
-                android:id="@+id/selected_thumbnail"
-                android:layout_width="@dimen/avatar_size"
-                android:layout_height="@dimen/avatar_size"/>
-            <RelativeLayout
-                android:id="@+id/player_control"
-                android:layout_width="@dimen/avatar_size"
-                android:layout_height="@dimen/avatar_size"
-                android:layout_alignParentRight="true"
-                >
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="3dp"
-                    android:background="@drawable/oval"
-                    />
-                <ImageView
-                    android:id="@+id/player_state"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
-                <ProgressBar
-                    android:id="@+id/player_progress"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
-                </RelativeLayout>
-            <TextView
-                android:id="@+id/selected_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/player_control"
-                android:layout_toRightOf="@id/selected_thumbnail"
-                android:paddingLeft="8dp"
-                android:text="@string/hello_world"
-                android:textColor="#fff" />
+    <include layout="@layout/inc_music_player" />
 
-            <TextView
-                android:id="@+id/selected_subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/selected_title"
-                android:layout_toEndOf="@+id/selected_thumbnail"
-                android:layout_toRightOf="@+id/selected_thumbnail"
-                android:paddingLeft="8dp"
-                android:text="@string/hello_world"
-                android:textColor="#fff"
-                android:textSize="12sp" />
-        </RelativeLayout>
+
 
 </LinearLayout>

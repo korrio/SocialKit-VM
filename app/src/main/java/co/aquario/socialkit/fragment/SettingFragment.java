@@ -28,7 +28,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
@@ -45,9 +44,13 @@ import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
-import co.aquario.socialkit.util.AndroidMultiPartEntity;
+
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.widget.RoundedTransformation;
+
+
+
+//
 
 /**
  * Created by Mac on 5/20/15.
@@ -323,38 +326,38 @@ public class SettingFragment extends BaseFragment {
             HttpPost httppost = new HttpPost(url);
 
             try {
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+//                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
 
 
                 Charset chars = Charset.forName("UTF-8");
 
-                entity.addPart("username", new StringBody(userName.getText().toString(), chars));
-                entity.addPart("name", new StringBody(fullName.getText().toString(), chars));
-                entity.addPart("about", new StringBody(about.getText().toString(), chars));
-                entity.addPart("email", new StringBody(email.getText().toString(), chars));
-
-                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(0, 2), chars));
-                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(3, 5), chars));
-                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(6, 10), chars));
-
-
-                entity.addPart("gender", new StringBody("male", chars));
-                entity.addPart("current_city", new StringBody(city.getText().toString(), chars));
-                entity.addPart("hometown", new StringBody(homeTown.getText().toString(), chars));
-                entity.addPart("timezone", new StringBody(timeZone.getText().toString(), chars));
-
-                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
+//                entity.addPart("username", new StringBody(userName.getText().toString(), chars));
+//                entity.addPart("name", new StringBody(fullName.getText().toString(), chars));
+//                entity.addPart("about", new StringBody(about.getText().toString(), chars));
+//                entity.addPart("email", new StringBody(email.getText().toString(), chars));
+//
+//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(0, 2), chars));
+//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(3, 5), chars));
+//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(6, 10), chars));
+//
+//
+//                entity.addPart("gender", new StringBody("male", chars));
+//                entity.addPart("current_city", new StringBody(city.getText().toString(), chars));
+//                entity.addPart("hometown", new StringBody(homeTown.getText().toString(), chars));
+//                entity.addPart("timezone", new StringBody(timeZone.getText().toString(), chars));
+//
+//                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
+//
+//                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
 
                 // Making server call
                 HttpResponse response = httpclient.execute(httppost);

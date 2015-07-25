@@ -317,6 +317,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                 Picasso.with(mActivity)
                         .load(item.clip.thumb)
                         .error(R.drawable.default_offline)
+                        .placeholder(R.drawable.default_offline)
                         .fit().centerCrop()
                         .into(holder.thumb);
             }
@@ -376,6 +377,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
 
 
+        } else if(item.type.equals("live")) {
+            Picasso.with(mActivity)
+                    .load(item.author.liveCover)
+                    .error(R.drawable.default_offline)
+                    .placeholder(R.drawable.default_offline)
+                    .fit().centerCrop()
+                    .into(holder.thumb);
         }
 
 
@@ -682,6 +690,19 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                             }
                             break;
                         case "live":
+                            String userId = post.author.id;
+                            String liveName = post.author.name;
+                            String username = post.author.username;
+                            String avatar = post.author.getAvatarPath();
+                            String cover = post.author.getCoverPath();
+                            String liveCover = post.author.liveCover;
+                            String gender = "male";
+                            boolean liveStatus = true;
+
+                            Channel channel = new Channel(userId, liveName, username, cover, avatar, liveCover, "male", liveStatus);
+
+                            LiveFragment liveFragment = LiveFragment.newInstance(channel);
+                            ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, liveFragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
 
                             break;
                     }

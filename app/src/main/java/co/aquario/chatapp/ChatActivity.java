@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import co.aquario.chatapp.event.ActivityResultEvent;
 import co.aquario.chatapp.fragment.ChatWidgetFragmentClient;
 import co.aquario.socialkit.BaseActivity;
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.handler.ApiBus;
 
@@ -19,10 +21,14 @@ public class ChatActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_chat);
 
+        CustomActivityOnCrash.setShowErrorDetails(true);
+        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+        CustomActivityOnCrash.install(this);
+
         if(getIntent() != null) {
             ChatWidgetFragmentClient fragment = new ChatWidgetFragmentClient();
             fragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.container, fragment, "CHAT_MAIN").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.sub_container, fragment, "CHAT_MAIN").commit();
         }
 
     }

@@ -57,7 +57,7 @@ import co.aquario.chatapp.picker.LocationPickerIntent;
 import co.aquario.chatapp.util.ChatUtil;
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.VMApplication;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
@@ -89,7 +89,7 @@ public class ChatWidgetFragment extends BaseFragment {
     public View rootView;
     public PrefManager mPref;
 
-    private String socketUrl = VMApplication.CHAT_SERVER;
+    private String socketUrl = VMApp.CHAT_SERVER;
     private Socket mSocket;
     {
         SSLContext sc = null;
@@ -169,7 +169,7 @@ public class ChatWidgetFragment extends BaseFragment {
         setChatSubTitle(mUserId + ":" + mPartnerId + " in " + mCid);
 
         //ApiBus.getInstance().post(new ChatSubTitleEvent());
-        ApiBus.getInstance().post(new HistoryEvent(mCid,20,1));
+        ApiBus.getInstance().post(new HistoryEvent(mCid,20,mChatType));
     }
 
     @Subscribe

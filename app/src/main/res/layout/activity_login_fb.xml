@@ -39,11 +39,10 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/profile_image"
                 android:layout_width="120dp"
-                android:layout_height="120dp"
-                app:border_width="0dp" />
+                android:layout_height="120dp"/>
 
             <TextView
                 android:id="@+id/txt_name"

@@ -1,6 +1,5 @@
 package co.aquario.socialkit.fragment.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,14 +13,12 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 
-import co.aquario.socialkit.VMApplication;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.LoginActivity;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.adapter.FriendRecyclerAdapter;
 import co.aquario.socialkit.event.FollowUserSuccessEvent;
 import co.aquario.socialkit.event.LoadFriendListEvent;
 import co.aquario.socialkit.event.LoadFriendListSuccessEvent;
-import co.aquario.socialkit.event.LogoutEvent;
 import co.aquario.socialkit.event.UnfollowUserSuccessEvent;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.User;
@@ -55,7 +52,7 @@ public class FriendFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefManager = VMApplication.get(getActivity()).getPrefManager();
+        prefManager = VMApp.get(getActivity()).getPrefManager();
         if (getArguments() != null) {
             type = getArguments().getString(LOAD_TYPE);
             userId = getArguments().getString(USER_ID);
@@ -140,10 +137,10 @@ public class FriendFragment extends BaseFragment {
 
     }
 
-    @Subscribe public void onLogout(LogoutEvent event) {
-        VMApplication.logout();
-        Intent login = new Intent(getActivity(), LoginActivity.class);
-        startActivity(login);
-        getActivity().finish();
-    }
+//    @Subscribe public void onLogout(LogoutEvent event) {
+//        VMApp.logout();
+//        Intent login = new Intent(getActivity(), LoginActivity.class);
+//        startActivity(login);
+//        getActivity().finish();
+//    }
 }

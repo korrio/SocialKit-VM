@@ -2,39 +2,71 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.aquario.socialkit">
 
+    <!-- GCM connects to Internet Services. -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Network State Permissions to detect Internet status -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Permission to vibrate -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
-
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <permission
-        android:name="co.aquario.chatapp.permission.C2D_MESSAGE"
+        android:name="co.aquario.socialkit.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="co.aquario.chatapp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="co.aquario.socialkit.permission.C2D_MESSAGE" />
+
+    <!-- old setting -->
+    <!--&lt;!&ndash; require by Parse.com &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.VIBRATE" />-->
+    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
+    <!--<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />-->
+    <!--<permission-->
+        <!--android:name="co.aquario.socialkit.debug.permission.C2D_MESSAGE"-->
+        <!--android:protectionLevel="signature" />-->
+    <!--<uses-permission android:name="co.aquario.socialkit.debug.permission.C2D_MESSAGE" />-->
+
+    <!--&lt;!&ndash; require by Social Actions &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.CAMERA" />-->
+    <!--<uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
+
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
+    <!--<uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />-->
+
+    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
+
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
+
+
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -50,10 +82,120 @@
         android:required="false" />
 
     <application
-        android:name=".VMApplication"
+        android:name=".VMApp"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:theme="@style/CustomTheme">
+        android:icon="@drawable/ic_vm"
+        android:theme="@style/AppTheme.WithoutActionBar">
+
+        <!-- start push config -->
+
+        <service android:name="com.parse.PushService" />
+
+        <receiver android:name=".service.IncomingCallReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="co.aquario.socialkit.PUSH_NOTIFICATION" />
+
+                <category android:name="co.aquario.socialkit" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.RECEIVE_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="co.aquario.socialkit" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".service.ShowInviteConfPopUp"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" >
+        </activity>
+        <activity
+            android:name=".service.ShowChatPopUp"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" >
+        </activity>
+        <activity
+            android:name=".service.ShowCallPopUp"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" >
+        </activity>
+        <!--<activity-->
+        <!--android:name=".NotiHistoryActivity"-->
+        <!--android:label="@string/app_name"-->
+        <!--android:screenOrientation="portrait" >-->
+        <!--</activity>-->
+        <activity
+            android:name=".service.SuperDialog"
+            android:label="@string/app_name" >
+        </activity>
+        <!--<activity android:name="eu.janmuller.android.simplecropimage.CropImage" />-->
+        <activity
+            android:name=".push.PushManage"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="ce7ec822404c2f0876c8ee8de00ca3fad6f3abe0" />
+
+        <meta-data
+            android:name="com.parse.APPLICATION_ID"
+            android:value="@string/parse_app_id" />
+        <meta-data
+            android:name="com.parse.CLIENT_KEY"
+            android:value="@string/parse_client_key" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyC6IMjUiIwpOC0wXPpXCPXa5R_Fw9ndX4A"/>
+
+        <!--<receiver android:name="com.parse.ParseBroadcastReceiver" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+                <!--<action android:name="android.intent.action.USER_PRESENT" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+
+        <activity
+            android:name="co.aquario.chatapp.ChatActivity"
+            android:theme="@style/AppTheme.WithoutActionBar">
+
+        </activity>
+
+        <activity
+            android:name="co.aquario.chatapp.CallActivityLauncher"
+            android:theme="@style/AppTheme.WithoutActionBar">
+
+        </activity>
+
+        <activity
+            android:name="co.aquario.chatui.ChatUIActivity"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
+            android:name="co.aquario.chatui.TattooDetailActivity">
+        </activity>
 
         <activity
             android:name=".activity.post.LiveStreamingActivity"
@@ -100,22 +242,6 @@
             android:name=".TakePhotoActivity"
             android:screenOrientation="portrait" />
 
-
-        <activity
-            android:name=".chat.NameActivity"
-            android:theme="@style/ChatAppTheme"
-            android:windowSoftInputMode="adjustPan">
-
-        </activity>
-        <activity
-            android:name=".chat.SimpleChatActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ChatAppTheme"/>
-
-        <activity
-            android:name=".NewProfileActivity"
-            android:theme="@style/AppCompatTheme" />
-
         <activity
             android:name=".activity.DragableActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
@@ -123,76 +249,78 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".NewProfileActivity"
+            android:theme="@style/AppTheme.WithoutActionBar" />
+
+        <activity
             android:name=".activity.CommentsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme" />
+            android:theme="@style/AppTheme" />
 
 
         <activity
             android:name=".activity.VideoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
             android:name=".activity.post.PostPhotoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
             android:name=".activity.post.PostVideoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <activity
             android:name=".activity.post.PostVideoReviewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
-
-        <activity
-            android:name=".activity.PhotoActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <activity
             android:name=".activity.post.PostYoutubeActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme" />
+            android:theme="@style/AppTheme" />
 
         <activity
-            android:name=".activity.post.SCSearchActivity"
+            android:name="co.aquario.chatapp.picker.LocationPickerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"
+            android:theme="@style/AppTheme.WithoutActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            />
+
+        <activity
+            android:name="co.aquario.chatapp.picker.MusicPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.WithoutActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
-            android:name=".activity.post.YtSearchActivity"
+            android:name="co.aquario.chatapp.picker.YoutubePickerActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"
+            android:theme="@style/AppTheme.WithoutActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <activity
             android:name=".activity.YoutubeActivity"
-            android:theme="@style/AppCompatTheme"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize|stateHidden"></activity>
 
         <activity
             android:name=".activity.post.PostStatusActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme"></activity>
+            android:theme="@style/AppTheme.WithoutActionBar" />
         <activity
             android:name=".activity.post.PostStatusActivity2"
             android:screenOrientation="portrait"
-            android:theme="@style/AppCompatTheme" />
+            android:theme="@style/AppTheme.WithoutActionBar" />
         <activity
             android:name=".activity.post.PostSoundCloudActivity"
-            android:theme="@style/AppCompatTheme" />
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".search.youtube.OpenYouTubePlayerActivity"/>
-
-
-
 
         <!--
         <activity
@@ -207,13 +335,6 @@
             android:screenOrientation="sensorLandscape">
         </activity>
         -->
-
-        <activity
-            android:name="co.aquario.chatapp.ChatActivity"
-            android:theme="@style/AppCompatTheme">
-
-        </activity>
-
 
         <activity
             android:name="com.parse.ui.ParseLoginActivity"
@@ -232,65 +353,16 @@
                 android:value="true"/>
         </activity>
 
-        <activity
-            android:name="co.aquario.chatapp.push.PushManage"
-            >
-        </activity>
-        <activity
-            android:name="co.aquario.chatapp.picker.LocationPickerActivity"
-            >
-        </activity>
 
         <activity android:name="com.facebook.FacebookActivity"
                   android:configChanges=
                       "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
-        <provider android:authorities="com.facebook.app.FacebookContentProvider1234"
+        <provider android:authorities="com.facebook.app.FacebookContentProvider391414774312517"
                   android:name="com.facebook.FacebookContentProvider"
                   android:exported="true"/>
 
-
-        <meta-data
-            android:name="com.parse.APPLICATION_ID"
-            android:value="@string/parse_app_id" />
-        <meta-data
-            android:name="com.parse.CLIENT_KEY"
-            android:value="@string/parse_client_key" />
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-
-        <service android:name="com.parse.PushService" />
-
-        <receiver
-            android:name=".PushReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE" />
-                <action android:name="com.parse.push.intent.DELETE" />
-                <action android:name="com.parse.push.intent.OPEN" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name="com.parse.ParseBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name="com.parse.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
-                <!-- IMPORTANT: Change "com.codemobiles.cmapppush" to match your app's package name. -->
-                <category android:name="co.aquario.socialkit.debug" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

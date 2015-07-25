@@ -17,23 +17,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mikepenz.crossfader.util.UIUtils;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.MiniDrawer;
+import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.model.interfaces.OnCheckedChangeListener;
 import com.parse.ParseAnalytics;
 import com.soundcloud.android.crop.Crop;
 import com.squareup.picasso.Picasso;
@@ -45,6 +44,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
+import co.aquario.chatui.ChatUIActivity;
+import co.aquario.chatui.fragment.TattooFragment;
 import co.aquario.socialkit.activity.post.PostPhotoActivity;
 import co.aquario.socialkit.activity.post.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
@@ -75,20 +77,27 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     public Toolbar toolbar;
     public ActionBarDrawerToggle toggle;
     public DrawerLayout mDrawer;
+
     List<WeakReference<Fragment>> fragList = new ArrayList<>();
     File tempFile;
-    private Drawer result = null;
+    Drawer result = null;
+    MiniDrawer miniResult = null;
+    //private Drawer result = null;
     private Context mContext;
     private Activity mActivity;
     private String userId;
     private Uri mFileURI = null;
 
     PrefManager mPref;
+    //Crossfader crossFader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_main);
+        CustomActivityOnCrash.setShowErrorDetails(true);
+        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+        CustomActivityOnCrash.install(this);
 
         mContext = this;
         mActivity = this;
@@ -97,14 +106,17 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
         mPref = getPref(getApplicationContext());
         userId = mPref.userId().getOr("0");
-        VMApplication.updateParseInstallation(Integer.parseInt(userId));
+        //VMApp.updateParseInstallation(Integer.parseInt(userId));
 
-        getToolbar().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NewProfileActivity.startProfileActivity(mActivity, userId);
-            }
-        });
+        if(getToolbar() != null) {
+            getToolbar().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NewProfileActivity.startProfileActivity(mActivity, userId);
+                }
+            });
+        }
+
 
         if (savedInstanceState == null) {
             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
@@ -117,29 +129,38 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         initDrawer(savedInstanceState);
     }
 
-
-
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the search; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    protected void onSaveInstanceState(Bundle outState) {
+        //add the values which need to be saved from the drawer to the bundle
+        outState = result.saveInstanceState(outState);
+        //add the values which need to be saved from the accountHeader to the bundle
+        //outState = headerResult.saveInstanceState(outState);
+        //add the values which need to be saved from the crossFader to the bundle
+        //outState = crossFader.saveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sort) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.menu_main, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_sort) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     public List<Fragment> getActiveFragments() {
         ArrayList<Fragment> ret = new ArrayList<Fragment>();
@@ -167,6 +188,16 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             finish();
     }
     */
+
+    @Override
+    public void onBackPressed() {
+        //handle the back press :D close the drawer first and if the drawer is closed close the activity
+        if (result != null && result.isDrawerOpen()) {
+            result.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     private static final int RESULT_PICK_VIDEO = 4;
     private static final int RESULT_VIDEO_CAP = 5;
@@ -328,8 +359,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
-                    public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-
+                    public boolean onItemClick(View view, int i, IDrawerItem drawerItem) {
                         if (drawerItem.getIdentifier() == 0) {
 
                             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
@@ -337,6 +367,14 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             FragmentTransaction transaction = manager.beginTransaction();
                             transaction.replace(R.id.sub_container, fragment);
                             transaction.commit();
+
+                        } else if(drawerItem.getIdentifier() == 1) {
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Chat");
+                            //getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, ConversationViewPagerFragment.newInstance(), "CHAT").addToBackStack(null).commit();
+
+                            Intent intent = new Intent(MainActivity.this, ChatUIActivity.class);
+                            startActivity(intent);
 
                         } else if (drawerItem.getIdentifier() == 2) {
 
@@ -356,9 +394,15 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                         } else if (drawerItem.getIdentifier() == 4) {
                             // Maxpoint
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Maxpoint");
 
                         } else if(drawerItem.getIdentifier() == 5){
-                            // Tattoo Store
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Tattoo Store");
+
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, TattooFragment.newInstance(), "TATTOO_STORE").addToBackStack(null).commit();
+
 
                         } else if(drawerItem.getIdentifier() == 6){
                             // Term & Policy
@@ -378,23 +422,47 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "NOTIFICATION").addToBackStack(null).commit();
 
                         } else if(drawerItem.getIdentifier() == 10) {
-                            VMApplication.logout();
+                            VMApp.logout(getApplicationContext());
                             Intent login = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(login);
                             finish();
                         }
 
+//                        if (crossFader.isCrossFaded()) {
+//                            crossFader.crossFade();
+//                            miniResult.update();
+//                        }
+
                         result.closeDrawer();
 
                         return true;
                     }
+
+//                    @Override
+//                    public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+//
+//
+//                    }
                 })
-                .withTranslucentActionBarCompatibility(false)
+                //.withTranslucentActionBarCompatibility(false)
                 .withSavedInstance(savedInstanceState)
                 .build();
 
+        miniResult = new MiniDrawer().withDrawer(result);
+                //.withAccountHeader(headerResult);
+
         toggle = result.getActionBarDrawerToggle();
         mDrawer = result.getDrawerLayout();
+
+        int firstWidth = (int) UIUtils.convertDpToPixel(200, this);
+        int secondWidth = (int) UIUtils.convertDpToPixel(72, this);
+
+//        crossFader = new Crossfader()
+//                .withContent(findViewById(R.id.crossfade_content))
+//                .withFirst(result.getSlider(), firstWidth)
+//                .withSecond(miniResult.build(this), secondWidth)
+//                .withSavedInstance(savedInstanceState)
+//                .build();
 
         ImageView channelMenu = (ImageView) result.getHeader().findViewById(R.id.channel_menu);
         ImageView sociallMenu = (ImageView) result.getHeader().findViewById(R.id.social_menu);
@@ -402,11 +470,14 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         ImageView photoMenu = (ImageView) result.getHeader().findViewById(R.id.photo_menu);
 
         ImageView avatarMenu = (ImageView) result.getHeader().findViewById(R.id.header_avatar);
+        ImageView coverMenu = (ImageView) result.getHeader().findViewById(R.id.header_cover);
         TextView nameMenu = (TextView) result.getHeader().findViewById(R.id.header_name);
         TextView usernameMenu = (TextView) result.getHeader().findViewById(R.id.header_username);
 
         Picasso.with(this).load(EndpointManager.getAvatarPath(mPref.avatar().getOr(""))).placeholder(R.drawable.avatar_default).centerCrop()
                 .resize(100, 100).transform(new RoundedTransformation(50, 4)).into(avatarMenu);
+        //Picasso.with(this).load(EndpointManager.getAvatarPath(mPref.cover().getOr(""))).placeholder(R.drawable.cover_default).centerCrop()
+          //      .resize(360,80).into(coverMenu);
         usernameMenu.setText("@" + mPref.username().getOr("null"));
         nameMenu.setText(mPref.name().getOr("null"));
 

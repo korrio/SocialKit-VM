@@ -15,12 +15,11 @@ import co.aquario.socialkit.fragment.main.BaseFragment;
 
 
 public class RegisterSuccessFragment extends BaseFragment {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private Button btnStart;
@@ -29,7 +28,6 @@ public class RegisterSuccessFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static RegisterSuccessFragment newInstance(String param1, String param2) {
         RegisterSuccessFragment fragment = new RegisterSuccessFragment();
         Bundle args = new Bundle();
@@ -76,7 +74,7 @@ public class RegisterSuccessFragment extends BaseFragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and nameUser
+
         void onFragmentInteraction(Uri uri);
     }
 

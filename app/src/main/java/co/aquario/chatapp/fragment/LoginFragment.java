@@ -54,7 +54,7 @@ import co.aquario.chatapp.event.login.UpdateProfileEvent;
 import co.aquario.chatapp.model.login.FbProfile;
 import co.aquario.chatapp.model.login.LoginData;
 import co.aquario.chatapp.model.login.UserProfile;
-import co.aquario.chatapp.util.PrefManager;
+import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;

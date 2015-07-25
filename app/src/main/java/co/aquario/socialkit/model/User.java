@@ -56,7 +56,8 @@ public class User extends BaseModel {
     @Expose
     @SerializedName("is_live")
     public boolean isLive;
-
+    @Expose
+    @SerializedName("is_following")
     public boolean isFollowing;
 
     public User() {

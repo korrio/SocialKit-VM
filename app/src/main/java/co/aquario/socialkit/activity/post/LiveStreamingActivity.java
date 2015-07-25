@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.widget.SrsHttpFlv;
 
 public class LiveStreamingActivity extends Activity {
@@ -63,7 +64,7 @@ public class LiveStreamingActivity extends Activity {
     private int vtrack;
     private int vcolor;
 
-    private String flv_url = "http://128.199.196.157:8936/live/korrio.flv";
+    private String flv_url = "";
     //private String flv_url = "http://ossrs.net:8936/live/livestream.flv";
     //private String flv_url = "http://192.168.1.137:8936/live/livestream.flv";
     //private String flv_url = "http://192.168.2.111:8936/live/livestream.flv";
@@ -105,6 +106,8 @@ public class LiveStreamingActivity extends Activity {
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_live_streamer);
+
+        flv_url = "http://chat.vdomax.com:8936/live/"+ VMApp.mPref.username().getOr("test")+".flv";
 
         // restore data.
         //flv_url = sp.getString("FLV_URL", flv_url);

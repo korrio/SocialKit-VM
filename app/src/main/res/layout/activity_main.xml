@@ -7,18 +7,19 @@
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
     android:orientation="vertical">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:transitionName="actionBar"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <include layout="@layout/tool_bar"/>
 
     <FrameLayout  android:id="@+id/sub_container"
         android:layout_width="match_parent" android:layout_height="match_parent"
         tools:mActivity=".MainActivity" tools:ignore="MergeRootFrame"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/toolbar" >
+        <TextView
+            android:id="@+id/crossfade_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:text=""
+            android:textSize="16sp" />
+    </FrameLayout>
 </LinearLayout>
 

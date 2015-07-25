@@ -13,7 +13,7 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 
-import co.aquario.socialkit.VMApplication;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.LoginActivity;
 import co.aquario.socialkit.adapter.FeedAdapter;
@@ -56,7 +56,7 @@ public class PhotoFragmentGrid extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefManager = VMApplication.get(getActivity()).getPrefManager();
+        prefManager = VMApp.get(getActivity()).getPrefManager();
         userId = prefManager.userId().getOr("0");
         ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
 
@@ -136,10 +136,10 @@ public class PhotoFragmentGrid extends BaseFragment {
 
     }
 
-    @Subscribe public void onLogout(LogoutEvent event) {
-        VMApplication.logout();
-        Intent login = new Intent(getActivity(), LoginActivity.class);
-        startActivity(login);
-        getActivity().finish();
-    }
+//    @Subscribe public void onLogout(LogoutEvent event) {
+//        VMApp.logout();
+//        Intent login = new Intent(getActivity(), LoginActivity.class);
+//        startActivity(login);
+//        getActivity().finish();
+//    }
 }

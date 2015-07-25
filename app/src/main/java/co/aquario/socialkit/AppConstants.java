@@ -8,7 +8,7 @@ public interface AppConstants {
     public static final String DIALOG_TITLE = "Loading";
 
     public static final long NUMBER_OF_VIDEOS_RETURNED = 25;
-    public static final String APP_NAME = VMApplication.appName();
+    public static final String APP_NAME = VMApp.appName();
 
     // Register an API key here: https://code.google.com/apis/console
     // Note : This is the browser key instead of android key as Android key was generating Service config errors (403)
