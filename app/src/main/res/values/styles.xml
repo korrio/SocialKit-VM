@@ -8,6 +8,20 @@
         <item name="colorAccent">@color/accent</item>
     </style>
 
+    <!-- Base application theme. -->
+    <style name="AppThemeLight" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/indigo_700</item>
+        <item name="colorPrimaryDark">@color/indigo_700</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="AppThemeLight.WithoutActionBar">
+        <!-- Both of these are needed -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.WithoutActionBar">
         <!-- Both of these are needed -->
         <item name="windowActionBar">false</item>

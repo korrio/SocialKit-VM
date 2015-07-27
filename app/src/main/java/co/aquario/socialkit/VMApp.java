@@ -17,7 +17,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 import com.parse.PushService;
+import com.parse.SaveCallback;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
@@ -159,6 +161,31 @@ public class VMApp extends Application {
 
     }
 
+    public static void saveInstallation(int userId) {
+        final ParseInstallation installation = ParseInstallation
+                .getCurrentInstallation();
+
+        installation.put("user_id", userId);
+        installation.saveInBackground(new SaveCallback() {
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    System.out.println("ok");
+                    //deviceToken = installation.get("deviceToken").toString();
+                    //System.out.println(deviceToken);
+                } else {
+                    System.out.println("not ok" + e.getLocalizedMessage());
+                }
+            }
+        });
+    }
+
+    public static void removeInstallation(int userId) {
+        final ParseInstallation installation = ParseInstallation
+                .getCurrentInstallation();
+
+        installation.deleteInBackground();
+    }
+
     public PrefManager getPrefManager() {
         return mPref;
     }
@@ -168,7 +195,8 @@ public class VMApp extends Application {
         mPref.clear().commit();
         boolean isLogin = mPref.isLogin().getOr(false);
         PushService
-                .unsubscribe(context, "EN");
+                .unsubscribe(getAppContext(), "EN");
+        VMApp.removeInstallation(Integer.parseInt(mPref.userId().getOr("0")));
 //        ParsePush.unsubscribeInBackground("EN");
         Log.e("isLogin",":::"+isLogin);
     }

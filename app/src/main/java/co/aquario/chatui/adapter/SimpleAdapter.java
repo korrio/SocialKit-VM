@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import co.aquario.chatui.model.User;
 import co.aquario.chatui.model.friendmodel.FriendsModel;
-import co.aquario.chatui.model.friendmodel.User;
 import co.aquario.chatui.utils.RoundedTransformation;
 import co.aquario.socialkit.R;
 

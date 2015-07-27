@@ -56,7 +56,7 @@ public class MessageAdapter extends BaseAdapter {
 
 	@Override
 	public int getItemViewType(int position) {
-		return this.mMessages.get(position).getIsSend() ? 1 : 0;
+		return this.mMessages.get(position).getIsSender() ? 1 : 0;
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public class MessageAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		final Message m = mMessages.get(position);
-		boolean isSend = m.getIsSend();
+		boolean isSend = m.getIsSender();
 
 		ViewHolder viewHolder = null;
 		if (convertView == null) {
@@ -139,7 +139,7 @@ public class MessageAdapter extends BaseAdapter {
 			viewHolder.textTextView.setVisibility(View.VISIBLE);
 			viewHolder.photoImageView.setVisibility(View.GONE);
 			viewHolder.faceImageView.setVisibility(View.GONE);
-			if(m.getIsSend()){
+			if(m.getIsSender()){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -185,13 +185,13 @@ public class MessageAdapter extends BaseAdapter {
                    // String imageUrl = "https://chat.vdomax.com:1314" + dataObj.optString("url");
                     String imageUrl = dataObj.optString("thumb");
                     Log.e("myurl", imageUrl);
-                    if(imageUrl != null && imageUrl.equals(""))
-                    Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
+                    if(imageUrl != null && !imageUrl.equals(""))
+                        Picasso.with(mContext).load(imageUrl).resize(400, 400).into(viewHolder.photoImageView);
                 } else if((dataObj.optString("fileType").equals("video/mp4") || dataObj.optString("fileType").equals("video/quicktime")) && dataObj.optString("thumb") != null) {
                     String imageUrl = dataObj.optString("thumb");
                     Log.e("myurl", imageUrl);
-                    if(imageUrl != null && imageUrl.equals(""))
-                    Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
+                    if(imageUrl != null && !imageUrl.equals(""))
+                        Picasso.with(mContext).load(imageUrl).resize(400, 400).into(viewHolder.photoImageView);
                 } else {
                     // from local photo taken or picked
                     String uriStr = dataObj.optString("imageUriPhoto");
@@ -199,7 +199,9 @@ public class MessageAdapter extends BaseAdapter {
                     try {
                         imageUri = new URI(uriStr);
                         Bitmap myImg = BitmapFactory.decodeFile(imageUri.getPath());
-                        viewHolder.photoImageView.setImageBitmap(myImg);
+                        if(imageUri.getPath() != null && !imageUri.getPath().equals(""))
+                            Picasso.with(mContext).load(imageUri.getPath()).resize(400,400).into(viewHolder.photoImageView);
+                        //viewHolder.photoImageView.setImageBitmap(myImg);
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
                     }
@@ -209,7 +211,7 @@ public class MessageAdapter extends BaseAdapter {
             }
 
 
-			if(m.getIsSend() ){
+			if(m.getIsSender() ){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -247,13 +249,11 @@ public class MessageAdapter extends BaseAdapter {
 			//int resId = mContext.getResources().getIdentifier(m.getContent(), "drawable", mContext.getPackageName());
 			//viewHolder.faceImageView.setImageResource(resId);
 
-
-
 			if(dataObj != null && !dataObj.optString("tattooUrl").equals(""))
 				Picasso.with(mContext).load(dataObj.optString("tattooUrl")).into(viewHolder.faceImageView);
 
 			
-			if(m.getIsSend()){
+			if(m.getIsSender()){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.faceImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -291,8 +291,8 @@ public class MessageAdapter extends BaseAdapter {
 
                 if(dataObj.optString("imageUriVdoThumb") == null) {
                     String imageUrl = dataObj.optString("thumb");
-                    if(imageUrl != null && imageUrl.equals(""))
-                    Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
+                    if(imageUrl != null && !imageUrl.equals(""))
+                        Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
                 } else {
                     try {
                         URI imageUri = new URI(dataObj.optString("imageUriVdoThumb"));
@@ -344,7 +344,7 @@ public class MessageAdapter extends BaseAdapter {
                     String regionName = dataObj.optString("regionName");
                     String mapImage = "https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=600x400&maptype=roadmap&markers=color:blue%7Clabel:"+regionName+"%7C"+lat+","+lon;
 
-                    Picasso.with(mContext).load(mapImage).into(viewHolder.photoImageView);
+                    Picasso.with(mContext).load(mapImage).resize(400, 400).into(viewHolder.photoImageView);
                 }
 
 

@@ -3,7 +3,6 @@ package co.aquario.chatapp.fragment;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -69,7 +68,7 @@ import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
-import co.aquario.chatapp.CallActivityLauncher;
+import co.aquario.chatapp.ChatActivity;
 import co.aquario.chatapp.event.request.ConversationGroupEvent;
 import co.aquario.chatapp.event.request.ConversationOneToOneEvent;
 import co.aquario.chatapp.event.request.HistoryEvent;
@@ -82,17 +81,23 @@ import co.aquario.chatapp.picker.LocationPickerIntent;
 import co.aquario.chatapp.picker.MusicPickerIntent;
 import co.aquario.chatapp.picker.YoutubePickerIntent;
 import co.aquario.chatapp.util.ChatUtil;
+import co.aquario.chatui.ChatUIActivity;
+import co.aquario.chatui.event.GetUserEvent;
+import co.aquario.chatui.event.GetUserEventSuccess;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.fragment.ExoSurfaceFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.search.soundcloud.SoundCloudService;
 import co.aquario.socialkit.search.youtube.OpenYouTubePlayerActivity;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PrefManager;
-import co.aquario.socialkit.widget.EndlessListOnScrollListener;
+import co.aquario.socialkit.util.Utils;
+import co.aquario.socialkit.widget.EndlessListOnScrollTopListener;
 import me.iwf.photopicker.PhotoPagerActivity;
+import me.iwf.photopicker.PhotoPickerActivity;
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -198,6 +203,9 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             mChatType = getArguments().getInt("CHAT_TYPE", 0);
             mCid = getArguments().getInt("CONVERSATION_ID", 0);
         }
+
+        ApiBus.getInstance().postQueue(new GetUserEvent(mPartnerId));
+
         mPref = VMApp.mPref;
 
         mName = mPref.name().getOr("null");
@@ -224,12 +232,19 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         String jsonObjStr = "{'roomName':'" + roomName + "'}";
         switch (item.getItemId()) {
             case R.id.action_audio_call:
-                attemptSendMessageToServer(Message.MSG_TYPE_AUDIO_CALL,"Video Calling",jsonObjStr);
-                CallActivityLauncher.startCallActivity(getActivity(), roomName, false);
+                Message audioMsg = new Message(Message.MSG_TYPE_AUDIO_CALL, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", roomName, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                listMessages.add(audioMsg);
+
+                attemptSendMessageToServer(Message.MSG_TYPE_AUDIO_CALL, "Video Calling", jsonObjStr);
+                ChatUIActivity.connectToRoom(getActivity(), roomName, false);
                 return true;
             case R.id.action_video_call:
+                Message videoMsg = new Message(Message.MSG_TYPE_VIDEO_CALL, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", roomName, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                listMessages.add(videoMsg);
+
+
                 attemptSendMessageToServer(Message.MSG_TYPE_VIDEO_CALL,"Voice Calling",jsonObjStr);
-                CallActivityLauncher.startCallActivity(getActivity(),roomName,true);
+                ChatUIActivity.connectToRoom(getActivity(), roomName, true);
                 return true;
             case R.id.action_view_contact:
                 NewProfileActivity.startProfileActivity(getActivity(),mPartnerId + "");
@@ -289,7 +304,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             Intent intent = new Intent(getActivity(), PhotoPagerActivity.class);
 
                             ArrayList<String> urls = new ArrayList<>();
-                            String imageUrl = "https://chat.vdomax.com:1314" + dataObj.optString("url");
+                            String imageUrl = dataObj.optString("url");
                             urls.add(0, imageUrl);
 
                             // view all images in chat (not complete)
@@ -314,6 +329,20 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             intent.putStringArrayListExtra("photos", urls);
 
                             getActivity().startActivity(intent);
+                        } else {
+
+                            String clipPath = dataObj.optString("url");
+
+                            Bundle data2 = new Bundle();
+                            data2.putString("PATH", clipPath);
+
+                            ExoSurfaceFragment surfaceFragment;
+                            surfaceFragment = new ExoSurfaceFragment();
+                            surfaceFragment.setArguments(data2);
+
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction().replace(R.id.sub_container, surfaceFragment, "VIDEO_PLAYER")
+                                    .addToBackStack(null).commit();
                         }
 
                         break;
@@ -333,7 +362,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     case 32:
                         // play soundcloud
                         Log.e("playTrack.params", dataObj.optString("trackUrl") + " " + dataObj.optString("trackTitle"));
-                        playTrack(dataObj.optString("trackUrl"), dataObj.optString("trackTitle"),dataObj.optString("trackImage"));
+                        playTrack(dataObj.optString("trackUrl"), dataObj.optString("trackTitle"), dataObj.optString("trackImage"));
                         break;
                     case 4:
                         // intent audio call
@@ -350,7 +379,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             }
         });
 
-        listView.setOnScrollListener(new EndlessListOnScrollListener() {
+
+
+//        listView.setSelectionAfterHeaderView();
+
+        listView.setOnScrollListener(new EndlessListOnScrollTopListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 if (!loading) {
@@ -363,6 +396,25 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     }
 
     boolean loading = false;
+
+    File imagePathToFile(Uri selectedImageUri, String path) {
+        Bitmap bm;
+        BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+
+        bm = BitmapFactory.decodeFile(path, btmapOptions);
+        OutputStream fOut = null;
+        File file = new File(path);
+        try {
+            fOut = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG, 70, fOut);
+            fOut.flush();
+            fOut.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -382,36 +434,23 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             // choose photo and video from Dialog
             if (requestCode == REQUEST_TAKE_PHOTO) {
 
-
-                Bitmap bm;
-                BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-
-                //tempFile = f;
                 String path = f.getAbsolutePath();
-                bm = BitmapFactory.decodeFile(path, btmapOptions);
-
-                //int rotate = getCameraPhotoOrientation(path);
-
-
-
-                OutputStream fOut = null;
-                File file = new File(path);
-                try {
-                    fOut = new FileOutputStream(file);
-                    bm.compress(Bitmap.CompressFormat.JPEG, 70, fOut);
-                    fOut.flush();
-                    fOut.close();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Uri selectedImageUri = Uri.parse(path);
+                File file = imagePathToFile(selectedImageUri, path);
 
                 // String fileType= "image/jpeg";
-
                 String dataJson = "{'imageUriPhoto':'" + path + "'" +
                         //",'fileType':'"+fileType+"'" +
                         "}";
-                Message message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                Message message = new Message(
+                        Message.MSG_TYPE_PHOTO,
+                        Message.MSG_STATE_SENDING,
+                        mUsername, mAvatarUrl,
+                        "", "", "",
+                        dataJson,
+                        true,
+                        false,
+                        new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
                 listMessages.add(message);
                 //uploadFile(file);
@@ -421,34 +460,16 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
                 Uri selectedImageUri = data.getData();
 
-                Bitmap bm;
-                BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-
-                //tempFile = f;
-                //String path = f.getAbsolutePath();
-                String path = getRealPathFromURIForKitKat(getActivity(), selectedImageUri);
-
-                bm = BitmapFactory.decodeFile(path, btmapOptions);
-
-
-                OutputStream fOut = null;
-                File file = new File(path);
-                try {
-                    fOut = new FileOutputStream(file);
-                    bm.compress(Bitmap.CompressFormat.JPEG, 70, fOut);
-                    fOut.flush();
-                    fOut.close();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                String path = getRealPathFromURI(getActivity(), selectedImageUri);
+                File file = imagePathToFile(selectedImageUri, path);
 
                 String fileType= "image/jpeg";
-
                 String dataJson = "{'imageUriPhoto':'" + path + "'" +
                         //",'fileType':'"+fileType+"'" +
                         "}";
-                Message message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                Message message = new Message(Message.MSG_TYPE_PHOTO,
+                        Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "",
+                        dataJson, true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
                 listMessages.add(message);
 
@@ -464,7 +485,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     if (vdoThumb != null)
                         dataJson = "{'imageUriVdoThumb':'" + vdoThumb + "'}";
 
-                    Message sendingMessage = new Message(Message.MSG_TYPE_CLIP, Message.MSG_STATE_SENDING, "", mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                    Message sendingMessage = new Message(Message.MSG_TYPE_CLIP,
+                            Message.MSG_STATE_SENDING, "",
+                            mAvatarUrl, "", "", "",
+                            dataJson, true, false,
+                            new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                     listMessages.add(sendingMessage);
 
 
@@ -482,7 +507,10 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     if (vdoThumb != null)
                         dataJson = "{'imageUriVdoThumb':'" + vdoThumb + "'}";
 
-                    Message sendingMessage = new Message(Message.MSG_TYPE_CLIP, Message.MSG_STATE_SENDING, "", mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                    Message sendingMessage = new Message(Message.MSG_TYPE_CLIP,
+                            Message.MSG_STATE_SENDING, "", mAvatarUrl, "", "", "",
+                            dataJson,
+                            true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                     listMessages.add(sendingMessage);
 
                     File clip = new File(getRealPathFromURI(getActivity(), mFileURI));
@@ -491,19 +519,27 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
             }
 
-//            List<String> photos = null;
-//            // choose photo from PhotoPickerActivity
-//            if (requestCode == 100) {
-//                if (data != null) {
-//                    photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
-//                    for (int i = 0; i < photos.size(); i++) {
-//                        String dataJson = "{'imageUri':'" + photos.get(i) + "'}";
-//                        Message message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SUCCESS, mUsername, mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
-//
-//                        listMessages.add(message);
-//                    }
-//                }
-//            } else
+            List<String> photos = null;
+            // choose photo from PhotoPickerActivity
+            if (requestCode == 100) {
+                if (data != null) {
+                    photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
+                    for (int i = 0; i < photos.size(); i++) {
+                        String dataJson = "{'imageUriPhoto':'" + photos.get(i) + "'}";
+                        Message message = new Message(Message.MSG_TYPE_PHOTO,
+                                Message.MSG_STATE_SUCCESS, mUsername, mAvatarUrl, "", "", "",
+                                dataJson, true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+
+                        Uri selectedImageUri = Uri.parse(photos.get(i));
+
+                        String path = getRealPathFromURI(getActivity(), selectedImageUri);
+                        File file = imagePathToFile(selectedImageUri, path);
+
+                        listMessages.add(message);
+                        uploadFileRetrofit(file, Message.MSG_TYPE_PHOTO);
+                    }
+                }
+            } else
             if (requestCode == 200 || requestCode == 201) {
 
                 if(data != null) {
@@ -513,11 +549,6 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     String dataJson = "";
                     if (vdoThumb != null)
                         dataJson = "{'imageUrl':'" + vdoThumb + "'}";
-
-                    Log.e("thumbthumb", vdoThumb);
-
-                    ContentResolver cR = getActivity().getContentResolver();
-                    String mime = cR.getType(mFileURI);
 
                     Message message = new Message(Message.MSG_TYPE_CLIP, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
@@ -530,13 +561,6 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 String trackUri = data.getStringExtra("soundcloud_uri");
                 String trackTitle = data.getStringExtra("soundcloud_title");
                 String artwork_url = data.getStringExtra("artwork_url");
-                //Location location = data.getParcelableExtra("LOCATION");
-
-//            {"trackUrl":
-//                "https://api.soundcloud.com/tracks/99558317",
-//                        "trackTitle":"Po Some Mo Up by Baby E ft. Capo & Juicy J",
-//                    "trackId":99558317,
-//                    "trackImage":"https://i1.sndcdn.com/artworks-000052101374-wh0dp4-large.jpg"}
 
                 String dataJson = "{'trackUrl':'" + trackUri + "'" +
                         ",'imageUrl':'" + artwork_url + "'" +
@@ -607,7 +631,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     @Subscribe
     public void onGetConversationId(ConversationEventSuccess event) {
         mCid = event.mCid;
-        setChatSubTitle(mUserId + ":" + mPartnerId + " in " + mCid);
+
+        //setChatSubTitle(mUserId + ":" + mPartnerId + " in " + mCid);
 
         Log.i("mCid", mCid + "");
         Log.i("chatType", mChatType + "");
@@ -619,7 +644,6 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     @Subscribe
     public void onGetHistory(HistoryEventSuccess event) {
         Log.e("HEY666", event.content.size() + "");
-
 
         if (event.content.size() > 0)
             loadHistory(event.content);
@@ -980,26 +1004,28 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             @Override
             public void success(UploadCallback cb, Response response) {
                 Log.e("Upload", "success " + cb.toString());
-                String imageUrl = cb.getThumb();
-
                 String dataJson;
-                if(cb.getMimetype().equals("image/jpeg") || cb.getMimetype().equals("image/png") || cb.getMimetype().equals("image/gif"))
-                    dataJson = "{'url':'" + cb.getFull_path() + "'" +
-                            ",'fileName':'" + cb.getName() + "'" +
-                            ",'id':'" + cb.getId() + "'" +
-                            ",'active':'" + cb.getActive() + "'" +
-                            ",'thumb':'" + cb.getThumb() + "'" +
-                            ",'fileType':'" + cb.getMimetype() + "'}";
-                else
-                    dataJson = "{'url':'" + cb.getFull_path() + "'" +
-                            ",'fileName':'" + cb.getName() + "'" +
-                            ",'id':'" + cb.getId() + "'" +
-                            ",'active':'" + cb.getActive() + "'" +
-                            ",'thumb':'" + cb.getThumb() + "'" +
-                            ",'fileType':'" + cb.getMimetype() + "'}";
+                if (cb.getFileType() != null) {
+                    if (cb.getFileType().equals("image/jpeg") || cb.getFileType().equals("image/png") || cb.getFileType().equals("image/gif"))
+                        dataJson = "{'url':'" + cb.getFull_path() + "'" +
+                                ",'fileName':'" + cb.getFileName() + "'" +
+                                ",'id':'" + cb.getId() + "'" +
+                                ",'active':'" + cb.getActive() + "'" +
+                                ",'thumb':'" + cb.getThumb() + "'" +
+                                ",'fileType':'" + cb.getFileType() + "'}";
+                    else
+                        dataJson = "{'url':'" + cb.getFull_path() + "'" +
+                                ",'fileName':'" + cb.getFileName() + "'" +
+                                ",'id':'" + cb.getId() + "'" +
+                                ",'active':'" + cb.getActive() + "'" +
+                                ",'thumb':'" + cb.getThumb() + "'" +
+                                ",'fileType':'" + cb.getFileType() + "'}";
 
 
-                attemptSendMessageToServer(msgType,"",dataJson);
+                    attemptSendMessageToServer(msgType, "", dataJson);
+                } else {
+                    Utils.showToast("UploadCallback is null");
+                }
             }
 
             @Override
@@ -1487,6 +1513,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     }
 
     public void setChatTitle(String title) {
+
 //        ApiBus.getInstance().postQueue(new TitleEvent(title));
 //        if(((BaseActivity) getActivity()).getToolbar() != null) {
 //            ((BaseActivity) getActivity()).getToolbar().setTitle(title);
@@ -1577,5 +1604,17 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
+    }
+
+    @Subscribe public void onUpdateUserProfile(GetUserEventSuccess event) {
+
+        Toolbar toolbar = ((ChatActivity) getActivity()).getToolbar();
+        if(toolbar != null) {
+            if(event.userMe.getUser() != null) {
+                toolbar.setTitle(event.userMe.getUser().getName());
+                toolbar.setSubtitle("@" + event.userMe.getUser().getUsername());
+            }
+        }
+
     }
 }

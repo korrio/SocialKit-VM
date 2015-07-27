@@ -32,6 +32,8 @@ public class PushManage extends Activity {
 	// message type
 	public static int TYPES_likeFeed = 100;
 	public static int TYPES_commentFeed = 101;
+    public static int TYPES_shareFeed = 102;
+    public static int TYPES_reportFeed = 103;
 	public static int TYPES_liveNow = 200;
 	public static int TYPES_followedYou = 300;
 	public static int TYPES_chatMessage = 500;

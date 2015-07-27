@@ -116,7 +116,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
         ActivityResultBus.getInstance().register(this);
         ApiBus.getInstance().register(this);
-        getToolbar().setTitle("VDOMAX");
+        //getToolbar().setTitle("VDOMAX");
         //getToolbar().setTitle("@" + VMApplication.get(mContext).getPrefManager().username());
     }
 

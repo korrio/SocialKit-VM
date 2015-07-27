@@ -12,7 +12,7 @@ import java.util.List;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.model.Photo;
-import co.aquario.socialkit.widget.SquareImageView;
+import co.aquario.socialkit.view.SquareImageView;
 
 import static android.widget.ImageView.ScaleType.CENTER_CROP;
 

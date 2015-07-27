@@ -761,12 +761,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                     if(Integer.parseInt(nShare.getText().toString()) == post.shareCount && !post.isShared) {
                         oldShareCount = post.shareCount;
                         oldShareCount++;
-                        btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share,0,0,0);
+                        //btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share,0,0,0);
                     }
                     else {
                         oldShareCount = Integer.parseInt(nShare.getText().toString());
                         oldShareCount--;
-                        btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share_blue,0,0,0);
+                        //btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share_blue,0,0,0);
                     }
                     nShare.setText(oldShareCount + "");
                     if (mItemShare != null) {

@@ -17,6 +17,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,7 +63,6 @@ import co.aquario.chatapp.ChatActivity;
 import co.aquario.chatapp.picker.MusicPickerIntent;
 import co.aquario.chatapp.picker.YoutubePickerActivity;
 import co.aquario.socialkit.BaseActivity;
-import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.TakePhotoActivity2;
 import co.aquario.socialkit.VMApp;
@@ -85,6 +86,7 @@ import co.aquario.socialkit.event.RefreshEvent;
 import co.aquario.socialkit.event.UnfollowUserSuccessEvent;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
+import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.pager.HomeViewPagerFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
@@ -115,6 +117,7 @@ public class FeedFragment extends BaseFragment {
 
     int pShare;
     View myHeader;
+    View rootView;
     ImageView avatar;
     ImageView cover;
     TextView titleTv;
@@ -176,6 +179,104 @@ public class FeedFragment extends BaseFragment {
         return mFragment;
     }
 
+    Toolbar toolbar;
+    void setupToolbar() {
+        toolbar = ((BaseActivity) getActivity()).getToolbar();
+        if(toolbar != null && getActivity().getLocalClassName().equals("MainActivity")) {
+            toolbar.setTitle("VDOMAX");
+            toolbar.inflateMenu(R.menu.menu_main);
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_search:
+                            mSearchCheck = true;
+                            break;
+                        case R.id.menu_sort_all:
+                            isRefresh = true;
+                            TYPE = "";
+                            break;
+                        case R.id.menu_sort_text:
+                            isRefresh = true;
+                            TYPE = "text";
+                            break;
+                        case R.id.menu_sort_photo:
+                            isRefresh = true;
+                            TYPE = "photo";
+                            break;
+                        case R.id.menu_sort_video:
+                            isRefresh = true;
+                            TYPE = "clip";
+                            break;
+                        case R.id.menu_sort_youtube:
+                            isRefresh = true;
+                            TYPE = "youtube";
+                            break;
+                        case R.id.menu_sort_soundcloud:
+                            isRefresh = true;
+                            TYPE = "soundcloud";
+                            break;
+                        case R.id.menu_sort_place:
+                            isRefresh = true;
+                            TYPE = "place";
+                            break;
+                        case R.id.menu_sort_live:
+                            isRefresh = true;
+                            TYPE = "live";
+                            break;
+
+                        case R.id.action_message:
+                            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(pref.userId().getOr("0")), Integer.parseInt(userId), 0);
+                            break;
+                        case R.id.action_edit_profile:
+                            SettingFragment fragment = SettingFragment.newInstance(userId);
+                            FragmentManager manager = getActivity().getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.add(R.id.sub_container, fragment).addToBackStack(null);
+                            transaction.commit();
+                            break;
+
+
+                        default:
+                            //isRefresh = true;
+                            break;
+                    }
+                    //myTitanicTextView.setVisibility(View.VISIBLE);
+                    switch (item.getItemId()) {
+                        case R.id.action_search:
+
+                        case R.id.menu_sort_all:
+
+                        case R.id.menu_sort_text:
+
+                        case R.id.menu_sort_photo:
+
+                        case R.id.menu_sort_video:
+
+                        case R.id.menu_sort_youtube:
+
+                        case R.id.menu_sort_soundcloud:
+
+                        case R.id.menu_sort_place:
+
+                        case R.id.menu_sort_live:
+                            list.clear();
+                            bAdapter.notifyDataSetChanged();
+                            adapter.notifyDataSetChanged();
+                            if(!isHashtag)
+                                swipeLayout.setRefreshing(true);
+                            ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+                            break;
+                    }
+
+
+                    return false;
+                }
+            });
+        }
+
+    }
+
     public FeedFragment() {
         setHasOptionsMenu(true);
     }
@@ -220,6 +321,7 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupToolbar();
         if(!isHashtag) {
             if (!isHomeTimeline) {
                 if (Utils.isNumeric(userId))
@@ -253,64 +355,7 @@ public class FeedFragment extends BaseFragment {
                 .start();
     }
 
-    @Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
-        View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
-
-        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
-
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                isRefresh = true;
-                ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
-
-            }
-        });
-
-        swipeLayout.setRefreshing(true);
-
-        fabLayout = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
-
-        // animation
-        rootViewAnimation = rootView.findViewById(R.id.root_view);
-        if (savedInstanceState == null) {
-            swipeLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    swipeLayout.getViewTreeObserver().removeOnPreDrawListener(this);
-                    startIntroAnimation();
-                    return true;
-                }
-            });
-        }
-
-        //mToolbar = ((MainActivity) getActivity()).getToolbar();
-        //mToolbarContainer = mToolbar;
-
-        //mToolbarHeight = mToolbar.getHeight();
-        // Create your views, whatever they may be
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvFeed);
-        mRecyclerView.setHasFixedSize(true);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-
-        myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.fragment_profile, mRecyclerView, false);
-
-        setEmptyText(getString(R.string.no_story));
-
-//        myTitanicTextView = (TitanicTextView) rootView.findViewById(R.id.titanic_tv);
-//        //myTitanicTextView.setTypeface(Typefaces.get(getActivity(), "Satisfy-Regular.ttf"));
-//
-//        titanic = new Titanic();
-//        titanic.start(myTitanicTextView);
-//        myTitanicTextView.setVisibility(View.VISIBLE);
-
+    void initSCMediaPlayer() {
         mPlayerToolbar = (Toolbar) rootView.findViewById(R.id.player_toolbar);
         mPlayerStateButton = (ImageView)rootView.findViewById(R.id.player_state);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.player_progress);
@@ -340,6 +385,68 @@ public class FeedFragment extends BaseFragment {
                 mPlayerStateButton.setImageResource(R.drawable.ic_play);
             }
         });
+    }
+
+    @Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
+        this.rootView = rootView;
+
+        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                isRefresh = true;
+                ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+
+            }
+        });
+
+        swipeLayout.setRefreshing(true);
+
+        fabLayout = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
+
+        // animation
+        rootViewAnimation = rootView.findViewById(R.id.root_view);
+        if (savedInstanceState == null) {
+            swipeLayout.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    swipeLayout.getViewTreeObserver().removeOnPreDrawListener(this);
+                    startIntroAnimation();
+                    return true;
+                }
+            });
+        }
+
+        //mToolbar = ((BaseActivity) getActivity()).getToolbar();
+        //mToolbarContainer = mToolbar;
+
+        //mToolbarHeight = mToolbar.getHeight();
+        // Create your views, whatever they may be
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvFeed);
+        mRecyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.fragment_profile, mRecyclerView, false);
+
+        setEmptyText(getString(R.string.no_story));
+
+//        myTitanicTextView = (TitanicTextView) rootView.findViewById(R.id.titanic_tv);
+//        //myTitanicTextView.setTypeface(Typefaces.get(getActivity(), "Satisfy-Regular.ttf"));
+//
+//        titanic = new Titanic();
+//        titanic.start(myTitanicTextView);
+//        myTitanicTextView.setVisibility(View.VISIBLE);
+
+        initSCMediaPlayer();
 
 
         postLive = (FloatingActionButton) fabLayout.findViewById(R.id.action_live_stream);
@@ -384,7 +491,7 @@ public class FeedFragment extends BaseFragment {
         postPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //((MainActivity) getActivity()).buildPhotoDialog();
+                //((BaseActivity) getActivity()).buildPhotoDialog();
                 int[] startingLocation = new int[2];
                 v.getLocationOnScreen(startingLocation);
                 startingLocation[0] += v.getWidth() / 2;
@@ -478,11 +585,9 @@ public class FeedFragment extends BaseFragment {
                     if ((Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE) && !isFabHide) {
                         isFabHide = true;
                         hideFloatingButton();
-                        //showMenuBar();
                     } else if ((Utils.pxToDp((int) dist, getActivity()) > DISTANCE) && isFabHide) {
                         isFabHide = false;
                         showFloatingButton();
-                        //hideMenuBar();
                     }
 
                     if ((isFabHide && (Utils.pxToDp((int) dist, getActivity()) <= -DISTANCE))
@@ -508,8 +613,6 @@ public class FeedFragment extends BaseFragment {
             mRecyclerView.setAdapter(adapter);
         }
 
-
-
         if(Utils.isNumeric(userId) && !isHashtag)
             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
 
@@ -521,23 +624,25 @@ public class FeedFragment extends BaseFragment {
     }
 
     @Subscribe public void onPostShareSuccess(PostShareSuccessEvent event) {
-        Utils.showToast("Post shared to your timeline");
+        Utils.showToast("Post shared to your VDOMAX");
     }
 
     public void buildShare2Dialog() {
-        final CharSequence[] items = {"Share to Facebook", "Share to VDOMAX",
+        final CharSequence[] items = {"Facebook", "VDOMAX",
                 "Cancel"};
 
+        final String postId = list.get(pShare).id;
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        //builder.setTitle("Add Video!");
+        builder.setTitle("Share to");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
                 if (i == 0) {
-                    shareToFacebook(pShare + "");
+                    shareToFacebook(postId + "");
                     //recordVideo();
                 } else if (i == 1) {
-                    ApiBus.getInstance().postQueue(new PostShareEvent(userId, pShare + ""));
+                    ApiBus.getInstance().postQueue(new PostShareEvent(userId, postId + ""));
                     //pickVideo();
                 } else if (i == 2) {
                     dialog.dismiss();
@@ -551,10 +656,10 @@ public class FeedFragment extends BaseFragment {
 
     private void shareToFacebook(String postId){
 
-        String url = "https://graph.facebook.com/me/photos";
+        String url = "https://graph.facebook.com/me/feed";
 
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("message", "Message from the Universe");
+        params.put("message", "กำลังเล่นสนุกอยู่ที่ VDOMAX (Live Streaming) https://goo.gl/jBF5cI");
         //params.put("link","https://www.vdomax.com/story/16693");
         //https://www.vdomax.com/story/195854
         params.put("link","https://www.vdomax.com/story/" + postId);
@@ -638,7 +743,6 @@ public class FeedFragment extends BaseFragment {
         AnimatorSet animSet = new AnimatorSet();
 
         HomeViewPagerFragment fragment = (HomeViewPagerFragment) getParentFragment();
-        Toolbar toolbar = ((MainActivity) getActivity()).getToolbar();
 
         ObjectAnimator anim1 = ObjectAnimator.ofFloat(fragment.mSlidingTabLayout
                 , View.TRANSLATION_Y, 0);
@@ -658,7 +762,6 @@ public class FeedFragment extends BaseFragment {
         AnimatorSet animSet = new AnimatorSet();
 
         HomeViewPagerFragment fragment = (HomeViewPagerFragment) getParentFragment();
-        Toolbar toolbar = ((MainActivity) getActivity()).getToolbar();
 
         ObjectAnimator anim1 = ObjectAnimator.ofFloat(fragment.mSlidingTabLayout
                 , View.TRANSLATION_Y, -fragment.mSlidingTabLayout.getHeight());
@@ -702,6 +805,9 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+
+
 
        // myTitanicTextView.setVisibility(View.GONE);
 
@@ -804,22 +910,7 @@ public class FeedFragment extends BaseFragment {
         countFollower.setText(event.getCount().follower + "");
         countFriend.setText(event.getCount().friend + "");
 
-
-
         isFollowing = event.getUser().getIsFollowing();
-
-        /*
-        if (!userId.equals(pref.userId().getOr("0"))) {
-            if(isFollowing)
-                menu.findItem(R.id.action_follow).setTitle("FOLLOWING");
-            else
-                menu.findItem(R.id.action_follow).setTitle("+ FOLLOW");
-        }
-        */
-
-
-
-
         initButton(isFollowing, btnFollow);
 
         btnFollow.setOnClickListener(new View.OnClickListener() {
@@ -937,18 +1028,43 @@ public class FeedFragment extends BaseFragment {
     public void playTrack(String uri,String title) {
         mPlayerToolbar.setVisibility(View.VISIBLE);
 
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.stop();
-        }
-        mMediaPlayer.reset();
-        toggleProgressBar();
+        if(mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
+            mMediaPlayer.reset();
+            toggleProgressBar();
 
-        try {
-            mMediaPlayer.setDataSource(uri + "?client_id=" + SoundCloudService.CLIENT_ID);
-            mMediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            e.printStackTrace();
+            String url = uri + "?client_id=" + SoundCloudService.CLIENT_ID;
+
+            Log.e("souncloudUrl", url);
+
+            try {
+                mMediaPlayer.setDataSource(uri + "?client_id=" + SoundCloudService.CLIENT_ID);
+                mMediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            initSCMediaPlayer();
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
+            mMediaPlayer.reset();
+            toggleProgressBar();
+
+            String url = uri + "?client_id=" + SoundCloudService.CLIENT_ID;
+
+            Log.e("souncloudUrl", url);
+
+            try {
+                mMediaPlayer.setDataSource(uri + "?client_id=" + SoundCloudService.CLIENT_ID);
+                mMediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
 
     }
 

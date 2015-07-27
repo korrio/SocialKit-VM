@@ -60,8 +60,6 @@ import co.aquario.socialkit.util.Utils;
 
 public class LoginFragment extends BaseFragment {
 
-
-
     public PrefManager prefManager;
     private AQuery aq;
     private FacebookHandle handle;
@@ -246,6 +244,8 @@ public class LoginFragment extends BaseFragment {
             //ApiBus.getInstance().post(new LoadFbProfileEvent(profile,facebookToken));
             ApiBus.getInstance().post(new FbAuthEvent(facebookToken));
 
+
+
             Log.e("POSTED", "SENT POST");
         }
     }
@@ -271,8 +271,6 @@ public class LoginFragment extends BaseFragment {
         final ParseInstallation installation = ParseInstallation
                 .getCurrentInstallation();
 
-
-
         installation.put("user_id", Integer.parseInt(event.getLoginData().user.id));
         installation.saveInBackground(new SaveCallback() {
             public void done(ParseException e) {
@@ -285,6 +283,8 @@ public class LoginFragment extends BaseFragment {
                 }
             }
         });
+
+
 
         //Snackbar.with(getActivity().getApplicationContext()).text(event.getLoginData().token).show(getActivity());
 

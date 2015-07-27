@@ -5,45 +5,34 @@ package co.aquario.chatapp.model;
  */
 public class UploadCallback {
 
+
     /**
-     * extension : png
-     * id : 115147
-     * mimetype : image/png
-     * name : bk_item_pressed.png
-     * path : photos/2015/07/RMgku_115147_1276d43cb604e89c276793ae2667ccf5.png
+     * id : 116039
+     * fileType : image/png
+     * fileName : ScreenShot2015-07-26at10.25.53AM.png
      * active : 1
-     * full_path : http://chat.vdomax.com/photos/2015/07/RMgku_115147_1276d43cb604e89c276793ae2667ccf5.png
-     * thumb : http://chat.vdomax.com/photos/2015/07/RMgku_115147_1276d43cb604e89c276793ae2667ccf5_thumb.png
-     * url : photos/2015/07/RMgku_115147_1276d43cb604e89c276793ae2667ccf5
+     * full_path : http://chat.vdomax.com/photos/2015/07/ynBan_116039_266961938e316427507db4857da1be71.png
+     * thumb : http://chat.vdomax.com/photos/2015/07/ynBan_116039_266961938e316427507db4857da1be71_thumb.png
+     * url : photos/2015/07/ynBan_116039_266961938e316427507db4857da1be71.png
      */
-    private String extension;
     private int id;
-    private String mimetype;
-    private String name;
-    private String path;
+    private String fileType;
+    private String fileName;
     private int active;
     private String full_path;
     private String thumb;
     private String url;
 
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setMimetype(String mimetype) {
-        this.mimetype = mimetype;
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public void setActive(int active) {
@@ -62,24 +51,16 @@ public class UploadCallback {
         this.url = url;
     }
 
-    public String getExtension() {
-        return extension;
-    }
-
     public int getId() {
         return id;
     }
 
-    public String getMimetype() {
-        return mimetype;
+    public String getFileType() {
+        return fileType;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPath() {
-        return path;
+    public String getFileName() {
+        return fileName;
     }
 
     public int getActive() {
@@ -96,20 +77,5 @@ public class UploadCallback {
 
     public String getUrl() {
         return url;
-    }
-
-    @Override
-    public String toString() {
-        return "UploadCallback{" +
-                "extension='" + extension + '\'' +
-                ", id=" + id +
-                ", mimetype='" + mimetype + '\'' +
-                ", name='" + name + '\'' +
-                ", path='" + path + '\'' +
-                ", active=" + active +
-                ", full_path='" + full_path + '\'' +
-                ", thumb='" + thumb + '\'' +
-                ", url='" + url + '\'' +
-                '}';
     }
 }

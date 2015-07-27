@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -40,30 +39,64 @@ public class NewProfileActivity extends BaseActivity {
 
     PrefManager pref;
     Toolbar toolbar;
+    Activity mActivity;
 
     public static void startProfileActivity(Activity mActivity, String userId) {
         Intent i = new Intent(mActivity,NewProfileActivity.class);
-        i.putExtra("USER_ID",userId);
+        i.putExtra("USER_ID", userId);
         mActivity.startActivity(i);
     }
 
     void setupToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if(getSupportActionBar() != null) {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if(toolbar != null) {
             toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent backIntent = new Intent();
-                    //backIntent.setAction("")
-                    setResult(-1, backIntent);
-                    //startActivity(backIntent);
-                    finish();
+                    onBackPressed();
                 }
             });
+
+            toolbar.getMenu().clear();
+            if (!userId.equals(pref.userId().getOr("0"))) {
+                toolbar.inflateMenu(R.menu.menu_profile);
+            } else {
+                toolbar.inflateMenu(R.menu.menu_my_profile);
+            }
+
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_message:
+                            ChatActivity.startChatActivity(mActivity, Integer.parseInt(pref.userId().getOr("0")), Integer.parseInt(userId), 0);
+                            break;
+                        case R.id.action_edit_profile:
+                            SettingFragment fragment = SettingFragment.newInstance(userId);
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.add(R.id.sub_container, fragment).addToBackStack(null);
+                            transaction.commit();
+                            break;
+                        case android.R.id.home:
+                            finish();
+                            break;
+
+                        default:
+                            break;
+
+                    }
+                    return false;
+                }
+            });
+
+            //toolbar.getMenu().clear();
+
         }
+
+
     }
 
     @Override
@@ -76,7 +109,7 @@ public class NewProfileActivity extends BaseActivity {
         CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
         CustomActivityOnCrash.install(this);
 
-        setupToolbar();
+        mActivity = this;
 
         pref = getPref(getApplicationContext());
 
@@ -84,6 +117,8 @@ public class NewProfileActivity extends BaseActivity {
             userId = getIntent().getStringExtra("USER_ID");
         else
             userId = pref.userId().getOr("0");
+
+        setupToolbar();
 
         /*
         btnFollow = (Button) findViewById(R.id.btn_follow);
@@ -164,50 +199,6 @@ public class NewProfileActivity extends BaseActivity {
         }
 
 
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        if (!userId.equals(pref.userId().getOr("0"))) {
-            getMenuInflater().inflate(R.menu.menu_profile, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.menu_my_profile, menu);
-        }
-
-
-
-        return true;
-    }
-
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId()) {
-            case R.id.action_message:
-                ChatActivity.startChatActivity(this, Integer.parseInt(pref.userId().getOr("0")), Integer.parseInt(userId),0);
-                break;
-            case R.id.action_edit_profile:
-                SettingFragment fragment = SettingFragment.newInstance(userId);
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                transaction.add(R.id.sub_container, fragment).addToBackStack(null);
-                transaction.commit();
-                break;
-            case android.R.id.home:
-                this.finish();
-                break;
-
-            default:
-                break;
-
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter
@@ -301,8 +292,12 @@ public class NewProfileActivity extends BaseActivity {
     }
 
     @Subscribe public void onLoadProfile(GetUserProfileSuccessEvent event) {
-        toolbar.setTitle(event.getUser().name);
-        toolbar.setSubtitle("@" + event.getUser().username);
+        if(toolbar != null) {
+            toolbar.setTitle(event.getUser().name);
+            toolbar.setSubtitle("@" + event.getUser().username);
+
+        }
+
         Channel channel = new Channel(userId,event.getUser().name,event.getUser().username,event.getUser().getCoverUrl(),event.getUser().getAvatarUrl(),event.getUser().live,event.getUser().gender,event.getUser().online);
 
         if(event.getUser().isLive) {

@@ -276,12 +276,17 @@ public class PostYoutubeActivity extends Activity {
     public void uploadCb(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {
         Log.e("hahahaha", jo.toString(4));
+        Intent backIntent = new Intent(context, MainActivity.class
+        );
+        //setResult(-1, backIntent);
+        startActivity(backIntent);
+        finish();
         if(jo.optInt("status") == 200) {
-            Intent backIntent = new Intent(context, MainActivity.class
-            );
-            //setResult(-1, backIntent);
-            startActivity(backIntent);
-            finish();
+//            Intent backIntent = new Intent(context, MainActivity.class
+//            );
+//            //setResult(-1, backIntent);
+//            startActivity(backIntent);
+//            finish();
         }
 
     }

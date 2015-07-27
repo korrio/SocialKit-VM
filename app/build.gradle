@@ -9,8 +9,8 @@ android {
         applicationId "co.aquario.socialkit"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 101
+        versionName "1.0.1"
         multiDexEnabled true
     }
     buildTypes {
@@ -177,4 +177,6 @@ dependencies {
 
     compile 'cat.ereza:customactivityoncrash:1.1.0'
     compile 'com.flaviofaria:kenburnsview:1.0.6'
+
+    compile 'com.venmo.view.tooltip:tooltip:0.1@aar'
 }

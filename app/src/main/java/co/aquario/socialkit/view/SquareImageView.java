@@ -1,4 +1,4 @@
-package co.aquario.socialkit.widget;
+package co.aquario.socialkit.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

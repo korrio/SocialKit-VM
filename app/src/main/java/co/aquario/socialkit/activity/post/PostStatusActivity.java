@@ -41,9 +41,6 @@ import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 
-
-//
-
 public class PostStatusActivity extends Activity {
 
     String statusText;

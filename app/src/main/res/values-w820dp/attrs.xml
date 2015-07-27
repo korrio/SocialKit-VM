@@ -12,4 +12,12 @@
         <attr name="tint" format="reference|color"/>
     </declare-styleable>
 
+    <declare-styleable name="ParkedTextView">
+        <attr name="parkedText" format="string" />
+        <attr name="parkedHint" format="string" />
+        <attr name="parkedTextColor" format="string" />
+        <attr name="parkedHintColor" format="string" />
+        <attr name="parkedTextBold" format="boolean" />
+    </declare-styleable>
+
 </resources>

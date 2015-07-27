@@ -72,8 +72,7 @@ public class PostStatusActivity2 extends Activity {
     @InjectView(R.id.emoji_btn)
     public ImageView emojiButton;
 
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar;
+
 
     @OnClick(R.id.button_recent)
     public void onPost() {
@@ -83,11 +82,12 @@ public class PostStatusActivity2 extends Activity {
     String toUserId = "";
     boolean isMyHometimeline;
 
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
     void setupToolbar() {
         if(toolbar != null) {
 //            setSupportActionBar(toolbar);
 //            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//
 //            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.setTitle("Post status");
@@ -99,8 +99,6 @@ public class PostStatusActivity2 extends Activity {
                     onBackPressed();
                 }
             });
-
-
         }
     }
 

@@ -2,6 +2,7 @@ package co.aquario.socialkit.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +14,24 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.dd.processbutton.FlatButton;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.otto.Subscribe;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.event.LoginEvent;
+import co.aquario.socialkit.event.LoginSuccessEvent;
 import co.aquario.socialkit.event.RegisterEvent;
 import co.aquario.socialkit.event.RegisterFailedEvent;
 import co.aquario.socialkit.event.RegisterSuccessEvent;
+import co.aquario.socialkit.event.UpdateProfileEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.model.UserProfile;
+import co.aquario.socialkit.util.Utils;
 
 public class RegisterFragment extends BaseFragment {
 
@@ -63,10 +73,40 @@ public class RegisterFragment extends BaseFragment {
         }
     }
 
+    View rootView;
+
+    private Toolbar toolbar;
+    void setupToolbar() {
+        toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        if(toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setTitle("Register");
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getActivity().onBackPressed();
+                }
+            });
+
+
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_register, container, false);
+
+        this.rootView = rootView;
+        setupToolbar();
+
+
+
 
         etEmail = (MaterialEditText) rootView.findViewById(R.id.et_email);
         etUsername = (MaterialEditText) rootView.findViewById(R.id.et_username);
@@ -94,6 +134,8 @@ public class RegisterFragment extends BaseFragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String numeral = null;
+                checkedId = radioGroupGender.getCheckedRadioButtonId();
+
                 switch (checkedId) {
                     case R.id.selectMale:
                         numeral = "male";
@@ -103,7 +145,7 @@ public class RegisterFragment extends BaseFragment {
                         break;
 
                 }
-                Toast.makeText(getActivity().getApplicationContext(), "You selected the " + numeral + " radio button.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "You selected " + numeral, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -132,12 +174,62 @@ public class RegisterFragment extends BaseFragment {
     }
 
     @Subscribe public void onRegisterSuccess(RegisterSuccessEvent event) {
-        Toast.makeText(getActivity().getApplicationContext(),"Register Success",Toast.LENGTH_SHORT).show();
+        Utils.showToast("Register Success");
+        ApiBus.getInstance().post(new LoginEvent(etUsername.getText().toString().trim(),
+                etPassword.getText().toString().trim()));
+
+    }
+
+    @Subscribe
+    public void onLoginSuccess(LoginSuccessEvent event) {
+        VMApp.USER_TOKEN = event.getLoginData().token;
+        Log.e("ARAIWA", VMApp.USER_TOKEN);
+
+        prefManager
+                .name().put(event.getLoginData().user.name)
+                .username().put(event.getLoginData().user.username)
+                .userId().put(event.getLoginData().user.id)
+                .token().put(event.getLoginData().token)
+                .cover().put(event.getLoginData().user.cover)
+                .avatar().put(event.getLoginData().user.avatar)
+                .isLogin().put(true)
+                .commit();
+
+
+        final ParseInstallation installation = ParseInstallation
+                .getCurrentInstallation();
+
+        installation.put("user_id", Integer.parseInt(event.getLoginData().user.id));
+        installation.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                if (e == null) {
+                    System.out.println("Parse noti register ok");
+                    //deviceToken = installation.get("deviceToken").toString();
+                    //System.out.println(deviceToken);
+                } else {
+                    System.out.println("Parse noti register not ok: " + e.getLocalizedMessage());
+                }
+            }
+        });
+
+
+
+        //Snackbar.with(getActivity().getApplicationContext()).text(event.getLoginData().token).show(getActivity());
+
+        Log.e("VM_PROFILE", event.getLoginData().user.toString());
+
+        //UserProfile registeredUserProfile = event.getLoginData().user;
+
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.login_container, new RegisterSuccessFragment()).commit();
+
+        UserProfile user = event.getLoginData().user;
+        ApiBus.getInstance().post(new UpdateProfileEvent(user));
+
+        //getActivity().finish();
     }
 
     @Subscribe public void onRegisterFailed(RegisterFailedEvent event) {
-        Toast.makeText(getActivity().getApplicationContext(),event.msg,Toast.LENGTH_SHORT).show();
+        Utils.showToast(event.msg);
     }
 
 

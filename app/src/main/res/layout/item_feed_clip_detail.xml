@@ -102,6 +102,14 @@
 
         </RelativeLayout>
 
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/imageView10"
+            android:src="@drawable/ic_play"
+            android:layout_centerInParent="true"
+            android:background="@color/transparent"/>
+
     </RelativeLayout>
 
 </LinearLayout>

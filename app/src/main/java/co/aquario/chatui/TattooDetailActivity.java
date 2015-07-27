@@ -2,6 +2,7 @@ package co.aquario.chatui;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,16 +11,12 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
-
 import co.aquario.chatui.adapter.TattooStoreDetailAdapter;
 import co.aquario.chatui.model.TattooStore;
 import co.aquario.socialkit.R;
 
 public class TattooDetailActivity extends ActionBarActivity {
 
-
-    ArrayList<co.aquario.chatui.model.TattooStore> list = new ArrayList<co.aquario.chatui.model.TattooStore>();
 
     TattooStoreDetailAdapter adapterTattooStroe;
     ImageView sticker;
@@ -46,10 +43,23 @@ public class TattooDetailActivity extends ActionBarActivity {
         title_vdomax.setText(tattoo.getCreate_by_name());
         name_sticker.setText(tattoo.getItem_set_name());
 
+        String path = tattoo.getImageLogo();
+
+        //path = path + "&width=100&height=100&fill-to-fit=ffffff";
+
+        //path = path.replace("assets","imgd.php?src=assets");
+
+
+
+
+
+        Log.e("tattoopath", path);
+
         Picasso.with(getApplicationContext())
-                .load(tattoo.getImageLogo())
-                .fit().centerCrop()
+                .load(path)
                 .into(sticker);
+
+
 
         adapterTattooStroe = new TattooStoreDetailAdapter(getApplicationContext(),tattoo.getTitle_vdomax());
         gridView.setAdapter(adapterTattooStroe);

@@ -3,7 +3,7 @@
     android:id="@+id/fragment_container"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="co.aquario.chatui.fragment.FragmentTabhost.TattooStoreTop">
+    tools:context="co.aquario.chatui.fragment.TattooStoreFragment">
 
 
         <ListView

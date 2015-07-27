@@ -120,17 +120,14 @@
 
         <activity
             android:name=".service.ShowInviteConfPopUp"
-            android:label="@string/app_name"
             android:theme="@android:style/Theme.Holo.Light.Dialog" >
         </activity>
         <activity
             android:name=".service.ShowChatPopUp"
-            android:label="@string/app_name"
             android:theme="@android:style/Theme.Holo.Light.Dialog" >
         </activity>
         <activity
             android:name=".service.ShowCallPopUp"
-            android:label="@string/app_name"
             android:theme="@android:style/Theme.Holo.Light.Dialog" >
         </activity>
         <!--<activity-->
@@ -190,11 +187,12 @@
 
         <activity
             android:name="co.aquario.chatui.ChatUIActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.WithoutActionBar">
         </activity>
 
         <activity
-            android:name="co.aquario.chatui.TattooDetailActivity">
+            android:name="co.aquario.chatui.TattooDetailActivity"
+            android:theme="@style/AppThemeLight.WithoutActionBar">
         </activity>
 
         <activity

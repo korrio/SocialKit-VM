@@ -1,13 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#303030">
+
+    <include layout="@layout/tool_bar" />
+
+<LinearLayout
+
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:padding="16dp"
-    android:background="#252525"
     >
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView11"
+            android:src="@drawable/tt0101"/>
+
+
+        <co.aquario.socialkit.view.ParkedTextView
+            android:layout_marginLeft="16dp"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/parked_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_centerInParent="true"
+            android:textSize="24sp"
+            app:parkedText=" nice to meet you!"
+            app:parkedHint="Hello, "
+            app:parkedTextColor="FFFFFF"
+            app:parkedHintColor="CCCCCC"
+            app:parkedTextBold="true"
+            android:layout_gravity="center_vertical"/>
+
+
+    </LinearLayout>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/et_email"
@@ -88,7 +128,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/et_phone"
@@ -110,7 +151,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/et_otp"
@@ -140,6 +182,9 @@
 
     </LinearLayout>
 
+
+</LinearLayout>
+
     <LinearLayout
         android:id="@+id/btn_register"
         android:orientation="horizontal"
@@ -162,6 +207,4 @@
             android:layout_marginLeft="42dp"
             android:layout_marginRight="42dp" />
     </LinearLayout>
-
-
 </LinearLayout>

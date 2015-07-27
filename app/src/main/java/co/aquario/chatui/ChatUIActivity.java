@@ -1,6 +1,5 @@
 package co.aquario.chatui;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -52,7 +52,7 @@ import co.aquario.chatui.adapter.AddFriendAdapter;
 import co.aquario.chatui.adapter.SimpleAdapter;
 import co.aquario.chatui.event.GetUserEventSuccess;
 import co.aquario.chatui.event.retrofit.friend.GetFriendSuccessEvent;
-import co.aquario.chatui.fragment.TattooFragment;
+import co.aquario.chatui.fragment.FragmentTabhost.TattooFragment;
 import co.aquario.chatui.fragment.a.ContactViewPagerFragment;
 import co.aquario.chatui.fragment.a.ConversationViewPagerFragment;
 import co.aquario.chatui.fragment.addfriend.AddFriendByIdFragment;
@@ -71,11 +71,13 @@ public class ChatUIActivity extends AppCompatActivity {
 
     private static final int CONNECTION_REQUEST = 1;
 
-    @InjectView(R.id.textNavigationBar)
-    TextView textNavigationBar;
+
 
     @InjectView(R.id.navIconLeft)
     ImageView navIconLeft;
+
+    @InjectView(R.id.textNavigationBar)
+    TextView textNavigationBar;
 
     @InjectView(R.id.navIconRight)
     ImageView navIconRight;
@@ -99,56 +101,57 @@ public class ChatUIActivity extends AppCompatActivity {
     Activity mActivity;
     PrefManager mPref;
 
-    private SharedPreferences sharedPref;
-    private String keyprefVideoCallEnabled;
-    private String keyprefResolution;
-    private String keyprefFps;
-    private String keyprefVideoBitrateType;
-    private String keyprefVideoBitrateValue;
-    private String keyprefVideoCodec;
-    private String keyprefAudioBitrateType;
-    private String keyprefAudioBitrateValue;
-    private String keyprefAudioCodec;
-    private String keyprefHwCodecAcceleration;
-    private String keyprefNoAudioProcessingPipeline;
-    private String keyprefCpuUsageDetection;
-    private String keyprefDisplayHud;
-    private String keyprefRoomServerUrl;
-    private String keyprefRoom;
-    private String keyprefRoomList;
+    private static SharedPreferences sharedPref;
+    private static String keyprefVideoCallEnabled;
+    private static String keyprefResolution;
+    private static String keyprefFps;
+    private static String keyprefVideoBitrateType;
+    private static String keyprefVideoBitrateValue;
+    private static String keyprefVideoCodec;
+    private static String keyprefAudioBitrateType;
+    private static String keyprefAudioBitrateValue;
+    private static String keyprefAudioCodec;
+    private static String keyprefHwCodecAcceleration;
+    private static String keyprefNoAudioProcessingPipeline;
+    private static String keyprefCpuUsageDetection;
+    private static String keyprefDisplayHud;
+    private static String keyprefRoomServerUrl;
+    private static String keyprefRoom;
+    private static String keyprefRoomList;
 
     private static boolean commandLineRun = false;
     private static boolean loopback = false;
+
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+    void setupToolbar() {
+        if(toolbar != null) {
+//            setSupportActionBar(toolbar);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+//            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            toolbar.setTitle("VDOMAX:Chat");
+            //toolbar.setSubtitle("Contact");
+            toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get setting keys.
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        keyprefVideoCallEnabled = getString(R.string.pref_videocall_key);
-        keyprefResolution = getString(R.string.pref_resolution_key);
-        keyprefFps = getString(R.string.pref_fps_key);
-        keyprefVideoBitrateType = getString(R.string.pref_startvideobitrate_key);
-        keyprefVideoBitrateValue = getString(R.string.pref_startvideobitratevalue_key);
-        keyprefVideoCodec = getString(R.string.pref_videocodec_key);
-        keyprefHwCodecAcceleration = getString(R.string.pref_hwcodec_key);
-        keyprefAudioBitrateType = getString(R.string.pref_startaudiobitrate_key);
-        keyprefAudioBitrateValue = getString(R.string.pref_startaudiobitratevalue_key);
-        keyprefAudioCodec = getString(R.string.pref_audiocodec_key);
-        keyprefNoAudioProcessingPipeline = getString(R.string.pref_noaudioprocessing_key);
-        keyprefCpuUsageDetection = getString(R.string.pref_cpu_usage_detection_key);
-        keyprefDisplayHud = getString(R.string.pref_displayhud_key);
-        keyprefRoomServerUrl = getString(R.string.pref_room_server_url_key);
-        keyprefRoom = getString(R.string.pref_room_key);
-        keyprefRoomList = getString(R.string.pref_room_list_key);
-
         setContentView(R.layout.activity_main_ui);
-
+        ButterKnife.inject(this);
+        setupToolbar();
+        initCallPref(this);
         mActivity = this;
 
-        ButterKnife.inject(ChatUIActivity.this);
         footerClickFragment(TYPE_MENU.CONTACT_LIST);
 
         //mManager  = new UserManager(this);
@@ -169,132 +172,9 @@ public class ChatUIActivity extends AppCompatActivity {
 
     }
 
-    public void connectToRoom(String roomName, boolean videoCall) {
-        // Get room name (random for loopback).
-        String roomId = roomName;
-        int runTimeMs = 0;
 
-
-        String roomUrl = "https://apprtc.webrtc.org";
-
-        // Video call enabled flag.
-        boolean videoCallEnabled = videoCall;
-
-        // Get default codecs.
-        String videoCodec = sharedPref.getString(keyprefVideoCodec,
-                getString(R.string.pref_videocodec_default));
-        String audioCodec = sharedPref.getString(keyprefAudioCodec,
-                getString(R.string.pref_audiocodec_default));
-
-        // Check HW codec flag.
-        boolean hwCodec = sharedPref.getBoolean(keyprefHwCodecAcceleration,
-                Boolean.valueOf(getString(R.string.pref_hwcodec_default)));
-
-        // Check Disable Audio Processing flag.
-        boolean noAudioProcessing = sharedPref.getBoolean(
-                keyprefNoAudioProcessingPipeline,
-                Boolean.valueOf(getString(R.string.pref_noaudioprocessing_default)));
-
-        // Get video resolution from settings.
-        int videoWidth = 0;
-        int videoHeight = 0;
-        String resolution = sharedPref.getString(keyprefResolution,
-                getString(R.string.pref_resolution_default));
-        String[] dimensions = resolution.split("[ x]+");
-        if (dimensions.length == 2) {
-            try {
-                videoWidth = Integer.parseInt(dimensions[0]);
-                videoHeight = Integer.parseInt(dimensions[1]);
-            } catch (NumberFormatException e) {
-                videoWidth = 0;
-                videoHeight = 0;
-                Log.e("HEYHEYHEY", "Wrong video resolution setting: " + resolution);
-            }
-        }
-
-        // Get camera fps from settings.
-        int cameraFps = 0;
-        String fps = sharedPref.getString(keyprefFps,
-                getString(R.string.pref_fps_default));
-        String[] fpsValues = fps.split("[ x]+");
-        if (fpsValues.length == 2) {
-            try {
-                cameraFps = Integer.parseInt(fpsValues[0]);
-            } catch (NumberFormatException e) {
-                Log.e("HEYHEYHEY", "Wrong camera fps setting: " + fps);
-            }
-        }
-
-        // Get video and audio start bitrate.
-        int videoStartBitrate = 0;
-        String bitrateTypeDefault = getString(
-                R.string.pref_startvideobitrate_default);
-        String bitrateType = sharedPref.getString(
-                keyprefVideoBitrateType, bitrateTypeDefault);
-        if (!bitrateType.equals(bitrateTypeDefault)) {
-            String bitrateValue = sharedPref.getString(keyprefVideoBitrateValue,
-                    getString(R.string.pref_startvideobitratevalue_default));
-            videoStartBitrate = Integer.parseInt(bitrateValue);
-        }
-        int audioStartBitrate = 0;
-        bitrateTypeDefault = getString(R.string.pref_startaudiobitrate_default);
-        bitrateType = sharedPref.getString(
-                keyprefAudioBitrateType, bitrateTypeDefault);
-        if (!bitrateType.equals(bitrateTypeDefault)) {
-            String bitrateValue = sharedPref.getString(keyprefAudioBitrateValue,
-                    getString(R.string.pref_startaudiobitratevalue_default));
-            audioStartBitrate = Integer.parseInt(bitrateValue);
-        }
-
-        // Test if CpuOveruseDetection should be disabled. By default is on.
-        boolean cpuOveruseDetection = sharedPref.getBoolean(
-                keyprefCpuUsageDetection,
-                Boolean.valueOf(
-                        getString(R.string.pref_cpu_usage_detection_default)));
-
-        // Check statistics display option.
-        boolean displayHud = sharedPref.getBoolean(keyprefDisplayHud,
-                Boolean.valueOf(getString(R.string.pref_displayhud_default)));
-
-        // Start AppRTCDemo activity.
-
-        Log.d("HEYHEYHEY", "Connecting to room " + roomId + " at URL " + roomUrl);
-        if (validateUrl(roomUrl)) {
-            Uri uri = Uri.parse(roomUrl);
-            Intent intent = new Intent(this, CallActivity.class);
-            intent.setData(uri);
-            intent.putExtra(CallActivity.EXTRA_ROOMID, roomId);
-            intent.putExtra(CallActivity.EXTRA_LOOPBACK, loopback);
-            intent.putExtra(CallActivity.EXTRA_VIDEO_CALL, videoCallEnabled);
-            intent.putExtra(CallActivity.EXTRA_VIDEO_WIDTH, videoWidth);
-            intent.putExtra(CallActivity.EXTRA_VIDEO_HEIGHT, videoHeight);
-            intent.putExtra(CallActivity.EXTRA_VIDEO_FPS, cameraFps);
-            intent.putExtra(CallActivity.EXTRA_VIDEO_BITRATE, videoStartBitrate);
-            intent.putExtra(CallActivity.EXTRA_VIDEOCODEC, videoCodec);
-            intent.putExtra(CallActivity.EXTRA_HWCODEC_ENABLED, hwCodec);
-            intent.putExtra(CallActivity.EXTRA_NOAUDIOPROCESSING_ENABLED,
-                    noAudioProcessing);
-            intent.putExtra(CallActivity.EXTRA_AUDIO_BITRATE, audioStartBitrate);
-            intent.putExtra(CallActivity.EXTRA_AUDIOCODEC, audioCodec);
-            intent.putExtra(CallActivity.EXTRA_CPUOVERUSE_DETECTION,
-                    cpuOveruseDetection);
-            intent.putExtra(CallActivity.EXTRA_DISPLAY_HUD, displayHud);
-            intent.putExtra(CallActivity.EXTRA_CMDLINE, commandLineRun);
-            intent.putExtra(CallActivity.EXTRA_RUNTIME, runTimeMs);
-
-            startActivityForResult(intent, CONNECTION_REQUEST);
-        }
-    }
-
-    private boolean validateUrl(String url) {
-        if (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) {
-            return true;
-        }
-        return false;
-    }
 
     FriendsModel friendsModel;
-
     @Subscribe
     public void onGetFriendSuccessEvent(GetFriendSuccessEvent event) {
         friendsModel = event.getFriendModel();
@@ -305,21 +185,21 @@ public class ChatUIActivity extends AppCompatActivity {
         public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
 
             dialog.dismiss();
-            //Toast.makeText(MainActivity.this, position + " clicked", Toast.LENGTH_LONG).show();
+
         }
     };
 
     OnDismissListener dismissListener = new OnDismissListener() {
         @Override
         public void onDismiss(DialogPlus dialog) {
-            //Toast.makeText(MainActivity.this, "dismiss listener invoked!", Toast.LENGTH_SHORT).show();
+
         }
     };
 
     OnCancelListener cancelListener = new OnCancelListener() {
         @Override
         public void onCancel(DialogPlus dialog) {
-            //Toast.makeText(MainActivity.this, "cancel listener invoked!", Toast.LENGTH_SHORT).show();
+
         }
     };
 
@@ -328,13 +208,10 @@ public class ChatUIActivity extends AppCompatActivity {
         public void onClick(DialogPlus dialog, View view) {
             switch (view.getId()) {
                 case R.id.header_container:
-                    //Toast.makeText(MainActivity.this, "Header clicked", Toast.LENGTH_LONG).show();
                     break;
                 case R.id.footer_confirm_button:
-                    //Toast.makeText(MainActivity.this, "Confirm button clicked", Toast.LENGTH_LONG).show();
                     break;
                 case R.id.footer_close_button:
-                    //Toast.makeText(MainActivity.this, "Close button clicked", Toast.LENGTH_LONG).show();
                     break;
             }
             dialog.dismiss();
@@ -463,7 +340,153 @@ public class ChatUIActivity extends AppCompatActivity {
 
     }
 
+    public static void connectToRoom(Activity activity,String roomName, boolean videoCall) {
+        // Get room name (random for loopback).
+        String roomId = roomName;
+        int runTimeMs = 0;
 
+        initCallPref(activity);
+
+
+        String roomUrl = "https://apprtc.webrtc.org";
+
+        // Video call enabled flag.
+        boolean videoCallEnabled = videoCall;
+
+        // Get default codecs.
+        String videoCodec = sharedPref.getString(keyprefVideoCodec,
+                activity.getString(R.string.pref_videocodec_default));
+        String audioCodec = sharedPref.getString(keyprefAudioCodec,
+                activity.getString(R.string.pref_audiocodec_default));
+
+        // Check HW codec flag.
+        boolean hwCodec = sharedPref.getBoolean(keyprefHwCodecAcceleration,
+                Boolean.valueOf(activity.getString(R.string.pref_hwcodec_default)));
+
+        // Check Disable Audio Processing flag.
+        boolean noAudioProcessing = sharedPref.getBoolean(
+                keyprefNoAudioProcessingPipeline,
+                Boolean.valueOf(activity.getString(R.string.pref_noaudioprocessing_default)));
+
+        // Get video resolution from settings.
+        int videoWidth = 0;
+        int videoHeight = 0;
+        String resolution = sharedPref.getString(keyprefResolution,
+                activity.getString(R.string.pref_resolution_default));
+        String[] dimensions = resolution.split("[ x]+");
+        if (dimensions.length == 2) {
+            try {
+                videoWidth = Integer.parseInt(dimensions[0]);
+                videoHeight = Integer.parseInt(dimensions[1]);
+            } catch (NumberFormatException e) {
+                videoWidth = 0;
+                videoHeight = 0;
+                Log.e("HEYHEYHEY", "Wrong video resolution setting: " + resolution);
+            }
+        }
+
+        // Get camera fps from settings.
+        int cameraFps = 0;
+        String fps = sharedPref.getString(keyprefFps,
+                activity.getString(R.string.pref_fps_default));
+        String[] fpsValues = fps.split("[ x]+");
+        if (fpsValues.length == 2) {
+            try {
+                cameraFps = Integer.parseInt(fpsValues[0]);
+            } catch (NumberFormatException e) {
+                Log.e("HEYHEYHEY", "Wrong camera fps setting: " + fps);
+            }
+        }
+
+        // Get video and audio start bitrate.
+        int videoStartBitrate = 0;
+        String bitrateTypeDefault = activity.getString(
+                R.string.pref_startvideobitrate_default);
+        String bitrateType = sharedPref.getString(
+                keyprefVideoBitrateType, bitrateTypeDefault);
+        if (!bitrateType.equals(bitrateTypeDefault)) {
+            String bitrateValue = sharedPref.getString(keyprefVideoBitrateValue,
+                    activity.getString(R.string.pref_startvideobitratevalue_default));
+            videoStartBitrate = Integer.parseInt(bitrateValue);
+        }
+        int audioStartBitrate = 0;
+        bitrateTypeDefault = activity.getString(R.string.pref_startaudiobitrate_default);
+        bitrateType = sharedPref.getString(
+                keyprefAudioBitrateType, bitrateTypeDefault);
+        if (!bitrateType.equals(bitrateTypeDefault)) {
+            String bitrateValue = sharedPref.getString(keyprefAudioBitrateValue,
+                    activity.getString(R.string.pref_startaudiobitratevalue_default));
+            audioStartBitrate = Integer.parseInt(bitrateValue);
+        }
+
+        // Test if CpuOveruseDetection should be disabled. By default is on.
+        boolean cpuOveruseDetection = sharedPref.getBoolean(
+                keyprefCpuUsageDetection,
+                Boolean.valueOf(
+                        activity.getString(R.string.pref_cpu_usage_detection_default)));
+
+        // Check statistics display option.
+        boolean displayHud = sharedPref.getBoolean(keyprefDisplayHud,
+                Boolean.valueOf(activity.getString(R.string.pref_displayhud_default)));
+
+        // Start AppRTCDemo activity.
+
+        Log.d("HEYHEYHEY", "Connecting to room " + roomId + " at URL " + roomUrl);
+        if (validateUrl(roomUrl)) {
+            Uri uri = Uri.parse(roomUrl);
+            Intent intent = new Intent(activity, CallActivity.class);
+            intent.setData(uri);
+            intent.putExtra(CallActivity.EXTRA_ROOMID, roomId);
+            intent.putExtra(CallActivity.EXTRA_LOOPBACK, loopback);
+            intent.putExtra(CallActivity.EXTRA_VIDEO_CALL, videoCallEnabled);
+            intent.putExtra(CallActivity.EXTRA_VIDEO_WIDTH, videoWidth);
+            intent.putExtra(CallActivity.EXTRA_VIDEO_HEIGHT, videoHeight);
+            intent.putExtra(CallActivity.EXTRA_VIDEO_FPS, cameraFps);
+            intent.putExtra(CallActivity.EXTRA_VIDEO_BITRATE, videoStartBitrate);
+            intent.putExtra(CallActivity.EXTRA_VIDEOCODEC, videoCodec);
+            intent.putExtra(CallActivity.EXTRA_HWCODEC_ENABLED, hwCodec);
+            intent.putExtra(CallActivity.EXTRA_NOAUDIOPROCESSING_ENABLED,
+                    noAudioProcessing);
+            intent.putExtra(CallActivity.EXTRA_AUDIO_BITRATE, audioStartBitrate);
+            intent.putExtra(CallActivity.EXTRA_AUDIOCODEC, audioCodec);
+            intent.putExtra(CallActivity.EXTRA_CPUOVERUSE_DETECTION,
+                    cpuOveruseDetection);
+            intent.putExtra(CallActivity.EXTRA_DISPLAY_HUD, displayHud);
+            intent.putExtra(CallActivity.EXTRA_CMDLINE, commandLineRun);
+            intent.putExtra(CallActivity.EXTRA_RUNTIME, runTimeMs);
+
+            activity.startActivityForResult(intent, CONNECTION_REQUEST);
+        }
+    }
+
+    public static boolean validateUrl(String url) {
+        if (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void initCallPref(Activity activity) {
+        // Get setting keys.
+        PreferenceManager.setDefaultValues(activity, R.xml.preferences, false);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
+        keyprefVideoCallEnabled = activity.getString(R.string.pref_videocall_key);
+        keyprefResolution = activity.getString(R.string.pref_resolution_key);
+        keyprefFps = activity.getString(R.string.pref_fps_key);
+        keyprefVideoBitrateType = activity.getString(R.string.pref_startvideobitrate_key);
+        keyprefVideoBitrateValue = activity.getString(R.string.pref_startvideobitratevalue_key);
+        keyprefVideoCodec = activity.getString(R.string.pref_videocodec_key);
+        keyprefHwCodecAcceleration = activity.getString(R.string.pref_hwcodec_key);
+        keyprefAudioBitrateType = activity.getString(R.string.pref_startaudiobitrate_key);
+        keyprefAudioBitrateValue = activity.getString(R.string.pref_startaudiobitratevalue_key);
+        keyprefAudioCodec = activity.getString(R.string.pref_audiocodec_key);
+        keyprefNoAudioProcessingPipeline = activity.getString(R.string.pref_noaudioprocessing_key);
+        keyprefCpuUsageDetection = activity.getString(R.string.pref_cpu_usage_detection_key);
+        keyprefDisplayHud = activity.getString(R.string.pref_displayhud_key);
+        keyprefRoomServerUrl = activity.getString(R.string.pref_room_server_url_key);
+        keyprefRoom = activity.getString(R.string.pref_room_key);
+        keyprefRoomList = activity.getString(R.string.pref_room_list_key);
+    }
 
     public void initFAB() {
 //        menu1 = (FloatingActionMenu) findViewById(R.id.menu1);
@@ -644,13 +667,14 @@ public class ChatUIActivity extends AppCompatActivity {
     }
     @OnClick(R.id.navIconRight)
     public void onClickNavIconRight(){
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment, ConversationViewPagerFragment.newInstance());
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-        textNavigationBar.setText(getResources().getString(R.string.txtNavigationBar_Chat));
+        initGridFriendsDialog();
+//        FragmentManager manager = getSupportFragmentManager();
+//        FragmentTransaction transaction = manager.beginTransaction();
+//        transaction.replace(R.id.fragment, ConversationViewPagerFragment.newInstance());
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//
+//        textNavigationBar.setText(getResources().getString(R.string.txtNavigationBar_Chat));
 
         //Toast.makeText(MainActivity.this , "navIconRight" , Toast.LENGTH_SHORT).show();
     }
