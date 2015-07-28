@@ -1,6 +1,7 @@
 package co.aquario.socialkit.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.parse.SaveCallback;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.otto.Subscribe;
 
+import co.aquario.socialkit.MyIntro;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.LoginEvent;
@@ -27,7 +29,6 @@ import co.aquario.socialkit.event.LoginSuccessEvent;
 import co.aquario.socialkit.event.RegisterEvent;
 import co.aquario.socialkit.event.RegisterFailedEvent;
 import co.aquario.socialkit.event.RegisterSuccessEvent;
-import co.aquario.socialkit.event.UpdateProfileEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.UserProfile;
@@ -104,9 +105,6 @@ public class RegisterFragment extends BaseFragment {
 
         this.rootView = rootView;
         setupToolbar();
-
-
-
 
         etEmail = (MaterialEditText) rootView.findViewById(R.id.et_email);
         etUsername = (MaterialEditText) rootView.findViewById(R.id.et_username);
@@ -220,10 +218,27 @@ public class RegisterFragment extends BaseFragment {
 
         //UserProfile registeredUserProfile = event.getLoginData().user;
 
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.login_container, new RegisterSuccessFragment()).commit();
+
+        Intent main = new Intent(getActivity(), MyIntro.class);
+        startActivity(main);
+        getActivity().finish();
+        //getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.login_container, new RegisterSuccessFragment()).commit();
+
+//        if(event.getLoginData().state != null) {
+//            if(event.getLoginData().state.equals("login")) {
+//                Intent main = new Intent(getActivity(),MainActivity.class);
+//                startActivity(main);
+//            } else if(event.getLoginData().state.equals("register")) {
+//                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.login_container, new RegisterSuccessFragment()).commit();
+//            }
+//        } else {
+//            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.login_container, new RegisterSuccessFragment()).commit();
+//        }
+
+
 
         UserProfile user = event.getLoginData().user;
-        ApiBus.getInstance().post(new UpdateProfileEvent(user));
+        //ApiBus.getInstance().post(new UpdateProfileEvent(user));
 
         //getActivity().finish();
     }

@@ -42,6 +42,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
 
 import co.aquario.socialkit.MainActivity;
+import co.aquario.socialkit.MyIntro;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.FailedNetworkEvent;
@@ -256,6 +257,7 @@ public class LoginFragment extends BaseFragment {
     public void onLoginSuccess(LoginSuccessEvent event) {
         VMApp.USER_TOKEN = event.getLoginData().token;
         Log.e("ARAIWA", VMApp.USER_TOKEN);
+        Log.e("ARAIWA", event.getLoginData().toString());
 
         prefManager
                 .name().put(event.getLoginData().user.name)
@@ -284,14 +286,29 @@ public class LoginFragment extends BaseFragment {
             }
         });
 
+                if(event.getLoginData().state != null) {
+            if(event.getLoginData().state.equals("login")) {
+                Intent main = new Intent(getActivity(),MainActivity.class);
+                startActivity(main);
+            } else if(event.getLoginData().state.equals("register")) {
+                Intent main = new Intent(getActivity(),MyIntro.class);
+                startActivity(main);
+            }
+        } else {
+                    Intent main = new Intent(getActivity(),MainActivity.class);
+                    startActivity(main);
+        }
+
 
 
         //Snackbar.with(getActivity().getApplicationContext()).text(event.getLoginData().token).show(getActivity());
 
-        Log.e("VM_PROFILE",event.getLoginData().user.toString());
+        Log.e("VM_PROFILE", event.getLoginData().user.toString());
 
-        Intent main = new Intent(getActivity(),MainActivity.class);
-        startActivity(main);
+
+            Intent main = new Intent(getActivity(),MainActivity.class);
+            startActivity(main);
+
 
         UserProfile user = event.getLoginData().user;
         ApiBus.getInstance().post(new UpdateProfileEvent(user));

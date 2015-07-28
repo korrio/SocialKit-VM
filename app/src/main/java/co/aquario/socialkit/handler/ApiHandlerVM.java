@@ -528,6 +528,7 @@ public class ApiHandlerVM {
 
             default:
                 options.put("sort",event.getType());
+                options.put("user_id",event.getUserId() + "");
 
                 api.getSocial( options, new Callback<FriendListDataResponse>() {
                     @Override

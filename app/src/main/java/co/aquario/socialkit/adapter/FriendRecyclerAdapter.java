@@ -108,7 +108,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
                 .transform(new RoundedTransformation(100, 4))
                 .into(holder.avatar);
 
-        holder.initButton(user.getIsFollowing(), holder.btnFollow);
+        holder.initButton(position,user.isFollowing, holder.btnFollow);
 
     }
 
@@ -178,18 +178,18 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
 
             switch (v.getId()) {
                 case R.id.profile_image:
-                    listener.onItemClick(v, getPosition());
+                    listener.onItemClick(v, getLayoutPosition());
                     break;
                 case R.id.btn_follow:
-                    listener.onFollowClick(v, getPosition());
+                    listener.onFollowClick(v, getLayoutPosition());
                     break;
             }
         }
 
-        public void initButton(boolean following, View v) {
+        public void initButton(int position,boolean following, View v) {
             Button button = (Button) v;
 
-            list.get(getPosition()).setIsFollowing(following);
+            list.get(position).setIsFollowing(following);
             isFollowing = following;
 
             if (following) {

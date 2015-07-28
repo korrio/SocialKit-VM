@@ -226,6 +226,10 @@
         </activity>
 
         <activity
+            android:name=".MyIntro">
+        </activity>
+
+        <activity
             android:name=".ExoSimplePlayerActivity"/>
 
         <activity

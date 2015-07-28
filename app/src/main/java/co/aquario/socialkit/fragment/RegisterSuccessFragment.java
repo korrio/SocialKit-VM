@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import co.aquario.socialkit.MyIntro;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 
 
@@ -54,7 +54,8 @@ public class RegisterSuccessFragment extends BaseFragment {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent main = new Intent(getActivity(), MainActivity.class);
+                //Intent main = new Intent(getActivity(), MainActivity.class);
+                Intent main = new Intent(getActivity(), MyIntro.class);
                 startActivity(main);
                 getActivity().finish();
             }

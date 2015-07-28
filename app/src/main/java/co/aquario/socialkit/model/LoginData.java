@@ -8,7 +8,9 @@ import com.google.gson.annotations.SerializedName;
  */
 public class LoginData {
     @Expose public String status;
+    @Expose public String message;
     @Expose public String token;
+    @Expose public String state;
     @SerializedName("api_token")
     @Expose public String apiToken;
     @Expose public UserProfile user;

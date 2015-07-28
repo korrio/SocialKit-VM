@@ -23,7 +23,6 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 import java.util.HashMap;
 
-import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import co.aquario.chatapp.ChatApp;
 import co.aquario.chatapp.event.login.LoginFailedAuthEvent;
 import co.aquario.chatapp.event.login.LoginSuccessEvent;
@@ -55,9 +54,9 @@ public class LoginActivity extends AppCompatActivity {
         prefManager = VMApp.get(this).getPrefManager();
         setContentView(R.layout.activity_login);
 
-        CustomActivityOnCrash.setShowErrorDetails(true);
-        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
-        CustomActivityOnCrash.install(this);
+//        CustomActivityOnCrash.setShowErrorDetails(true);
+//        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+//        CustomActivityOnCrash.install(this);
 
         callbackManager = CallbackManager.Factory.create();
 
