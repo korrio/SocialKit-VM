@@ -43,7 +43,6 @@
                 android:layout_centerInParent="true"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="ไม่ยากเกินไป"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
 

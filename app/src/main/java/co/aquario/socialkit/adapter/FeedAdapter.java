@@ -41,8 +41,9 @@ import java.util.Map;
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.activity.post.CommentsActivity;
 import co.aquario.socialkit.activity.DragableActivity;
+import co.aquario.socialkit.activity.post.CommentsActivity;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.LiveFragment;
 import co.aquario.socialkit.handler.ApiBus;
@@ -71,14 +72,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
     private FeedFragment mFragment;
 
     public FeedAdapter(Activity mActivity, ArrayList<PostStory> list) {
-        FeedAdapter.mActivity = mActivity;
+        this.mActivity = mActivity;
         this.list = list;
 
         ApiBus.getInstance().register(this);
     }
 
     public FeedAdapter(Activity mActivity, ArrayList<PostStory> list, FeedFragment fragment, boolean isHomeTimeline) {
-        FeedAdapter.mActivity = mActivity;
+        this.mActivity = mActivity;
         this.list = list;
         this.isHomeTimeline = isHomeTimeline;
         mFragment = fragment;
@@ -463,19 +464,25 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
     @Override
     public void clickedTag(String tag) {
-        if(tag.startsWith("@")) {
-            FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1), false);
-            FragmentManager manager = ((BaseActivity) mActivity).getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
-            transaction.commitAllowingStateLoss();
-        } else if(tag.startsWith("#")) {
-            FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1));
-            FragmentManager manager = ((BaseActivity) mActivity).getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
-            transaction.commitAllowingStateLoss();
+        if(mActivity != null) {
+            if(tag.startsWith("@")) {
+                //NewProfileActivity.startProfileActivity(mActivity,tag.substring(1));
+                FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1), false);
+                FragmentManager manager = ((BaseActivity) mActivity).getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+                ApiBus.getInstance().postQueue(new TitleEvent(tag));
+            } else if(tag.startsWith("#")) {
+                FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1));
+                FragmentManager manager = ((BaseActivity) mActivity).getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+                ApiBus.getInstance().postQueue(new TitleEvent(tag));
+            }
         }
+
 
     }
 

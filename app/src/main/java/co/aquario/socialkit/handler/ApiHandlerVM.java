@@ -186,6 +186,7 @@ public class ApiHandlerVM {
 
     @Subscribe public void onGetStory(GetStoryEvent event) {
 
+        if(!event.getPostId().equals(""))
         api.getStory(Integer.parseInt(event.getPostId()), new Callback<StoryDataResponse>() {
             @Override
             public void success(StoryDataResponse storyDataResponse, Response response) {

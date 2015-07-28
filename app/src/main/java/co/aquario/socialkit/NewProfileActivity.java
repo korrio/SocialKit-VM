@@ -36,16 +36,99 @@ public class NewProfileActivity extends BaseActivity {
     private ViewPager pager;
 
     String userId;
+    String username = "";
 
     PrefManager pref;
     Toolbar toolbar;
     Activity mActivity;
 
+    public static void startProfileActivity(Activity mActivity, String username,boolean isUsername) {
+        Intent i = new Intent(mActivity,NewProfileActivity.class);
+        i.putExtra("USERNAME", username);
+        i.putExtra("IS_USERNAME", isUsername);
+        mActivity.startActivity(i);
+    }
+
     public static void startProfileActivity(Activity mActivity, String userId) {
         Intent i = new Intent(mActivity,NewProfileActivity.class);
         i.putExtra("USER_ID", userId);
+        i.putExtra("IS_USERNAME", false);
         mActivity.startActivity(i);
     }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        super.setContentView(R.layout.activity_appcompat);
+
+        CustomActivityOnCrash.setShowErrorDetails(true);
+        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+        CustomActivityOnCrash.install(this);
+
+        mActivity = this;
+
+        pref = getPref(getApplicationContext());
+
+        if(getIntent() != null) {
+            if(getIntent().getExtras().getBoolean("IS_USERNAME")) {
+                userId = getIntent().getExtras().getString("USERNAME");
+            } else {
+                userId = getIntent().getExtras().getString("USER_ID");
+            }
+        } else {
+            userId = pref.userId().getOr("0");
+        }
+
+
+        setupToolbar();
+
+        /*
+        btnFollow = (Button) findViewById(R.id.btn_follow);
+        initButton(true, btnFollow);
+
+        btnFollow.setOnClickListener(toolbar View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isFollowing) {
+                    toggleUnfollow(btnFollow);
+
+                } else {
+                    toggleFollowing(btnFollow);
+                }
+                ApiBus.getInstance().post(toolbar FollowRegisterEvent(userId));
+                isFollowing = !isFollowing;
+            }
+        });
+        */
+
+
+        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setAllCaps(false);
+        tabs.setShouldExpand(true);
+        tabs.setFillViewport(true);
+        tabs.setTextColor(getResources().getColor(android.R.color.white));
+
+        //mSlidingTabLayout.setDistributeEvenly(true);
+
+        //mSlidingTabLayout.setBackgroundResource(R.color.black_semi_transparent);
+
+        //mSlidingTabLayout.setIndicatorColorResource(getResources().getColor(android.R.color.transparent));
+        tabs.setDividerColor(getResources().getColor(android.R.color.transparent));
+        pager = (ViewPager) findViewById(R.id.pager);
+
+        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(adapter);
+        tabs.setViewPager(pager);
+
+
+        //final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
+       // pager.setPageMargin(pageMargin);
+        //pager.setOffscreenPageLimit(5);
+    }
+
+
 
     void setupToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -97,71 +180,6 @@ public class NewProfileActivity extends BaseActivity {
         }
 
 
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.activity_appcompat);
-
-        CustomActivityOnCrash.setShowErrorDetails(true);
-        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
-        CustomActivityOnCrash.install(this);
-
-        mActivity = this;
-
-        pref = getPref(getApplicationContext());
-
-        if(getIntent() != null)
-            userId = getIntent().getStringExtra("USER_ID");
-        else
-            userId = pref.userId().getOr("0");
-
-        setupToolbar();
-
-        /*
-        btnFollow = (Button) findViewById(R.id.btn_follow);
-        initButton(true, btnFollow);
-
-        btnFollow.setOnClickListener(toolbar View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isFollowing) {
-                    toggleUnfollow(btnFollow);
-
-                } else {
-                    toggleFollowing(btnFollow);
-                }
-                ApiBus.getInstance().post(toolbar FollowRegisterEvent(userId));
-                isFollowing = !isFollowing;
-            }
-        });
-        */
-
-
-        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-        tabs.setAllCaps(false);
-        tabs.setShouldExpand(true);
-        tabs.setFillViewport(true);
-        tabs.setTextColor(getResources().getColor(android.R.color.white));
-
-        //mSlidingTabLayout.setDistributeEvenly(true);
-
-        //mSlidingTabLayout.setBackgroundResource(R.color.black_semi_transparent);
-
-        //mSlidingTabLayout.setIndicatorColorResource(getResources().getColor(android.R.color.transparent));
-        tabs.setDividerColor(getResources().getColor(android.R.color.transparent));
-        pager = (ViewPager) findViewById(R.id.pager);
-
-        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(adapter);
-        tabs.setViewPager(pager);
-
-
-        //final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
-       // pager.setPageMargin(pageMargin);
-        //pager.setOffscreenPageLimit(5);
     }
 
     boolean isFollowing = true;

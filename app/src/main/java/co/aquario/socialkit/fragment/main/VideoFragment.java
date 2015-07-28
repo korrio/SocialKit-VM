@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.DragableActivity;
+import co.aquario.socialkit.activity.NewDragableActivity;
 import co.aquario.socialkit.adapter.VideoRecyclerAdapter;
 import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.util.PrefManager;
@@ -105,7 +106,11 @@ public class VideoFragment extends BaseFragment {
                 Toast.makeText(getActivity(),"click " + position,Toast.LENGTH_SHORT).show();
 
                 Video post = list.get(position);
-                Intent i2 = new Intent(getActivity(), DragableActivity.class);
+                Intent i2;
+                if(getActivity().getLocalClassName().equals("NewDragableActivity"))
+                    i2 = new Intent(getActivity(), DragableActivity.class);
+                else
+                    i2 = new Intent(getActivity(), NewDragableActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("obj", Parcels.wrap(post));
 

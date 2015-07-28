@@ -37,7 +37,7 @@ import co.aquario.socialkit.util.Utils;
 import retrofit.mime.TypedFile;
 
 
-public class PublishActivity extends BaseActivity {
+public class PublishPhotoActivity extends BaseActivity {
     public static final String ARG_TAKEN_PHOTO_URI = "arg_taken_photo_uri";
 
     @InjectView(R.id.tbFollowers)
@@ -54,7 +54,7 @@ public class PublishActivity extends BaseActivity {
     private int photoSize;
 
     public static void openWithPhotoUri(Activity openingActivity, Uri photoUri) {
-        Intent intent = new Intent(openingActivity, PublishActivity.class);
+        Intent intent = new Intent(openingActivity, PublishPhotoActivity.class);
         intent.putExtra(ARG_TAKEN_PHOTO_URI, photoUri);
         openingActivity.startActivity(intent);
     }

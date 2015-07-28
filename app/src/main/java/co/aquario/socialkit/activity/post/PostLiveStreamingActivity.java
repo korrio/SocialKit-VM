@@ -34,7 +34,7 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.widget.SrsHttpFlv;
 
-public class LiveStreamingActivity extends Activity {
+public class PostLiveStreamingActivity extends Activity {
     // audio device.
     private AudioRecord mic;
     private byte[] abuffer;
@@ -89,7 +89,7 @@ public class LiveStreamingActivity extends Activity {
     private static final String VCODEC = "video/avc";
     private static final String ACODEC = "audio/mp4a-latm";
 
-    public LiveStreamingActivity() {
+    public PostLiveStreamingActivity() {
         camera = null;
         vencoder = null;
         muxer = null;

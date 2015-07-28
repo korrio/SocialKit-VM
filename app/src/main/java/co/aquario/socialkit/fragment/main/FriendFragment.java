@@ -1,6 +1,7 @@
 package co.aquario.socialkit.fragment.main;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,8 +36,10 @@ public class FriendFragment extends BaseFragment {
     ArrayList<User> list = new ArrayList<>();
     FriendRecyclerAdapter adapter2;
     RecyclerView recyclerView;
+    SwipeRefreshLayout swipeLayout;
     GridLayoutManager manager;
-    boolean refresh = false;
+    boolean isRefreshing = false;
+    boolean isLoadmore = false;
     private String type = "";
     private String userId = "";
 
@@ -64,15 +67,16 @@ public class FriendFragment extends BaseFragment {
         }
     }
 
-    TextView emptyTv;
+    TextView emptyView;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview_autofit, container, false);
 
-        emptyTv = (TextView) rootView.findViewById(R.id.no_data);
 
         recyclerView = (AutofitRecyclerView) rootView.findViewById(R.id.recycler_view);
+        emptyView = (TextView) rootView.findViewById(R.id.emptyText);
         recyclerView.setHasFixedSize(true);
+
         adapter2 = new FriendRecyclerAdapter(getActivity(),list);
         recyclerView.setAdapter(adapter2);
         if(Utils.isTablet(getActivity()))
@@ -88,11 +92,23 @@ public class FriendFragment extends BaseFragment {
         recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
             @Override
             public void onLoadMore(int current_page) {
-                refresh = false;
+                isRefreshing = false;
+                isLoadmore = true;
                 ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
             }
 
 
+        });
+
+        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                isRefreshing = true;
+                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
+
+            }
         });
 
         return rootView;
@@ -121,11 +137,31 @@ public class FriendFragment extends BaseFragment {
     @Subscribe public void onLoadFriendListSuccess(LoadFriendListSuccessEvent event) {
         Log.e("MYTYPE",type);
         if(event.getType().equals(type)) {
-            if(refresh)
+            if(isRefreshing){
                 list.clear();
+                isRefreshing = false;
+                swipeLayout.setRefreshing(isRefreshing);
+            }
+            else {
+                if(!isLoadmore) {
+                    if (event.getFriendListData().users.size() == 0) {
+                        //recyclerView.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        //recyclerView.setVisibility(View.VISIBLE);
+                        emptyView.setVisibility(View.GONE);
+                    }
+                }
+
+
+            }
+
+            isLoadmore = false;
+
             list.addAll(event.getFriendListData().users);
             adapter2.updateList(list);
-            emptyTv.setVisibility(View.GONE);
+
         }
     }
 

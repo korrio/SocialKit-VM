@@ -26,8 +26,16 @@ public class Channel extends BaseModel {
     @SerializedName("avatar_url")
     @Expose
     public String avatar;
-    @SerializedName("live_cover")
+
     @Expose
+    @SerializedName("is_following")
+    public boolean isFollowing = false;
+
+    @Expose
+    @SerializedName("total_follower")
+    public String totalFollower;
+    @Expose
+    @SerializedName("live_cover")
     public String liveCover;
     @Expose
     public String gender;
@@ -52,5 +60,9 @@ public class Channel extends BaseModel {
 
     public String getCoverUrl() {
         return EndpointManager.getAvatarPath(cover);
+    }
+
+    public void setIsFollowing(boolean isFollowing) {
+        this.isFollowing = isFollowing;
     }
 }

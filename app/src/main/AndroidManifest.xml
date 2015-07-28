@@ -196,7 +196,7 @@
         </activity>
 
         <activity
-            android:name=".activity.post.LiveStreamingActivity"
+            android:name=".activity.post.PostLiveStreamingActivity"
             android:screenOrientation="landscape"
             android:label="STREAM TO FLV" >
         </activity>
@@ -237,7 +237,7 @@
             android:theme="@style/CustomTheme" />
 
         <activity
-            android:name=".PublishActivity"
+            android:name=".PublishPhotoActivity"
             android:theme="@style/CustomTheme" />
 
         <activity
@@ -246,6 +246,12 @@
 
         <activity
             android:name=".activity.DragableActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".activity.NewDragableActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:launchMode="singleTop"
             android:windowSoftInputMode="stateAlwaysHidden" />

@@ -232,6 +232,36 @@ public class ChatUIActivity extends AppCompatActivity {
                 expanded);
     }
 
+    private void showCompleteDialog(String titleStr, String subTitleStr, Holder holder, int gravity, BaseAdapter adapter,
+                                    OnClickListener clickListener, OnItemClickListener itemClickListener,
+                                    OnDismissListener dismissListener, OnCancelListener cancelListener,
+                                    boolean expanded) {
+        final DialogPlus dialog = new DialogPlus.Builder(this)
+                .setContentHolder(holder)
+                .setHeader(R.layout.dialog_header)
+                        //.setFooter(R.layout.dialog_footer)
+                .setCancelable(true)
+                .setGravity(gravity)
+                .setAdapter(adapter)
+                .setOnClickListener(clickListener)
+                .setOnItemClickListener(itemClickListener)
+                .setOnDismissListener(dismissListener)
+                .setExpanded(expanded)
+                .setOnCancelListener(cancelListener)
+                        //                .setOutMostMargin(0, 100, 0, 0)
+                .create();
+
+        View headerView = dialog.getHeaderView();
+        TextView title = (TextView) headerView.findViewById(R.id.dialog_title);
+        TextView subtitle = (TextView) headerView.findViewById(R.id.dialog_subtitle);
+
+        title.setText(titleStr);
+        subtitle.setText(subTitleStr);
+        View footerView = dialog.getFooterView();
+        dialog.show();
+
+    }
+
     public void initListAddFriendDialog() {
         //holder = new GridHolder(3);
         //isGrid = true;
@@ -310,35 +340,7 @@ public class ChatUIActivity extends AppCompatActivity {
         return bmp;
     }
 
-    private void showCompleteDialog(String titleStr, String subTitleStr, Holder holder, int gravity, BaseAdapter adapter,
-                                    OnClickListener clickListener, OnItemClickListener itemClickListener,
-                                    OnDismissListener dismissListener, OnCancelListener cancelListener,
-                                    boolean expanded) {
-        final DialogPlus dialog = new DialogPlus.Builder(this)
-                .setContentHolder(holder)
-                .setHeader(R.layout.dialog_header)
-                //.setFooter(R.layout.dialog_footer)
-                .setCancelable(true)
-                .setGravity(gravity)
-                .setAdapter(adapter)
-                .setOnClickListener(clickListener)
-                .setOnItemClickListener(itemClickListener)
-                .setOnDismissListener(dismissListener)
-                .setExpanded(expanded)
-                .setOnCancelListener(cancelListener)
-                        //                .setOutMostMargin(0, 100, 0, 0)
-                .create();
 
-        View headerView = dialog.getHeaderView();
-        TextView title = (TextView) headerView.findViewById(R.id.dialog_title);
-        TextView subtitle = (TextView) headerView.findViewById(R.id.dialog_subtitle);
-
-        title.setText(titleStr);
-        subtitle.setText(subTitleStr);
-        View footerView = dialog.getFooterView();
-        dialog.show();
-
-    }
 
     public static void connectToRoom(Activity activity,String roomName, boolean videoCall) {
         // Get room name (random for loopback).

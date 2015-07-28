@@ -17,6 +17,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -55,6 +56,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,12 +68,14 @@ import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.TakePhotoActivity2;
 import co.aquario.socialkit.VMApp;
-import co.aquario.socialkit.activity.post.LiveStreamingActivity;
+import co.aquario.socialkit.activity.post.PostLiveStreamingActivity;
 import co.aquario.socialkit.activity.post.PostStatusActivity2;
 import co.aquario.socialkit.adapter.ButtonItemAdapter;
 import co.aquario.socialkit.adapter.FeedAdapter;
 import co.aquario.socialkit.event.FollowRegisterEvent;
 import co.aquario.socialkit.event.FollowUserSuccessEvent;
+import co.aquario.socialkit.event.GetStoryEvent;
+import co.aquario.socialkit.event.GetStorySuccessEvent;
 import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.event.LoadHashtagStoryEvent;
@@ -101,7 +105,11 @@ public class FeedFragment extends BaseFragment {
 
 
     public static final String USER_ID = "USER_ID";
+    public static final String POST_ID = "POST_ID";
+
     public static final String IS_HOMETIMELINE = "IS_HOMETIMELINE";
+    public static final String IS_HASHTAG = "IS_HASHTAG";
+    public static final String IS_STORY = "IS_STORY";
     public static final String HASHTAG = "HASHTAG";
 
     public static String HASHTAG_QUERY = "";
@@ -115,6 +123,7 @@ public class FeedFragment extends BaseFragment {
     public RecyclerView mRecyclerView;
     PrefManager pref;
 
+    // profile element
     int pShare;
     View myHeader;
     View rootView;
@@ -135,16 +144,20 @@ public class FeedFragment extends BaseFragment {
 
     // @InjectView(R.id.empty)
     //TextView mEmptyView;
+    private boolean isRefreshable = false;
     private String username = "";
     private boolean isFollowing;
     private int currentPage = 1;
     private boolean isRefresh = false;
     private boolean isLoadding = false;
     private String userId = "";
+    private int postId;
+
     // home_timeline = including others post
     // user_timeline = only the user's post
     private boolean isHomeTimeline = false;
     private boolean isHashtag = false;
+    private boolean isStory = false;
     private SwipeRefreshLayout swipeLayout;
     private FloatingActionButton postLive;
     private FloatingActionButton postPhotoBtn;
@@ -159,14 +172,13 @@ public class FeedFragment extends BaseFragment {
     private ImageView mPlayerStateButton;
     private ProgressBar mProgressBar;
 
-    // animation
-
-
     public static FeedFragment newInstance(String userId, boolean isHomeTimeline) {
         FeedFragment mFragment = new FeedFragment();
 		Bundle mBundle = new Bundle();
 		mBundle.putString(USER_ID, userId);
         mBundle.putBoolean(IS_HOMETIMELINE, isHomeTimeline);
+        mBundle.putBoolean(IS_HASHTAG, false);
+        mBundle.putBoolean(IS_STORY,false);
         mFragment.setArguments(mBundle);
 		return mFragment;
 	}
@@ -175,6 +187,20 @@ public class FeedFragment extends BaseFragment {
         FeedFragment mFragment = new FeedFragment();
         Bundle mBundle = new Bundle();
         mBundle.putString(HASHTAG, hashtag);
+        mBundle.putBoolean(IS_HOMETIMELINE, true);
+        mBundle.putBoolean(IS_HASHTAG, true);
+        mBundle.putBoolean(IS_STORY,false);
+        mFragment.setArguments(mBundle);
+        return mFragment;
+    }
+
+    public static FeedFragment newInstance(int postId) {
+        FeedFragment mFragment = new FeedFragment();
+        Bundle mBundle = new Bundle();
+        mBundle.putInt(POST_ID, postId);
+        mBundle.putBoolean(IS_HOMETIMELINE, false);
+        mBundle.putBoolean(IS_HASHTAG, false);
+        mBundle.putBoolean(IS_STORY,true);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -183,6 +209,7 @@ public class FeedFragment extends BaseFragment {
     void setupToolbar() {
         toolbar = ((BaseActivity) getActivity()).getToolbar();
         if(toolbar != null && getActivity().getLocalClassName().equals("MainActivity")) {
+            toolbar.getMenu().clear();
             toolbar.setTitle("VDOMAX");
             toolbar.inflateMenu(R.menu.menu_main);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -284,52 +311,86 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
 
         pref = VMApp.get(getActivity().getApplicationContext()).getPrefManager();
-
         if (getArguments() != null) {
 
-            if(getArguments().getString(HASHTAG) != null) {
-                isHashtag = true;
-                HASHTAG_QUERY = getArguments().getString(HASHTAG);
-                userId = pref.userId().getOr("0");
-                isHomeTimeline = true;
-                ApiBus.getInstance().postQueue(new TitleEvent("#" + HASHTAG_QUERY));
-                ApiBus.getInstance().postQueue(new SubTitleEvent(""));
+            isStory = getArguments().getBoolean(IS_STORY);
 
+            if(!getArguments().getBoolean(IS_STORY)) {
+                if(getArguments().getBoolean(IS_HASHTAG)) {
+                    // HASHTAG
+                    isHashtag = true;
+                    isHomeTimeline = true;
+                    HASHTAG_QUERY = getArguments().getString(HASHTAG);
+
+                    userId = pref.userId().getOr("0");
+
+                    ApiBus.getInstance().post(new LoadHashtagStoryEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline,HASHTAG_QUERY));
+                    ApiBus.getInstance().postQueue(new TitleEvent("#" + HASHTAG_QUERY));
+                    ApiBus.getInstance().postQueue(new SubTitleEvent(""));
+
+                } else {
+                    userId = getArguments().getString(USER_ID);
+                    isHashtag = false;
+                    isHomeTimeline = getArguments().getBoolean(IS_HOMETIMELINE);
+
+
+                    if(!Utils.isNumeric(userId)) {
+                        // USER_TIMELINE -> @mention
+                        username = userId;
+                        isHomeTimeline = false;
+                        ApiBus.getInstance().post(new GetUserProfileEvent(username, true));
+                    } else {
+                        ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
+                        if(!isHomeTimeline) // USER_TIMELINE -> userId
+                        {
+                            ApiBus.getInstance().post(new GetUserProfileEvent(userId));
+                        }
+                    }
+
+
+
+                }
             } else {
-                userId = getArguments().getString(USER_ID);
-                isHomeTimeline = getArguments().getBoolean(IS_HOMETIMELINE);
+                // POST_ID
+                postId = getArguments().getInt(POST_ID);
 
-                //if(!Utils.isNumeric(userId))
-                  //  username = userId;
+                    isHomeTimeline = true;
+                    ApiBus.getInstance().postQueue(new TitleEvent("VDOMAX"));
+                    ApiBus.getInstance().postQueue(new GetStoryEvent("" + postId));
+
+
+                //ApiBus.getInstance().postQueue(new SubTitleEvent("PostID:" + postId));
             }
-
-
         } else {
             userId = pref.userId().getOr("0");
             isHomeTimeline = true;
+            ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
             //((MainActivity) getActivity()).getToolbar().setSubtitle("");
         }
     }
-
-    //Titanic titanic;
-    //TitanicTextView myTitanicTextView;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
-        if(!isHashtag) {
-            if (!isHomeTimeline) {
-                if (Utils.isNumeric(userId))
-                    ApiBus.getInstance().post(new GetUserProfileEvent(userId));
-                else
-                    ApiBus.getInstance().post(new GetUserProfileEvent(username, true));
-            }
-        }
+    }
+
+    @Subscribe public void onGetStoryEventSuccess(GetStorySuccessEvent event) {
+        if(isRefresh)
+            list.clear();
+        isRefresh = false;
+        swipeLayout.setRefreshing(false);
+
+        list.add(event.getPost());
+
+        bAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+        if(!isHashtag)
+            swipeLayout.setRefreshing(false);
+        isLoadding = false;
     }
 
     //animation
@@ -400,7 +461,8 @@ public class FeedFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 isRefresh = true;
-                ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+                if(!isHashtag)
+                    ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
 
             }
         });
@@ -459,7 +521,7 @@ public class FeedFragment extends BaseFragment {
         postLive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), LiveStreamingActivity.class);
+                Intent i = new Intent(getActivity(), PostLiveStreamingActivity.class);
                 startActivity(i);
             }
         });
@@ -538,13 +600,10 @@ public class FeedFragment extends BaseFragment {
         adapter.OnItemShareClick(new FeedAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
                 pShare = position;
-
                 Log.e("postId",pShare+"");
                 buildShare2Dialog();
-                //buildShareDialog();
-                //ApiBus.getInstance().post(new PostShareEvent(pref.userId().getOr("6"), list.get(position).postId));
+
             }
         });
 
@@ -556,7 +615,7 @@ public class FeedFragment extends BaseFragment {
             public void onLoadMore(int page) {
                 currentPage = page;
                 isRefresh = false;
-                if (!isLoadding)
+                if (!isLoadding && !isHashtag )
                     ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
                 isLoadding = true;
                 Log.e("thispageis", page + "");
@@ -613,12 +672,6 @@ public class FeedFragment extends BaseFragment {
             mRecyclerView.setAdapter(adapter);
         }
 
-        if(Utils.isNumeric(userId) && !isHashtag)
-            ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
-
-        if(isHashtag)
-            ApiBus.getInstance().post(new LoadHashtagStoryEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline,HASHTAG_QUERY));
-
 		rootView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         return rootView;
     }
@@ -628,8 +681,7 @@ public class FeedFragment extends BaseFragment {
     }
 
     public void buildShare2Dialog() {
-        final CharSequence[] items = {"Facebook", "VDOMAX",
-                "Cancel"};
+        final CharSequence[] items = {"FACEBOOK", "VDOMAX"};
 
         final String postId = list.get(pShare).id;
 
@@ -651,8 +703,6 @@ public class FeedFragment extends BaseFragment {
         });
         builder.show();
     }
-
-
 
     private void shareToFacebook(String postId){
 
@@ -802,6 +852,22 @@ public class FeedFragment extends BaseFragment {
         //tvSample.setText(savedInstanceState.getString("text"));
     }
 
+    //fix crash on hashtag click in nested fragment
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        try {
+            Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
+            childFragmentManager.setAccessible(true);
+            childFragmentManager.set(this, null);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -818,7 +884,9 @@ public class FeedFragment extends BaseFragment {
             list.clear();
         isRefresh = false;
         swipeLayout.setRefreshing(false);
+
         list.addAll(event.getTimelineData().getPosts());
+
         bAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
         if(!isHashtag)
@@ -837,7 +905,6 @@ public class FeedFragment extends BaseFragment {
 
     @Subscribe public void onPostLoveSuccessEvent(PostLoveSuccessEvent event) {
         Utils.showToast("Loved");
-
     }
 
     @Subscribe public void onPostShareSuccessEvent(PostShareSuccessEvent event) {
@@ -900,6 +967,9 @@ public class FeedFragment extends BaseFragment {
                 .transform(new RoundedTransformation(100, 2))
                 .into(avatar);
 
+        if(!userId.equals(VMApp.mPref.userId().getOr("")))
+            btnFollow.setVisibility(View.GONE);
+
         countPost = (TextView) myHeader.findViewById(R.id.countPost);
         countFollowing = (TextView) myHeader.findViewById(R.id.countFollowing);
         countFollower = (TextView) myHeader.findViewById(R.id.countFollower);
@@ -926,6 +996,8 @@ public class FeedFragment extends BaseFragment {
                 isFollowing = !isFollowing;
             }
         });
+
+
 
         btnMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -980,7 +1052,6 @@ public class FeedFragment extends BaseFragment {
         if(requestCode == 100)
             Utils.showToast("Post complete!");
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

@@ -35,6 +35,7 @@ import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.parse.ParseAnalytics;
 import com.soundcloud.android.crop.Crop;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -50,6 +51,8 @@ import co.aquario.chatui.fragment.FragmentTabhost.TattooFragment;
 import co.aquario.socialkit.activity.post.PostPhotoActivity;
 import co.aquario.socialkit.activity.post.PostVideoActivity;
 import co.aquario.socialkit.event.ActivityResultEvent;
+import co.aquario.socialkit.event.toolbar.SubTitleEvent;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.NotiFragment;
 import co.aquario.socialkit.fragment.SettingFragment;
@@ -62,6 +65,7 @@ import co.aquario.socialkit.fragment.pager.PhotoViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.SocialViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.VideoViewPagerFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
+import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.util.PrefManager;
@@ -108,25 +112,26 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         userId = mPref.userId().getOr("0");
         VMApp.saveInstallation(Integer.parseInt(userId));
 
-        if(getToolbar() != null) {
-            toolbar = getToolbar();
-            toolbar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    NewProfileActivity.startProfileActivity(mActivity, userId);
-                }
-            });
-
-
-        }
-
-
         if (savedInstanceState == null) {
             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.sub_container, fragment);
             transaction.commit();
+        }
+
+        if(getIntent().getExtras() != null) {
+            Integer postId = getIntent().getExtras().getInt("post_id");
+            if(postId != null) {
+                FeedFragment fragment = new FeedFragment().newInstance(postId);
+                FragmentManager manager = ((BaseActivity) mActivity).getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+                ApiBus.getInstance().postQueue(new TitleEvent("VDOMAX"));
+                //ApiBus.getInstance().postQueue(new SubTitleEvent("PostID:" + postId));
+            }
+
         }
 
         initDrawer(savedInstanceState);
@@ -346,6 +351,10 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                     public boolean onItemClick(View view, int i, IDrawerItem drawerItem) {
                         if (drawerItem.getIdentifier() == 0) {
 
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Home");
+
+
                             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
                             FragmentManager manager = getSupportFragmentManager();
                             FragmentTransaction transaction = manager.beginTransaction();
@@ -357,6 +366,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setSubtitle("Chat");
                             //getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, ConversationViewPagerFragment.newInstance(), "CHAT").addToBackStack(null).commit();
 
+                            getToolbar().getMenu().clear();
                             Intent intent = new Intent(MainActivity.this, ChatUIActivity.class);
                             startActivity(intent);
 
@@ -365,6 +375,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Live History");
 
+                            getToolbar().getMenu().clear();
                             LiveHistoryFragment fragment = LiveHistoryFragment.newInstance(userId);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "LIVE_HISTORY").addToBackStack(null).commit();
 
@@ -373,6 +384,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Setting");
 
+                            getToolbar().getMenu().clear();
                             SettingFragment fragment = SettingFragment.newInstance(userId);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SETTINGS").addToBackStack(null).commit();
 
@@ -385,6 +397,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Tattoo Store");
 
+                            getToolbar().getMenu().clear();
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, TattooFragment.newInstance(), "TATTOO_STORE").addToBackStack(null).commit();
 
 
@@ -394,6 +407,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setSubtitle("Term & Policy");
                             String termUrl = "https://www.vdomax.com/ajax.php?t=getDisclaimer&lang=en";
 
+                            getToolbar().getMenu().clear();
                             WebViewFragment fragment = WebViewFragment.newInstance(termUrl);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "TERM_POLICY").addToBackStack(null).commit();
 
@@ -402,10 +416,12 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Notification");
 
+                            getToolbar().getMenu().clear();
                             NotiFragment fragment = NotiFragment.newInstance(userId,"ALL");
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "NOTIFICATION").addToBackStack(null).commit();
 
                         } else if(drawerItem.getIdentifier() == 10) {
+                            getToolbar().getMenu().clear();
                             VMApp.logout(getApplicationContext());
                             Intent login = new Intent(MainActivity.this, LoginActivity.class);
                             startActivity(login);
@@ -531,5 +547,17 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             }
         });
     }
+
+    @Subscribe public void onUpdateTitle(TitleEvent event) {
+        if(getToolbar() != null)
+        getToolbar().setTitle(event.str);
+
+    }
+
+    @Subscribe public void onUpdateSubTitle(SubTitleEvent event) {
+        if(getToolbar() != null)
+        getToolbar().setSubtitle(event.str);
+    }
+
 
 }

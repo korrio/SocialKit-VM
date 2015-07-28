@@ -16,8 +16,9 @@ import org.json.JSONObject;
 
 import co.aquario.chatapp.CallActivityLauncher;
 import co.aquario.chatapp.ChatActivity;
-import co.aquario.chatapp.LandingActivity;
 import co.aquario.chatapp.push.DialogService;
+import co.aquario.socialkit.MainActivity;
+import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 
@@ -206,21 +207,26 @@ public class PushManage extends Activity {
 	void intentManage(int type) {
 		Intent toDetail = null;
         if (type == TYPES_likeFeed) {
-			Intent routeIntent = new Intent(this, LandingActivity.class);
+			Intent routeIntent = new Intent(this, MainActivity.class);
 			routeIntent.putExtra("type", "post");
-			routeIntent.putExtra("post_id", postId + "");
+			routeIntent.putExtra("post_id", postId);
 			startActivity(routeIntent);
 		} else if (type == TYPES_commentFeed) {
-			Intent routeIntent = new Intent(this, LandingActivity.class);
+			Intent routeIntent = new Intent(this, MainActivity.class);
 			routeIntent.putExtra("type", "post");
-			routeIntent.putExtra("post_id", postId + "");
+			routeIntent.putExtra("post_id", postId);
 			startActivity(routeIntent);
-		} else if (type == TYPES_liveNow) {
-			Intent routeIntent = new Intent(this, LandingActivity.class);
+		} else if(type == TYPES_shareFeed) {
+            Intent routeIntent = new Intent(this, MainActivity.class);
+            routeIntent.putExtra("type", "post");
+            routeIntent.putExtra("post_id", postId);
+            startActivity(routeIntent);
+        } else if (type == TYPES_liveNow) {
+			Intent routeIntent = new Intent(this, MainActivity.class);
 			routeIntent.putExtra("type", "post");
-			routeIntent.putExtra("post_id", postId + "");
-			routeIntent.putExtra("user_id", fromId + "");
-			startActivity(routeIntent);
+			routeIntent.putExtra("post_id", postId);
+			routeIntent.putExtra("user_id", fromId);
+            startActivity(routeIntent);
 			/*
 			 * toDetail = new Intent(ManagePush.this, PlayActivity.class);
 			 * toDetail.putExtra("isPlay", "1"); toDetail.putExtra("roomId",
@@ -229,15 +235,17 @@ public class PushManage extends Activity {
 			 */
 
 		} else if (type == TYPES_followedYou) {
-			Intent profileIntent = new Intent(this, LandingActivity.class);
-			profileIntent.putExtra("type", "profile");
-			profileIntent.putExtra("user_id", fromId + "");
-			startActivity(profileIntent);
+            NewProfileActivity.startProfileActivity(this,fromId + "");
+
+//			Intent profileIntent = new Intent(this, LandingActivity.class);
+//			profileIntent.putExtra("type", "profile");
+//			profileIntent.putExtra("user_id", fromId + "");
+//			startActivity(profileIntent);
 
 		} else if (type == TYPES_chatMessage || type == TYPES_chatSticker
 				|| type == TYPES_chatFile || type == TYPES_chatLocation) {
 
-            ChatActivity.startChatActivity(PushManage.this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            ChatActivity.startChatActivity(this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
 
 		}
 //        else if (type == TYPES_confCreate || type == TYPES_confJoin
@@ -250,13 +258,13 @@ public class PushManage extends Activity {
 //
 //		}
         else if (type == TYPES_chatFreeCall) {
-            ChatActivity.startChatActivity(PushManage.this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            ChatActivity.startChatActivity(PushManage.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
             CallActivityLauncher.startCallActivity(PushManage.this, customdata, false);
 		} else if (type == TYPES_chatVideoCall) {
             ChatActivity.startChatActivity(PushManage.this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
             CallActivityLauncher.startCallActivity(PushManage.this, customdata, true);
 		} else if (type == TYPES_chatInviteGroup) {
-            ChatActivity.startChatActivity(PushManage.this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            ChatActivity.startChatActivity(PushManage.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
 		}
 
 		this.finish();

@@ -87,6 +87,8 @@ import co.aquario.chatui.event.GetUserEventSuccess;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.event.toolbar.SubTitleEvent;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.ExoSurfaceFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
@@ -637,7 +639,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         Log.i("mCid", mCid + "");
         Log.i("chatType", mChatType + "");
 
-        //ApiBus.getInstance().post(new ChatSubTitleEvent());
+        ApiBus.getInstance().post(new SubTitleEvent("Room:" + mCid));
         ApiBus.getInstance().post(new HistoryEvent(mCid, 20, 1));
     }
 
@@ -1513,8 +1515,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     }
 
     public void setChatTitle(String title) {
-
-//        ApiBus.getInstance().postQueue(new TitleEvent(title));
+        ApiBus.getInstance().postQueue(new TitleEvent(title));
 //        if(((BaseActivity) getActivity()).getToolbar() != null) {
 //            ((BaseActivity) getActivity()).getToolbar().setTitle(title);
         //  }

@@ -15,6 +15,7 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.adapter.PhotoGridViewAdapter;
 import co.aquario.socialkit.event.LoadPhotoListEvent;
 import co.aquario.socialkit.event.LoadPhotoListSuccessEvent;
@@ -33,13 +34,17 @@ public class PhotoGridFragment extends BaseFragment {
     public boolean isRefresh = false;
     public boolean isLoadding = false;
 
+    View rootView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_gridview_photo, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_gridview_photo, container, false);
+        this.rootView = rootView;
 
         adapter = new PhotoGridViewAdapter(getActivity(),listPhoto);
         gv = (GridView) rootView.findViewById(R.id.grid_view);
+        gv.setEmptyView(rootView.findViewById(R.id.progressBar1));
         gv.setAdapter(adapter);
         gv.setOnScrollListener(new EndlessListOnScrollListener(20,1) {
             @Override
@@ -48,9 +53,10 @@ public class PhotoGridFragment extends BaseFragment {
                 isRefresh = false;
                 //String loadMoreUrl = MainApplication.ENDPOINT + "/search/channel?sort=F&page="+page;
                 if (!isLoadding) {
-                    ApiBus.getInstance().post(new LoadPhotoListEvent(6,mSort,currentPage,20));
+                    ApiBus.getInstance().post(new LoadPhotoListEvent(Integer.parseInt(VMApp.mPref.userId().getOr("0")),mSort,currentPage,20));
                     //aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
                     Log.e("totalItemsCount", totalItemsCount + "");
+                    rootView.findViewById(R.id.progressBar1).setVisibility(View.VISIBLE);
                 }
 
                 isLoadding = true;
@@ -110,6 +116,9 @@ public class PhotoGridFragment extends BaseFragment {
     @Subscribe
     public void onPhotoListDataResponseSuccess(LoadPhotoListSuccessEvent event) {
         if(event.getSortType().equals(mSort) && event.getPhotoListData() != null) {
+            rootView.findViewById(R.id.progressBar1).setVisibility(View.INVISIBLE);
+            if(event.getPhotoListData().photos.size() == 0)
+                gv.setEmptyView(rootView.findViewById(R.id.emptyText));
             listPhoto.addAll(event.getPhotoListData().photos);
             adapter.notifyDataSetChanged();
         }

@@ -1,5 +1,7 @@
 package co.aquario.socialkit.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,22 +19,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidquery.AQuery;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
 import org.parceler.Parcels;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.post.CommentsActivity;
 import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
+import co.aquario.socialkit.event.PostShareEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.VideoFragment;
 import co.aquario.socialkit.handler.ApiBus;
@@ -127,7 +136,6 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
         shareCountView = (TextView) view.findViewById(R.id.number3);
 
         btnFollow.setOnClickListener(this);
-
 
 
         btnLove = (Button) view.findViewById(R.id.btn_love);
@@ -274,8 +282,60 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
                 //getActivity().finish();
                 break;
 
+            case R.id.btn_share:
+
+                Log.e("postId",postId+"");
+                buildShare2Dialog();
+                break;
+
         }
 
+    }
+
+    public void buildShare2Dialog() {
+        final CharSequence[] items = {"FACEBOOK", "VDOMAX"};
+
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Share to");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                if (i == 0) {
+                    shareToFacebook(postId + "");
+                    //recordVideo();
+                } else if (i == 1) {
+                    ApiBus.getInstance().postQueue(new PostShareEvent(userId, postId + ""));
+                    //pickVideo();
+                } else if (i == 2) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void shareToFacebook(String postId){
+
+        String url = "https://graph.facebook.com/me/feed";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("message", "กำลังเล่นสนุกอยู่ที่ VDOMAX (Live Streaming) https://goo.gl/jBF5cI");
+        //params.put("link","https://www.vdomax.com/story/16693");
+        //https://www.vdomax.com/story/195854
+        params.put("link","https://www.vdomax.com/story/" + postId);
+
+        //Simply put a byte[] to the params, AQuery will detect it and treat it as a multi-part post
+        //byte[] data = getImageData(getResources().getDrawable(R.drawable.com_parse_ui_facebook_login_logo));
+        //params.put("source", data);
+
+        //Alternatively, put a File or InputStream instead of byte[]
+        //File file = getImageFile();
+        //params.put("source", file);
+
+        AQuery aq = new AQuery(getActivity());
+        aq.auth(VMApp.getFacebookHandle(getActivity())).ajax(url, params, JSONObject.class, this, "shareFb");
     }
 
     public void initButton(boolean following, View v) {

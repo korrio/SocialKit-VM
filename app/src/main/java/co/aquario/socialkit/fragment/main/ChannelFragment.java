@@ -57,8 +57,6 @@ public class ChannelFragment extends BaseFragment {
         return mFragment;
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,6 +198,12 @@ public class ChannelFragment extends BaseFragment {
                 boolean liveStatus = obj.optBoolean("status");
 
                 Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, gender, liveStatus);
+
+                channel.isFollowing = obj.optBoolean("is_following");
+                if(obj.optString("total_follower") != null)
+                    channel.totalFollower = obj.optString("total_follower");
+                else
+                    channel.totalFollower = "";
                     liveChannelList.add(channel);
 
             }

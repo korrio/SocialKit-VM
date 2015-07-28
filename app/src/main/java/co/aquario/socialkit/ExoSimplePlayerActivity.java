@@ -18,6 +18,7 @@ package co.aquario.socialkit;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -73,6 +74,8 @@ public class ExoSimplePlayerActivity extends Activity implements SurfaceHolder.C
       VIDEO_URL = getIntent().getStringExtra("PATH");
     else
       VIDEO_URL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:youlove/youlove_xxx_7043.mp4/playlist.m3u8";
+
+      Log.e("ExoSimplePlayerActivity",VIDEO_URL);
 
     //http://stream-1.vdomax.com:1935/vod/__definst__/mp4:piano/piano_xxx_7321.mp4/playlist.m3u8
 

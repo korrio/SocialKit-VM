@@ -168,7 +168,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
 
                         if (from.equals("post")) {
                             Intent i = new Intent(getApplicationContext(), PostSoundCloudActivity.class);
-                            i.putExtra("soundcloud_uri", selectedMusicTrack.mStreamURL);
+                            i.putExtra("soundcloud_uri", selectedMusicTrack.uri);
                             i.putExtra("soundcloud_title", selectedMusicTrack.mTitle);
                             i.putExtra("soundcloud_subtitle", selectedMusicTrack.user.username);
                             i.putExtra("artwork_url", selectedMusicTrack.getArtworkURL());
@@ -177,7 +177,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
                             finish();
                         } else {
                             Intent i = new Intent();
-                            i.putExtra("soundcloud_uri", selectedMusicTrack.mStreamURL);
+                            i.putExtra("soundcloud_uri", selectedMusicTrack.uri);
                             i.putExtra("soundcloud_title", selectedMusicTrack.mTitle);
                             i.putExtra("artwork_url", selectedMusicTrack.getArtworkURL());
                             //i.putExtra("LOCATION",marker.)

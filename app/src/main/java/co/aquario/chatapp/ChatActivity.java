@@ -23,6 +23,8 @@ import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.ActivityResultEvent;
+import co.aquario.socialkit.event.toolbar.SubTitleEvent;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.handler.ApiBus;
 
 
@@ -139,9 +141,9 @@ public class ChatActivity extends BaseActivity {
 
     public static void startChatActivity(Activity mActivity, int userId,int partnerId,int chatType) {
         Intent i = new Intent(mActivity,ChatActivity.class);
-        i.putExtra("USER_ID_1",userId);
-        i.putExtra("USER_ID_2",partnerId);
-        i.putExtra("CHAT_TYPE",chatType);
+        i.putExtra("USER_ID_1", userId);
+        i.putExtra("USER_ID_2", partnerId);
+        i.putExtra("CHAT_TYPE", chatType);
         mActivity.startActivity(i);
     }
 
@@ -178,6 +180,17 @@ public class ChatActivity extends BaseActivity {
             }
         }
 
+    }
+
+    @Subscribe public void onUpdateTitle(TitleEvent event) {
+        if(getToolbar() != null)
+            getToolbar().setTitle(event.str);
+
+    }
+
+    @Subscribe public void onUpdateSubTitle(SubTitleEvent event) {
+        if(getToolbar() != null)
+            getToolbar().setSubtitle(event.str);
     }
 
 
