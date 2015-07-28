@@ -73,7 +73,6 @@ public class PostStatusActivity2 extends Activity {
     public ImageView emojiButton;
 
 
-
     @OnClick(R.id.button_recent)
     public void onPost() {
         postStatus();

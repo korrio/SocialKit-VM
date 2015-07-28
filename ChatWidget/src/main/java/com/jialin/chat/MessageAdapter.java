@@ -56,7 +56,7 @@ public class MessageAdapter extends BaseAdapter {
 
 	@Override
 	public int getItemViewType(int position) {
-		return this.mMessages.get(position).getIsSender() ? 1 : 0;
+		return this.mMessages.get(position).getIsSent() ? 1 : 0;
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public class MessageAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		final Message m = mMessages.get(position);
-		boolean isSend = m.getIsSender();
+		boolean isSend = m.getIsSent();
 
 		ViewHolder viewHolder = null;
 		if (convertView == null) {
@@ -139,7 +139,7 @@ public class MessageAdapter extends BaseAdapter {
 			viewHolder.textTextView.setVisibility(View.VISIBLE);
 			viewHolder.photoImageView.setVisibility(View.GONE);
 			viewHolder.faceImageView.setVisibility(View.GONE);
-			if(m.getIsSender()){
+			if(m.getIsSent()){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -211,7 +211,7 @@ public class MessageAdapter extends BaseAdapter {
             }
 
 
-			if(m.getIsSender() ){
+			if(m.getIsSent() ){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -253,7 +253,7 @@ public class MessageAdapter extends BaseAdapter {
 				Picasso.with(mContext).load(dataObj.optString("tattooUrl")).into(viewHolder.faceImageView);
 
 			
-			if(m.getIsSender()){
+			if(m.getIsSent()){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.faceImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -329,6 +329,27 @@ public class MessageAdapter extends BaseAdapter {
 
                 if(dataObj != null)
                     Picasso.with(mContext).load(dataObj.optString("trackImage")).into(viewHolder.photoImageView);
+
+                break;
+
+            case 4:
+
+                viewHolder.textTextView.setVisibility(View.VISIBLE);
+                viewHolder.photoImageView.setVisibility(View.GONE);
+                viewHolder.faceImageView.setVisibility(View.GONE);
+
+                viewHolder.textTextView.setText("Audio Call");
+                viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_white_24dp, 0, 0, 0);
+
+                break;
+            case 5:
+
+                viewHolder.textTextView.setVisibility(View.VISIBLE);
+                viewHolder.photoImageView.setVisibility(View.GONE);
+                viewHolder.faceImageView.setVisibility(View.GONE);
+
+                viewHolder.textTextView.setText("Video Call");
+                viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_videocam_white_24dp, 0, 0, 0);
 
                 break;
 

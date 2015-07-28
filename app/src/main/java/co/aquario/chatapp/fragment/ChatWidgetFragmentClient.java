@@ -89,7 +89,7 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
-import co.aquario.socialkit.fragment.ExoSurfaceFragment;
+import co.aquario.socialkit.fragment.VideoViewNativeFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.search.soundcloud.SoundCloudService;
@@ -338,8 +338,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             Bundle data2 = new Bundle();
                             data2.putString("PATH", clipPath);
 
-                            ExoSurfaceFragment surfaceFragment;
-                            surfaceFragment = new ExoSurfaceFragment();
+                            VideoViewNativeFragment surfaceFragment;
+                            surfaceFragment = new VideoViewNativeFragment();
                             surfaceFragment.setArguments(data2);
 
                             getActivity().getSupportFragmentManager()
@@ -368,9 +368,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                         break;
                     case 4:
                         // intent audio call
+                        ChatUIActivity.connectToRoom(getActivity(), dataObj.optString("roomName"), false);
                         break;
                     case 5:
                         // intent video call
+                        ChatUIActivity.connectToRoom(getActivity(), dataObj.optString("roomName"), true);
                         break;
                     case 6:
                         String lat = dataObj.optString("latitude");

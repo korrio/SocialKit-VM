@@ -954,7 +954,6 @@ public class FeedFragment extends BaseFragment {
             ApiBus.getInstance().postQueue(new SubTitleEvent("@" + event.getUser().getUsername()));
         }
 
-
         Picasso.with(getActivity())
                 .load(event.getUser().getCoverUrl())
                 .fit().centerCrop()
@@ -967,7 +966,7 @@ public class FeedFragment extends BaseFragment {
                 .transform(new RoundedTransformation(100, 2))
                 .into(avatar);
 
-        if(!userId.equals(VMApp.mPref.userId().getOr("")))
+        if(userId.equals(VMApp.mPref.userId().getOr("")))
             btnFollow.setVisibility(View.GONE);
 
         countPost = (TextView) myHeader.findViewById(R.id.countPost);

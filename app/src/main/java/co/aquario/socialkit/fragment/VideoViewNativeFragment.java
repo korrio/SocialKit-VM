@@ -56,8 +56,6 @@ public class VideoViewNativeFragment extends Fragment {
 		if (getArguments() != null)
 			path = getArguments().getString("PATH");
 
-
-
 		Log.e("onCreate", path);
 
 	}
@@ -78,6 +76,8 @@ public class VideoViewNativeFragment extends Fragment {
 			mVideoView.setVideoPath(path);
 			mVideoView.setMediaController(new MediaController(getActivity()));
 			mVideoView.requestFocus();
+
+            mVideoView.start();
 
 
 			mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

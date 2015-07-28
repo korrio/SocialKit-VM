@@ -33,6 +33,7 @@ public class ChatActivity extends BaseActivity {
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
     void setupToolbar() {
+        toolbar = getToolbar();
         if(toolbar != null) {
 //            setSupportActionBar(toolbar);
 //            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -83,17 +84,17 @@ public class ChatActivity extends BaseActivity {
             final int mPartnerId = getIntent().getExtras().getInt("USER_ID_2");
             final int mUserId = Integer.parseInt(VMApp.mPref.userId().getOr("0"));
 
-            if(toolbar != null) {
+            if(getToolbar() != null) {
                 if(user != null) {
-                    toolbar.setTitle(user.getName());
-                    toolbar.setSubtitle("@" + user.getUsername());
+                    getToolbar().setTitle(user.getName());
+                    getToolbar().setSubtitle("@" + user.getUsername());
                 } else {
                     ApiBus.getInstance().postQueue(new GetUserEvent(mPartnerId));
                 }
 
-                toolbar.inflateMenu(R.menu.menu_chat);
+                getToolbar().inflateMenu(R.menu.menu_chat);
 
-                toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
 

@@ -10,34 +10,92 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/qr"
+            android:src="@drawable/tt0101"
+            android:visibility="visible"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="My ID :" />
+            android:text="Username:"
+            android:textColor="#252525"
+            android:layout_marginLeft="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="LuZee"
-            android:id="@+id/textView9" />
+            android:id="@+id/usernameTv"
+            android:textColor="#666666"
+            android:layout_marginLeft="6dp"/>
 
 
     </LinearLayout>
 
     <LinearLayout
-        android:background="@color/black"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:background="#eeeeee">
 
         <EditText
             android:background="@color/white"
             android:drawableLeft="@android:drawable/ic_menu_search"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:layout_weight="1" />
+            android:id="@+id/searchUsernameEt"
+            android:inputType="text"
+            android:layout_margin="6dp"
+            android:padding="6dp"
+            android:hint="Your friend username"
+            android:textColor="#252525"
+            android:imeOptions="actionSearch"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            android:id="@+id/user_detail_frame">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Large Text"
+                android:id="@+id/searchUsernameTv"
+                android:textColor="#252525"
+                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/avatar"
+                android:src="@drawable/default_avatar"
+                android:layout_gravity="center"
+                android:layout_above="@+id/searchUsernameTv"
+                android:layout_centerHorizontal="true"/>
+
+            <Button
+                android:id="@+id/btn_follow"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:layout_width="96dp"
+                android:layout_height="36dp"
+                android:background="@drawable/follow_button_selector"
+                android:text="Loading"
+                android:layout_below="@+id/searchUsernameTv"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"/>
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

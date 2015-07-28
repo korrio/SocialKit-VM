@@ -95,6 +95,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     PrefManager mPref;
     //Crossfader crossFader;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

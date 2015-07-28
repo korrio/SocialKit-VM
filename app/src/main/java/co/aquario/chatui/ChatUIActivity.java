@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.BaseAdapter;
@@ -61,6 +62,7 @@ import co.aquario.chatui.model.friendmodel.FriendsModel;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.util.Utils;
 
 
 public class ChatUIActivity extends AppCompatActivity {
@@ -130,7 +132,23 @@ public class ChatUIActivity extends AppCompatActivity {
 //            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            toolbar.setTitle("VDOMAX:Chat");
+            toolbar.setTitle("Chat");
+            toolbar.getMenu().clear();
+            toolbar.inflateMenu(R.menu.menu_add);
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_add_friend:
+                            initListAddFriendDialog();
+                            break;
+                        case R.id.action_add_friends_to_group:
+                            initGridFriendsDialog();
+                            break;
+                    }
+                    return false;
+                }
+            });
             //toolbar.setSubtitle("Contact");
             toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_white_24dp));
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -140,6 +158,12 @@ public class ChatUIActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -274,16 +298,23 @@ public class ChatUIActivity extends AppCompatActivity {
             @Override
             public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
 
+                Utils.showToast(position + "");
+
                 switch (position) {
                     case 0:
+
+                        break;
+                    case 1:
+                        new IntentIntegrator(mActivity).initiateScan();
+                        break;
+                    case 2:
                         FragmentManager manager = getSupportFragmentManager();
                         FragmentTransaction transaction = manager.beginTransaction();
                         transaction.add(R.id.frameFragment, AddFriendByIdFragment.newInstance());
                         transaction.addToBackStack(null);
-                        transaction.commit();
-                        break;
-                    case 1:
-                        new IntentIntegrator(mActivity).initiateScan();
+                        transaction.commitAllowingStateLoss()
+
+                        ;
                         break;
                 }
 
@@ -310,14 +341,19 @@ public class ChatUIActivity extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() == null) {
-                Log.d("MainActivity", "Cancelled scan");
+                Log.e("MainActivity", "Cancelled scan");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Log.d("MainActivity", "Scanned");
+                Log.e("MainActivity", "Scanned");
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.add(R.id.frameFragment, AddFriendByIdFragment.newInstance(result.getContents().toLowerCase()));
+                transaction.addToBackStack(null);
+                transaction.commitAllowingStateLoss();
             }
         } else {
-            Log.d("MainActivity", "Weird");
+            Log.e("MainActivity", "Weird");
             // This is important, otherwise the result will not be passed to the fragment
             super.onActivityResult(requestCode, resultCode, data);
         }
