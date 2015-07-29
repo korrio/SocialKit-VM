@@ -2,12 +2,21 @@ package co.aquario.socialkit.fragment;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,22 +28,26 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxStatus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -44,17 +57,12 @@ import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
-
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import retrofit.mime.TypedFile;
 
 
-
-//
-
-/**
- * Created by Mac on 5/20/15.
- */
 public class SettingFragment extends BaseFragment {
     private static final String USER_ID = "USER_ID";
     public RadioButton radioGender;
@@ -89,6 +97,10 @@ public class SettingFragment extends BaseFragment {
     private String currentBirthday = "";
     private String ddmmyyyy = "DDMMYYYY";
     private Calendar cal = Calendar.getInstance();
+    Bitmap bitmap;
+    public static final int REQUEST_GALLERY = 1;
+    public static final int CAMERA_REQUEST_CODE = 2;
+
 
     public static SettingFragment newInstance(String userId) {
         SettingFragment mFragment = new SettingFragment();
@@ -100,7 +112,7 @@ public class SettingFragment extends BaseFragment {
 
     @OnClick(R.id.btn_save_profile)
     public void submit(View view) {
-        updateProfile();
+        uploadProfile(userId);
     }
 
     View myHeader;
@@ -213,6 +225,7 @@ public class SettingFragment extends BaseFragment {
     }
 
     String profileName = "";
+    String genderStr = "";
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -243,6 +256,14 @@ public class SettingFragment extends BaseFragment {
                 .transform(new RoundedTransformation(100, 2))
                 .into(avatar);
 
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectVideo();
+                Toast.makeText(getActivity(), "Hey", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         userId = event.getUser().getId();
         url = "http://api.vdomax.com/user/update/" + userId + "";
 
@@ -257,137 +278,168 @@ public class SettingFragment extends BaseFragment {
         radioGender.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String numeral = null;
+                //String numeral = null;
                 switch (checkedId) {
                     case R.id.selectMale:
-                        numeral = "male";
+                        genderStr = "male";
                         break;
                     case R.id.selectFemale:
-                        numeral = "female";
+                        genderStr = "female";
                         break;
 
                 }
                 //Toast.makeText(getActivity().getApplicationContext(), "You selected the " + numeral + " radio button.", Toast.LENGTH_SHORT).show();
             }
         });
-        //city.setText(event.getUser());
+        city.setText("");
         timeZone.setText(event.getUser().getTimezone());
 
     }
 
-    public void updateProfile() {
+    private void uploadAvatar(File file){
+
+        TypedFile typedFile = new TypedFile("multipart/form-data",file);
+
+        AQuery aq = new AQuery(getActivity());
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("timeline_id", userName.getText());
+        params.put("image", typedFile);
 
 
-        dialog = new ProgressDialog(getActivity());
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Updating profile");
-        dialog.setMessage("กำลังอัพเดทข้อมูลส่วนตัว..");
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setIndeterminate(false);
-        dialog.setMax(100);
-
-
-        new UploadFileToServer().execute();
+        aq.ajax(url, params, JSONObject.class, this, "updateProfile");
 
     }
 
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
-        @Override
-        protected void onPreExecute() {
+    private void uploadProfile(String postId) {
+        Charset chars = Charset.forName("UTF-8");
+        String url = "http://api.vdomax.com/user/update/" + postId;
 
-            dialog.show();
-            dialog.setProgress(0);
-            super.onPreExecute();
-        }
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("username", userName.getText());
+        params.put("name", fullName.getText());
+        params.put("about", about.getText());
+        params.put("email", email.getText());
+        params.put("birthday[]", birthDay.getText().toString().substring(0, 2));
+        params.put("birthday[]", birthDay.getText().toString().substring(3, 5));
+        params.put("birthday[]", birthDay.getText().toString().substring(6, 10));
 
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
+        params.put("gender", "male");
+        params.put("current_city", city.getText());
 
-            dialog.setProgress(progress[0]);
+        params.put("hometown", homeTown.getText());
+        params.put("timezone", timeZone.getText());
 
+        AQuery aq = new AQuery(getActivity());
+        aq.ajax(url, params, JSONObject.class, this, "updateProfile");
+    }
+    public void updateProfile(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        Log.e("hahaha", jo.toString(4));
+        Utils.showToast("Update complete!");
+    }
 
-            dialog.setTitle(String.valueOf(progress[0]) + "%");
+    public void selectVideo() {
+        final CharSequence[] items = {"Choose from Gallery", "Take from Camera",
+                "Cancel"};
 
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(url);
-
-            try {
-//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-//                        new AndroidMultiPartEntity.ProgressListener() {
-//
-//                            @Override
-//                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-//                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
-//                            }
-//                        });
-
-
-                Charset chars = Charset.forName("UTF-8");
-
-//                entity.addPart("username", new StringBody(userName.getText().toString(), chars));
-//                entity.addPart("name", new StringBody(fullName.getText().toString(), chars));
-//                entity.addPart("about", new StringBody(about.getText().toString(), chars));
-//                entity.addPart("email", new StringBody(email.getText().toString(), chars));
-//
-//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(0, 2), chars));
-//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(3, 5), chars));
-//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(6, 10), chars));
-//
-//
-//                entity.addPart("gender", new StringBody("male", chars));
-//                entity.addPart("current_city", new StringBody(city.getText().toString(), chars));
-//                entity.addPart("hometown", new StringBody(homeTown.getText().toString(), chars));
-//                entity.addPart("timezone", new StringBody(timeZone.getText().toString(), chars));
-//
-//                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
-//
-//                totalSize = entity.getContentLength();
-//                httppost.setEntity(entity);
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        //builder.setTitle("Add Video!");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Choose from Gallery")) {
+                    pickImage();
+                } else if (items[item].equals("Take from Camera")) {
+                    pickCamera();
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
                 }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
             }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            dialog.dismiss();
-
-            super.onPostExecute(result);
-        }
-
+        });
+        builder.show();
     }
+
+    public void pickImage() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, REQUEST_GALLERY);
+    }
+
+    public void pickCamera() {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode
+            , Intent data) {
+        if (requestCode == REQUEST_GALLERY && resultCode == getActivity().RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+
+            String path = getRealPathFromURI(getActivity(), selectedImageUri);
+            File file = imagePathToFile(selectedImageUri, path);
+            uploadAvatar(file);
+            Log.e("CheckImage:",file+"");
+
+           /* try {
+                //bitmap = Media.getBitmap(getActivity().getContentResolver(), uri);
+                //Log.e("CheckImage:",bitmap+"");
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+        }else if(requestCode == CAMERA_REQUEST_CODE && resultCode == getActivity().RESULT_OK){
+            Uri uri = data.getData();
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                Log.e("CheckCamera:", bitmap + "");
+
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            cursor = context.getContentResolver().query(contentUri, proj, null,
+                    null, null);
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    File imagePathToFile(Uri selectedImageUri, String path) {
+        Bitmap bm;
+        BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
+
+        bm = BitmapFactory.decodeFile(path, btmapOptions);
+        OutputStream fOut = null;
+        File file = new File(path);
+        try {
+            fOut = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.JPEG, 70, fOut);
+            fOut.flush();
+            fOut.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
 }

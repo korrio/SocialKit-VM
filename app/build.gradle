@@ -1,4 +1,14 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'android-apt'
 
 android {
@@ -52,31 +62,28 @@ repositories {
     maven { url "https://repo.commonsware.com.s3.amazonaws.com" }
     maven { url "https://jitpack.io" }
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
     // parse
     compile rootProject.ext.facebookSDK
     compile project(':ParseLoginUI')
     compile files(rootProject.ext.parsePath)
     compile files(rootProject.ext.parseFacebookUtilsPath)
-
+    compile files(rootProject.ext.parseCrashReporting)
     compile('com.mikepenz:actionitembadge:3.0.2@aar') {
         transitive = true
     }
-
     compile('com.mikepenz:materialdrawer:4.0.0.b4-SNAPSHOT@aar') {
         transitive = true
     }
-
     compile('com.mikepenz:crossfader:0.0.2@aar') {
         transitive = true
     }
-
     // main libs
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:support-v13:22.2.0'
@@ -86,10 +93,15 @@ dependencies {
     compile 'com.android.support:cardview-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
     // http client
-//    compile('org.apache.httpcomponents:httpmime:4.3.6') {
-//        exclude module: 'httpclient'
-//    }
-//    compile 'org.apache.httpcomponents:httpclient-android:4.3.5'
+
+    //    compile('org.apache.httpcomponents:httpmime:4.3.6') {
+
+    //        exclude module: 'httpclient'
+
+    //    }
+
+    //    compile 'org.apache.httpcomponents:httpclient-android:4.3.5'
+
     // squareup libs
     compile 'com.squareup.retrofit:retrofit:1.6.1'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.4.0'
@@ -112,15 +124,18 @@ dependencies {
     compile 'com.melnykov:floatingactionbutton:1.0.7'
     compile 'com.github.pedrovgs:draggablepanel:1.8'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
-
     // amazing views
 
     //compile 'com.alexvasilkov:foldable-layout:1.0.1'
+
     //compile 'com.github.chrisbanes.photoview:library:1.2.3'
+
     // misc view libs
+
     //compile 'it.sephiroth.android.library.imagezoom:imagezoom:+'
     compile 'com.rengwuxian.materialedittext:library:1.8.3'
     //compile 'de.hdodenhof:circleimageview:1.2.2'
+
     //compile 'jp.wasabeef:recyclerview-animators:1.1.2@aar'
     compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.3'
     compile 'com.github.dmytrodanylyk.circular-progress-button:library:1.1.3'
@@ -131,52 +146,54 @@ dependencies {
     compile 'com.google.api-client:google-api-client-gson:+'
     compile 'com.nhaarman.supertooltips:library:3.0.+'
     compile 'com.venmo.view.tooltip:tooltip:0.1@aar'
-
     compile 'com.android.support:multidex:1.0.1'
     androidTestCompile 'com.android.support:multidex-instrumentation:1.0.1'
-
     compile 'com.google.android.gms:play-services-maps:7.5.0'
     compile 'com.google.android.gms:play-services-location:7.5.0'
-
     compile 'com.romainpiel.shimmer:library:1.4.0@aar'
     //compile 'com.ctrlplusz.anytextview:library:1.2'
-    //compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
-    //compile 'com.nineoldandroids:library:2.4.0'
-    //compile 'com.mikepenz.iconics:library:0.7.7@aar'
-    //compile 'com.mikepenz.iconics:meteocons-typeface:1.1.1@aar'
-    //compile 'com.desarrollodroide:fragmenttransactionextended:1'
-    //compile 'com.github.gabrielemariotti.changeloglib:library:1.+'
 
+    //compile 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
+
+    //compile 'com.nineoldandroids:library:2.4.0'
+
+    //compile 'com.mikepenz.iconics:library:0.7.7@aar'
+
+    //compile 'com.mikepenz.iconics:meteocons-typeface:1.1.1@aar'
+
+    //compile 'com.desarrollodroide:fragmenttransactionextended:1'
+
+    //compile 'com.github.gabrielemariotti.changeloglib:library:1.+'
     compile 'org.parceler:parceler-api:1.0.1'
     apt "org.parceler:parceler:1.0.1"
-
     compile 'com.quinny898.library.persistentsearch:library:1.0.0-SNAPSHOT'
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
     compile 'com.orhanobut:logger:1.10'
-
     compile project(':emojicon')
     compile project(':bookends')
     compile project(':cvlibrary')
     //compile project(':drawer')
+
     //compile project(':iconic')
     compile project(':PhotoPickerLib')
-
-    compile ('com.github.nkzawa:socket.io-client:0.5.1') {
+    compile('com.github.nkzawa:socket.io-client:0.5.1') {
         exclude group: 'org.json', module: 'json'
     }
     compile project(':ChatWidget')
     compile project(':apprtc')
-
     // alert / dialog view libs
     compile 'com.afollestad:material-dialogs:0.7.4.2'
     compile 'com.github.clans:fab:1.5.3'
     compile 'com.orhanobut:dialogplus:1.7@aar'
-
     compile 'com.journeyapps:zxing-android-embedded:3.0.1@aar'
     compile 'com.google.zxing:core:3.2.0'
-
     compile 'cat.ereza:customactivityoncrash:1.1.0'
     compile 'com.flaviofaria:kenburnsview:1.0.6'
-
     compile 'com.github.paolorotolo:appintro:3.1.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.0@aar') {
+        transitive = true;
+    }
+
+    compile 'ch.acra:acra:4.6.1'
+
 }

@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.androidquery.auth.FacebookHandle;
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,10 +18,15 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.parse.Parse;
+import com.parse.ParseCrashReporting;
 import com.parse.ParseInstallation;
 import com.parse.PushService;
 import com.parse.SaveCallback;
 import com.squareup.okhttp.OkHttpClient;
+
+import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
+import org.acra.sender.HttpSender;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -41,11 +47,18 @@ import co.aquario.socialkit.handler.PostUploadService;
 import co.aquario.socialkit.push.PushManage;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.StorageUtils;
+import io.fabric.sdk.android.Fabric;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
-
+@ReportsCrashes (
+        httpMethod = HttpSender.Method.PUT,
+        reportType = HttpSender.Type.JSON,
+        formUri = "http://chat.vdomax.com:5984/acra-vm/_design/acra-storage/_update/report",
+        formUriBasicAuthLogin = "user",
+        formUriBasicAuthPassword = "12345"
+)
 public class VMApp extends Application {
 
     public static String VERSION;
@@ -72,6 +85,7 @@ public class VMApp extends Application {
     private static OkHttpClient sHttpClient;
 
     private static FacebookHandle handle;
+    private static Activity mFbHandleActivity;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -107,13 +121,17 @@ public class VMApp extends Application {
 
 
     public static FacebookHandle getFacebookHandle(Activity activity) {
-        handle = new FacebookHandle(activity, "391414774312517", "email,public_profile,user_friends");
+        mFbHandleActivity = activity;
+        handle = new FacebookHandle(activity, APP_ID, APP_PERMISSIONS);
         return handle;
     }
 
 
+
+
     @Override public void onCreate() {
         super.onCreate();
+
         //LeakCanary.install(this);
         sContext = this;
 
@@ -126,6 +144,10 @@ public class VMApp extends Application {
             e.printStackTrace();
         }
 
+        Fabric.with(this, new Crashlytics());
+        ParseCrashReporting.enable(this);
+        ACRA.init(this);
+
         String applicationID = "j6DTfeUL6JvI9PunllRInpQbUg3dJLCVNTvaAOfY";
         String clientKey = "VLESF9CjbpiRJ97A1XVllHZuBgO0TJrRJyNA3OL8";
 
@@ -134,6 +156,8 @@ public class VMApp extends Application {
                 PushManage.class);
         PushService
                 .subscribe(this, "EN", PushManage.class);
+
+        saveInstallation(0);
 
         //APA91bHWnClTagZ9PD8sqM3Xf2EHb1Y14mPeeSMJV1YYcwCtpGxDQVPNBIe144KLRzIgS6LajHebBqRmnzPs4oeB2xM_feChMBPK72lf5HVCEZuC-yTAZfUgYyi7GHc4gfenwmd8x2fZ
 
@@ -158,6 +182,8 @@ public class VMApp extends Application {
         mPref.isNoti().put(true).commit();
 
 
+        // test crash
+        //throw new RuntimeException("Test Exception!");
 
     }
 
@@ -197,6 +223,8 @@ public class VMApp extends Application {
         PushService
                 .unsubscribe(getAppContext(), "EN");
         VMApp.removeInstallation(Integer.parseInt(mPref.userId().getOr("0")));
+        if (mFbHandleActivity != null)
+            getFacebookHandle(mFbHandleActivity).unauth();
 //        ParsePush.unsubscribeInBackground("EN");
         Log.e("isLogin",":::"+isLogin);
     }

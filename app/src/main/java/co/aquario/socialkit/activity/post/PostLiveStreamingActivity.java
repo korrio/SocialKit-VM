@@ -70,7 +70,7 @@ public class PostLiveStreamingActivity extends Activity {
     //private String flv_url = "http://192.168.2.111:8936/live/livestream.flv";
     //private String flv_url = "http://192.168.1.144:8936/live/livestream.flv";
     // the bitrate in kbps.
-    private int vbitrate_kbps = 300;
+    private int vbitrate_kbps = 480;
     private final static int VFPS = 20;
     private final static int VGOP = 5;
     //private final static int VWIDTH = 640;

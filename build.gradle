@@ -12,6 +12,7 @@ ext {
     bolts = 'com.parse.bolts:bolts-android:1.2.0'
     parsePath = "$rootProject.projectDir/ParseLoginUI/libs/Parse-1.9.1.jar"
     parseFacebookUtilsPath = "$rootProject.projectDir/ParseLoginUI/libs/ParseFacebookUtilsV4-1.9.1.jar"
+    parseCrashReporting = "$rootProject.projectDir/ParseLoginUI/libs/ParseCrashReporting-1.9.4.jar"
 }
 
 allprojects {

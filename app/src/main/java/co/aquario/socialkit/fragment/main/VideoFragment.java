@@ -107,7 +107,7 @@ public class VideoFragment extends BaseFragment {
 
                 Video post = list.get(position);
                 Intent i2;
-                if(getActivity().getLocalClassName().equals("NewDragableActivity"))
+                if(getActivity().getClass().getSimpleName().equals("NewDragableActivity"))
                     i2 = new Intent(getActivity(), DragableActivity.class);
                 else
                     i2 = new Intent(getActivity(), NewDragableActivity.class);
@@ -116,7 +116,7 @@ public class VideoFragment extends BaseFragment {
 
                 i2.putExtras(bundle);
                 startActivity(i2);
-                getActivity().finish();
+                //getActivity().finish();
             }
         });
 

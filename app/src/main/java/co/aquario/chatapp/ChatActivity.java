@@ -93,7 +93,6 @@ public class ChatActivity extends BaseActivity {
                 }
 
                 getToolbar().inflateMenu(R.menu.menu_chat);
-
                 getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
