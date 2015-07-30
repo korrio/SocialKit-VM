@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,6 +49,7 @@ import co.aquario.chatui.ChatUIActivity;
 import co.aquario.chatui.fragment.FragmentTabhost.TattooFragment;
 import co.aquario.socialkit.activity.post.PostPhotoActivity;
 import co.aquario.socialkit.activity.post.PostVideoActivity;
+import co.aquario.socialkit.activity.search.SearchPagerFragment;
 import co.aquario.socialkit.event.ActivityResultEvent;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
@@ -287,11 +287,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     @Override
     public void onSearchQuery(String query) {
         Utils.hideKeyboard(this);
-        FeedFragment fragment = new FeedFragment().newInstance(query);
-        FragmentManager manager = ((AppCompatActivity) mActivity).getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
-        transaction.commit();
+        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),query);
+        getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
 
         //SearchActivity.startActivity(getApplicationContext(),query);
     }
@@ -333,6 +330,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 .addDrawerItems(
 
                         new SectionDrawerItem().withName("Menu"),
+                        new SecondaryDrawerItem().withName("Search").withIcon(FontAwesome.Icon.faw_search).withIdentifier(7),
                         new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home).withIdentifier(0),
                         new SecondaryDrawerItem().withName("Chat").withIcon(FontAwesome.Icon.faw_envelope).withIdentifier(1),
                         new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history).withIdentifier(2),
@@ -411,6 +409,17 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().getMenu().clear();
                             WebViewFragment fragment = WebViewFragment.newInstance(termUrl);
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "TERM_POLICY").addToBackStack(null).commit();
+
+                        } else if(drawerItem.getIdentifier() == 7){
+                            // Term & Policy
+                            getToolbar().setTitle("VDOMAX");
+                            getToolbar().setSubtitle("Search");
+
+
+                            getToolbar().getMenu().clear();
+                            SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),"สวย");
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
+
 
                         } else if(drawerItem.getIdentifier() == 9) {
 

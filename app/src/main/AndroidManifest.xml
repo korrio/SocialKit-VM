@@ -174,6 +174,12 @@
         <!--</receiver>-->
 
         <activity
+            android:name="co.aquario.socialkit.activity.search.SearchActivity"
+            android:theme="@style/AppTheme.WithoutActionBar">
+
+        </activity>
+
+        <activity
             android:name="co.aquario.chatapp.ChatActivity"
             android:theme="@style/AppTheme.WithoutActionBar">
 
@@ -223,6 +229,12 @@
 
         <activity
             android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
         </activity>
 
         <activity

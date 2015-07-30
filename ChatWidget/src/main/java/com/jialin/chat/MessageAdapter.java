@@ -122,6 +122,8 @@ public class MessageAdapter extends BaseAdapter {
 		viewHolder.userNameTextView.setText(m.getFromUserName());
 		Picasso.with(mContext).load(m.getFromUserAvatar()).centerCrop().resize(200,200)
                 .transform(new RoundedTransformation(100, 4)).into(viewHolder.userAvatarImageView);
+        viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
 
 		JSONObject dataObj;
 		dataObj = null;
@@ -131,10 +133,11 @@ public class MessageAdapter extends BaseAdapter {
 			e.printStackTrace();
 		}
 
-        Log.e("dataObj["+position+"]",m.getData());
+        //Log.e("dataObj["+position+"]",m.getData());
 
 		switch (m.getType()) {
 		case 0://text
+
 			viewHolder.textTextView.setText(m.getContent());
 			viewHolder.textTextView.setVisibility(View.VISIBLE);
 			viewHolder.photoImageView.setVisibility(View.GONE);
@@ -146,7 +149,7 @@ public class MessageAdapter extends BaseAdapter {
 				
 				LayoutParams layoutParams = (LayoutParams) viewHolder.failImageView.getLayoutParams();
 				layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
-				if( m.getSendSucces() != null && !m.getSendSucces()){
+				if( m.getSendSuccess() != null && !m.getSendSuccess()){
 					viewHolder.failImageView.setVisibility(View.VISIBLE);
 					viewHolder.failImageView.setLayoutParams(layoutParams);
 				}else{
@@ -186,12 +189,12 @@ public class MessageAdapter extends BaseAdapter {
                     String imageUrl = dataObj.optString("thumb");
                     Log.e("myurl", imageUrl);
                     if(imageUrl != null && !imageUrl.equals(""))
-                        Picasso.with(mContext).load(imageUrl).resize(400, 400).into(viewHolder.photoImageView);
+                        Picasso.with(mContext).load(imageUrl).fit().centerCrop().into(viewHolder.photoImageView);
                 } else if((dataObj.optString("fileType").equals("video/mp4") || dataObj.optString("fileType").equals("video/quicktime")) && dataObj.optString("thumb") != null) {
                     String imageUrl = dataObj.optString("thumb");
                     Log.e("myurl", imageUrl);
                     if(imageUrl != null && !imageUrl.equals(""))
-                        Picasso.with(mContext).load(imageUrl).resize(400, 400).into(viewHolder.photoImageView);
+                        Picasso.with(mContext).load(imageUrl).fit().centerCrop().into(viewHolder.photoImageView);
                 } else {
                     // from local photo taken or picked
                     String uriStr = dataObj.optString("imageUriPhoto");
@@ -218,7 +221,7 @@ public class MessageAdapter extends BaseAdapter {
 				
 				LayoutParams layoutParams = (LayoutParams) viewHolder.failImageView.getLayoutParams();
 				layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
-				if(m.getSendSucces() != null && !m.getSendSucces()){
+				if(m.getSendSuccess() != null && !m.getSendSuccess()){
 					viewHolder.failImageView.setVisibility(View.VISIBLE);
 					viewHolder.failImageView.setLayoutParams(layoutParams);
 				}else{
@@ -260,7 +263,7 @@ public class MessageAdapter extends BaseAdapter {
 				
 				LayoutParams layoutParams = (LayoutParams) viewHolder.failImageView.getLayoutParams();
 				layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.faceImageView);
-				if(m.getSendSucces() != null && !m.getSendSucces()){
+				if(m.getSendSuccess() != null && !m.getSendSuccess()){
 					viewHolder.failImageView.setVisibility(View.VISIBLE);
 					viewHolder.failImageView.setLayoutParams(layoutParams);
 				}else{
@@ -292,7 +295,7 @@ public class MessageAdapter extends BaseAdapter {
                 if(dataObj.optString("imageUriVdoThumb") == null) {
                     String imageUrl = dataObj.optString("thumb");
                     if(imageUrl != null && !imageUrl.equals(""))
-                        Picasso.with(mContext).load(imageUrl).into(viewHolder.photoImageView);
+                        Picasso.with(mContext).load(imageUrl).fit().centerCrop().into(viewHolder.photoImageView);
                 } else {
                     try {
                         URI imageUri = new URI(dataObj.optString("imageUriVdoThumb"));

@@ -23,6 +23,9 @@ import co.aquario.chatui.model.UserMe;
 import co.aquario.chatui.model.follow_suggestion_model.FollowSuggestionModel;
 import co.aquario.chatui.model.followersmodel.FollowersModel;
 import co.aquario.chatui.model.friendmodel.FriendsModel;
+import co.aquario.socialkit.activity.search.GetSearchEvent;
+import co.aquario.socialkit.activity.search.GetSearchEventSuccess;
+import co.aquario.socialkit.activity.search.SearchResult;
 import co.aquario.socialkit.event.FailedNetworkEvent;
 import co.aquario.socialkit.event.FbAuthEvent;
 import co.aquario.socialkit.event.FollowRegisterEvent;
@@ -630,6 +633,25 @@ public class ApiHandlerVM {
             @Override
             public void failure(RetrofitError error) {
 
+            }
+        });
+    }
+
+    @Subscribe public void getSearchResult(GetSearchEvent event) {
+
+        Map<String, String> options = new HashMap<String, String>();
+
+        options.put("q", event.query);
+        api.getSearch(options, new Callback<SearchResult>() {
+            @Override
+            public void success(SearchResult searchResult, Response response) {
+                //Log.e("ma pa", "???");
+                ApiBus.getInstance().post(new GetSearchEventSuccess(searchResult.result));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                //Log.e("ma pa", error.getLocalizedMessage());
             }
         });
     }

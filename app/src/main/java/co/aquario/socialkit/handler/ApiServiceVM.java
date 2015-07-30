@@ -6,6 +6,7 @@ import co.aquario.chatui.model.UserMe;
 import co.aquario.chatui.model.follow_suggestion_model.FollowSuggestionModel;
 import co.aquario.chatui.model.followersmodel.FollowersModel;
 import co.aquario.chatui.model.friendmodel.FriendsModel;
+import co.aquario.socialkit.activity.search.SearchResult;
 import co.aquario.socialkit.event.FollowUserResponse;
 import co.aquario.socialkit.event.FriendListDataResponse;
 import co.aquario.socialkit.event.PhotoListDataResponse;
@@ -49,6 +50,10 @@ public interface ApiServiceVM {
     @GET("/story/{id}")
     public void getStory(@Path("id") int id,
                          Callback<StoryDataResponse> responseJson);
+
+    @GET("/search/result")
+    public void getSearch(@QueryMap Map<String, String> options,
+                                Callback<SearchResult> responseJson);
 
     @GET("/search/hashtag")
     public void getHashtagStory(@QueryMap Map<String, String> options,

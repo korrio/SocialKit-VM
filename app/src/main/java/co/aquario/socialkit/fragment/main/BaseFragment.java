@@ -13,10 +13,12 @@ import com.squareup.otto.Subscribe;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.activity.search.SearchPagerFragment;
 import co.aquario.socialkit.event.ActivityResultEvent;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PrefManager;
+import co.aquario.socialkit.util.Utils;
 
 public abstract class BaseFragment extends Fragment {
 

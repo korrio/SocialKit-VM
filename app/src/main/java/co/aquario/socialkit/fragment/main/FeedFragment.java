@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -53,6 +54,7 @@ import com.tumblr.bookends.Bookends;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -70,6 +72,7 @@ import co.aquario.socialkit.TakePhotoActivity2;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.post.PostLiveStreamingActivity;
 import co.aquario.socialkit.activity.post.PostStatusActivity2;
+import co.aquario.socialkit.activity.search.SearchPagerFragment;
 import co.aquario.socialkit.adapter.ButtonItemAdapter;
 import co.aquario.socialkit.adapter.FeedAdapter;
 import co.aquario.socialkit.event.FollowRegisterEvent;
@@ -101,7 +104,7 @@ import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
 import co.aquario.socialkit.widget.RoundedTransformation;
 
 
-public class FeedFragment extends BaseFragment {
+public class FeedFragment extends BaseFragment implements BaseFragment.SearchListener {
 
 
     public static final String USER_ID = "USER_ID";
@@ -110,7 +113,10 @@ public class FeedFragment extends BaseFragment {
     public static final String IS_HOMETIMELINE = "IS_HOMETIMELINE";
     public static final String IS_HASHTAG = "IS_HASHTAG";
     public static final String IS_STORY = "IS_STORY";
+    public static final String IS_SEARCH = "IS_SEARCH";
     public static final String HASHTAG = "HASHTAG";
+
+    public static final String STORY_LIST = "STORY_LIST";
 
     public static String HASHTAG_QUERY = "";
 
@@ -150,6 +156,7 @@ public class FeedFragment extends BaseFragment {
     private int currentPage = 1;
     private boolean isRefresh = false;
     private boolean isLoadding = false;
+    private boolean isSearch = false;
     private String userId = "";
     private int postId;
 
@@ -172,6 +179,19 @@ public class FeedFragment extends BaseFragment {
     private ImageView mPlayerStateButton;
     private ProgressBar mProgressBar;
 
+    public static FeedFragment newInstance(String userId, boolean isHomeTimeline,ArrayList<PostStory> storyList) {
+        FeedFragment mFragment = new FeedFragment();
+        Bundle mBundle = new Bundle();
+        mBundle.putString(USER_ID, userId);
+        mBundle.putBoolean(IS_HOMETIMELINE, isHomeTimeline);
+        mBundle.putBoolean(IS_HASHTAG, false);
+        mBundle.putBoolean(IS_STORY,false);
+        mBundle.putBoolean(IS_SEARCH,true);
+        mBundle.putParcelable(STORY_LIST, Parcels.wrap(storyList));
+        mFragment.setArguments(mBundle);
+        return mFragment;
+    }
+
     public static FeedFragment newInstance(String userId, boolean isHomeTimeline) {
         FeedFragment mFragment = new FeedFragment();
 		Bundle mBundle = new Bundle();
@@ -179,6 +199,7 @@ public class FeedFragment extends BaseFragment {
         mBundle.putBoolean(IS_HOMETIMELINE, isHomeTimeline);
         mBundle.putBoolean(IS_HASHTAG, false);
         mBundle.putBoolean(IS_STORY,false);
+        mBundle.putBoolean(IS_SEARCH,false);
         mFragment.setArguments(mBundle);
 		return mFragment;
 	}
@@ -190,6 +211,7 @@ public class FeedFragment extends BaseFragment {
         mBundle.putBoolean(IS_HOMETIMELINE, true);
         mBundle.putBoolean(IS_HASHTAG, true);
         mBundle.putBoolean(IS_STORY,false);
+        mBundle.putBoolean(IS_SEARCH,false);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -201,17 +223,42 @@ public class FeedFragment extends BaseFragment {
         mBundle.putBoolean(IS_HOMETIMELINE, false);
         mBundle.putBoolean(IS_HASHTAG, false);
         mBundle.putBoolean(IS_STORY,true);
+        mBundle.putBoolean(IS_SEARCH,false);
         mFragment.setArguments(mBundle);
         return mFragment;
     }
 
+    SearchView mSearchView;
     Toolbar toolbar;
+
+    String oldQuery = "Search..";
+
     void setupToolbar() {
         toolbar = ((BaseActivity) getActivity()).getToolbar();
         if(toolbar != null && getActivity().getLocalClassName().equals("MainActivity")) {
             toolbar.getMenu().clear();
             toolbar.setTitle("VDOMAX");
             toolbar.inflateMenu(R.menu.menu_main);
+
+            mSearchView = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
+            mSearchView.setQueryHint(oldQuery);
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    Utils.hideKeyboard(getActivity());
+                    SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),s);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
+                    toolbar.setTitle("Search: " + s);
+                    oldQuery = s;
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
+
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -292,6 +339,7 @@ public class FeedFragment extends BaseFragment {
                             adapter.notifyDataSetChanged();
                             if(!isHashtag)
                                 swipeLayout.setRefreshing(true);
+
                             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
                             break;
                     }
@@ -316,54 +364,64 @@ public class FeedFragment extends BaseFragment {
         pref = VMApp.get(getActivity().getApplicationContext()).getPrefManager();
         if (getArguments() != null) {
 
-            isStory = getArguments().getBoolean(IS_STORY);
+            if(!getArguments().getBoolean(IS_SEARCH)) {
+                isStory = getArguments().getBoolean(IS_STORY);
 
-            if(!getArguments().getBoolean(IS_STORY)) {
-                if(getArguments().getBoolean(IS_HASHTAG)) {
-                    // HASHTAG
-                    isHashtag = true;
-                    isHomeTimeline = true;
-                    HASHTAG_QUERY = getArguments().getString(HASHTAG);
+                if(!getArguments().getBoolean(IS_STORY)) {
+                    if(getArguments().getBoolean(IS_HASHTAG)) {
+                        // HASHTAG
+                        isHashtag = true;
+                        isHomeTimeline = true;
+                        HASHTAG_QUERY = getArguments().getString(HASHTAG);
 
-                    userId = pref.userId().getOr("0");
+                        userId = pref.userId().getOr("0");
 
-                    ApiBus.getInstance().post(new LoadHashtagStoryEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline,HASHTAG_QUERY));
-                    ApiBus.getInstance().postQueue(new TitleEvent("#" + HASHTAG_QUERY));
-                    ApiBus.getInstance().postQueue(new SubTitleEvent(""));
+                        ApiBus.getInstance().post(new LoadHashtagStoryEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline,HASHTAG_QUERY));
+                        ApiBus.getInstance().postQueue(new TitleEvent("#" + HASHTAG_QUERY));
+                        ApiBus.getInstance().postQueue(new SubTitleEvent(""));
 
-                } else {
-                    userId = getArguments().getString(USER_ID);
-                    isHashtag = false;
-                    isHomeTimeline = getArguments().getBoolean(IS_HOMETIMELINE);
-
-
-                    if(!Utils.isNumeric(userId)) {
-                        // USER_TIMELINE -> @mention
-                        username = userId;
-                        isHomeTimeline = false;
-                        ApiBus.getInstance().post(new GetUserProfileEvent(username, true));
                     } else {
-                        ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
-                        if(!isHomeTimeline) // USER_TIMELINE -> userId
-                        {
-                            ApiBus.getInstance().post(new GetUserProfileEvent(userId));
+                        userId = getArguments().getString(USER_ID);
+                        isHashtag = false;
+                        isHomeTimeline = getArguments().getBoolean(IS_HOMETIMELINE);
+
+
+                        if(!Utils.isNumeric(userId)) {
+                            // USER_TIMELINE -> @mention
+                            username = userId;
+                            isHomeTimeline = false;
+                            ApiBus.getInstance().post(new GetUserProfileEvent(username, true));
+                        } else {
+                            ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
+                            if(!isHomeTimeline) // USER_TIMELINE -> userId
+                            {
+                                ApiBus.getInstance().post(new GetUserProfileEvent(userId));
+                            }
                         }
+
+
+
                     }
-
-
-
-                }
-            } else {
-                // POST_ID
-                postId = getArguments().getInt(POST_ID);
+                } else {
+                    // POST_ID
+                    postId = getArguments().getInt(POST_ID);
 
                     isHomeTimeline = true;
                     ApiBus.getInstance().postQueue(new TitleEvent("VDOMAX"));
                     ApiBus.getInstance().postQueue(new GetStoryEvent("" + postId));
 
 
-                //ApiBus.getInstance().postQueue(new SubTitleEvent("PostID:" + postId));
+                    //ApiBus.getInstance().postQueue(new SubTitleEvent("PostID:" + postId));
+                }
+            } else {
+                isSearch = true;
+                isHomeTimeline = true;
+                userId = getArguments().getString(USER_ID);
+                list = Parcels.unwrap(getArguments().getParcelable(STORY_LIST));
+
             }
+
+
         } else {
             userId = pref.userId().getOr("0");
             isHomeTimeline = true;
@@ -376,6 +434,10 @@ public class FeedFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
+        if(isSearch) {
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     @Subscribe public void onGetStoryEventSuccess(GetStorySuccessEvent event) {
@@ -484,10 +546,6 @@ public class FeedFragment extends BaseFragment {
             });
         }
 
-        //mToolbar = ((BaseActivity) getActivity()).getToolbar();
-        //mToolbarContainer = mToolbar;
-
-        //mToolbarHeight = mToolbar.getHeight();
         // Create your views, whatever they may be
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvFeed);
         mRecyclerView.setHasFixedSize(true);
@@ -500,13 +558,6 @@ public class FeedFragment extends BaseFragment {
         myHeader = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.fragment_profile, mRecyclerView, false);
 
         setEmptyText(getString(R.string.no_story));
-
-//        myTitanicTextView = (TitanicTextView) rootView.findViewById(R.id.titanic_tv);
-//        //myTitanicTextView.setTypeface(Typefaces.get(getActivity(), "Satisfy-Regular.ttf"));
-//
-//        titanic = new Titanic();
-//        titanic.start(myTitanicTextView);
-//        myTitanicTextView.setVisibility(View.VISIBLE);
 
         initSCMediaPlayer();
 
@@ -580,33 +631,11 @@ public class FeedFragment extends BaseFragment {
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), PostStatusActivity2.class);
                 i.putExtra("IS_MYHOMETIMELINE",(userId.equals(VMApp.mPref.userId().getOr("0"))));
-                i.putExtra("USER_ID",userId);
+                i.putExtra("USER_ID", userId);
                 startActivityForResult(i,100);
 
             }
         });
-
-        adapter = new FeedAdapter(getActivity(), list, this, isHomeTimeline);
-
-        adapter.OnItemLoveClick(new FeedAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (!isHomeTimeline)
-                    position--;
-                ApiBus.getInstance().post(new PostLoveEvent(userId, list.get(position).postId));
-            }
-        });
-
-        adapter.OnItemShareClick(new FeedAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                pShare = position;
-                Log.e("postId",pShare+"");
-                buildShare2Dialog();
-
-            }
-        });
-
 
 
         // load more
@@ -615,7 +644,7 @@ public class FeedFragment extends BaseFragment {
             public void onLoadMore(int page) {
                 currentPage = page;
                 isRefresh = false;
-                if (!isLoadding && !isHashtag )
+                if (!isLoadding && !isHashtag)
                     ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
                 isLoadding = true;
                 Log.e("thispageis", page + "");
@@ -661,6 +690,25 @@ public class FeedFragment extends BaseFragment {
             }
         });
 
+        adapter = new FeedAdapter(getActivity(), list, this, isHomeTimeline);
+
+        adapter.OnItemLoveClick(new FeedAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (!isHomeTimeline)
+                    position--;
+                ApiBus.getInstance().post(new PostLoveEvent(userId, list.get(position).postId));
+            }
+        });
+
+        adapter.OnItemShareClick(new FeedAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                pShare = position;
+                Log.e("postId", pShare + "");
+                buildShare2Dialog();
+            }
+        });
 
         // Add them as headers / footers
         bAdapter = new Bookends<>(adapter);
@@ -1234,6 +1282,12 @@ public class FeedFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void onSearchQuery(String query) {
+        Utils.hideKeyboard(getActivity());
+        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),query);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
 
-
+        //SearchActivity.startActivity(getApplicationContext(),query);
+    }
 }

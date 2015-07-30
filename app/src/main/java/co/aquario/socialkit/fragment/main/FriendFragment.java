@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
@@ -33,6 +35,7 @@ import co.aquario.socialkit.widget.EndlessRecyclerOnScrollListener;
 public class FriendFragment extends BaseFragment {
     private static final String LOAD_TYPE = "TYPE";
     private static final String USER_ID = "USER_ID";
+    private static final String FRIEND_LIST = "FRIEND_LIST";
     ArrayList<User> list = new ArrayList<>();
     FriendRecyclerAdapter adapter2;
     RecyclerView recyclerView;
@@ -40,14 +43,25 @@ public class FriendFragment extends BaseFragment {
     GridLayoutManager manager;
     boolean isRefreshing = false;
     boolean isLoadmore = false;
+    boolean isRefreshable = false;
     private String type = "";
     private String userId = "";
 
-    public static FriendFragment newInstance(String text,String userId){
+    public static FriendFragment newInstance(String type,String userId){
         FriendFragment mFragment = new FriendFragment();
         Bundle mBundle = new Bundle();
-        mBundle.putString(LOAD_TYPE, text);
+        mBundle.putString(LOAD_TYPE, type);
         mBundle.putString(USER_ID,userId);
+        mFragment.setArguments(mBundle);
+        return mFragment;
+    }
+
+    public static FriendFragment newInstance(String type,String userId,ArrayList<User> list){
+        FriendFragment mFragment = new FriendFragment();
+        Bundle mBundle = new Bundle();
+        mBundle.putString(LOAD_TYPE, type);
+        mBundle.putString(USER_ID,userId);
+        mBundle.putParcelable(FRIEND_LIST, Parcels.wrap(list));
         mFragment.setArguments(mBundle);
         return mFragment;
     }
@@ -59,8 +73,13 @@ public class FriendFragment extends BaseFragment {
         if (getArguments() != null) {
             type = getArguments().getString(LOAD_TYPE);
             userId = getArguments().getString(USER_ID);
+            isRefreshable = true;
+            if(getArguments().getParcelable(FRIEND_LIST) != null) {
+                this.list = Parcels.unwrap(getArguments().getParcelable(FRIEND_LIST));
+                isRefreshable = false;
+            }
         }
-        if(!type.equals("")) {
+        if(!type.equals("") && !type.equals("SEARCH")) {
             if(userId.equals(""))
                 userId = prefManager.userId().getOr("0");
             ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),1,100));
@@ -89,27 +108,30 @@ public class FriendFragment extends BaseFragment {
         //LinearLayoutManager linearLayoutManager = toolbar LinearLayoutManager(getActivity());
         //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
-            @Override
-            public void onLoadMore(int current_page) {
-                isRefreshing = false;
-                isLoadmore = true;
-                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
-            }
+        if(isRefreshable) {
+            recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
+                @Override
+                public void onLoadMore(int current_page) {
+                    isRefreshing = false;
+                    isLoadmore = true;
+                    ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
+                }
 
 
-        });
+            });
 
-        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+            swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
 
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                isRefreshing = true;
-                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
+            swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    isRefreshing = true;
+                    ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
 
-            }
-        });
+                }
+            });
+        }
+
 
         return rootView;
     }
@@ -134,33 +156,38 @@ public class FriendFragment extends BaseFragment {
         //tvSample.setText(savedInstanceState.getString("text"));
     }
 
+    private void updateFriendList(ArrayList<User> list) {
+        if(isRefreshing){
+            list.clear();
+            isRefreshing = false;
+            swipeLayout.setRefreshing(isRefreshing);
+        }
+        else {
+            if(!isLoadmore) {
+                if (list.size() == 0) {
+                    //recyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                }
+                else {
+                    //recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
+            }
+
+
+        }
+
+        isLoadmore = false;
+
+        list.addAll(list);
+        adapter2.updateList(list);
+    }
+
     @Subscribe public void onLoadFriendListSuccess(LoadFriendListSuccessEvent event) {
         Log.e("MYTYPE",type);
         if(event.getType().equals(type)) {
-            if(isRefreshing){
-                list.clear();
-                isRefreshing = false;
-                swipeLayout.setRefreshing(isRefreshing);
-            }
-            else {
-                if(!isLoadmore) {
-                    if (event.getFriendListData().users.size() == 0) {
-                        //recyclerView.setVisibility(View.GONE);
-                        emptyView.setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        //recyclerView.setVisibility(View.VISIBLE);
-                        emptyView.setVisibility(View.GONE);
-                    }
-                }
-
-
-            }
-
-            isLoadmore = false;
-
-            list.addAll(event.getFriendListData().users);
-            adapter2.updateList(list);
+            //event.getFriendListData().users
+            updateFriendList(event.getFriendListData().users);
 
         }
     }

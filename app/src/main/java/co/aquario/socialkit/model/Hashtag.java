@@ -1,6 +1,7 @@
 package co.aquario.socialkit.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Mac on 6/8/15.
@@ -13,10 +14,18 @@ public class Hashtag {
     public String hash;
     @Expose
     public String tag;
+    @Expose
+    @SerializedName("trend_use_num")
+    public String num;
+    @Expose
+    @SerializedName("last_trend_time")
+    public String ago;
 
-    public Hashtag(String id, String hash, String tag) {
+    public Hashtag(String id, String hash, String tag, String num, String ago) {
         this.id = id;
         this.hash = hash;
         this.tag = tag;
+        this.num = num;
+        this.ago = ago;
     }
 }

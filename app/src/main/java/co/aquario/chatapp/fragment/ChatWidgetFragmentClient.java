@@ -435,6 +435,28 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 }
             }
 
+            List<String> photos = null;
+            // choose photo from PhotoPickerActivity
+            if (requestCode == 100) {
+                if (data != null) {
+                    photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
+                    for (int i = 0; i < photos.size(); i++) {
+                        String dataJson = "{}";
+                        Message sendingMessage = new Message(Message.MSG_TYPE_PHOTO,
+                                Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "",
+                                dataJson, true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+
+                        Uri selectedImageUri = Uri.parse(photos.get(i));
+
+                        String path = getRealPath(getActivity(), selectedImageUri);
+                        File file = imagePathToFile(selectedImageUri, path);
+
+                        listMessages.add(sendingMessage);
+                        uploadFileRetrofit(file, Message.MSG_TYPE_PHOTO, sendingMessage);
+                    }
+                }
+            }
+
             // choose photo and video from Dialog
             if (requestCode == REQUEST_TAKE_PHOTO) {
 
@@ -442,11 +464,9 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 Uri selectedImageUri = Uri.parse(path);
                 File file = imagePathToFile(selectedImageUri, path);
 
-                // String fileType= "image/jpeg";
-                String dataJson = "{'imageUriPhoto':'" + path + "'" +
-                        //",'fileType':'"+fileType+"'" +
-                        "}";
-                Message message = new Message(
+                ;
+                String dataJson = "{}";
+                Message sendingMessage = new Message(
                         Message.MSG_TYPE_PHOTO,
                         Message.MSG_STATE_SENDING,
                         mUsername, mAvatarUrl,
@@ -456,29 +476,28 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                         false,
                         new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
-                listMessages.add(message);
+                listMessages.add(sendingMessage);
                 //uploadFile(file);
-                uploadFileRetrofit(file,Message.MSG_TYPE_PHOTO);
+                uploadFileRetrofit(file, Message.MSG_TYPE_PHOTO, sendingMessage);
 
             } else if (requestCode == REQUEST_CHOOSE_PHOTO) {
 
                 Uri selectedImageUri = data.getData();
 
-                String path = getRealPathFromURI(getActivity(), selectedImageUri);
+                String path = getRealPath(getActivity(), selectedImageUri);
                 File file = imagePathToFile(selectedImageUri, path);
 
-                String fileType= "image/jpeg";
-                String dataJson = "{'imageUriPhoto':'" + path + "'" +
-                        //",'fileType':'"+fileType+"'" +
-                        "}";
-                Message message = new Message(Message.MSG_TYPE_PHOTO,
-                        Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "",
-                        dataJson, true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
-                listMessages.add(message);
+                String dataJson = "{}";
+                Message sendingMessage = new Message(Message.MSG_TYPE_PHOTO,
+                        Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "",
+                        dataJson, true, false,
+                        new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+
+                listMessages.add(sendingMessage);
 
                 //uploadFile(file);
-                uploadFileRetrofit(file,Message.MSG_TYPE_PHOTO);
+                uploadFileRetrofit(file, Message.MSG_TYPE_PHOTO, sendingMessage);
 
             } else if (requestCode == RESULT_PICK_VIDEO) {
 
@@ -487,18 +506,18 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     String vdoThumb = ChatUtil.getThumbnailPathForLocalFile(getActivity(), mFileURI);
                     String dataJson = "";
                     if (vdoThumb != null)
-                        dataJson = "{'imageUriVdoThumb':'" + vdoThumb + "'}";
+                        dataJson = "{'thumb':'" + vdoThumb + "'}";
 
                     Message sendingMessage = new Message(Message.MSG_TYPE_CLIP,
-                            Message.MSG_STATE_SENDING, "",
+                            Message.MSG_STATE_SENDING, mUsername,
                             mAvatarUrl, "", "", "",
                             dataJson, true, false,
                             new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                     listMessages.add(sendingMessage);
 
-
-                    File clip = new File(getRealPathFromURI(getActivity(), mFileURI));
-                    uploadFileRetrofit(clip,Message.MSG_TYPE_PHOTO);
+                    String path = getRealPathFromURIVideo(getActivity(), mFileURI);
+                    File clip = new File(path);
+                    uploadFileRetrofit(clip, Message.MSG_TYPE_PHOTO, sendingMessage);
                 }
 
             } else if (requestCode == RESULT_VIDEO_CAP) {
@@ -509,58 +528,51 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     String vdoThumb = ChatUtil.getThumbnailPathForLocalFile(getActivity(), mFileURI);
                     String dataJson = "";
                     if (vdoThumb != null)
-                        dataJson = "{'imageUriVdoThumb':'" + vdoThumb + "'}";
+                        dataJson = "{'thumb':'" + vdoThumb + "'}";
 
                     Message sendingMessage = new Message(Message.MSG_TYPE_CLIP,
-                            Message.MSG_STATE_SENDING, "", mAvatarUrl, "", "", "",
+                            Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "",
                             dataJson,
                             true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                     listMessages.add(sendingMessage);
 
-                    File clip = new File(getRealPathFromURI(getActivity(), mFileURI));
-                    uploadFileRetrofit(clip,Message.MSG_TYPE_PHOTO);
+                    String path = getRealPathFromURIVideo(getActivity(), mFileURI);
+                    File clip = new File(path);
+                    uploadFileRetrofit(clip, Message.MSG_TYPE_PHOTO, sendingMessage);
                 }
 
             }
 
-            List<String> photos = null;
-            // choose photo from PhotoPickerActivity
-            if (requestCode == 100) {
-                if (data != null) {
-                    photos = data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
-                    for (int i = 0; i < photos.size(); i++) {
-                        String dataJson = "{'imageUriPhoto':'" + photos.get(i) + "'}";
-                        Message message = new Message(Message.MSG_TYPE_PHOTO,
-                                Message.MSG_STATE_SUCCESS, mUsername, mAvatarUrl, "", "", "",
-                                dataJson, true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
-                        Uri selectedImageUri = Uri.parse(photos.get(i));
-
-                        String path = getRealPathFromURI(getActivity(), selectedImageUri);
-                        File file = imagePathToFile(selectedImageUri, path);
-
-                        listMessages.add(message);
-                        uploadFileRetrofit(file, Message.MSG_TYPE_PHOTO);
-                    }
-                }
-            } else
-            if (requestCode == 200 || requestCode == 201) {
-
-                if(data != null) {
-                    Uri mFileURI = data.getData();
-
-                    String vdoThumb = ChatUtil.getThumbnailPathForLocalFile(getActivity(), mFileURI);
-                    String dataJson = "";
-                    if (vdoThumb != null)
-                        dataJson = "{'imageUrl':'" + vdoThumb + "'}";
-
-                    Message message = new Message(Message.MSG_TYPE_CLIP, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
-
-                    listMessages.add(message);
-                }
+        //}
+          //  else
+//            if (requestCode == 200 || requestCode == 201) {
+//
+//                if(data != null) {
+//                    Uri mFileURI = data.getData();
+//
+//                    String vdoThumb = ChatUtil.getThumbnailPathForLocalFile(getActivity(), mFileURI);
+//                    String dataJson = "";
+//                    if (vdoThumb != null)
+//                        dataJson = "{'thumb':'"+vdoThumb+"'}";
+//
+//                    String path = getRealPath(getActivity(), mFileURI);
+//                    File file = imagePathToFile(mFileURI, path);
+//
+//                    Message sendingMessage = new Message(Message.MSG_TYPE_PHOTO,
+//                            Message.MSG_STATE_SENDING, mUsername, mAvatarUrl, "", "", "",
+//                            dataJson, true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+//
+//                    uploadFileRetrofit(file, Message.MSG_TYPE_PHOTO,sendingMessage);
+//
+//                    //Message message = new Message(Message.MSG_TYPE_CLIP, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+//
+//                    //listMessages.add(message);
+//                }
 
 
-            } else if (requestCode == 300) {
+        //    }
+        else if (requestCode == 300) {
 
                 String trackUri = data.getStringExtra("soundcloud_uri");
                 String trackTitle = data.getStringExtra("soundcloud_title");
@@ -573,8 +585,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
                 Log.e("myArtworkUrl", artwork_url);
 
-                Message message = new Message(Message.MSG_TYPE_SOUNDCLOUD_OBJ, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
-                listMessages.add(message);
+                Message sendingMessage = new Message(Message.MSG_TYPE_SOUNDCLOUD_OBJ, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", dataJson, false, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                listMessages.add(sendingMessage);
 
                 attemptSendMessageToServer(Message.MSG_TYPE_SOUNDCLOUD_OBJ, "", dataJson);
 
@@ -997,7 +1009,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         mSocket.emit("SendMessage", jObj);
     }
 
-    private void uploadFileRetrofit(File file, final int msgType) {
+    private void uploadFileRetrofit(File file, final int msgType, final Message message) {
         //FileUploadService service = ServiceGenerator.createService(FileUpload.class, FileUpload.BASE_URL);
 
         FileUploadService service = buildUploadApi();
@@ -1025,10 +1037,15 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                                 ",'thumb':'" + cb.getThumb() + "'" +
                                 ",'fileType':'" + cb.getFileType() + "'}";
 
+                    message.setIsSend(false);
+                    message.setState(Message.MSG_STATE_SUCCESS);
+                    message.setData(dataJson);
 
+                    adapter.notifyDataSetChanged();
                     attemptSendMessageToServer(msgType, "", dataJson);
                 } else {
-                    Utils.showToast("UploadCallback is null");
+                    Utils.showToast("Upload is not success, try again");
+                    message.setIsSend(true);
                 }
             }
 
@@ -1174,9 +1191,9 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         for (int i = 0; i < jsonMessages.size(); i++) {
             ChatMessage m = jsonMessages.get(i);
             Message message = null;
-            boolean isSender = false;
+            boolean isSend = false;
             if (m.senderId == mUserId) {
-                isSender = true;
+                isSend = true;
             } else {
                 setChatTitle("@" + m.sender.username);
             }
@@ -1189,46 +1206,46 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             if (m.messageType == 0) {
 
                 // 0 = normal message
-                message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.message, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_TEXT, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.message, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                 //addMessage(m.messageType,m.senderId,m.sender.username + "(type:"+m.messageType+")",m.message,m.data);
 
             } else if (m.messageType == 1) {
 
                 // 1 = tattoo
-                message = new Message(Message.MSG_TYPE_FACE, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.message, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_FACE, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.message, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
                 //addMessage(m.messageType,m.senderId,m.sender.username + "(type:"+m.messageType+")",m.data,m.data);
             } else if (m.messageType == 2) {
 
                 // 2 = image
-                message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.message, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_PHOTO, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.message, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
             } else if (m.messageType == 3) {
 
                 // 3 = youtube link
-                message = new Message(Message.MSG_TYPE_CLIP, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_CLIP, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
             } else if (m.messageType == 31) {
 
                 // 31 = youtube object
-                message = new Message(Message.MSG_TYPE_YOUTUBE_OBJ, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_YOUTUBE_OBJ, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
             } else if (m.messageType == 32) {
 
                 // 32 = soundcloud object
-                message = new Message(Message.MSG_TYPE_SOUNDCLOUD_OBJ, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_SOUNDCLOUD_OBJ, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
             } else if (m.messageType == 4) {
 
                 // 4 = audio call
-                message = new Message(Message.MSG_TYPE_AUDIO_CALL, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_AUDIO_CALL, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
             } else if (m.messageType == 5) {
 
                 // 5 = video call
-                message = new Message(Message.MSG_TYPE_VIDEO_CALL, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_VIDEO_CALL, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
             } else if (m.messageType == 6) {
 
                 // 6 = location
 
-                message = new Message(Message.MSG_TYPE_LOCATION, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSender, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
+                message = new Message(Message.MSG_TYPE_LOCATION, Message.MSG_STATE_SUCCESS, m.sender.username, m.sender.getAvatarPath(), "", "", m.data, m.data, isSend, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
 
             } else if (m.messageType == 7) {
 
@@ -1469,6 +1486,14 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         return rotate;
     }
 
+    public static String getRealPath(Context context,Uri mFileURI) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            return getRealPathFromURIForKitKat(context,mFileURI);
+        } else {
+            return getRealPathFromURI(context, mFileURI);
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getRealPathFromURIForKitKat(Context context, Uri uri) {
         // Will return "image:x*"
@@ -1514,6 +1539,17 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 cursor.close();
             }
         }
+    }
+
+    public static String getRealPathFromURIVideo(Context context, Uri contentUri) {
+
+        String[] proj = { MediaStore.Video.Media.DATA };
+        Cursor cursor = context.getContentResolver().query(contentUri, proj, null,
+                null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     public void setChatTitle(String title) {

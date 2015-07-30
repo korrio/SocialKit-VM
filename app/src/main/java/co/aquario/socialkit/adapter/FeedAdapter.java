@@ -231,7 +231,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
         Date timeAgo = new java.util.Date(agoLong * 1000);
         String ago = p.format(timeAgo);
 
-        holder.name.setText(item.author.name);
+        holder.name.setText(Html.fromHtml(item.author.name));
         holder.ago.setText(item.timestamp);
         holder.nLove.setText(item.loveCount + "");
         holder.nComment.setText(item.commentCount + "");
@@ -744,38 +744,38 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                     break;
                 case R.id.btn_love:
                     int oldLoveCount = 0;
-                    if(Integer.parseInt(nLove.getText().toString()) == post.loveCount && !post.isLoved) {
+                    if(Integer.parseInt(btnLove.getText().toString()) == post.loveCount && !post.isLoved) {
                         oldLoveCount = post.loveCount;
                         oldLoveCount++;
                         btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red,0,0,0);
 
                     }
                     else {
-                        oldLoveCount = Integer.parseInt(nLove.getText().toString());
+                        oldLoveCount = Integer.parseInt(btnLove.getText().toString());
                         oldLoveCount--;
-                        btnLove.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                        btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_outline_grey,0,0,0);
                     }
 
                     post.isLoved = !post.isLoved;
 
-                    nLove.setText(oldLoveCount + "");
+                    btnLove.setText(oldLoveCount + "");
                     if (mItemLove != null) {
                         mItemLove.onItemClick(v, getPosition());
                     }
                     break;
                 case R.id.btn_share:
                     int oldShareCount = 0;
-                    if(Integer.parseInt(nShare.getText().toString()) == post.shareCount && !post.isShared) {
+                    if(Integer.parseInt(btnShare.getText().toString()) == post.shareCount && !post.isShared) {
                         oldShareCount = post.shareCount;
                         oldShareCount++;
                         //btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share,0,0,0);
                     }
-                    else {
-                        oldShareCount = Integer.parseInt(nShare.getText().toString());
-                        oldShareCount--;
-                        //btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share_blue,0,0,0);
-                    }
-                    nShare.setText(oldShareCount + "");
+//                    else {
+//                        oldShareCount = Integer.parseInt(btnShare.getText().toString());
+//                        oldShareCount--;
+//                        //btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share_blue,0,0,0);
+//                    }
+                    //btnShare.setText(oldShareCount + "");
                     if (mItemShare != null) {
                         mItemShare.onItemClick(v, getPosition());
                     }

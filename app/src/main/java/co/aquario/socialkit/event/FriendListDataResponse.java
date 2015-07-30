@@ -3,7 +3,7 @@ package co.aquario.socialkit.event;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import co.aquario.socialkit.model.User;
 
@@ -24,6 +24,6 @@ public class FriendListDataResponse {
     @Expose
     public String total;
     @Expose
-    public List<User> users;
+    public ArrayList<User> users;
 
 }
