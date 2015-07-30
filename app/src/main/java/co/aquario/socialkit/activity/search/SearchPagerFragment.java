@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.otto.Subscribe;
@@ -40,7 +41,7 @@ public class SearchPagerFragment extends BaseFragment {
         return mFragment;
     }
 
-
+    boolean isLoading = false;
 
     Toolbar toolbar;
     void setupToolbar() {
@@ -64,21 +65,29 @@ public class SearchPagerFragment extends BaseFragment {
         }
 
         ApiBus.getInstance().postQueue(new GetSearchEvent(query));
+        isLoading = true;
 
         //
 
     }
 
     View rootView;
+    ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_viewpager, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_viewpager_loading, container, false);
         this.rootView = rootView;
+
         rootView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         setupToolbar();
+
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar2);
+
+        if(isLoading && progressBar != null)
+            progressBar.setVisibility(View.VISIBLE);
 
         return rootView;
     }
@@ -95,6 +104,11 @@ public class SearchPagerFragment extends BaseFragment {
             listStory = event.result.getStory();
             listHashtag = event.result.getHashtag();
         }
+
+        isLoading = false;
+
+        if(progressBar != null)
+            progressBar.setVisibility(View.GONE);
 
         //listUser = event.result.getUser();
         mTabs.add(new SearchTabPagerItem(0, "USER",userId,listUser,listStory,listHashtag));

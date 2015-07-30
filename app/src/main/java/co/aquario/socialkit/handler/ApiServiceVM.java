@@ -91,11 +91,11 @@ public interface ApiServiceVM {
 
 
     @GET("/1.0/user/{id}")
-    public void getProfile(@Path("id") int id,
+    public void getProfile(@QueryMap Map<String, String> options,@Path("id") int id,
                            Callback<UserProfileDataResponse> responseJson);
 
     @GET("/username/{username}")
-    public void getProfileUsername(@Path("username") String username,
+    public void getProfileUsername(@QueryMap Map<String, String> options,@Path("username") String username,
                            Callback<UserProfileDataResponse> responseJson);
 
     @POST("/1.0/posts/{id}/comment")

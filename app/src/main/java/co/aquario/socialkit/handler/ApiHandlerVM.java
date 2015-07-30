@@ -23,6 +23,7 @@ import co.aquario.chatui.model.UserMe;
 import co.aquario.chatui.model.follow_suggestion_model.FollowSuggestionModel;
 import co.aquario.chatui.model.followersmodel.FollowersModel;
 import co.aquario.chatui.model.friendmodel.FriendsModel;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.search.GetSearchEvent;
 import co.aquario.socialkit.activity.search.GetSearchEventSuccess;
 import co.aquario.socialkit.activity.search.SearchResult;
@@ -309,8 +310,14 @@ public class ApiHandlerVM {
 
     @Subscribe public void onGetUserProfile(GetUserProfileEvent event) {
 
+        Map<String, String> options = new HashMap<String, String>();
+        String userId = VMApp.mPref.userId().getOr("0");
+        if(!userId.equals("0"))
+            options.put("user_id", userId);
+
         if(!event.getUserId().equals("")) {
-            api.getProfile(Integer.parseInt(event.getUserId()), new Callback<UserProfileDataResponse>() {
+
+            api.getProfile(options,Integer.parseInt(event.getUserId()), new Callback<UserProfileDataResponse>() {
                 @Override
                 public void success(UserProfileDataResponse userProfileDataResponse, Response response) {
                     GetUserProfileSuccessEvent event = new GetUserProfileSuccessEvent(userProfileDataResponse.user, userProfileDataResponse.count);
@@ -324,7 +331,7 @@ public class ApiHandlerVM {
 
             });
         } else {
-            api.getProfileUsername(event.getUsername(), new Callback<UserProfileDataResponse>() {
+            api.getProfileUsername(options,event.getUsername(), new Callback<UserProfileDataResponse>() {
                 @Override
                 public void success(UserProfileDataResponse userProfileDataResponse, Response response) {
                     GetUserProfileSuccessEvent event = new GetUserProfileSuccessEvent(userProfileDataResponse.user, userProfileDataResponse.count);
@@ -338,8 +345,6 @@ public class ApiHandlerVM {
 
             });
         }
-
-
 
     }
 

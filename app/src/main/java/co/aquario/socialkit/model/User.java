@@ -249,7 +249,7 @@ public class User extends BaseModel {
     }
 
     public boolean getIsFollowing() {
-        return false;
+        return isFollowing;
     }
 
 

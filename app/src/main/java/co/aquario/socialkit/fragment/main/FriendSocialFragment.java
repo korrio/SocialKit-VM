@@ -76,9 +76,9 @@ public class FriendSocialFragment extends BaseFragment {
             userId = getArguments().getString(USER_ID);
             if(userId == null || userId.equals(""))
                 userId = prefManager.userId().getOr("0");
-            if(!type.equals("SEARCH"))
-                ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),1,100));
-            else {
+            if(!type.equals("SEARCH")) {
+                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
+            } else {
                 list = Parcels.unwrap(getArguments().getParcelable("LIST")) ;
                 adapter2.updateList(list);
                 //emptyTv.setVisibility(View.GONE);
@@ -130,6 +130,7 @@ public class FriendSocialFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 isRefreshing = true;
+                if(!type.equals("SEARCH"))
                 ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
 
             }
@@ -166,9 +167,7 @@ public class FriendSocialFragment extends BaseFragment {
                 list.clear();
                 isRefreshing = false;
                 swipeLayout.setRefreshing(isRefreshing);
-            }
-
-            else {
+            } else {
                 if (event.getFriendListData().users.isEmpty()) {
                     recyclerView.setVisibility(View.GONE);
                     emptyView.setVisibility(View.VISIBLE);
@@ -178,8 +177,6 @@ public class FriendSocialFragment extends BaseFragment {
                     emptyView.setVisibility(View.GONE);
                 }
             }
-
-
 
             list.addAll(event.getFriendListData().users);
             adapter2.updateList(list);

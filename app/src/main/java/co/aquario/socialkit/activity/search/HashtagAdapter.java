@@ -46,9 +46,13 @@ public class HashtagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         avatarSize = context.getResources().getDimensionPixelSize(R.dimen.comment_avatar_size);
     }
 
+    //private final View.OnClickListener mOnClickListener = new MyOnClickListener();
+
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(context).inflate(R.layout.item_hashtag, parent, false);
+        //view.setOnClickListener(mOnClickListener);
         return new CommentViewHolder(view);
     }
 
@@ -67,7 +71,10 @@ public class HashtagAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
         holder.tvName.setText("#" + html2text(hashtag.tag));
-        holder.tvComment.setText(hashtag.num + " trend points");
+        if(!hashtag.num.equals("1"))
+            holder.tvComment.setText(hashtag.num + " posts");
+        else
+            holder.tvComment.setText(hashtag.num + " post");
 
         PrettyTime p = new PrettyTime();
         long agoLong = Integer.parseInt(hashtag.ago);

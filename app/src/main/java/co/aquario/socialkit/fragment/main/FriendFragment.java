@@ -43,7 +43,6 @@ public class FriendFragment extends BaseFragment {
     GridLayoutManager manager;
     boolean isRefreshing = false;
     boolean isLoadmore = false;
-    boolean isRefreshable = false;
     private String type = "";
     private String userId = "";
 
@@ -73,24 +72,24 @@ public class FriendFragment extends BaseFragment {
         if (getArguments() != null) {
             type = getArguments().getString(LOAD_TYPE);
             userId = getArguments().getString(USER_ID);
-            isRefreshable = true;
-            if(getArguments().getParcelable(FRIEND_LIST) != null) {
+            //isRefreshable = true;
+            if(type.equals("SEARCH")) {
                 this.list = Parcels.unwrap(getArguments().getParcelable(FRIEND_LIST));
-                isRefreshable = false;
+            } else {
+                Log.e("LOADING", "FRIEND");
+                if(userId.equals(""))
+                    userId = prefManager.userId().getOr("0");
+                ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
             }
         }
-        if(!type.equals("") && !type.equals("SEARCH")) {
-            if(userId.equals(""))
-                userId = prefManager.userId().getOr("0");
-            ApiBus.getInstance().post(new LoadFriendListEvent(type,Integer.parseInt(userId),1,100));
-        }
+
+
     }
 
     TextView emptyView;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview_autofit, container, false);
-
 
         recyclerView = (AutofitRecyclerView) rootView.findViewById(R.id.recycler_view);
         emptyView = (TextView) rootView.findViewById(R.id.emptyText);
@@ -108,13 +107,19 @@ public class FriendFragment extends BaseFragment {
         //LinearLayoutManager linearLayoutManager = toolbar LinearLayoutManager(getActivity());
         //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        if(isRefreshable) {
+
             recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
                 @Override
                 public void onLoadMore(int current_page) {
-                    isRefreshing = false;
-                    isLoadmore = true;
-                    ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
+                    if (!type.equals("SEARCH")) {
+                        isRefreshing = false;
+                        isLoadmore = true;
+                        Log.e("current_page", current_page + "");
+
+                        ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), current_page, 100));
+                    } else {
+
+                    }
                 }
 
 
@@ -125,12 +130,16 @@ public class FriendFragment extends BaseFragment {
             swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    isRefreshing = true;
-                    ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
+                    if (!type.equals("SEARCH")) {
+                        isRefreshing = true;
+                        ApiBus.getInstance().post(new LoadFriendListEvent(type, Integer.parseInt(userId), 1, 100));
+                    } else {
+                        swipeLayout.setRefreshing(false);
+                    }
 
                 }
             });
-        }
+
 
 
         return rootView;
@@ -156,31 +165,29 @@ public class FriendFragment extends BaseFragment {
         //tvSample.setText(savedInstanceState.getString("text"));
     }
 
-    private void updateFriendList(ArrayList<User> list) {
+    private void updateFriendList(ArrayList<User> loadList) {
         if(isRefreshing){
             list.clear();
             isRefreshing = false;
             swipeLayout.setRefreshing(isRefreshing);
+
+        }
+
+        list.addAll(loadList);
+        adapter2.updateList(list);
+
+        if (list.size() == 0) {
+            //recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
         }
         else {
-            if(!isLoadmore) {
-                if (list.size() == 0) {
-                    //recyclerView.setVisibility(View.GONE);
-                    emptyView.setVisibility(View.VISIBLE);
-                }
-                else {
-                    //recyclerView.setVisibility(View.VISIBLE);
-                    emptyView.setVisibility(View.GONE);
-                }
-            }
-
-
+            //recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
         }
 
         isLoadmore = false;
 
-        list.addAll(list);
-        adapter2.updateList(list);
+
     }
 
     @Subscribe public void onLoadFriendListSuccess(LoadFriendListSuccessEvent event) {

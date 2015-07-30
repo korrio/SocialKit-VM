@@ -3,7 +3,6 @@ package co.aquario.socialkit;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,10 +10,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.otto.Subscribe;
@@ -83,26 +80,6 @@ public class NewProfileActivity extends BaseActivity {
 
 
         setupToolbar();
-
-        /*
-        btnFollow = (Button) findViewById(R.id.btn_follow);
-        initButton(true, btnFollow);
-
-        btnFollow.setOnClickListener(toolbar View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isFollowing) {
-                    toggleUnfollow(btnFollow);
-
-                } else {
-                    toggleFollowing(btnFollow);
-                }
-                ApiBus.getInstance().post(toolbar FollowRegisterEvent(userId));
-                isFollowing = !isFollowing;
-            }
-        });
-        */
-
 
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setAllCaps(false);
@@ -182,42 +159,6 @@ public class NewProfileActivity extends BaseActivity {
 
     }
 
-    boolean isFollowing = true;
-
-    public void toggleFollowing(Button v) {
-        v.setTextColor(Color.parseColor("#ffffff"));
-        //v.setText(Html.fromHtml("&#x2713; FOLLOWING"));
-        v.setText(Html.fromHtml("FOLLOWING"));
-
-        // change state
-        v.setSelected(true);
-        v.setPressed(false);
-
-    }
-
-    public void toggleUnfollow(Button v) {
-        v.setTextColor(Color.parseColor("#2C6497"));
-        v.setText("+ FOLLOW");
-
-        // change state
-        v.setSelected(false);
-        v.setPressed(false);
-
-    }
-
-    public void initButton(boolean following, View v) {
-        Button button = (Button) v;
-
-        isFollowing = following;
-
-        if (following) {
-            toggleFollowing(button);
-        } else {
-            toggleUnfollow(button);
-        }
-
-
-    }
 
     private class MyPagerAdapter extends FragmentPagerAdapter
     {

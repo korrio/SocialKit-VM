@@ -2,6 +2,8 @@ package co.aquario.socialkit.activity.search;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,8 +17,12 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import co.aquario.chatapp.picker.RecyclerItemClickListener;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
+import co.aquario.socialkit.fragment.main.FeedFragment;
+import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.Hashtag;
 import co.aquario.socialkit.util.PrefManager;
 
@@ -85,6 +91,18 @@ public class HashtagFragment extends BaseFragment {
                 }
             }
         });
+        rvComments.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.OnItemClickListener() {
+            @Override public void onItemClick(View view, int position) {
+                String tag = listHashtag.get(position).tag;
+                FeedFragment fragment = new FeedFragment().newInstance(tag);
+                FragmentManager manager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+                ApiBus.getInstance().postQueue(new TitleEvent("#" + tag));
+            }
+        }));
 
         return rootView;
     }

@@ -181,8 +181,6 @@ public class PushManage extends Activity {
 			} else if (type.equals(TYPES_chatFreeCall + "")) {
                 customdata = json.optString("customdata");
 			}
-			
-			
 
 			intentManage(Integer.parseInt(type));
 
@@ -204,7 +202,7 @@ public class PushManage extends Activity {
 
 	}
 
-	void intentManage(int type) {
+	public void intentManage(int type) {
 		Intent toDetail = null;
         if (type == TYPES_likeFeed) {
 			Intent routeIntent = new Intent(this, MainActivity.class);

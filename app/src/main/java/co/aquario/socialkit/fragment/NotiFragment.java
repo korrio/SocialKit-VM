@@ -1,6 +1,7 @@
 package co.aquario.socialkit.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,10 +16,16 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import co.aquario.chatapp.CallActivityLauncher;
+import co.aquario.chatapp.ChatActivity;
 import co.aquario.chatapp.event.request.NotiListEvent;
 import co.aquario.chatapp.event.response.NotiListEventSuccess;
 import co.aquario.chatapp.model.Noti;
+import co.aquario.chatapp.picker.RecyclerItemClickListener;
+import co.aquario.socialkit.MainActivity;
+import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.adapter.NotiAdapter;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
@@ -89,6 +96,15 @@ public class NotiFragment extends BaseFragment {
                 }
             }
         });
+        rvComments.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        intentManage(Integer.parseInt(notiList.get(position).type),
+                                Integer.parseInt(notiList.get(position).from_id),
+                                Integer.parseInt(notiList.get(position).to_id));
+                    }
+                }));
 
         return rootView;
     }
@@ -115,5 +131,86 @@ public class NotiFragment extends BaseFragment {
             notiList.addAll(event.data.data);
         notiAdapter.updateItems();
     }
+
+    public void intentManage(int type,int postId,int fromId) {
+
+        String customdata = "";
+        if (type == TYPES_likeFeed) {
+            Intent routeIntent = new Intent(getActivity(), MainActivity.class);
+            routeIntent.putExtra("type", "post");
+            routeIntent.putExtra("post_id", postId);
+            startActivity(routeIntent);
+        } else if (type == TYPES_commentFeed) {
+            Intent routeIntent = new Intent(getActivity(), MainActivity.class);
+            routeIntent.putExtra("type", "post");
+            routeIntent.putExtra("post_id", postId);
+            startActivity(routeIntent);
+        } else if(type == TYPES_shareFeed) {
+            Intent routeIntent = new Intent(getActivity(), MainActivity.class);
+            routeIntent.putExtra("type", "post");
+            routeIntent.putExtra("post_id", postId);
+            startActivity(routeIntent);
+        } else if (type == TYPES_liveNow) {
+            return;
+			/*
+			 * toDetail = new Intent(ManagePush.this, PlayActivity.class);
+			 * toDetail.putExtra("isPlay", "1"); toDetail.putExtra("roomId",
+			 * fromName); toDetail.putExtra("roomTag", "0");
+			 * startActivity(toDetail);
+			 */
+
+        } else if (type == TYPES_followedYou) {
+            NewProfileActivity.startProfileActivity(getActivity(), fromId + "");
+
+//			Intent profileIntent = new Intent(this, LandingActivity.class);
+//			profileIntent.putExtra("type", "profile");
+//			profileIntent.putExtra("user_id", fromId + "");
+//			startActivity(profileIntent);
+
+        } else if (type == TYPES_chatMessage || type == TYPES_chatSticker
+                || type == TYPES_chatFile || type == TYPES_chatLocation) {
+
+            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")), fromId, 0);
+
+        }
+//        else if (type == TYPES_confCreate || type == TYPES_confJoin
+//				|| type == TYPES_confInvite) {
+//			// intent Lobby
+//			toDetail = new Intent(PushManage.this,
+//                    LandingActivity.class);
+//			toDetail.putExtra("roomName", roomName);
+//			startActivity(toDetail);
+//
+//		}
+        else if (type == TYPES_chatFreeCall) {
+            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            CallActivityLauncher.startCallActivity(getActivity(), customdata, false);
+        } else if (type == TYPES_chatVideoCall) {
+            ChatActivity.startChatActivity(getActivity(),Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            CallActivityLauncher.startCallActivity(getActivity(), customdata, true);
+        } else if (type == TYPES_chatInviteGroup) {
+            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+        }
+
+
+    }
+
+    public static int TYPES_likeFeed = 100;
+    public static int TYPES_commentFeed = 101;
+    public static int TYPES_shareFeed = 102;
+    public static int TYPES_reportFeed = 103;
+    public static int TYPES_liveNow = 200;
+    public static int TYPES_followedYou = 300;
+    public static int TYPES_chatMessage = 500;
+    public static int TYPES_chatSticker = 501;
+    public static int TYPES_chatFile = 502;
+    public static int TYPES_chatLocation = 503;
+    public static int TYPES_chatFreeCall = 504;
+    public static int TYPES_chatVideoCall = 505;
+    public static int TYPES_chatInviteGroup = 506;
+    public static int TYPES_confInvite = 600;
+    public static int TYPES_confCreate = 601;
+    public static int TYPES_confJoin = 602;
+    public static int TYPES_NotifyBadge = 700;
 
 }

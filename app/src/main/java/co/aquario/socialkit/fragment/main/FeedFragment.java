@@ -238,6 +238,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         if(toolbar != null && getActivity().getLocalClassName().equals("MainActivity")) {
             toolbar.getMenu().clear();
             toolbar.setTitle("VDOMAX");
+            toolbar.setSubtitle("Home");
+
             toolbar.inflateMenu(R.menu.menu_main);
 
             mSearchView = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
@@ -248,7 +250,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                     Utils.hideKeyboard(getActivity());
                     SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),s);
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
-                    toolbar.setTitle("Search: " + s);
+                    toolbar.setTitle('"' + s + '"');
+                    toolbar.setSubtitle("Search");
                     oldQuery = s;
                     return false;
                 }
@@ -337,7 +340,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                             list.clear();
                             bAdapter.notifyDataSetChanged();
                             adapter.notifyDataSetChanged();
-                            if(!isHashtag)
+                            if(!isHashtag && !isSearch)
                                 swipeLayout.setRefreshing(true);
 
                             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
@@ -523,7 +526,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             @Override
             public void onRefresh() {
                 isRefresh = true;
-                if(!isHashtag)
+                if(!isHashtag && !isSearch)
                     ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
 
             }
@@ -644,7 +647,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             public void onLoadMore(int page) {
                 currentPage = page;
                 isRefresh = false;
-                if (!isLoadding && !isHashtag)
+                if (!isLoadding && !isHashtag && !isSearch)
                     ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
                 isLoadding = true;
                 Log.e("thispageis", page + "");
@@ -937,7 +940,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
         bAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
-        if(!isHashtag)
+        if(!isHashtag && !isSearch)
             swipeLayout.setRefreshing(false);
         isLoadding = false;
        // myTitanicTextView.setVisibility(View.GONE);
@@ -1027,7 +1030,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         countFollower.setText(event.getCount().follower + "");
         countFriend.setText(event.getCount().friend + "");
 
-        isFollowing = event.getUser().getIsFollowing();
+        isFollowing = event.getUser().isFollowing;
         initButton(isFollowing, btnFollow);
 
         btnFollow.setOnClickListener(new View.OnClickListener() {
@@ -1270,7 +1273,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 list.clear();
                 bAdapter.notifyDataSetChanged();
                 adapter.notifyDataSetChanged();
-                if(!isHashtag)
+                if(!isHashtag && !isSearch)
                     swipeLayout.setRefreshing(true);
                 ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
                 break;
