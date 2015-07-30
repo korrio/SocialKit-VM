@@ -50,8 +50,6 @@ public class LiveFragment extends BaseFragment {
     private Channel channel;
     private Fragment fragment;
 
-
-
     public static LiveFragment newInstance(Channel channel) {
         LiveFragment mFragment = new LiveFragment();
         Bundle mBundle = new Bundle();
@@ -74,6 +72,7 @@ public class LiveFragment extends BaseFragment {
             userId = channel.id;
         }
         fragment = this;
+
 
 
     }

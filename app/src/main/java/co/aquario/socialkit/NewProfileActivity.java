@@ -22,7 +22,6 @@ import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
-import co.aquario.socialkit.fragment.main.FriendFragment;
 import co.aquario.socialkit.fragment.main.LiveFragment;
 import co.aquario.socialkit.fragment.main.PhotoGridProfileFragment;
 import co.aquario.socialkit.model.Channel;
@@ -162,7 +161,9 @@ public class NewProfileActivity extends BaseActivity {
 
     private class MyPagerAdapter extends FragmentPagerAdapter
     {
-        private final String[] TITLES = { "Feed","Live History", "Followers","Followings","Friends","Pages"};
+        private final String[] TITLES = { "FEED","PHOTO","HISTORY"
+               // , "Followers","Followings","Friends","Pages"
+        };
 
 
         public MyPagerAdapter(FragmentManager fm)
@@ -176,12 +177,12 @@ public class NewProfileActivity extends BaseActivity {
         {
             Fragment[] listFragments = new Fragment[] {
                     new FeedFragment().newInstance(userId, false),
-                    //new PhotoGridProfileFragment().newInstance(userId),
+                    new PhotoGridProfileFragment().newInstance(userId),
                     new LiveHistoryFragment().newInstance(userId),
-                    new FriendFragment().newInstance("FOLLOWER",userId),
-                    new FriendFragment().newInstance("FOLLOWING",userId),
-                    new FriendFragment().newInstance("FRIEND",userId),
-                    new FriendFragment().newInstance("PAGE",userId)
+                    //new FriendFragment().newInstance("FOLLOWER",userId),
+                    //new FriendFragment().newInstance("FOLLOWING",userId),
+                    //new FriendFragment().newInstance("FRIEND",userId),
+                    //new FriendFragment().newInstance("PAGE",userId)
                     };
 
             return listFragments[position];
@@ -205,7 +206,9 @@ public class NewProfileActivity extends BaseActivity {
 
     private class LivePagerAdapter extends FragmentPagerAdapter
     {
-        private final String[] TITLES = { "Live","Feed","Photo","Live History", "Followers","Followings","Friends"};
+        private final String[] TITLES = { "LIVE","FEED","PHOTO","HISTORY"
+                //, "Followers","Followings","Friends"
+        };
     private Channel channel;
 
         public LivePagerAdapter(FragmentManager fm,Channel channel)
@@ -225,9 +228,9 @@ public class NewProfileActivity extends BaseActivity {
                     new FeedFragment().newInstance(userId, false),
                     new PhotoGridProfileFragment().newInstance(userId),
                     new LiveHistoryFragment().newInstance(userId),
-                    new FriendFragment().newInstance("FOLLOWER",userId),
-                    new FriendFragment().newInstance("FOLLOWING",userId),
-                    new FriendFragment().newInstance("FRIEND",userId),
+                  //  new FriendFragment().newInstance("FOLLOWER",userId),
+                   // new FriendFragment().newInstance("FOLLOWING",userId),
+                   // new FriendFragment().newInstance("FRIEND",userId),
                     //new FriendFragment().newInstance("PAGE",userId)
             };
 

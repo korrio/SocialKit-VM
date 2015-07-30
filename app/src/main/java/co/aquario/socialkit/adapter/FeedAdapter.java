@@ -218,7 +218,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PostStory item = list.get(position);
+        final PostStory item = list.get(position);
 
         if(item.isLoved)
             holder.btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red,0,0,0);
@@ -406,6 +406,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                         .resize(100, 100)
                         .transform(new RoundedTransformation(50, 4))
                         .into(holder.ivUserAvatar1);
+                holder.ivUserAvatar1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(mActivity, NewProfileActivity.class);
+                        i.putExtra("USER_ID",item.comment.get(0).user.id);
+                        mActivity.startActivity(i);
+                    }
+                });
             } else {
                 holder.comment1.setVisibility(View.GONE);
                 holder.comment2.setVisibility(View.GONE);
@@ -425,6 +433,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                         .resize(100, 100)
                         .transform(new RoundedTransformation(50, 4))
                         .into(holder.ivUserAvatar2);
+
+                holder.ivUserAvatar2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(mActivity, NewProfileActivity.class);
+                        i.putExtra("USER_ID", item.comment.get(1).user.id);
+                        mActivity.startActivity(i);
+                    }
+                });
             } else {
                 holder.comment2.setVisibility(View.GONE);
             }

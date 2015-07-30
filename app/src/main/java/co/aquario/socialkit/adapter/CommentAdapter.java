@@ -2,7 +2,8 @@ package co.aquario.socialkit.adapter;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.Context;
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
@@ -22,6 +23,7 @@ import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.model.CommentStory;
 import co.aquario.socialkit.model.User;
@@ -34,7 +36,8 @@ import co.aquario.socialkit.widget.URLImageParser;
  */
 public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
+    private Activity mActivity;
+    //private Context context;
     private int itemsCount = 0;
     private int lastAnimatedPosition = -1;
     private int avatarSize;
@@ -44,22 +47,22 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     ArrayList<CommentStory> mList = new ArrayList<CommentStory>();
 
-    public CommentAdapter(Context context, ArrayList<CommentStory> mList) {
-        this.context = context;
+    public CommentAdapter(Activity mActivity, ArrayList<CommentStory> mList) {
+        this.mActivity = mActivity;
         this.mList = mList;
-        avatarSize = context.getResources().getDimensionPixelSize(R.dimen.comment_avatar_size);
+        avatarSize = mActivity.getResources().getDimensionPixelSize(R.dimen.comment_avatar_size);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false);
+        final View view = LayoutInflater.from(mActivity.getApplicationContext()).inflate(R.layout.item_comment, parent, false);
         return new CommentViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
-        CommentStory comment = mList.get(position);
+        final CommentStory comment = mList.get(position);
 
         runEnterAnimation(viewHolder.itemView, position);
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
@@ -81,7 +84,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (comment.text != null) {
 
             if (textEmoticonized != null) {
-                URLImageParser parser = new URLImageParser(holder.tvComment, context,1);
+                URLImageParser parser = new URLImageParser(holder.tvComment, mActivity.getApplicationContext(),1);
                 Spanned htmlSpan = Html.fromHtml(textEmoticonized, parser, null);
 
                 holder.tvComment.setText(htmlSpan);
@@ -91,12 +94,21 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             holder.tvComment.setVisibility(View.GONE);
         }
 
-        Picasso.with(context)
+        Picasso.with(mActivity.getApplicationContext())
                 .load(comment.user.getAvatarUrl())
                 .centerCrop()
                 .resize(avatarSize, avatarSize)
                 .transform(new RoundedTransformation(avatarSize/2,4))
                 .into(holder.ivUserAvatar);
+
+        holder.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mActivity, NewProfileActivity.class);
+                i.putExtra("USER_ID",comment.user.id);
+                mActivity.startActivity(i);
+            }
+        });
     }
 
     private void runEnterAnimation(View view, int position) {

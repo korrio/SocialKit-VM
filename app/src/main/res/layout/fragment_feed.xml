@@ -24,24 +24,6 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <TextView
-        android:id="@+id/titanic_tv"
-        android:text="Loading .."
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#212121"
-        android:textSize="70sp"
-        android:layout_gravity="center"
-        android:layout_centerInParent="true"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone" />
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/player_toolbar"
         android:layout_width="match_parent"
@@ -187,6 +169,22 @@
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="#252525"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:id="@+id/progressBar3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
 </RelativeLayout>
 

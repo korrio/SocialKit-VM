@@ -54,7 +54,6 @@ public class NewDragableActivity extends AppCompatActivity {
 
         video = Parcels.unwrap((Parcelable) getIntent().getExtras().get("obj"));
 
-
         userId = video.getpUserId();
         name = video.getpName();
         avatar = video.getpAvatar();

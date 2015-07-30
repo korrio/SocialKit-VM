@@ -149,7 +149,9 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     String coverUrl;
 
     // @InjectView(R.id.empty)
-    //TextView mEmptyView;
+    TextView mEmptyView;
+    ProgressBar mProgressBarFeed;
+
     private boolean isRefreshable = false;
     private String username = "";
     private boolean isFollowing;
@@ -520,8 +522,18 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
         this.rootView = rootView;
 
-        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+        mEmptyView = (TextView) rootView.findViewById(R.id.empty);
+        mProgressBarFeed = (ProgressBar) rootView.findViewById(R.id.progressBar3);
 
+        mProgressBarFeed.setVisibility(View.VISIBLE);
+        if(list.size() == 0) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mProgressBarFeed.setVisibility(View.GONE);
+        }
+
+
+
+        swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -552,6 +564,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         // Create your views, whatever they may be
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rvFeed);
         mRecyclerView.setHasFixedSize(true);
+
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -938,11 +951,17 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
         list.addAll(event.getTimelineData().getPosts());
 
+        if(list.size() == 0)
+            mEmptyView.setVisibility(View.VISIBLE);
+        else
+            mEmptyView.setVisibility(View.GONE);
+
         bAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
         if(!isHashtag && !isSearch)
             swipeLayout.setRefreshing(false);
         isLoadding = false;
+        mProgressBarFeed.setVisibility(View.GONE);
        // myTitanicTextView.setVisibility(View.GONE);
 
     }

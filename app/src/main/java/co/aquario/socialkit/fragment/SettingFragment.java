@@ -1,6 +1,7 @@
 package co.aquario.socialkit.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,10 +10,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images.Media;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -35,6 +37,13 @@ import com.androidquery.callback.AjaxStatus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,6 +72,11 @@ import co.aquario.socialkit.widget.RoundedTransformation;
 import retrofit.mime.TypedFile;
 
 
+//
+
+/**
+ * Created by Mac on 5/20/15.
+ */
 public class SettingFragment extends BaseFragment {
     private static final String USER_ID = "USER_ID";
     public RadioButton radioGender;
@@ -225,7 +239,6 @@ public class SettingFragment extends BaseFragment {
     }
 
     String profileName = "";
-    String genderStr = "";
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -278,21 +291,137 @@ public class SettingFragment extends BaseFragment {
         radioGender.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //String numeral = null;
+                String numeral = null;
                 switch (checkedId) {
                     case R.id.selectMale:
-                        genderStr = "male";
+                        numeral = "male";
                         break;
                     case R.id.selectFemale:
-                        genderStr = "female";
+                        numeral = "female";
                         break;
 
                 }
                 //Toast.makeText(getActivity().getApplicationContext(), "You selected the " + numeral + " radio button.", Toast.LENGTH_SHORT).show();
             }
         });
-        city.setText("");
+        //city.setText(event.getUser());
         timeZone.setText(event.getUser().getTimezone());
+
+    }
+
+//    public void updateProfile() {
+//
+//
+//        dialog = new ProgressDialog(getActivity());
+//        dialog.setIndeterminate(true);
+//        dialog.setCancelable(false);
+//        dialog.setInverseBackgroundForced(false);
+//        dialog.setCanceledOnTouchOutside(false);
+//        dialog.setTitle("Updating profile");
+//        dialog.setMessage("กำลังอัพเดทข้อมูลส่วนตัว..");
+//        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//        dialog.setIndeterminate(false);
+//        dialog.setMax(100);
+//
+//
+//        new UploadFileToServer().execute();
+//
+//    }
+
+    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+
+            dialog.show();
+            dialog.setProgress(0);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+
+            dialog.setProgress(progress[0]);
+
+
+            dialog.setTitle(String.valueOf(progress[0]) + "%");
+
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return uploadFile();
+        }
+
+        @SuppressWarnings("deprecation")
+        private String uploadFile() {
+            String responseString = null;
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(url);
+
+            try {
+//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
+//                        new AndroidMultiPartEntity.ProgressListener() {
+//
+//                            @Override
+//                            public void transferred(long num) {
+//                                publishProgress((int) ((num / (float) totalSize) * 100));
+//                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
+//                            }
+//                        });
+
+
+                Charset chars = Charset.forName("UTF-8");
+
+//                entity.addPart("username", new StringBody(userName.getText().toString(), chars));
+//                entity.addPart("name", new StringBody(fullName.getText().toString(), chars));
+//                entity.addPart("about", new StringBody(about.getText().toString(), chars));
+//                entity.addPart("email", new StringBody(email.getText().toString(), chars));
+//
+//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(0, 2), chars));
+//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(3, 5), chars));
+//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(6, 10), chars));
+//
+//
+//                entity.addPart("gender", new StringBody("male", chars));
+//                entity.addPart("current_city", new StringBody(city.getText().toString(), chars));
+//                entity.addPart("hometown", new StringBody(homeTown.getText().toString(), chars));
+//                entity.addPart("timezone", new StringBody(timeZone.getText().toString(), chars));
+//
+//                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
+//
+//                totalSize = entity.getContentLength();
+//                httppost.setEntity(entity);
+
+                // Making server call
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity r_entity = response.getEntity();
+
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 200) {
+                    // Server response
+                    responseString = EntityUtils.toString(r_entity);
+                } else {
+                    responseString = "Error occurred! Http Status Code: "
+                            + statusCode;
+                }
+
+            } catch (ClientProtocolException e) {
+                responseString = e.toString();
+            } catch (IOException e) {
+                responseString = e.toString();
+            }
+
+            return responseString;
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            dialog.dismiss();
+
+            super.onPostExecute(result);
+        }
 
     }
 
@@ -393,8 +522,8 @@ public class SettingFragment extends BaseFragment {
         }else if(requestCode == CAMERA_REQUEST_CODE && resultCode == getActivity().RESULT_OK){
             Uri uri = data.getData();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-                Log.e("CheckCamera:", bitmap + "");
+                bitmap = Media.getBitmap(getActivity().getContentResolver(), uri);
+                Log.e("CheckCamera:",bitmap+"");
 
 
 
