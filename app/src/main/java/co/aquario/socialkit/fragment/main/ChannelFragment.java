@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.adapter.ChannelAdapter;
 import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.util.Utils;
@@ -33,7 +34,7 @@ public class ChannelFragment extends BaseFragment {
     public ChannelFragment fragment;
     String endpoint = "http://api.vdomax.com";
     // tab 0
-    String liveChannelUrl = endpoint + "/live/now";
+    String liveChannelUrl = endpoint + "/live/now?a=1";
     // tab 1
     String channelUrl = endpoint + "/search/channel?page=1&sort=F";
     int currentPage;
@@ -87,12 +88,13 @@ public class ChannelFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 isRefresh = true;
+                String suffix = "&user_id=" + VMApp.mPref.userId().getOr("0");
                 if (tabNo == 0) {
-                    aq.ajax(liveChannelUrl, JSONObject.class, fragment, "getJson");
+                    aq.ajax(liveChannelUrl + suffix, JSONObject.class, fragment, "getJson");
                     Log.e("liveChannelUrl", liveChannelUrl);
                 }
                 else {
-                    aq.ajax(channelUrl, JSONObject.class, fragment, "getJson");
+                    aq.ajax(channelUrl + suffix, JSONObject.class, fragment, "getJson");
                     Log.e("channelUrl", channelUrl);
                 }
                 swipeLayout.setRefreshing(false);
@@ -218,8 +220,8 @@ public class ChannelFragment extends BaseFragment {
                 Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, gender, liveStatus);
 
                 channel.isFollowing = obj.optBoolean("is_following");
-                if(obj.optString("total_follower") != null)
-                    channel.totalFollower = obj.optString("total_follower");
+                if(obj.optJSONObject("count") != null)
+                    channel.totalFollower = obj.optJSONObject("count").optInt("follower") + "";
                 else
                     channel.totalFollower = "";
                     liveChannelList.add(channel);
