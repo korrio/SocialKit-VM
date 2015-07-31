@@ -245,6 +245,9 @@
             android:name=".ExoSimplePlayerActivity"/>
 
         <activity
+            android:name=".activity.FullScreenVideoCacheActivity"/>
+
+        <activity
             android:name=".TakePhotoActivity2"
             android:theme="@style/CustomTheme" />
 
@@ -267,6 +270,10 @@
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"
             android:launchMode="singleTop"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".activity.LiveDragableActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"/>
 
         <activity
             android:name=".NewProfileActivity"

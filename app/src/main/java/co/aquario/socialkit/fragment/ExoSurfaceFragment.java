@@ -15,6 +15,7 @@
  */
 package co.aquario.socialkit.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,7 +27,11 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.TextView;
 
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.VideoSurfaceView;
@@ -35,6 +40,7 @@ import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.util.Util;
 
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.activity.FullScreenVideoCacheActivity;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.widget.exoplayer.DemoPlayer;
 import co.aquario.socialkit.widget.exoplayer.HlsRendererBuilder;
@@ -81,19 +87,69 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
 
   // Activity lifecycle
 
+    TextView statusText;
+    ImageView btnFullscreen;
+
+    private View mTopView;
+    private View mBottomView;
+
+    private float mLastMotionX;
+    private float mLastMotionY;
+    private int startX;
+    private int startY;
+    private int threshold;
+    private boolean isClick = true;
+
+    String mUsername;
+    String mName;
+
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.activity_simple_exo_player, container, false);
 
-    //VIDEO_URL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:youlove/youlove_xxx_7043.mp4/playlist.m3u8";
+      mTopView = rootView.findViewById(R.id.top_layout);
+      mBottomView = rootView.findViewById(R.id.bottom_layout);
 
+    //VIDEO_URL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:youlove/youlove_xxx_7043.mp4/playlist.m3u8";
+    statusText = (TextView) rootView.findViewById(R.id.status);
+      btnFullscreen = (ImageView) rootView.findViewById(R.id.fullscreen_btn);
+      btnFullscreen.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View view) {
+              Intent fullscreenIntent = new Intent(getActivity(), FullScreenVideoCacheActivity.class);
+              fullscreenIntent.putExtra("VIDEO_URL", VIDEO_URL);
+              fullscreenIntent.putExtra("USERNAME", mUsername);
+              fullscreenIntent.putExtra("NAME", mName);
+              startActivity(fullscreenIntent);
+              //releasePlayer();
+          }
+      });
     View root = rootView.findViewById(R.id.root);
     root.setOnTouchListener(new OnTouchListener() {
       @Override
-      public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-          toggleControlsVisibility();
-        } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+      public boolean onTouch(View view, MotionEvent event) {
+
+          final float x = event.getX();
+          final float y = event.getY();
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mLastMotionX = x;
+            mLastMotionY = y;
+            startX = (int) x;
+            startY = (int) y;
+          //toggleControlsVisibility();
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
           view.performClick();
+            if (Math.abs(x - startX) > threshold
+                    || Math.abs(y - startY) > threshold) {
+                isClick = false;
+            }
+            mLastMotionX = 0;
+            mLastMotionY = 0;
+            startX = (int) 0;
+            if (isClick) {
+                showOrHide();
+            }
+            isClick = true;
         }
         return true;
       }
@@ -114,7 +170,7 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
     surfaceView.getHolder().addCallback(this);
 
     mediaController = new MediaController(getActivity());
-    mediaController.setAnchorView(root);
+    mediaController.setAnchorView(surfaceView);
 
     preparePlayer();
 
@@ -126,6 +182,8 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
   @Override
   public void onResume() {
     super.onResume();
+
+      preparePlayer();
     //configureSubtitleView();
 
     // The player will be prepared on receiving audio capabilities.
@@ -139,6 +197,7 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
       releasePlayer();
     } else {
       player.setBackgrounded(true);
+        player.release();
     }
     audioCapabilitiesReceiver.unregister();
 
@@ -186,8 +245,8 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
       player.addListener(this);
       player.seekTo(playerPosition);
       playerNeedsPrepare = true;
-      mediaController.setMediaPlayer(player.getPlayerControl());
-      mediaController.setEnabled(true);
+      //mediaController.setMediaPlayer(player.getPlayerControl());
+      //mediaController.setEnabled(false);
 
     }
     if (playerNeedsPrepare) {
@@ -214,7 +273,7 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
   @Override
   public void onStateChanged(boolean playWhenReady, int playbackState) {
     if (playbackState == ExoPlayer.STATE_ENDED) {
-      showControls();
+      //showControls();
     }
     String text = "playWhenReady=" + playWhenReady + ", playbackState=";
     switch(playbackState) {
@@ -237,6 +296,11 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
         text += "unknown";
         break;
     }
+
+      //if(statusText != null)
+          //statusText.setText(text);
+
+
     //playerStateTextView.setText(text);
     updateButtonVisibilities();
   }
@@ -246,7 +310,7 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
 
     playerNeedsPrepare = true;
     updateButtonVisibilities();
-    showControls();
+    //showControls();
   }
 
   @Override
@@ -266,19 +330,19 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
   }
 
 
-  private void toggleControlsVisibility()  {
-    if (mediaController.isShowing()) {
-      mediaController.hide();
-      //debugRootView.setVisibility(View.GONE);
-    } else {
-      showControls();
-    }
-  }
-
-  private void showControls() {
-    mediaController.show(0);
-    //debugRootView.setVisibility(View.VISIBLE);
-  }
+//  private void toggleControlsVisibility()  {
+//    if (mediaController.isShowing()) {
+//      mediaController.hide();
+//      //debugRootView.setVisibility(View.GONE);
+//    } else {
+//      showControls();
+//    }
+//  }
+//
+//  private void showControls() {
+//    mediaController.show(0);
+//    //debugRootView.setVisibility(View.VISIBLE);
+//  }
 
   // DemoPlayer.TextListener implementation
 
@@ -303,6 +367,65 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
       player.blockingClearSurface();
     }
   }
+
+    private void showOrHide() {
+        if (mTopView.getVisibility() == View.VISIBLE) {
+            mTopView.clearAnimation();
+            Animation animation = AnimationUtils.loadAnimation(getActivity(),
+                    R.anim.option_leave_from_top);
+            animation.setAnimationListener(new AnimationImp() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    super.onAnimationEnd(animation);
+                    mTopView.setVisibility(View.GONE);
+                }
+            });
+            mTopView.startAnimation(animation);
+
+            mBottomView.clearAnimation();
+            Animation animation1 = AnimationUtils.loadAnimation(getActivity(),
+                    R.anim.option_leave_from_bottom);
+            animation1.setAnimationListener(new AnimationImp() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    super.onAnimationEnd(animation);
+                    mBottomView.setVisibility(View.GONE);
+                }
+            });
+            mBottomView.startAnimation(animation1);
+        } else {
+            mTopView.setVisibility(View.VISIBLE);
+            mTopView.clearAnimation();
+            Animation animation = AnimationUtils.loadAnimation(getActivity(),
+                    R.anim.option_entry_from_top);
+            mTopView.startAnimation(animation);
+
+            mBottomView.setVisibility(View.VISIBLE);
+            mBottomView.clearAnimation();
+            Animation animation1 = AnimationUtils.loadAnimation(getActivity(),
+                    R.anim.option_entry_from_bottom);
+            mBottomView.startAnimation(animation1);
+            //mHandler.removeCallbacks(hideRunnable);
+            //mHandler.postDelayed(hideRunnable, HIDE_TIME);
+        }
+    }
+
+    private class AnimationImp implements Animation.AnimationListener {
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+    }
 
 
 

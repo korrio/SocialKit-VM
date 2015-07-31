@@ -13,6 +13,9 @@ ext {
     parsePath = "$rootProject.projectDir/ParseLoginUI/libs/Parse-1.9.1.jar"
     parseFacebookUtilsPath = "$rootProject.projectDir/ParseLoginUI/libs/ParseFacebookUtilsV4-1.9.1.jar"
     parseCrashReporting = "$rootProject.projectDir/ParseLoginUI/libs/ParseCrashReporting-1.9.4.jar"
+
+//    betaDistributionReleaseNotes="Add search functionality"
+//    betaDistributionEmails="tismgroups@gmail.com, heartmon12@gmail.com, vdomax@hotmail.com, koredevman@gmail.com, cloudtist@gmail.com, folkrice.th@gmail.com, anyarimpsnus@gmail.com"
 }
 
 allprojects {

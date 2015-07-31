@@ -1,7 +1,9 @@
 package co.aquario.socialkit.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -13,14 +15,16 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 
-import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.activity.LiveDragableActivity;
 import co.aquario.socialkit.event.FollowRegisterEvent;
-import co.aquario.socialkit.fragment.main.LiveFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.Channel;
+import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.widget.RoundedTransformation;
 
 
@@ -99,8 +103,22 @@ public class ChannelAdapter extends BaseAdapter {
         liveCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LiveFragment fragment = LiveFragment.newInstance(list.get(position));
-                ((BaseActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+//                LiveFragment fragment = LiveFragment.newInstance(list.get(position));
+//                ((BaseActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+
+                Channel c = list.get(position);
+                String liveURL = "http://150.107.31.13:1935/live/" + c.username + "/playlist.m3u8";
+                long unixTime = System.currentTimeMillis() / 1000L;
+
+                //Video clip = new Video("clip","", c.name, "@"+c.username,liveURL ,"", unixTime + "", "168", c.id, c.name, c.getAvatarUrl(), 0, 0, 0);
+                Video clip = new Video("clip", "", c.name, "@" + c.username, liveURL, "", unixTime + "", "168", c.id, c.name, c.getAvatarUrl(), 0, 0, 0);
+
+                Intent intentClip = new Intent(mActivity, LiveDragableActivity.class);
+                Bundle bundleClip = new Bundle();
+                bundleClip.putParcelable("obj", Parcels.wrap(clip));
+
+                intentClip.putExtras(bundleClip);
+                mActivity.startActivity(intentClip);
 
             }
         });
@@ -125,8 +143,11 @@ public class ChannelAdapter extends BaseAdapter {
         }
 
         name.setText(Html.fromHtml(channel.name));
-        if(channel.totalFollower != null)
-            follower.setText(channel.totalFollower + " followers");
+        follower.setVisibility(View.VISIBLE);
+        if(channel.count != null)
+            follower.setText(channel.count.follower + " followers");
+        else
+            follower.setVisibility(View.GONE);
 
         Picasso.with(mActivity.getApplicationContext())
                 .load(channel.liveCover)

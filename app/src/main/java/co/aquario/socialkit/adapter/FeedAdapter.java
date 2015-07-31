@@ -42,6 +42,7 @@ import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.DragableActivity;
+import co.aquario.socialkit.activity.LiveDragableActivity;
 import co.aquario.socialkit.activity.post.CommentsActivity;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.main.FeedFragment;
@@ -664,19 +665,31 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                         case "clip":
                             if(post.clip.type.equals("livestreaming")) {
 
-                                String userId = post.author.id;
-                                String liveName = post.author.name;
-                                String username = post.author.username;
-                                String avatar = post.author.getAvatarPath();
-                                String cover = post.author.getCoverPath();
-                                String liveCover = post.author.liveCover;
-                                String gender = "male";
-                                boolean liveStatus = true;
+//                                String userId = post.author.id;
+//                                String liveName = post.author.name;
+//                                String username = post.author.username;
+//                                String avatar = post.author.getAvatarPath();
+//                                String cover = post.author.getCoverPath();
+//                                String liveCover = post.author.liveCover;
+//                                String gender = "male";
+//                                boolean liveStatus = true;
+//
+//                                Channel channel = new Channel(userId, liveName, username, cover, avatar, liveCover, "male", liveStatus);
+//
+//                                LiveFragment liveFragment = LiveFragment.newInstance(channel);
+//                                ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, liveFragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
 
-                                Channel channel = new Channel(userId, liveName, username, cover, avatar, liveCover, "male", liveStatus);
+                                String clipURL = post.clip.url;
+                                Log.e("fromFeedAdapter", clipURL);
 
-                                LiveFragment liveFragment = LiveFragment.newInstance(channel);
-                                ((AppCompatActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, liveFragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+                                Video clip = new Video("clip",post.postId, post.author.name, "@"+post.author.username, clipURL, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);
+
+                                Intent intentClip = new Intent(mActivity, LiveDragableActivity.class);
+                                Bundle bundleClip = new Bundle();
+                                bundleClip.putParcelable("obj", Parcels.wrap(clip));
+
+                                intentClip.putExtras(bundleClip);
+                                mActivity.startActivity(intentClip);
 
                             } else {
 

@@ -41,6 +41,8 @@ public class Channel extends BaseModel {
     public String gender;
     @Expose
     public boolean online;
+    @Expose
+    public BadgeCount count;
 
     @ParcelConstructor
     public Channel(String id, String name, String username, String cover, String avatar, String liveCover, String gender, boolean online) {

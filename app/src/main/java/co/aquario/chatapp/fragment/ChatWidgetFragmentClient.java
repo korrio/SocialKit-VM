@@ -971,20 +971,25 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         }
         JSONObject senderObj = new JSONObject();
 
-        Log.e("SendMessage", "yung");
+        Log.e("SendMessage", "is sending");
 
         try {
 
             senderObj.put("senderId", mUserId);
             senderObj.put("id", mUserId);
-            senderObj.put("username", mUserId);
-            senderObj.put("name", mUserId);
-            senderObj.put("avatarUrl", mUserId);
+            senderObj.put("username", mUsername);
+            senderObj.put("name", mName);
+            senderObj.put("avatarUrl", mAvatarUrl);
+
+            String avatar = mPref.avatar().getOr("null");
+            //String[] parts = avatar.split(".");
+            //senderObj.put("avatar", parts[0]);
+            //senderObj.put("extension", parts[1]);
 
 
             if (messageType == 1) {
                 jObj2.put("tattooUrl", message);
-                jObj.put("message", "::tt0101::");
+                jObj.put("message", "");
             } else {
                 jObj.put("message", message);
             }
@@ -995,6 +1000,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             jObj.put("messageType", messageType);
             jObj.put("data", jObj2);
             jObj.put("sender", senderObj);
+            //jObj.put("createdAt",new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
 
             Log.e("SendMessage", jObj.toString(4));
 
@@ -1003,10 +1009,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             e.printStackTrace();
         }
 
-        Log.e("SendMessage", "laew");
+
 
 
         mSocket.emit("SendMessage", jObj);
+        Log.e("SendMessage", "sent");
     }
 
     private void uploadFileRetrofit(File file, final int msgType, final Message message) {

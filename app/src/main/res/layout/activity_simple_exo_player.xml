@@ -35,7 +35,7 @@
             android:id="@+id/top_layout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="#50000000" >
+            >
 
             <TextView
                 android:layout_width="match_parent"
@@ -44,7 +44,8 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:id="@+id/status"/>
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -52,8 +53,54 @@
                 android:layout_height="wrap_content"
                 style="@android:style/Widget.Holo.ProgressBar.Horizontal"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
         </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FULL"
+            android:id="@+id/fullscreen_btn"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_fullscreen_white_24dp"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView13"
+            android:src="@drawable/messenger_bubble_large_white"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/fullscreen_btn"
+            android:layout_toStartOf="@+id/fullscreen_btn"
+            android:layout_marginRight="23dp"
+            android:layout_marginEnd="23dp"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView14"
+            android:src="@drawable/com_parse_ui_facebook_login_logo"
+            android:layout_marginRight="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/imageView13"
+            android:layout_toStartOf="@+id/imageView13"/>
+
     </RelativeLayout>
 
 

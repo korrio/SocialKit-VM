@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.androidquery.AQuery;
@@ -96,6 +95,7 @@ public class ChannelFragment extends BaseFragment {
                     aq.ajax(channelUrl, JSONObject.class, fragment, "getJson");
                     Log.e("channelUrl", channelUrl);
                 }
+                swipeLayout.setRefreshing(false);
             }
         });
 
@@ -110,40 +110,58 @@ public class ChannelFragment extends BaseFragment {
 
         mGridView.setNumColumns(col);
 
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                if (tabNo == 0) {
-
-                    LiveFragment fragment = LiveFragment.newInstance(liveChannelList.get(position));
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
-
-
-                    /*
-                    // intent to profile page with live streaming
-                    Intent i = toolbar Intent(getActivity(), VitamioActivity.class);
-                    i.putExtra("id", "rtmp://150.107.31.6:1935/live/" + liveChannelList.get(position).username);
-                    i.putExtra("name", liveChannelList.get(position).name);
-                    i.putExtra("avatar", liveChannelList.get(position).getAvatarUrl());
-                    i.putExtra("cover", liveChannelList.get(position).getCoverUrl());
-                    i.putExtra("title", liveChannelList.get(position).name);
-                    i.putExtra("desc", "@" + liveChannelList.get(position).username);
-                    i.putExtra("userId", liveChannelList.get(position).id);
-                    startActivity(i);
-                    */
-                } else if (tabNo == 1) {
-                    // intent to profile page w/o live streaming
-                    LiveFragment fragment = LiveFragment.newInstance(mostFollowerList.get(position));
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
-
-
-
-
-                }
-
-            }
-        });
+//        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//                Channel c = liveChannelList.get(position);
+//
+//                if (tabNo == 0) {
+//
+//                    c = liveChannelList.get(position);
+//
+////                    LiveFragment fragment = LiveFragment.newInstance(liveChannelList.get(position));
+////                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+//
+//
+//                    /*
+//                    // intent to profile page with live streaming
+//                    Intent i = toolbar Intent(getActivity(), VitamioActivity.class);
+//                    i.putExtra("id", "rtmp://150.107.31.6:1935/live/" + liveChannelList.get(position).username);
+//                    i.putExtra("name", liveChannelList.get(position).name);
+//                    i.putExtra("avatar", liveChannelList.get(position).getAvatarUrl());
+//                    i.putExtra("cover", liveChannelList.get(position).getCoverUrl());
+//                    i.putExtra("title", liveChannelList.get(position).name);
+//                    i.putExtra("desc", "@" + liveChannelList.get(position).username);
+//                    i.putExtra("userId", liveChannelList.get(position).id);
+//                    startActivity(i);
+//                    */
+//                } else if (tabNo == 1) {
+//                    // intent to profile page w/o live streaming
+////                    LiveFragment fragment = LiveFragment.newInstance(mostFollowerList.get(position));
+////                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
+//
+//                    c = mostFollowerList.get(position);
+//
+//
+//                }
+//
+//
+//
+//                String liveURL = "https://stream-1.vdomax.com/live/"+c.username+"/playlist.m3u8";
+//                long unixTime = System.currentTimeMillis() / 1000L;
+//
+//                Video clip = new Video("clip","", c.name, "@"+c.username,liveURL ,"", unixTime + "", "168", c.id, c.name, c.getAvatarUrl(), 0, 0, 0);
+//
+//                Intent intentClip = new Intent(getActivity(), LiveDragableActivity.class);
+//                Bundle bundleClip = new Bundle();
+//                bundleClip.putParcelable("obj", Parcels.wrap(clip));
+//
+//                intentClip.putExtras(bundleClip);
+//                getActivity().startActivity(intentClip);
+//
+//            }
+//        });
         mGridView.setAdapter(channelAdapter);
         mGridView.setOnScrollListener(new EndlessListOnScrollListener() {
             @Override
@@ -241,7 +259,7 @@ public class ChannelFragment extends BaseFragment {
                 String gender = obj.optString("gender");
                 if(gender == null)
                     gender = "male";
-                boolean liveStatus = obj.optBoolean("status");
+                boolean liveStatus = obj.optBoolean("online");
 
                 Channel channel = new Channel(userId, name, username, cover, avatar, liveCover, gender, liveStatus);
                 mostFollowerList.add(channel);

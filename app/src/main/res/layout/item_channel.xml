@@ -22,12 +22,24 @@
             android:paddingLeft="@dimen/padding_size_layout_medium"
             android:paddingRight="@dimen/padding_size_layout_medium">
 
-            <ImageView
-                android:id="@+id/avatar"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginRight="5dp"
-                android:gravity="center" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center" />
+
+                <ImageView
+                    android:id="@+id/status"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_marginLeft="@dimen/size_text"
+                    android:layout_gravity="right|top"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -75,15 +87,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignRight="@+id/live_cover"
                 android:layout_alignEnd="@+id/live_cover"
-                android:layout_marginTop="24dp"
-                android:layout_marginRight="16dp"/>
-
-            <ImageView
-                android:id="@+id/status"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginLeft="@dimen/size_text"
                 />
+
         </LinearLayout>
 
         <RelativeLayout

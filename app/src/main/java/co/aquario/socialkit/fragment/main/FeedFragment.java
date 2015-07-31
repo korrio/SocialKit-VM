@@ -935,6 +935,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     @Override
     public void onResume() {
         super.onResume();
+        if(mProgressBarFeed != null && !isLoadding)
+            mProgressBarFeed.setVisibility(View.GONE);
 
 
 
