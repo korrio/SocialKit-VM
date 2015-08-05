@@ -16,14 +16,13 @@ import android.view.View;
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.otto.Subscribe;
 
-import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import co.aquario.chatapp.ChatActivity;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
-import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.LiveFragment;
 import co.aquario.socialkit.fragment.main.PhotoGridProfileFragment;
+import co.aquario.socialkit.fragment.newuser.EditProfileFragment;
 import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.util.PrefManager;
 
@@ -34,6 +33,8 @@ public class NewProfileActivity extends BaseActivity {
     String userId;
     String username = "";
 
+
+
     PrefManager pref;
     Toolbar toolbar;
     Activity mActivity;
@@ -42,6 +43,7 @@ public class NewProfileActivity extends BaseActivity {
         Intent i = new Intent(mActivity,NewProfileActivity.class);
         i.putExtra("USERNAME", username);
         i.putExtra("IS_USERNAME", isUsername);
+        i.putExtra("IS_LIVE", false);
         mActivity.startActivity(i);
     }
 
@@ -49,6 +51,7 @@ public class NewProfileActivity extends BaseActivity {
         Intent i = new Intent(mActivity,NewProfileActivity.class);
         i.putExtra("USER_ID", userId);
         i.putExtra("IS_USERNAME", false);
+        i.putExtra("IS_LIVE", false);
         mActivity.startActivity(i);
     }
 
@@ -59,9 +62,9 @@ public class NewProfileActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_appcompat);
 
-        CustomActivityOnCrash.setShowErrorDetails(true);
-        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
-        CustomActivityOnCrash.install(this);
+//        CustomActivityOnCrash.setShowErrorDetails(true);
+//        CustomActivityOnCrash.setRestartActivityClass(MainActivity.class);
+//        CustomActivityOnCrash.install(this);
 
         mActivity = this;
 
@@ -133,10 +136,10 @@ public class NewProfileActivity extends BaseActivity {
                             ChatActivity.startChatActivity(mActivity, Integer.parseInt(pref.userId().getOr("0")), Integer.parseInt(userId), 0);
                             break;
                         case R.id.action_edit_profile:
-                            SettingFragment fragment = SettingFragment.newInstance(userId);
+                            EditProfileFragment editProfileFragment = EditProfileFragment.newInstance();
                             FragmentManager manager = getSupportFragmentManager();
                             FragmentTransaction transaction = manager.beginTransaction();
-                            transaction.add(R.id.sub_container, fragment).addToBackStack(null);
+                            transaction.add(R.id.sub_container, editProfileFragment).addToBackStack(null);
                             transaction.commit();
                             break;
                         case android.R.id.home:

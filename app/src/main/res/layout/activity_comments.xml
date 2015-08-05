@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -51,17 +52,31 @@
                 android:padding="4dp"
                 android:src="@drawable/ic_action_emoji"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true" />
+                android:layout_alignParentLeft="true"
+                android:visibility="gone"/>
 
-            <github.ankushsachdeva.emojicon.EmojiconEditText
+            <com.arabagile.typeahead.widget.TypeaheadTextView
                 android:id="@+id/et_box"
+                android:hint="@string/hint_autocomplete"
+                android:singleLine="false"
+                android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:ems="10"
-                android:layout_weight="0.4"
-                android:gravity="top"
-                android:hint="โพสข้อความ"
-                android:textColor="#252525" />
+                android:layout_weight="1"
+                android:textColor="#252525"
+                app:ag_threshold="2"
+                />
+
+            <!--<github.ankushsachdeva.emojicon.EmojiconEditText-->
+                <!--android:id="@+id/et_box"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:ems="10"-->
+                <!--android:layout_weight="0.4"-->
+                <!--android:gravity="top"-->
+                <!--android:hint="โพสข้อความ"-->
+                <!--android:textColor="#252525" />-->
+
+
 
             <co.aquario.socialkit.view.SendCommentButton
                 android:id="@+id/btnSendComment"

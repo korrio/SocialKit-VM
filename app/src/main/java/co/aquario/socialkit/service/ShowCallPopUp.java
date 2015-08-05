@@ -13,7 +13,6 @@ import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -76,7 +75,7 @@ public class ShowCallPopUp extends Activity implements OnClickListener {
     public void onClick(View view) {
           if(view == ok) {
 
-              Toast.makeText(this,type,Toast.LENGTH_LONG).show();
+              //Toast.makeText(this,type,Toast.LENGTH_LONG).show();
 
         	  if(type.equals("504")) {
                   connectToRoom(customdata,false);

@@ -38,7 +38,7 @@ import butterknife.OnClick;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
-import co.aquario.socialkit.activity.post.CommentsActivity;
+import co.aquario.socialkit.activity.post.PostCommentsActivity;
 import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
 import co.aquario.socialkit.event.PostShareEvent;
@@ -270,10 +270,10 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
                 btnLove.setText(oldLoveCount + "");
                 break;
             case R.id.btn_comment:
-                final Intent intent = new Intent(getActivity(), CommentsActivity.class);
+                final Intent intent = new Intent(getActivity(), PostCommentsActivity.class);
                 int[] startingLocation = new int[2];
                 v.getLocationOnScreen(startingLocation);
-                intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+                intent.putExtra(PostCommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
                 //intent.putParcelableArrayListExtra(CommentsActivity.ARG_COMMENT_LIST, Parcels.wrap(post.comment));
                 Log.i("postIdComment",postId);
                 intent.putExtra("POST_ID", postId);

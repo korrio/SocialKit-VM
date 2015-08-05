@@ -17,16 +17,26 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.PopupWindow;
 import android.widget.VideoView;
 
 import com.androidquery.AQuery;
+import com.arabagile.typeahead.MentionAdapter;
+import com.arabagile.typeahead.model.MentionUser;
+import com.arabagile.typeahead.widget.TypeaheadTextView;
+import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.event.mention.LoadMentionListSuccessEvent;
+import co.aquario.socialkit.event.mention.MentionListEvent;
+import co.aquario.socialkit.handler.ApiBus;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
@@ -40,7 +50,7 @@ public class PostVideoActivity extends Activity {
 	MediaController mc;
 
 	Button uploadButton;
-	EditText photoText;
+    TypeaheadTextView photoText;
 
 	AQuery aq;
     String statusText;
@@ -61,7 +71,28 @@ public class PostVideoActivity extends Activity {
         }
     }
 
+    @Subscribe
+    public void onRequestMention(LoadMentionListSuccessEvent event) {
+        List<MentionUser> users = new ArrayList<>();
+        ArrayList<MentionUser> mentionList = event.response.mentions;
+        for(int i = 0 ; i < mentionList.size() ; i++) {
+            users.add(new MentionUser(mentionList.get(i).name, mentionList.get(i).username, mentionList.get(i).getAvatarUrl()));
+        }
+        MentionAdapter adapter = new MentionAdapter(this, R.layout.menu_user_mention, users);
+        photoText.setAdapter(adapter);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ApiBus.getInstance().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ApiBus.getInstance().unregister(this);
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +102,12 @@ public class PostVideoActivity extends Activity {
 		context = this;
 		aq = new AQuery(context);
 
+        ApiBus.getInstance().post(new MentionListEvent(Integer.parseInt(VMApp.mPref.userId().getOr("0"))));
+
 
 		uploadButton = (Button) findViewById(R.id.button_recent);
 		//status = (EditText) findViewById(R.id.comment);
-        photoText = (EditText) findViewById(R.id.et_box);
+        photoText = (TypeaheadTextView) findViewById(R.id.et_box);
 
         setupToolbar();
 

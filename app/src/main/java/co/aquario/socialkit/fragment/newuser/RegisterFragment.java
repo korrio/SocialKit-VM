@@ -1,4 +1,4 @@
-package co.aquario.socialkit.fragment;
+package co.aquario.socialkit.fragment.newuser;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -98,6 +98,8 @@ public class RegisterFragment extends BaseFragment {
         }
     }
 
+    String genderStr;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -131,19 +133,18 @@ public class RegisterFragment extends BaseFragment {
         radioGender.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String numeral = null;
                 checkedId = radioGroupGender.getCheckedRadioButtonId();
 
                 switch (checkedId) {
                     case R.id.selectMale:
-                        numeral = "male";
+                        genderStr = "male";
                         break;
                     case R.id.selectFemale:
-                        numeral = "female";
+                        genderStr = "female";
                         break;
 
                 }
-                Toast.makeText(getActivity().getApplicationContext(), "You selected " + numeral, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "You selected " + genderStr, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -186,6 +187,8 @@ public class RegisterFragment extends BaseFragment {
         prefManager
                 .name().put(event.getLoginData().user.name)
                 .username().put(event.getLoginData().user.username)
+                .password().put(event.getLoginData().user.password)
+                .email().put(event.getLoginData().user.email)
                 .userId().put(event.getLoginData().user.id)
                 .token().put(event.getLoginData().token)
                 .cover().put(event.getLoginData().user.cover)

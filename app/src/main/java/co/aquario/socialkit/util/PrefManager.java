@@ -24,6 +24,18 @@ public class PrefManager extends PrettySharedPreferences<PrefManager> {
         return getStringEditor("username");
     }
 
+    public StringEditor<PrefManager> password() {
+        return getStringEditor("password");
+    }
+
+    public StringEditor<PrefManager> email() {
+        return getStringEditor("email");
+    }
+
+    public StringEditor<PrefManager> about() {
+        return getStringEditor("about");
+    }
+
     public StringEditor<PrefManager> userId() {
         return getStringEditor("userId");
     }

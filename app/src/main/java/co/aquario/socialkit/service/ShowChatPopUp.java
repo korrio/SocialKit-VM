@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import co.aquario.chatapp.ChatActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.widget.RoundedTransformation;
@@ -80,6 +81,8 @@ public class ShowChatPopUp extends Activity implements OnClickListener {
 	public void onClick(View view) {
 		if (view == ok || view == chat_dialog) {
             Toast.makeText(this, type, Toast.LENGTH_LONG).show();
+
+            ChatActivity.startChatActivity(this, Integer.parseInt(VMApp.mPref.userId().getOr("0")), Integer.parseInt(from_id), 0);
 
 //			if(!type.equals("506")) {
 //				String chatUrl = "https://www.armymax.com/mobile.php?id="

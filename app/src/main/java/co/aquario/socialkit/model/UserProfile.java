@@ -20,6 +20,8 @@ public class UserProfile extends BaseModel {
     @Expose
     public String username;
     @Expose
+    public String password;
+    @Expose
     public String email;
 
 }

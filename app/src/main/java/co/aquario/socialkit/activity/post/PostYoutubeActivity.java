@@ -14,19 +14,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.arabagile.typeahead.MentionAdapter;
+import com.arabagile.typeahead.model.MentionUser;
+import com.arabagile.typeahead.widget.TypeaheadTextView;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,20 +39,23 @@ import java.util.regex.Pattern;
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.event.mention.LoadMentionListSuccessEvent;
+import co.aquario.socialkit.event.mention.MentionListEvent;
+import co.aquario.socialkit.handler.ApiBus;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 public class PostYoutubeActivity extends Activity {
 
-    public String url = "https://www.vdomax.com/ajax.php?t=post&a=toolbar&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
+    public String url = "https://www.vdomax.com/ajax.php?t=post&a=new&user_id=6&token=123456&user_pass=039a726ac0aeec3dde33e45387a7d4ac";
     public long totalSize;
     String yid;
     String title;
     String desc;
     String statusText;
     ImageView thumb;
-    EditText etStatus;
+    TypeaheadTextView etStatus;
     Button btnPost;
     ProgressDialog dialog;
     TextView titleView;
@@ -57,6 +65,8 @@ public class PostYoutubeActivity extends Activity {
     View rootView;
     ImageView emojiButton;
     EmojiconsPopup popup;
+
+    //searchMenuItem.expandActionView();
 
     private Toolbar toolbar;
     void setupToolbar() {
@@ -80,16 +90,39 @@ public class PostYoutubeActivity extends Activity {
         }
     }
 
+    @Subscribe
+    public void onRequestMention(LoadMentionListSuccessEvent event) {
+        List<MentionUser> users = new ArrayList<>();
+        ArrayList<MentionUser> mentionList = event.response.mentions;
+        for(int i = 0 ; i < mentionList.size() ; i++) {
+            users.add(new MentionUser(mentionList.get(i).name, mentionList.get(i).username, mentionList.get(i).getAvatarUrl()));
+        }
+        MentionAdapter adapter = new MentionAdapter(this, R.layout.menu_user_mention, users);
+        etStatus.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ApiBus.getInstance().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ApiBus.getInstance().unregister(this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_youtube);
 
+        ApiBus.getInstance().post(new MentionListEvent(Integer.parseInt(VMApp.mPref.userId().getOr("0"))));
+
         rootView = findViewById(R.id.root_view);
         emojiButton = (ImageView) findViewById(R.id.emoji_btn);
         popup = new EmojiconsPopup(rootView, this);
-        context = this;
-
         context = this;
 
         setupToolbar();
@@ -98,7 +131,7 @@ public class PostYoutubeActivity extends Activity {
         thumb = (ImageView) findViewById(R.id.video_thumbnail_imv);
         titleView = (TextView) findViewById(R.id.video_title_txv);
         descView = (TextView) findViewById(R.id.video_desc_txv);
-        etStatus = (EditText) findViewById(R.id.et_box);
+        etStatus = (TypeaheadTextView) findViewById(R.id.et_box);
         btnPost = (Button) findViewById(R.id.button_recent);
 
         btnPost.setOnClickListener(new View.OnClickListener() {
@@ -232,7 +265,7 @@ public class PostYoutubeActivity extends Activity {
         boolean isWhitespace = statusText.matches("^\\s*$");
 
         if (statusText.length() == 0 || statusText.trim().equals("") || found || isWhitespace) {
-            etStatus.setError("กรุณาพิมพ์ข้อความก่อนส่ง");
+            //etStatus.setError("กรุณาพิมพ์ข้อความก่อนส่ง");
             Log.e("YEAH", statusText.length() + " " + statusText.trim() + " " + found + " " + isWhitespace);
         }
 
@@ -268,6 +301,8 @@ public class PostYoutubeActivity extends Activity {
         params.put("youtube_title", title);
         params.put("youtube_description", desc);
         params.put("youtube_video_id", yid);
+
+        Log.e("postyoutube",params.toString());
 
         AQuery aq = new AQuery(getApplicationContext());
         aq.progress(dialog).ajax(url, params, JSONObject.class, this, "uploadCb");

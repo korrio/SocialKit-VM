@@ -19,6 +19,7 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
+import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.LiveDragableActivity;
 import co.aquario.socialkit.event.FollowRegisterEvent;
@@ -73,7 +74,7 @@ public class ChannelAdapter extends BaseAdapter {
         ImageView avatar;
         ImageView status;
 
-        Channel channel = list.get(position);
+        final Channel channel = list.get(position);
 
         name = (TextView) convertView.findViewById(R.id.name);
         follower = (TextView) convertView.findViewById(R.id.followerTv);
@@ -81,6 +82,24 @@ public class ChannelAdapter extends BaseAdapter {
         liveCover = (ImageView) convertView.findViewById(R.id.live_cover);
         avatar = (ImageView) convertView.findViewById(R.id.avatar);
         status = (ImageView) convertView.findViewById(R.id.status);
+
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mActivity, NewProfileActivity.class);
+                i.putExtra("USER_ID",channel.id);
+                mActivity.startActivity(i);
+            }
+        });
+
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(mActivity, NewProfileActivity.class);
+                i.putExtra("USER_ID",channel.id);
+                mActivity.startActivity(i);
+            }
+        });
 
         btnFollow = (Button) convertView.findViewById(R.id.btn_follow);
         btnFollow.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +126,9 @@ public class ChannelAdapter extends BaseAdapter {
 //                ((BaseActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "WATCH_LIVE_MAIN").addToBackStack(null).commit();
 
                 Channel c = list.get(position);
-                String liveURL = "http://150.107.31.13:1935/live/" + c.username + "/playlist.m3u8";
+
+                //http://150.107.31.13:1935/live/mp4:youlove_vm/playlist.m3u8
+                String liveURL = "http://150.107.31.13:1935/live/mp4:" + c.username + "_vm/playlist.m3u8";
                 long unixTime = System.currentTimeMillis() / 1000L;
 
                 //Video clip = new Video("clip","", c.name, "@"+c.username,liveURL ,"", unixTime + "", "168", c.id, c.name, c.getAvatarUrl(), 0, 0, 0);

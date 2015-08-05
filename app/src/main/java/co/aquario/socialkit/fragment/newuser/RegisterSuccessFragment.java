@@ -1,4 +1,4 @@
-package co.aquario.socialkit.fragment;
+package co.aquario.socialkit.fragment.newuser;
 
 import android.app.Activity;
 import android.content.Intent;

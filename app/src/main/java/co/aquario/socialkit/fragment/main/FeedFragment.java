@@ -48,6 +48,9 @@ import com.afollestad.materialdialogs.Theme;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.mikepenz.actionitembadge.library.ActionItemBadge;
+import com.mikepenz.actionitembadge.library.ActionItemBadgeAdder;
+import com.mikepenz.actionitembadge.library.utils.UIUtil;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 import com.tumblr.bookends.Bookends;
@@ -235,26 +238,36 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
     String oldQuery = "Search..";
 
+
+    Menu menu;
     void setupToolbar() {
         toolbar = ((BaseActivity) getActivity()).getToolbar();
         if(toolbar != null && getActivity().getLocalClassName().equals("MainActivity")) {
             toolbar.getMenu().clear();
             toolbar.setTitle("VDOMAX");
             toolbar.setSubtitle("Home");
-
             toolbar.inflateMenu(R.menu.menu_main);
 
+            menu = toolbar.getMenu();
+
             mSearchView = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
+            mSearchView.setIconifiedByDefault(true);
+            //MenuItemCompat.expandActionView(toolbar.getMenu().findItem(R.id.action_search));
             mSearchView.setQueryHint(oldQuery);
+            mSearchView.setIconifiedByDefault(false);
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
-                    Utils.hideKeyboard(getActivity());
-                    SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),s);
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
-                    toolbar.setTitle('"' + s + '"');
-                    toolbar.setSubtitle("Search");
-                    oldQuery = s;
+                    if(getActivity() != null) {
+                        Utils.hideKeyboard(getActivity());
+
+                        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),s);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
+                        toolbar.setTitle('"' + s + '"');
+                        toolbar.setSubtitle("Searching");
+                        oldQuery = s;
+                    }
+
                     return false;
                 }
 
@@ -267,6 +280,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
+                    Log.e("itemId",item.getItemId() + "");
                     switch (item.getItemId()) {
                         case R.id.action_search:
                             mSearchCheck = true;
@@ -315,7 +329,6 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                             transaction.commit();
                             break;
 
-
                         default:
                             //isRefresh = true;
                             break;
@@ -345,6 +358,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                             if(!isHashtag && !isSearch)
                                 swipeLayout.setRefreshing(true);
 
+                            userId = VMApp.mPref.userId().getOr("0");
+
                             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
                             break;
                     }
@@ -366,8 +381,12 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        VMApp.updateBadge(getActivity());
+
         pref = VMApp.get(getActivity().getApplicationContext()).getPrefManager();
         if (getArguments() != null) {
+
+            userId = getArguments().getString(USER_ID);
 
             if(!getArguments().getBoolean(IS_SEARCH)) {
                 isStory = getArguments().getBoolean(IS_STORY);
@@ -433,12 +452,14 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
             //((MainActivity) getActivity()).getToolbar().setSubtitle("");
         }
+
+        setupToolbar();
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupToolbar();
+
         if(isSearch) {
             adapter.notifyDataSetChanged();
         }
@@ -526,12 +547,6 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         mProgressBarFeed = (ProgressBar) rootView.findViewById(R.id.progressBar3);
 
         mProgressBarFeed.setVisibility(View.VISIBLE);
-        if(list.size() == 0) {
-            mEmptyView.setVisibility(View.VISIBLE);
-            mProgressBarFeed.setVisibility(View.GONE);
-        }
-
-
 
         swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -589,6 +604,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(), PostLiveStreamingActivity.class);
+                //Intent i = new Intent(getActivity(), PostLiveDragableActivity.class);
                 startActivity(i);
             }
         });
@@ -646,7 +662,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), PostStatusActivity2.class);
-                i.putExtra("IS_MYHOMETIMELINE",(userId.equals(VMApp.mPref.userId().getOr("0"))));
+                i.putExtra("IS_MYHOMETIMELINE",(userId.equals(pref.userId().getOr("0"))));
                 i.putExtra("USER_ID", userId);
                 startActivityForResult(i,100);
 
@@ -660,6 +676,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             public void onLoadMore(int page) {
                 currentPage = page;
                 isRefresh = false;
+                userId = pref.userId().getOr("0");
                 if (!isLoadding && !isHashtag && !isSearch)
                     ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
                 isLoadding = true;
@@ -937,21 +954,26 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         super.onResume();
         if(mProgressBarFeed != null && !isLoadding)
             mProgressBarFeed.setVisibility(View.GONE);
-
-
-
-
-       // myTitanicTextView.setVisibility(View.GONE);
-
     }
 
     @Subscribe public void onLoadTimelineSuccess(LoadTimelineSuccessEvent event) {
+
+        new ActionItemBadgeAdder().act(getActivity()).menu(menu)
+                .title("NOTI").itemDetails(0, 12345, 1)
+                .showAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .add(UIUtil.getCompatDrawable(getActivity(), R.drawable.ic_notification), ActionItemBadge.BadgeStyles.RED.getStyle(), VMApp.getNotiBadge());
+
         if(isRefresh)
             list.clear();
         isRefresh = false;
         swipeLayout.setRefreshing(false);
 
         list.addAll(event.getTimelineData().getPosts());
+
+        if(list.size() == 0) {
+            mEmptyView.setVisibility(View.VISIBLE);
+            mProgressBarFeed.setVisibility(View.GONE);
+        }
 
         if(list.size() == 0)
             mEmptyView.setVisibility(View.VISIBLE);
@@ -964,7 +986,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             swipeLayout.setRefreshing(false);
         isLoadding = false;
         mProgressBarFeed.setVisibility(View.GONE);
-       // myTitanicTextView.setVisibility(View.GONE);
+
+
 
     }
 
@@ -1038,7 +1061,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 .transform(new RoundedTransformation(100, 2))
                 .into(avatar);
 
-        if(userId.equals(VMApp.mPref.userId().getOr("")))
+        if(userId.equals(pref.userId().getOr("")))
             btnFollow.setVisibility(View.GONE);
 
         countPost = (TextView) myHeader.findViewById(R.id.countPost);
@@ -1144,17 +1167,26 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         getActivity().getMenuInflater().inflate(R.menu.menu_main, menu);
+
     }
 
+
+
+
     private void toggleSongState() {
-        if (mMediaPlayer.isPlaying()){
-            mMediaPlayer.pause();
-            mPlayerStateButton.setImageResource(R.drawable.ic_play);
-        }else{
-            mMediaPlayer.start();
-            toggleProgressBar();
-            mPlayerStateButton.setImageResource(R.drawable.ic_pause);
+        if(mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()){
+                mMediaPlayer.pause();
+                mPlayerStateButton.setImageResource(R.drawable.ic_play);
+            } else {
+                mMediaPlayer.start();
+                toggleProgressBar();
+                mPlayerStateButton.setImageResource(R.drawable.ic_pause);
+            }
+        } else {
+            initSCMediaPlayer();
         }
+
     }
 
     private void toggleProgressBar() {
@@ -1296,6 +1328,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 adapter.notifyDataSetChanged();
                 if(!isHashtag && !isSearch)
                     swipeLayout.setRefreshing(true);
+
+
                 ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
                 break;
         }
@@ -1309,7 +1343,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     @Override
     public void onSearchQuery(String query) {
         Utils.hideKeyboard(getActivity());
-        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),query);
+        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(pref.userId().getOr("0"),query);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
 
         //SearchActivity.startActivity(getApplicationContext(),query);

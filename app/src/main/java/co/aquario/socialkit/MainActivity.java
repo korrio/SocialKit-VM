@@ -16,12 +16,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.crossfader.util.UIUtils;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
@@ -29,7 +31,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.MiniDrawer;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.parse.ParseAnalytics;
@@ -94,7 +95,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
     PrefManager mPref;
     //Crossfader crossFader;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -329,7 +329,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 //                        )
                 .addDrawerItems(
 
-                        new SectionDrawerItem().withName("Menu"),
+                        //new SectionDrawerItem().withName("Menu"),
                         new SecondaryDrawerItem().withName("Search").withIcon(FontAwesome.Icon.faw_search).withIdentifier(7),
                         new SecondaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home).withIdentifier(0),
                         new SecondaryDrawerItem().withName("Chat").withIcon(FontAwesome.Icon.faw_envelope).withIdentifier(1),
@@ -342,7 +342,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                 )
                 .addStickyDrawerItems(
-                        new SwitchDrawerItem().withName(R.string.action_notification).withIcon(FontAwesome.Icon.faw_newspaper_o).withIdentifier(9).withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
+                        new SwitchDrawerItem().withName(R.string.action_notification).withIcon(FontAwesome.Icon.faw_newspaper_o).withIdentifier(9),
                         new SecondaryDrawerItem().withName(R.string.action_logout).withIcon(FontAwesome.Icon.faw_sign_out).withIdentifier(10)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -352,7 +352,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Home");
-
 
                             HomeViewPagerFragment fragment = new HomeViewPagerFragment();
                             FragmentManager manager = getSupportFragmentManager();
@@ -414,7 +413,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             // Term & Policy
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Search");
-
 
                             getToolbar().getMenu().clear();
                             SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),"สวย");
@@ -486,10 +484,31 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
         Picasso.with(this).load(EndpointManager.getAvatarPath(mPref.avatar().getOr(""))).placeholder(R.drawable.avatar_default).centerCrop()
                 .resize(100, 100).transform(new RoundedTransformation(50, 4)).into(avatarMenu);
-        //Picasso.with(this).load(EndpointManager.getAvatarPath(mPref.cover().getOr(""))).placeholder(R.drawable.cover_default).centerCrop()
-          //      .resize(360,80).into(coverMenu);
+        Picasso.with(this).load(EndpointManager.getAvatarPath(mPref.cover().getOr(""))).placeholder(R.drawable.cover_default).centerCrop()
+                .resize(360, 80).into(coverMenu);
         usernameMenu.setText("@" + mPref.username().getOr("null"));
         nameMenu.setText(mPref.name().getOr("null"));
+
+
+        usernameMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NewProfileActivity.startProfileActivity(mActivity, mPref.userId().getOr("0"));
+            }
+        });
+
+        nameMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NewProfileActivity.startProfileActivity(mActivity, mPref.userId().getOr("0"));
+            }
+        });
+        coverMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NewProfileActivity.startProfileActivity(mActivity,mPref.userId().getOr("0"));
+            }
+        });
 
         avatarMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -511,6 +530,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 ChannelViewPagerFragment fragment = new ChannelViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "CHANNEL_MAIN").addToBackStack(null).commit();
 
+                getToolbar().getMenu().clear();
                 getToolbar().setTitle("VDOMAX");
                 getToolbar().setSubtitle("Channels");
                 result.closeDrawer();
@@ -524,6 +544,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 SocialViewPagerFragment fragment = new SocialViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "SOCIAL_MAIN").addToBackStack(null).commit();
 
+                getToolbar().getMenu().clear();
                 getToolbar().setTitle("VDOMAX");
                 getToolbar().setSubtitle("Social");
                 result.closeDrawer();
@@ -536,6 +557,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 VideoViewPagerFragment fragment = new VideoViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "VIDEO_MAIN").addToBackStack(null).commit();
 
+                getToolbar().getMenu().clear();
                 getToolbar().setTitle("VDOMAX");
                 getToolbar().setSubtitle("Videos");
                 result.closeDrawer();
@@ -550,7 +572,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 PhotoViewPagerFragment fragment = new PhotoViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
 
-
+                getToolbar().getMenu().clear();
                 getToolbar().setTitle("VDOMAX");
                 getToolbar().setSubtitle("Photos");
                 result.closeDrawer();
@@ -569,5 +591,16 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         getToolbar().setSubtitle(event.str);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == 12345) {
+            //toolbar.getMenu().clear();
+            NotiFragment notiFragment = NotiFragment.newInstance(VMApp.mPref.userId().getOr(""),"ALL");
+            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, notiFragment, "NOTIFICATION").addToBackStack(null).commit();
+            ActionItemBadge.update(item, VMApp.getNotiBadge());
+        }
 
+        return super.onOptionsItemSelected(item);
+
+    }
 }

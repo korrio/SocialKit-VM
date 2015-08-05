@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,7 +56,6 @@ public class NotiFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static NotiFragment newInstance(String userId,String notiType) {
         NotiFragment fragment = new NotiFragment();
         Bundle args = new Bundle();
@@ -127,8 +127,11 @@ public class NotiFragment extends BaseFragment {
     }
 
     @Subscribe public void onLoadNotiListSuccess(NotiListEventSuccess event) {
-        if(event.data.data != null)
+        if(event.data.data != null) {
+            Log.e("notilistsize",event.data.data.size() + "");
             notiList.addAll(event.data.data);
+        }
+
         notiAdapter.updateItems();
     }
 
@@ -170,7 +173,7 @@ public class NotiFragment extends BaseFragment {
         } else if (type == TYPES_chatMessage || type == TYPES_chatSticker
                 || type == TYPES_chatFile || type == TYPES_chatLocation) {
 
-            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")), fromId, 0);
+            ChatActivity.startChatActivity(getActivity(),postId, Integer.parseInt(VMApp.mPref.userId().getOr("0")), fromId, 0);
 
         }
 //        else if (type == TYPES_confCreate || type == TYPES_confJoin

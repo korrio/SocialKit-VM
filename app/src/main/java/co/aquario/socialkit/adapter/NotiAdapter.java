@@ -60,9 +60,7 @@ public class NotiAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.tvName.setText(noti.from_name);
         holder.tvComment.setText(noti.msg);
 
-
         holder.tvAgo.setText(noti.ago);
-
 
         if(noti.getAvatarUrl() != null)
         Picasso.with(context)

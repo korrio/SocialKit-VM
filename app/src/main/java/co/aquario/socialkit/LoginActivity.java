@@ -28,7 +28,7 @@ import co.aquario.chatapp.event.login.LoginFailedAuthEvent;
 import co.aquario.chatapp.event.login.LoginSuccessEvent;
 import co.aquario.chatapp.model.login.LoginData;
 import co.aquario.socialkit.event.UpdateProfileEvent;
-import co.aquario.socialkit.fragment.LoginFragment;
+import co.aquario.socialkit.fragment.newuser.LoginFragment;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.UserProfile;

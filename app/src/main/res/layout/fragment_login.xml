@@ -38,8 +38,8 @@
 
         <FrameLayout
             android:id="@+id/frameLayout"
-            android:layout_width="480dp"
-            android:layout_height="220dp"
+            android:layout_width="520dp"
+            android:layout_height="280dp"
             android:layout_below="@+id/imageView4"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="16dp"
@@ -78,6 +78,14 @@
                     app:baseColor="@android:color/white"
                     app:floatingLabel="highlight"
                     app:primaryColor="@color/material_drawer_primary" />
+
+                <CheckBox
+                    android:id="@+id/remember_me_checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:text="Remember me"
+                    android:textSize="18sp" />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -124,7 +132,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="67dp"
+            android:layout_marginTop="@dimen/fb_btn_margin"
             android:background="@color/indigo_700"
             android:orientation="vertical">
 

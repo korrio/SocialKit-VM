@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/cvlibrary" />
             <option value="$PROJECT_DIR$/emoji" />
             <option value="$PROJECT_DIR$/iconic" />
+            <option value="$PROJECT_DIR$/typehead" />
           </set>
         </option>
       </GradleProjectSettings>

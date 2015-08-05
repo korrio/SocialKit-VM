@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#353535">
+
+    <LinearLayout
+        android:id="@+id/formLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView11"
+                android:src="@drawable/tt0101"/>
+
+
+            <co.aquario.socialkit.view.ParkedTextView
+                android:layout_marginLeft="16dp"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/parked_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_centerInParent="true"
+                android:textSize="24sp"
+                app:parkedText=" Update Profile"
+                app:parkedHint="Yes, "
+                app:parkedTextColor="FFFFFF"
+                app:parkedHintColor="CCCCCC"
+                app:parkedTextBold="true"
+                android:layout_gravity="center_vertical"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="95dp"
+                android:layout_height="95dp"
+                android:src="@drawable/default_avatar" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:orientation="vertical" >
+
+                <EditText
+                    android:id="@+id/firstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/name" />
+
+                <EditText
+                    android:id="@+id/lastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/surname" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/emailSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:editable="false"
+            android:hint="email" android:visibility="gone" />
+
+
+        <EditText
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:editable="false"
+            android:hint="username"
+            android:visibility="visible"/>
+
+        <EditText
+            android:id="@+id/about"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:hint="about" />
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/btn_update_profile"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:background="@color/indigo_500"
+        android:layout_below="@+id/formLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/tv_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Update"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textColor="#eee"
+            android:drawablePadding="5dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginRight="42dp" />
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/updateButton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_alignParentLeft="true"
+
+        android:layout_margin="20dp"
+
+        android:text="Update"
+        android:textColor="@color/white"
+        android:textSize="@dimen/button_text_size"
+        android:visibility="gone"/>
+
+
+
+</RelativeLayout>

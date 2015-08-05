@@ -66,11 +66,15 @@ public class YoutubePickerActivity extends Activity implements View.OnClickListe
         }
     }
 
+    Activity mActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_youtube);
         setupToolbar();
+
+        mActivity = this;
 
         if(getIntent() !=null) {
             from = getIntent().getAction();
@@ -81,7 +85,7 @@ public class YoutubePickerActivity extends Activity implements View.OnClickListe
         // https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=th&key={YOUR_API_KEY}
 
         initializeViews();
-        initSearchAsync();
+        initSearchAsync("bodyslam");
         context = this;
     }
 
@@ -114,7 +118,7 @@ public class YoutubePickerActivity extends Activity implements View.OnClickListe
             public boolean onQueryTextSubmit(String query) {
                 if (query.length() > 0) {
                     // Service to search video
-                    mYtServiceTask.execute(query);
+                    initSearchAsync(query);
                     return true;
                 } else {
                     return false;
@@ -148,12 +152,12 @@ public class YoutubePickerActivity extends Activity implements View.OnClickListe
         mYtVideoLsv.setOnItemClickListener(this);
     }
 
-    private void initSearchAsync() {
+    private void initSearchAsync(String q) {
         // Service to search video
         mYtServiceTask = new ServiceTask(1);
         mYtServiceTask.setmServerResponseListener(this);
 
-        mYtServiceTask.execute("bodyslam");
+        mYtServiceTask.execute(q);
     }
 
     @Override
@@ -201,8 +205,8 @@ public class YoutubePickerActivity extends Activity implements View.OnClickListe
             intent.putExtra("desc", result.getSnippet().getDescription());
             intent.putExtra("thumb", result.getSnippet().getThumbnails().getMedium().getUrl());
             //i.putExtra("LOCATION",marker.)
-            setResult(-1, intent);
-            finish();
+            mActivity.setResult(RESULT_OK, intent);
+            mActivity.finish();
         }
 
 

@@ -4,9 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,18 +26,25 @@ import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.event.toolbar.TitleEvent;
+import co.aquario.socialkit.fragment.main.FeedFragment;
+import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.interfaces.TagClick;
 import co.aquario.socialkit.model.CommentStory;
 import co.aquario.socialkit.model.User;
+import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import co.aquario.socialkit.widget.TagSelectingTextview;
 import co.aquario.socialkit.widget.URLImageParser;
 
 
 /**
  * Created by froger_mcs on 11.11.14.
  */
-public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements TagClick {
 
     private Activity mActivity;
     //private Context context;
@@ -46,6 +56,8 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private boolean delayEnterAnimation = true;
 
     ArrayList<CommentStory> mList = new ArrayList<CommentStory>();
+
+
 
     public CommentAdapter(Activity mActivity, ArrayList<CommentStory> mList) {
         this.mActivity = mActivity;
@@ -66,7 +78,28 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         runEnterAnimation(viewHolder.itemView, position);
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
-        holder.tvComment.setText(comment.text);
+
+
+
+
+        if(comment.text != null) {
+            holder.tvComment.setMovementMethod(LinkMovementMethod.getInstance());
+            TagSelectingTextview mTagSelectingTextview = new TagSelectingTextview();
+
+            String hastTagColorBlue = "#5BCFF2", hastTagColorRed = "#FF0000",
+                    hastTagColorYellow = "#FFFF00", hastTagColorGreen = "#014a01", hashtagColorIndigo500 = "#3f51b5",
+                    testText, currentHashTagColor;
+
+            int hashTagHyperLinkEnabled = 1;
+            int hashTagHyperLinkDisabled = 0;
+
+            holder.tvComment.setText(mTagSelectingTextview.addClickablePart(
+                            Utils.bbcode(comment.text), this, hashTagHyperLinkDisabled, hashtagColorIndigo500),
+                    TextView.BufferType.SPANNABLE);
+        }
+
+
+        //holder.tvComment.setText(comment.text);
         holder.tvName.setText(Html.fromHtml(comment.user.getName()));
 
         if(comment.time != null) {
@@ -164,6 +197,27 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyItemInserted(itemsCount - 1);
     }
 
+    @Override
+    public void clickedTag(String tag) {
+        if(mActivity != null) {
+            if(tag.startsWith("@")) {
+                //NewProfileActivity.startProfileActivity(mActivity,tag.substring(1));
+                FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1), false);
+                FragmentManager manager = ((BaseActivity) mActivity).getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+                ApiBus.getInstance().postQueue(new TitleEvent(tag));
+            } else if(tag.startsWith("#")) {
+                FeedFragment fragment = new FeedFragment().newInstance(tag.substring(1));
+                FragmentManager manager = ((BaseActivity) mActivity).getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.sub_container, fragment).addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+                ApiBus.getInstance().postQueue(new TitleEvent(tag));
+            }
+        }
+    }
 
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {

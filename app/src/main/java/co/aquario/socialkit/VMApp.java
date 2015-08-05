@@ -8,7 +8,9 @@ import android.content.pm.PackageManager;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
+import com.androidquery.AQuery;
 import com.androidquery.auth.FacebookHandle;
+import com.androidquery.callback.AjaxStatus;
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -27,6 +29,8 @@ import com.squareup.okhttp.OkHttpClient;
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -34,6 +38,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import co.aquario.chatapp.handler.ChatApiHandler;
 import co.aquario.chatapp.handler.ChatApiService;
@@ -47,6 +52,7 @@ import co.aquario.socialkit.handler.PostUploadService;
 import co.aquario.socialkit.push.PushManage;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.StorageUtils;
+import co.aquario.socialkit.util.Utils;
 import io.fabric.sdk.android.Fabric;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -87,7 +93,37 @@ public class VMApp extends Application {
     private static FacebookHandle handle;
     private static Activity mFbHandleActivity;
 
-    @Override
+    public static int notiBadge = 0;
+
+    public static int getNotiBadge() {
+        return notiBadge;
+    }
+
+    public static void updateBadge(Context context) {
+        String userId = VMApp.mPref.userId().getOr("0");
+        if(!userId.equals("0")) {
+            String url = "http://chat.vdomax.com/noti/index.php?a=badge&user_id=" + userId;
+            AQuery aq = new AQuery(context);
+            HashMap<String,Object> params = new HashMap<>();
+
+            aq.ajax(url, params, JSONObject.class, context,
+                    "updateBadgeCb");
+        }
+
+    }
+
+    public void updateBadgeCb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        if (jo != null) {
+            notiBadge = jo.optJSONObject("count").optInt("noti_unread");
+            Utils.showToast("Badge:" + notiBadge);
+
+        }
+    }
+
+
+
+            @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
@@ -134,6 +170,7 @@ public class VMApp extends Application {
 
         //LeakCanary.install(this);
         sContext = this;
+
 
         PackageInfo pInfo;
         try {

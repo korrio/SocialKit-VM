@@ -44,7 +44,7 @@ public interface ChatApiService {
                            Callback<HistoryDataResponse> responseJson);
 
     @GET("/chat/{id}")
-    public void getChatById(@Body String body, @Path("id") int id,Callback<ChatInfo> responseJson);
+    public void getChatById(@Path("id") int id,Callback<ChatInfo> responseJson);
 
     @FormUrlEncoded
     @POST("/chat/group/create")

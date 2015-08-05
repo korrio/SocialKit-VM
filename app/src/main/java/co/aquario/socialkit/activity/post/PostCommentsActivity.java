@@ -23,9 +23,13 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.arabagile.typeahead.MentionAdapter;
+import com.arabagile.typeahead.model.MentionUser;
+import com.arabagile.typeahead.widget.TypeaheadTextView;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -37,18 +41,19 @@ import co.aquario.socialkit.event.GetStoryEvent;
 import co.aquario.socialkit.event.GetStorySuccessEvent;
 import co.aquario.socialkit.event.PostCommentEvent;
 import co.aquario.socialkit.event.PostCommentSuccessEvent;
+import co.aquario.socialkit.event.mention.LoadMentionListSuccessEvent;
+import co.aquario.socialkit.event.mention.MentionListEvent;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.CommentStory;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.view.SendCommentButton;
-import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 
-public class CommentsActivity extends ActionBarActivity implements SendCommentButton.OnSendClickListener {
+public class PostCommentsActivity extends ActionBarActivity implements SendCommentButton.OnSendClickListener {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
     public static final String ARG_COMMENT_LIST = "arg_comment_list";
 
@@ -62,7 +67,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     @InjectView(R.id.llAddComment)
     LinearLayout llAddComment;
     @InjectView(R.id.et_box)
-    EmojiconEditText etComment;
+    TypeaheadTextView etComment;
     @InjectView(R.id.btnSendComment)
     SendCommentButton btnSendComment;
 
@@ -81,13 +86,36 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     ImageView emojiButton;
     EmojiconsPopup popup;
 
+    @Subscribe
+    public void onRequestMention(LoadMentionListSuccessEvent event) {
+        List<MentionUser> users = new ArrayList<>();
+        ArrayList<MentionUser> mentionList = event.response.mentions;
+        for(int i = 0 ; i < mentionList.size() ; i++) {
+            users.add(new MentionUser(mentionList.get(i).name, mentionList.get(i).username, mentionList.get(i).getAvatarUrl()));
+        }
+        MentionAdapter adapter = new MentionAdapter(this, R.layout.menu_user_mention, users);
+        etComment.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ApiBus.getInstance().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ApiBus.getInstance().unregister(this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
         ButterKnife.inject(this);
 
-        ApiBus.getInstance().register(this);
+        ApiBus.getInstance().post(new MentionListEvent(Integer.parseInt(VMApp.mPref.userId().getOr("0"))));
 
         postId = getIntent().getStringExtra("POST_ID");
         ApiBus.getInstance().post(new GetStoryEvent(postId));
@@ -296,7 +324,7 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        CommentsActivity.super.onBackPressed();
+                        PostCommentsActivity.super.onBackPressed();
                         overridePendingTransition(0, 0);
                     }
                 })
@@ -335,6 +363,17 @@ public class CommentsActivity extends ActionBarActivity implements SendCommentBu
     @Subscribe public void onPostCommentSuccess(PostCommentSuccessEvent event) {
         //ApiBus.getInstance().post(toolbar RefreshEvent());
         Toast.makeText(getApplicationContext(),"Success comment",Toast.LENGTH_SHORT).show();
+        contentRoot.animate()
+                .translationY(Utils.getScreenHeight(this))
+                .setDuration(200)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        PostCommentsActivity.super.onBackPressed();
+                        overridePendingTransition(0, 0);
+                    }
+                })
+                .start();
 
     }
 

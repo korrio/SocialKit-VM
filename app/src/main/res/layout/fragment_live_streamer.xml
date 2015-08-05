@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+                tools:context=".MainActivity">
+
+    <SurfaceView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/camera_preview"
+
+/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Publish"
+        android:id="@+id/capture"
+        android:layout_below="@+id/txt_version"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        android:id="@+id/stop"
+        android:layout_below="@+id/capture"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="v0.0.1"
+        android:id="@+id/txt_version"
+        android:layout_toRightOf="@id/stop"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14dp"
+        android:id="@+id/vbitrate"
+        android:layout_alignTop="@+id/flv_url"
+        android:layout_alignRight="@+id/camera_preview"
+        android:layout_alignEnd="@+id/camera_preview"
+        android:visibility="gone"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14dp"
+        android:id="@+id/flv_url"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/camera_preview"
+        android:layout_alignStart="@+id/camera_preview"
+        android:visibility="gone"/>
+
+</RelativeLayout>

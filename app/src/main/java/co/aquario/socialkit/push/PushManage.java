@@ -142,6 +142,8 @@ public class PushManage extends Activity {
 				fromName = json.getString("from_name");
                 toId = Integer.parseInt(json.getString("to_id"));
 
+
+
                 /*
                 chatUrl += fromId;
 				String m = fromName + "%20ได้ส่งข้อความหาคุณ";
@@ -243,7 +245,7 @@ public class PushManage extends Activity {
 		} else if (type == TYPES_chatMessage || type == TYPES_chatSticker
 				|| type == TYPES_chatFile || type == TYPES_chatLocation) {
 
-            ChatActivity.startChatActivity(this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            ChatActivity.startChatActivity(this,postId,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
 
 		}
 //        else if (type == TYPES_confCreate || type == TYPES_confJoin

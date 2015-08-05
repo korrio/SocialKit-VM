@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        >
+        android:background="#353535">
 
         <include layout="@layout/fragment_profile" />
 
@@ -22,7 +22,7 @@
             android:hint="Username"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
             app:primaryColor="@color/material_drawer_primary" />
@@ -34,7 +34,7 @@
             android:hint="Full Name"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
             app:primaryColor="@color/material_drawer_primary" />
@@ -46,7 +46,7 @@
             android:hint="About"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
             app:primaryColor="@color/material_drawer_primary" />
@@ -58,7 +58,7 @@
             android:hint="E-Mail"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
             app:primaryColor="@color/material_drawer_primary" />
@@ -70,7 +70,7 @@
             android:hint="Current City"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
 
@@ -88,14 +88,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/male" />
+                android:text="@string/male"
+                android:textSize="22dp"/>
 
             <RadioButton
                 android:id="@+id/selectFemale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/female" />
+                android:text="@string/female"
+                android:textSize="22dp"/>
         </RadioGroup>
 
         <com.rengwuxian.materialedittext.MaterialEditText
@@ -106,7 +108,7 @@
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
 
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
             app:primaryColor="@color/material_drawer_primary" />
@@ -119,7 +121,7 @@
             android:inputType="date"
             android:text=""
             android:textCursorDrawable="@drawable/text_cursor_cyan"
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
             app:primaryColor="@color/material_drawer_primary" />
@@ -130,7 +132,7 @@
             android:layout_height="wrap_content"
             android:hint="Timezone"
             android:textCursorDrawable="@drawable/text_cursor_cyan"
-            android:textSize="13dp"
+            android:textSize="22dp"
             app:baseColor="@android:color/white"
             app:floatingLabel="highlight"
             app:primaryColor="@color/material_drawer_primary" />

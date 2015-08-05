@@ -82,6 +82,8 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
         }
     }
 
+    Activity mActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +92,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
         setupToolbar();
 
         context = this;
+        mActivity = this;
 
         if(getIntent() !=null) {
             from = getIntent().getAction();
@@ -176,13 +179,16 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
                             startActivity(i);
                             finish();
                         } else {
+
+                            Log.e("returnChatFragment",selectedMusicTrack.uri);
                             Intent i = new Intent();
                             i.putExtra("soundcloud_uri", selectedMusicTrack.uri);
                             i.putExtra("soundcloud_title", selectedMusicTrack.mTitle);
                             i.putExtra("artwork_url", selectedMusicTrack.getArtworkURL());
                             //i.putExtra("LOCATION",marker.)
-                            setResult(-1, i);
-                            finish();
+
+                            mActivity.setResult(RESULT_OK, i);
+                            mActivity.finish();
                         }
                     }
                 })
@@ -224,7 +230,7 @@ public class MusicPickerActivity extends Activity implements SearchView.OnQueryT
         mMusicTracks.clear();
         mMusicTracks.addAll(musicTracks);
         mAdapter.notifyDataSetChanged();
-        Log.e("heyhey", mMusicTracks.size() + "");
+        //Log.e("heyhey", mMusicTracks.size() + "");
     }
 
 

@@ -439,9 +439,9 @@ public class SettingFragment extends BaseFragment {
 
     }
 
-    private void uploadProfile(String postId) {
+    private void uploadProfile(String userId) {
         Charset chars = Charset.forName("UTF-8");
-        String url = "http://api.vdomax.com/user/update/" + postId;
+        String url = "http://api.vdomax.com/user/update/" + userId;
 
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", userName.getText());
@@ -461,6 +461,7 @@ public class SettingFragment extends BaseFragment {
         AQuery aq = new AQuery(getActivity());
         aq.ajax(url, params, JSONObject.class, this, "updateProfile");
     }
+
     public void updateProfile(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {
         Log.e("hahaha", jo.toString(4));

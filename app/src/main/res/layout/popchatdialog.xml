@@ -30,7 +30,7 @@
                android:layout_height="wrap_content"
                android:text="Task"
                android:textColor="@android:color/holo_blue_dark"
-               android:textSize="25sp" />
+               android:textSize="18sp" />
 
            <TextView
                android:id="@+id/chat_msg_coming"
@@ -38,7 +38,7 @@
                android:layout_height="match_parent"
                android:text="chat_msg_coming"
                android:textAppearance="?android:attr/textAppearanceSmall"
-               android:textSize="24sp" />
+               android:textSize="16sp" />
 
        </LinearLayout>
   

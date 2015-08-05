@@ -14,6 +14,7 @@ import co.aquario.socialkit.event.PostCommentDataResponse;
 import co.aquario.socialkit.event.StoryDataResponse;
 import co.aquario.socialkit.event.TimelineDataResponse;
 import co.aquario.socialkit.event.UserProfileDataResponse;
+import co.aquario.socialkit.event.mention.MentionListDataResponse;
 import co.aquario.socialkit.model.LoginData;
 import co.aquario.socialkit.model.RegisterData;
 import retrofit.Callback;
@@ -131,6 +132,10 @@ public interface ApiServiceVM {
 
     @GET("/user/{id}")
     public void getUser(@Body String body, @Path("id") int id,Callback<UserMe> responseJson);
+
+    @GET("/user/{id}/mention")
+    public void getMentionList(@Path("id") int id ,
+                               Callback<MentionListDataResponse> responseJson);
 
 
 }

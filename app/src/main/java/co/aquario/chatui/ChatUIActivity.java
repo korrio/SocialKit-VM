@@ -73,8 +73,6 @@ public class ChatUIActivity extends AppCompatActivity {
 
     private static final int CONNECTION_REQUEST = 1;
 
-
-
     @InjectView(R.id.navIconLeft)
     ImageView navIconLeft;
 
@@ -142,9 +140,9 @@ public class ChatUIActivity extends AppCompatActivity {
                         case R.id.action_add_friend:
                             initListAddFriendDialog();
                             break;
-                        case R.id.action_add_friends_to_group:
-                            initGridFriendsDialog();
-                            break;
+//                        case R.id.action_add_friends_to_group:
+//                            initGridFriendsDialog();
+//                            break;
                     }
                     return false;
                 }

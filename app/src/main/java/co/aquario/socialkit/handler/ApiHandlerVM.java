@@ -64,6 +64,9 @@ import co.aquario.socialkit.event.StoryDataResponse;
 import co.aquario.socialkit.event.TimelineDataResponse;
 import co.aquario.socialkit.event.UnfollowUserSuccessEvent;
 import co.aquario.socialkit.event.UserProfileDataResponse;
+import co.aquario.socialkit.event.mention.LoadMentionListSuccessEvent;
+import co.aquario.socialkit.event.mention.MentionListDataResponse;
+import co.aquario.socialkit.event.mention.MentionListEvent;
 import co.aquario.socialkit.model.LoginData;
 import co.aquario.socialkit.model.RegisterData;
 import retrofit.Callback;
@@ -661,7 +664,19 @@ public class ApiHandlerVM {
         });
     }
 
+    @Subscribe public void onMentionListRequestEvent(MentionListEvent event) {
+        api.getMentionList(event.id, new Callback<MentionListDataResponse>() {
+            @Override
+            public void success(MentionListDataResponse mentionListDataResponse, Response response) {
+                ApiBus.getInstance().post(new LoadMentionListSuccessEvent(mentionListDataResponse));
+            }
 
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
 
 
 }

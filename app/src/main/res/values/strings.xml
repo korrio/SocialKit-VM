@@ -65,7 +65,8 @@
     <string name="user_des">MY DESC DESC DESC</string>
     <string name="user_recommend_tip">MY TIP</string>
     <string name="title_activity_post_youtube">PostYoutubeActivity</string>
-    <string name="name">Cool Name</string>
+    <string name="name">Name</string>
+    <string name="surname">Lastname</string>
     <string name="title_activity_profile_activity_test">ProfileActivity</string>
     <string name="title_activity_live_history">LiveHistory</string>
 
@@ -111,5 +112,7 @@
 
     <string name="uploading">Uploading</string>
     <string name="waiting">Please wait a while,</string>
+
+    <string name="hint_autocomplete">Type something and @mention others!</string>
 
 </resources>

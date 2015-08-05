@@ -43,7 +43,7 @@ import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.activity.DragableActivity;
 import co.aquario.socialkit.activity.LiveDragableActivity;
-import co.aquario.socialkit.activity.post.CommentsActivity;
+import co.aquario.socialkit.activity.post.PostCommentsActivity;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.LiveFragment;
@@ -750,10 +750,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                     }
                     break;
                 case R.id.btn_comment:
-                    final Intent intent = new Intent(mActivity, CommentsActivity.class);
+                    final Intent intent = new Intent(mActivity, PostCommentsActivity.class);
                     int[] startingLocation = new int[2];
                     v.getLocationOnScreen(startingLocation);
-                    intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+                    intent.putExtra(PostCommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
                     //intent.putParcelableArrayListExtra(CommentsActivity.ARG_COMMENT_LIST, Parcels.wrap(post.comment));
                     intent.putExtra("POST_ID", post.postId);
                     mActivity.startActivity(intent);

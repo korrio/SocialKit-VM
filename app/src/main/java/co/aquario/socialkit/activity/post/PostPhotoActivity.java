@@ -27,6 +27,10 @@ import android.widget.PopupWindow;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.arabagile.typeahead.MentionAdapter;
+import com.arabagile.typeahead.model.MentionUser;
+import com.arabagile.typeahead.widget.TypeaheadTextView;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -34,17 +38,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.event.mention.LoadMentionListSuccessEvent;
+import co.aquario.socialkit.event.mention.MentionListEvent;
+import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.handler.PostUploadService;
 import co.aquario.socialkit.model.UploadPostCallback;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.util.Utils;
-import github.ankushsachdeva.emojicon.EmojiconEditText;
 import github.ankushsachdeva.emojicon.EmojiconGridView;
 import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
@@ -60,7 +68,7 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
 
     Button post_photo;
     ImageView imageView;
-    EmojiconEditText photoText;
+    TypeaheadTextView photoText;
 
     File tempFile;
 
@@ -123,10 +131,36 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
 
     public LinearLayout contentRoot;
 
+    @Subscribe
+    public void onRequestMention(LoadMentionListSuccessEvent event) {
+        List<MentionUser> users = new ArrayList<>();
+        ArrayList<MentionUser> mentionList = event.response.mentions;
+        for(int i = 0 ; i < mentionList.size() ; i++) {
+            users.add(new MentionUser(mentionList.get(i).name, mentionList.get(i).username, mentionList.get(i).getAvatarUrl()));
+        }
+        MentionAdapter adapter = new MentionAdapter(this, R.layout.menu_user_mention, users);
+        photoText.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ApiBus.getInstance().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ApiBus.getInstance().unregister(this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_photo);
+
+        ApiBus.getInstance().post(new MentionListEvent(Integer.parseInt(VMApp.mPref.userId().getOr("0"))));
+
         final View rootView = findViewById(R.id.root_view);
 
         final ImageView emojiButton = (ImageView) findViewById(R.id.emoji_btn);
@@ -161,7 +195,7 @@ public class PostPhotoActivity extends Activity implements OnClickListener {
         aq = new AQuery(context);
 
         post_photo = (Button) findViewById(R.id.button_recent);
-        photoText = (EmojiconEditText) findViewById(R.id.et_box);
+        photoText = (TypeaheadTextView) findViewById(R.id.et_box);
         imageView = (ImageView) findViewById(R.id.image);
 
         imageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

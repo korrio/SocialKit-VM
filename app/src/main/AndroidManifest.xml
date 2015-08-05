@@ -118,6 +118,18 @@
             </intent-filter>
         </receiver>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="co.aquario.socialkit.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/image_path" />
+        </provider>
+
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
+
         <activity
             android:name=".service.ShowInviteConfPopUp"
             android:theme="@android:style/Theme.Holo.Light.Dialog" >
@@ -276,11 +288,15 @@
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"/>
 
         <activity
+            android:name=".activity.live.PostLiveDragableActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"/>
+
+        <activity
             android:name=".NewProfileActivity"
             android:theme="@style/AppTheme.WithoutActionBar" />
 
         <activity
-            android:name=".activity.post.CommentsActivity"
+            android:name=".activity.post.PostCommentsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 

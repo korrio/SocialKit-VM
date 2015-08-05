@@ -11,11 +11,14 @@ import java.util.Map;
 import co.aquario.chatapp.event.request.BlockUserEvent;
 import co.aquario.chatapp.event.request.ConversationGroupEvent;
 import co.aquario.chatapp.event.request.ConversationOneToOneEvent;
+import co.aquario.chatapp.event.request.GetChatInfoEvent;
 import co.aquario.chatapp.event.request.HistoryEvent;
 import co.aquario.chatapp.event.request.SearchUserEvent;
 import co.aquario.chatapp.event.request.SomeEvent;
+import co.aquario.chatapp.event.response.ChatInfo;
 import co.aquario.chatapp.event.response.ConversationEventSuccess;
 import co.aquario.chatapp.event.response.FailedEvent;
+import co.aquario.chatapp.event.response.GetChatInfoSuccess;
 import co.aquario.chatapp.event.response.HistoryDataResponse;
 import co.aquario.chatapp.event.response.HistoryEventSuccess;
 import co.aquario.chatapp.event.response.SuccessEvent;
@@ -156,13 +159,29 @@ public class ChatApiHandler {
         api.getFindFriends(options, new Callback<FindFriends>() {
             @Override
             public void success(FindFriends user, Response response) {
-                if(user != null) ApiBus.getInstance().postQueue(new SearchUserEventSuccess(user));
+                if (user != null) ApiBus.getInstance().postQueue(new SearchUserEventSuccess(user));
                 else ApiBus.getInstance().postQueue(new SearchUserNotFoundEvent());
             }
 
             @Override
             public void failure(RetrofitError error) {
                 ApiBus.getInstance().postQueue(new SearchUserNotFoundEvent());
+            }
+        });
+    }
+
+    @Subscribe public void getChatInfo(GetChatInfoEvent event) {
+        api.getChatById(event.cid, new Callback<ChatInfo>() {
+            @Override
+            public void success(ChatInfo chatInfo, Response response) {
+                if(chatInfo.getConversationMembers().size() != 0)
+                    Log.e("conversationmembers",chatInfo.getConversationMembers().size()+ "");
+                ApiBus.getInstance().postQueue(new GetChatInfoSuccess(chatInfo));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
             }
         });
     }

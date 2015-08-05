@@ -1,7 +1,9 @@
 package co.aquario.socialkit.activity.search;
 
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,13 +20,16 @@ import java.util.List;
 
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.fragment.main.BaseFragment;
+import co.aquario.socialkit.fragment.main.BaseFragment.SearchListener;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.Hashtag;
 import co.aquario.socialkit.model.PostStory;
 import co.aquario.socialkit.model.User;
+import co.aquario.socialkit.util.Utils;
 
-public class SearchPagerFragment extends BaseFragment {
+public class SearchPagerFragment extends BaseFragment implements SearchListener {
     private static final String USER_ID = "USER_ID";
     private static final String SEARCH_QUERY = "SEARCH_QUERY";
     public LinearLayout mTabsLinearLayout;
@@ -44,12 +49,45 @@ public class SearchPagerFragment extends BaseFragment {
     boolean isLoading = false;
 
     Toolbar toolbar;
+    SearchView mSearchView;
     void setupToolbar() {
         if(((BaseActivity)getActivity()).getToolbar() != null) {
-            toolbar = ((BaseActivity)getActivity()).getToolbar();
+            toolbar = ((BaseActivity) getActivity()).getToolbar();
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.menu_search);
             toolbar.setTitle("Search: " + query);
+
+            mSearchView = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
+
+
+            if (mSearchView != null) {
+                //mSearchView.setQueryHint(oldQuery);
+                MenuItemCompat.expandActionView(toolbar.getMenu().findItem(R.id.action_search));
+                mSearchView.setIconifiedByDefault(false);
+                mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    if (getActivity() != null) {
+                        Utils.hideKeyboard(getActivity());
+
+                        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"), s);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
+                        toolbar.setTitle('"' + s + '"');
+                        toolbar.setSubtitle("Searching");
+                        //oldQuery = s;
+                    }
+
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
+        }
+
+
         }
     }
 
@@ -182,4 +220,12 @@ public class SearchPagerFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onSearchQuery(String query) {
+        Utils.hideKeyboard(getActivity());
+        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),query);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
+
+        //SearchActivity.startActivity(getApplicationContext(),query);
+    }
 }

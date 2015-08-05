@@ -3,7 +3,6 @@ package co.aquario.socialkit.activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.github.pedrovgs.DraggableListener;
@@ -18,6 +17,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.chatapp.fragment.ChatWidgetFragmentClient;
+import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.fragment.ExoSurfaceFragment;
@@ -26,7 +26,7 @@ import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.util.DensityUtil;
 
 
-public class LiveDragableActivity extends AppCompatActivity {
+public class LiveDragableActivity extends BaseActivity {
 
     private static final String YOUTUBE_API_KEY = "AIzaSyC1rMU-mkhoyTvBIdTnYU0dss0tU9vtK48";
     private static String VIDEO_KEY = "";

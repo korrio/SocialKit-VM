@@ -1,4 +1,4 @@
-package co.aquario.socialkit.fragment;
+package co.aquario.socialkit.fragment.newuser;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -268,6 +268,8 @@ public class LoginFragment extends BaseFragment {
                 .avatar().put(event.getLoginData().user.avatar)
                 .isLogin().put(true)
                 .commit();
+
+        VMApp.updateBadge(getActivity());
 
 
         final ParseInstallation installation = ParseInstallation

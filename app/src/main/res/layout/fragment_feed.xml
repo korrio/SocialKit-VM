@@ -6,10 +6,30 @@
     android:background="@color/md_blue_grey_100"
     android:fillViewport="true">
 
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="#252525"
+        android:layout_centerInParent="true"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:id="@+id/progressBar3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvFeed"
@@ -23,6 +43,8 @@
             android:background="@drawable/shadow_top" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/player_toolbar"
@@ -169,22 +191,6 @@
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="gone"
-        android:textColor="#252525"/>
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
-        android:id="@+id/progressBar3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
 
 </RelativeLayout>
 

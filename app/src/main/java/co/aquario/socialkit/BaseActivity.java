@@ -44,9 +44,8 @@ import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.util.PrefManager;
 
 public abstract class BaseActivity extends AppCompatActivity {
-    private static final int NUM_OF_ITEMS = 100;
-    private static final int NUM_OF_ITEMS_FEW = 3;
-    private PrefManager mPref;
+
+    public PrefManager mPref;
     private Context mContext;
     private Toolbar toolbar;
 
@@ -59,6 +58,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.setContentView(layoutResID);
         ButterKnife.inject(this);
 
+        mPref = VMApp.get(getApplicationContext()).getPrefManager();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (getSupportActionBar() != null) {
             setSupportActionBar(toolbar);
@@ -232,13 +232,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
         builder.show();
     }
-
-    private void startCropImage(String path) {
-
-        //Crop.of(path, path).asSquare().start(activity);
-    }
-
-
 
     public int getCameraPhotoOrientation(String imagePath) {
         int rotate = 0;

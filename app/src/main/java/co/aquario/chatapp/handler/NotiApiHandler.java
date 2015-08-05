@@ -1,6 +1,7 @@
 package co.aquario.chatapp.handler;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.squareup.otto.Subscribe;
 
@@ -56,6 +57,7 @@ public class NotiApiHandler {
 
             @Override
             public void failure(RetrofitError error) {
+                Log.e("getNotiList",error.getMessage());
                 apiBus.post(new FailedEvent());
             }
         });

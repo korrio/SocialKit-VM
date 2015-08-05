@@ -56,7 +56,7 @@ public class MessageAdapter extends BaseAdapter {
 
 	@Override
 	public int getItemViewType(int position) {
-		return this.mMessages.get(position).getIsSent() ? 1 : 0;
+		return this.mMessages.get(position).getIsSender() ? 1 : 0;
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public class MessageAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		final Message m = mMessages.get(position);
-		boolean isSend = m.getIsSent();
+		boolean isSend = m.getIsSender();
 
 		ViewHolder viewHolder = null;
 		if (convertView == null) {
@@ -142,7 +142,7 @@ public class MessageAdapter extends BaseAdapter {
 			viewHolder.textTextView.setVisibility(View.VISIBLE);
 			viewHolder.photoImageView.setVisibility(View.GONE);
 			viewHolder.faceImageView.setVisibility(View.GONE);
-			if(m.getIsSent()){
+			if(m.getIsSender()){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -150,7 +150,7 @@ public class MessageAdapter extends BaseAdapter {
 				LayoutParams layoutParams = (LayoutParams) viewHolder.failImageView.getLayoutParams();
 				layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
 				if( m.getSendSuccess() != null && !m.getSendSuccess()){
-					viewHolder.failImageView.setVisibility(View.VISIBLE);
+					//viewHolder.failImageView.setVisibility(View.VISIBLE);
 					viewHolder.failImageView.setLayoutParams(layoutParams);
 				}else{
 					viewHolder.failImageView.setVisibility(View.GONE);
@@ -214,7 +214,7 @@ public class MessageAdapter extends BaseAdapter {
             }
 
 
-			if(m.getIsSent() ){
+			if(m.getIsSender() ){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -222,7 +222,7 @@ public class MessageAdapter extends BaseAdapter {
 				LayoutParams layoutParams = (LayoutParams) viewHolder.failImageView.getLayoutParams();
 				layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
 				if(m.getSendSuccess() != null && !m.getSendSuccess()){
-					viewHolder.failImageView.setVisibility(View.VISIBLE);
+					//viewHolder.failImageView.setVisibility(View.VISIBLE);
 					viewHolder.failImageView.setLayoutParams(layoutParams);
 				}else{
 					viewHolder.failImageView.setVisibility(View.GONE);
@@ -256,7 +256,7 @@ public class MessageAdapter extends BaseAdapter {
 				Picasso.with(mContext).load(dataObj.optString("tattooUrl")).into(viewHolder.faceImageView);
 
 			
-			if(m.getIsSent()){
+			if(m.getIsSender()){
 				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.faceImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
@@ -264,7 +264,7 @@ public class MessageAdapter extends BaseAdapter {
 				LayoutParams layoutParams = (LayoutParams) viewHolder.failImageView.getLayoutParams();
 				layoutParams.addRule(RelativeLayout.LEFT_OF, R.id.faceImageView);
 				if(m.getSendSuccess() != null && !m.getSendSuccess()){
-					viewHolder.failImageView.setVisibility(View.VISIBLE);
+					//viewHolder.failImageView.setVisibility(View.VISIBLE);
 					viewHolder.failImageView.setLayoutParams(layoutParams);
 				}else{
 					viewHolder.failImageView.setVisibility(View.GONE);

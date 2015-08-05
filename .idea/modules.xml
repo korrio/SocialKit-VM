@@ -12,6 +12,7 @@
       <module fileurl="file://$PROJECT_DIR$/cvlibrary/cvlibrary.iml" filepath="$PROJECT_DIR$/cvlibrary/cvlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/emoji/emojicon.iml" filepath="$PROJECT_DIR$/emoji/emojicon.iml" />
       <module fileurl="file://$PROJECT_DIR$/iconic/iconic.iml" filepath="$PROJECT_DIR$/iconic/iconic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/typehead/typehead.iml" filepath="$PROJECT_DIR$/typehead/typehead.iml" />
     </modules>
   </component>
 </project>

@@ -93,7 +93,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageView14"
+            android:id="@+id/share_fb_btn"
             android:src="@drawable/com_parse_ui_facebook_login_logo"
             android:layout_marginRight="30dp"
             android:layout_marginEnd="30dp"

@@ -2,11 +2,7 @@ package co.aquario.socialkit.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -14,14 +10,12 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.squareup.otto.Subscribe;
-import com.squareup.picasso.Picasso;
 
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.event.PostEvent;
 import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.PostStory;
-import co.aquario.socialkit.widget.RoundedTransformation;
 
 
 public class YoutubeActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
@@ -56,38 +50,39 @@ public class YoutubeActivity extends YouTubeBaseActivity implements YouTubePlaye
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_youtube);
+        setContentView(R.layout.activity_youtube_chat);
 
         Intent intent = getIntent();
-        VIDEO_ID = intent.getStringExtra("id");
-        String title = intent.getStringExtra("title");
-        String desc = intent.getStringExtra("desc");
-        String avatar = intent.getStringExtra("avatar");
-        String name = intent.getStringExtra("name");
-        String agoText = intent.getStringExtra("ago");
-
-        TextView authorName = (TextView) findViewById(R.id.name);
-        ImageView authorAvatar = (ImageView) findViewById(R.id.avatar);
-        TextView videoTitle = (TextView) findViewById(R.id.video_title);
-        TextView videoDesc = (TextView) findViewById(R.id.video_desc);
-        TextView ago = (TextView) findViewById(R.id.ago);
-        TextView view = (TextView) findViewById(R.id.view);
+        if(intent != null)
+            VIDEO_ID = intent.getStringExtra("id");
+//        String title = intent.getStringExtra("title");
+//        String desc = intent.getStringExtra("desc");
+//        String avatar = intent.getStringExtra("avatar");
+//        String name = intent.getStringExtra("name");
+//        String agoText = intent.getStringExtra("ago");
+//
+//        TextView authorName = (TextView) findViewById(R.id.name);
+//        ImageView authorAvatar = (ImageView) findViewById(R.id.avatar);
+//        TextView videoTitle = (TextView) findViewById(R.id.video_title);
+//        TextView videoDesc = (TextView) findViewById(R.id.video_desc);
+//        TextView ago = (TextView) findViewById(R.id.ago);
+//        TextView view = (TextView) findViewById(R.id.view);
 
         YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
 
-        videoTitle.setText(title);
-        videoDesc.setText(Html.fromHtml(desc));
-        videoDesc.setMovementMethod(new ScrollingMovementMethod());
-        ago.setText(agoText);
-
-        authorName.setText(name);
-
-        Picasso.with(getApplication())
-                .load(avatar)
-                .centerCrop()
-                .resize(100, 100)
-                .transform(new RoundedTransformation(50, 4))
-                .into(authorAvatar);
+//        videoTitle.setText(title);
+//        videoDesc.setText(Html.fromHtml(desc));
+//        videoDesc.setMovementMethod(new ScrollingMovementMethod());
+//        ago.setText(agoText);
+//
+//        authorName.setText(name);
+//
+//        Picasso.with(getApplication())
+//                .load(avatar)
+//                .centerCrop()
+//                .resize(100, 100)
+//                .transform(new RoundedTransformation(50, 4))
+//                .into(authorAvatar);
 
         youTubePlayerView.initialize(API_KEY, this);
 

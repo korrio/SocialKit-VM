@@ -33,13 +33,20 @@ import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
 
+import com.androidquery.AQuery;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.VideoSurfaceView;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.util.Util;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.FullScreenVideoCacheActivity;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.widget.exoplayer.DemoPlayer;
@@ -89,6 +96,7 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
 
     TextView statusText;
     ImageView btnFullscreen;
+    ImageView btnShareFb;
 
     private View mTopView;
     private View mBottomView;
@@ -103,6 +111,28 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
     String mUsername;
     String mName;
 
+    private void shareToFacebook(String username){
+
+        String url = "https://graph.facebook.com/me/feed";
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("message", "กำลังเล่นสนุกอยู่ที่ VDOMAX (Live Streaming) https://goo.gl/jBF5cI");
+        //params.put("link","https://www.vdomax.com/story/16693");
+        //https://www.vdomax.com/story/195854
+        params.put("link","https://www.vdomax.com/live/"+username+"?" + System.currentTimeMillis());
+
+        //Simply put a byte[] to the params, AQuery will detect it and treat it as a multi-part post
+        //byte[] data = getImageData(getResources().getDrawable(R.drawable.com_parse_ui_facebook_login_logo));
+        //params.put("source", data);
+
+        //Alternatively, put a File or InputStream instead of byte[]
+        //File file = getImageFile();
+        //params.put("source", file);
+
+        AQuery aq = new AQuery(getActivity());
+        aq.auth(VMApp.getFacebookHandle(getActivity())).ajax(url, params, JSONObject.class, this, "shareFb");
+    }
+
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.activity_simple_exo_player, container, false);
 
@@ -111,6 +141,14 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
 
     //VIDEO_URL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:youlove/youlove_xxx_7043.mp4/playlist.m3u8";
     statusText = (TextView) rootView.findViewById(R.id.status);
+      btnShareFb = (ImageView) rootView.findViewById(R.id.share_fb_btn);
+      btnShareFb.setOnClickListener(new OnClickListener() {
+
+          @Override
+          public void onClick(View view) {
+              shareToFacebook(mUsername);
+          }
+      });
       btnFullscreen = (ImageView) rootView.findViewById(R.id.fullscreen_btn);
       btnFullscreen.setOnClickListener(new OnClickListener() {
           @Override
