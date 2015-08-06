@@ -256,8 +256,8 @@ public class LoginFragment extends BaseFragment {
     @Subscribe
     public void onLoginSuccess(LoginSuccessEvent event) {
         VMApp.USER_TOKEN = event.getLoginData().token;
-        Log.e("ARAIWA", VMApp.USER_TOKEN);
-        Log.e("ARAIWA", event.getLoginData().toString());
+        //Log.e("ARAIWA", VMApp.USER_TOKEN);
+        //Log.e("ARAIWA", event.getLoginData().toString());
 
         prefManager
                 .name().put(event.getLoginData().user.name)
@@ -269,7 +269,7 @@ public class LoginFragment extends BaseFragment {
                 .isLogin().put(true)
                 .commit();
 
-        VMApp.updateBadge(getActivity());
+        VMApp.fetchBadge(getActivity());
 
 
         final ParseInstallation installation = ParseInstallation

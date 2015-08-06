@@ -92,7 +92,8 @@
             android:lineSpacingExtra="2dp"
             android:minHeight="50dp"
             android:textColor="#ff58616d"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            android:text="asdf"/>
 
         <TextView
             android:id="@+id/userNameTextView"

@@ -12,6 +12,7 @@ import co.aquario.chatapp.event.request.BlockUserEvent;
 import co.aquario.chatapp.event.request.ConversationGroupEvent;
 import co.aquario.chatapp.event.request.ConversationOneToOneEvent;
 import co.aquario.chatapp.event.request.GetChatInfoEvent;
+import co.aquario.chatapp.event.request.GetRecentChatEvent;
 import co.aquario.chatapp.event.request.HistoryEvent;
 import co.aquario.chatapp.event.request.SearchUserEvent;
 import co.aquario.chatapp.event.request.SomeEvent;
@@ -19,11 +20,13 @@ import co.aquario.chatapp.event.response.ChatInfo;
 import co.aquario.chatapp.event.response.ConversationEventSuccess;
 import co.aquario.chatapp.event.response.FailedEvent;
 import co.aquario.chatapp.event.response.GetChatInfoSuccess;
+import co.aquario.chatapp.event.response.GetRecentChatSuccess;
 import co.aquario.chatapp.event.response.HistoryDataResponse;
 import co.aquario.chatapp.event.response.HistoryEventSuccess;
 import co.aquario.chatapp.event.response.SuccessEvent;
 import co.aquario.chatapp.model.SomeData;
 import co.aquario.chatapp.model.conversation.ConversationId;
+import co.aquario.chatapp.model.conversation.RecentChatResponse;
 import co.aquario.chatui.event_chat.response.SearchUserEventSuccess;
 import co.aquario.chatui.event_chat.response.SearchUserNotFoundEvent;
 import co.aquario.chatui.model.Block;
@@ -78,13 +81,10 @@ public class ChatApiHandler {
         opt.put("page",event.page);
         opt.put("size",event.size);
 
-        Log.i("getHistory", ":" + event.cid);
-
         api.getHistory(event.cid, opt, new Callback<HistoryDataResponse>() {
             @Override
             public void success(HistoryDataResponse historyDataResponse, Response response) {
                 //if(historyDataResponse.content != null)
-                Log.i("historyContent", historyDataResponse.content.toString());
                 ApiBus.getInstance().post(new HistoryEventSuccess(historyDataResponse.content));
             }
 
@@ -108,6 +108,7 @@ public class ChatApiHandler {
             @Override
             public void success(ConversationId conversationId, Response response) {
                 Log.e("conversationOneToOne", conversationId.id + "");
+                //ApiBus.getInstance().post(new GetChatInfoEvent(conversationId.id));
                 ApiBus.getInstance().post(new ConversationEventSuccess(conversationId.id));
             }
 
@@ -177,6 +178,21 @@ public class ChatApiHandler {
                 if(chatInfo.getConversationMembers().size() != 0)
                     Log.e("conversationmembers",chatInfo.getConversationMembers().size()+ "");
                 ApiBus.getInstance().postQueue(new GetChatInfoSuccess(chatInfo));
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    @Subscribe public void getRecentChat(GetRecentChatEvent event) {
+        api.getRecentChat(event.userId, new Callback<RecentChatResponse>() {
+            @Override
+            public void success(RecentChatResponse recentChatResponse, Response response) {
+                if(recentChatResponse.getContent().size() != 0)
+                    ApiBus.getInstance().postQueue(new GetRecentChatSuccess(recentChatResponse));
             }
 
             @Override

@@ -51,14 +51,15 @@
         android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/title"
         android:gravity="right"
         android:text="5:45"
-        android:layout_marginRight="5dip"
         android:textSize="10dip"
         android:textColor="#000000"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:layout_below="@+id/artist"
+        android:layout_alignLeft="@+id/artist"
+        android:layout_alignStart="@+id/artist"
+        android:layout_marginTop="6dp"/>
 
 
 

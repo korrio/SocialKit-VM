@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:mContext=".MainActivity">
+
+    <item android:id="@+id/action_view_contact"
+          android:title="View Contact"
+          android:orderInCategory="300"
+          app:showAsAction="never"/>
+    <!--<item android:id="@+id/action_block"-->
+          <!--android:title="Block"-->
+          <!--android:orderInCategory="400"-->
+          <!--app:showAsAction="never"/>-->
+    <item android:id="@+id/action_leave"
+          android:title="Leave"
+          android:orderInCategory="500"
+          app:showAsAction="never"/>
+
+</menu>

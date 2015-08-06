@@ -29,10 +29,12 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp" >
 
+
+
         <ImageView
             android:id="@+id/userAvatarImageView"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"

@@ -166,17 +166,7 @@ public class YoutubePickerActivity extends Activity implements View.OnClickListe
             case R.id.yt_video_btn:
                 final String keyWord = mYtVideoEdt.getText().toString().trim();
                 if (keyWord.length() > 0) {
-
-
-
-                    //mYtServiceTask.execute(toolbar String[]{keyWord});
-                    if(!executing) {
-                        executing = true;
-                        mYtServiceTask.execute(keyWord);
-                    }
-
-
-
+                    initSearchAsync(keyWord);
                 } else {
                     //Utils.showToast("Empty field");
                 }

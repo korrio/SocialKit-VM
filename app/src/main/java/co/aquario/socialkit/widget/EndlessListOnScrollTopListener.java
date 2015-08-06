@@ -1,6 +1,5 @@
 package co.aquario.socialkit.widget;
 
-import android.util.Log;
 import android.widget.AbsListView;
 
 public abstract class EndlessListOnScrollTopListener implements AbsListView.OnScrollListener {
@@ -36,7 +35,7 @@ public abstract class EndlessListOnScrollTopListener implements AbsListView.OnSc
     public void onScroll(AbsListView view,int firstVisibleItem,int visibleItemCount,int totalItemCount)
     {
 
-        Log.e("scrollStatus",firstVisibleItem + " " + visibleItemCount + " " + totalItemCount);
+        //Log.e("scrollStatus",firstVisibleItem + " " + visibleItemCount + " " + totalItemCount);
         // If the total item count is zero and the previous isn't, assume the
         // listStory is invalidated and should be reset back to initial state
         if (totalItemCount < previousTotalItemCount) {

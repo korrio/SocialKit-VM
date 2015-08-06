@@ -2,6 +2,7 @@ package co.aquario.socialkit.fragment.view;
 
 import android.support.v4.app.Fragment;
 
+import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.FriendFragment;
 
@@ -35,4 +36,8 @@ public class HomeTabPagerItem {
     }
 
     public String getUserId() { return userId;}
+
+    int getAndroidIconResId() {
+        return R.drawable.chat_icon;
+    }
 }

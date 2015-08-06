@@ -99,14 +99,14 @@ public class VMApp extends Application {
         return notiBadge;
     }
 
-    public static void updateBadge(Context context) {
+    public static void fetchBadge(Context context) {
         String userId = VMApp.mPref.userId().getOr("0");
         if(!userId.equals("0")) {
             String url = "http://chat.vdomax.com/noti/index.php?a=badge&user_id=" + userId;
             AQuery aq = new AQuery(context);
             HashMap<String,Object> params = new HashMap<>();
 
-            aq.ajax(url, params, JSONObject.class, context,
+            aq.ajax(url, JSONObject.class, context,
                     "updateBadgeCb");
         }
 

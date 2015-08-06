@@ -124,7 +124,6 @@ public class MessageAdapter extends BaseAdapter {
                 .transform(new RoundedTransformation(100, 4)).into(viewHolder.userAvatarImageView);
         viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
-
 		JSONObject dataObj;
 		dataObj = null;
 		try {
@@ -135,7 +134,10 @@ public class MessageAdapter extends BaseAdapter {
 
         //Log.e("dataObj["+position+"]",m.getData());
 
-		switch (m.getType()) {
+        LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
+
+
+        switch (m.getType()) {
 		case 0://text
 
 			viewHolder.textTextView.setText(m.getContent());
@@ -143,7 +145,6 @@ public class MessageAdapter extends BaseAdapter {
 			viewHolder.photoImageView.setVisibility(View.GONE);
 			viewHolder.faceImageView.setVisibility(View.GONE);
 			if(m.getIsSender()){
-				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
 				
@@ -167,7 +168,6 @@ public class MessageAdapter extends BaseAdapter {
 				viewHolder.failImageView.setVisibility(View.GONE);
 				viewHolder.sendingProgressBar.setVisibility(View.GONE);
 				
-				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.textTextView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
 			}
@@ -215,7 +215,6 @@ public class MessageAdapter extends BaseAdapter {
 
 
 			if(m.getIsSender() ){
-				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
 				
@@ -237,7 +236,6 @@ public class MessageAdapter extends BaseAdapter {
 				
 			}else{
 				viewHolder.failImageView.setVisibility(View.GONE);
-				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
 			}
@@ -257,7 +255,6 @@ public class MessageAdapter extends BaseAdapter {
 
 			
 			if(m.getIsSender()){
-				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.faceImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
 				
@@ -280,7 +277,6 @@ public class MessageAdapter extends BaseAdapter {
 			}else{
 				viewHolder.failImageView.setVisibility(View.GONE);
 				
-				LayoutParams sendTimeTextViewLayoutParams = (LayoutParams) viewHolder.sendTimeTextView.getLayoutParams();
 				sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.faceImageView);
 				viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
 			}
@@ -307,6 +303,13 @@ public class MessageAdapter extends BaseAdapter {
 
                 }
 
+                if(m.getIsSender()) {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                } else {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                }
 
 
                 //if(dataObj != null)
@@ -322,6 +325,15 @@ public class MessageAdapter extends BaseAdapter {
                 if(dataObj != null)
                     Picasso.with(mContext).load(dataObj.optString("ytImage")).into(viewHolder.photoImageView);
 
+
+                if(m.getIsSender()) {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                } else {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                }
+
                 break;
 
             case 32:
@@ -332,6 +344,15 @@ public class MessageAdapter extends BaseAdapter {
 
                 if(dataObj != null)
                     Picasso.with(mContext).load(dataObj.optString("trackImage")).into(viewHolder.photoImageView);
+
+                if(m.getIsSender()) {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                } else {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                }
+
 
                 break;
 
@@ -344,6 +365,14 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder.textTextView.setText("Audio Call");
                 viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_white_24dp, 0, 0, 0);
 
+                if(m.getIsSender()) {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                } else {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                }
+
                 break;
             case 5:
 
@@ -353,6 +382,14 @@ public class MessageAdapter extends BaseAdapter {
 
                 viewHolder.textTextView.setText("Video Call");
                 viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_videocam_white_24dp, 0, 0, 0);
+
+                if(m.getIsSender()) {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                } else {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                }
 
                 break;
 
@@ -368,7 +405,15 @@ public class MessageAdapter extends BaseAdapter {
                     String regionName = dataObj.optString("regionName");
                     String mapImage = "https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=600x400&maptype=roadmap&markers=color:blue%7Clabel:"+regionName+"%7C"+lat+","+lon;
 
-                    Picasso.with(mContext).load(mapImage).resize(400, 400).into(viewHolder.photoImageView);
+                    Picasso.with(mContext).load(mapImage).resize(300, 200).into(viewHolder.photoImageView);
+                }
+
+                if(m.getIsSender()) {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
+                } else {
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
                 }
 
 

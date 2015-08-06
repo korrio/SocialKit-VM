@@ -25,9 +25,6 @@ import co.aquario.socialkit.handler.ApiBus;
 
 public class ChatActivity extends BaseActivity {
 
-
-
-
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
     void setupToolbar() {

@@ -1,12 +1,10 @@
 package co.aquario.chatapp.fragment;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,12 +14,13 @@ import android.media.AudioManager;
 import android.media.ExifInterface;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +30,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -70,7 +71,6 @@ import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
-import co.aquario.chatapp.ChatActivity;
 import co.aquario.chatapp.event.request.ConversationGroupEvent;
 import co.aquario.chatapp.event.request.ConversationOneToOneEvent;
 import co.aquario.chatapp.event.request.GetChatInfoEvent;
@@ -204,7 +204,12 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         toolbar = ((BaseActivity) getActivity()).getToolbar();
         if (toolbar != null) {
 
-            toolbar.inflateMenu(R.menu.menu_chat);
+            toolbar.getMenu().clear();
+            if(mChatType == 0)
+                toolbar.inflateMenu(R.menu.menu_chat);
+            else
+                toolbar.inflateMenu(R.menu.menu_chat_group);
+
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -599,7 +604,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                     listMessages.add(sendingMessage);
 
-                    String path = getRealPathFromURIVideo(getActivity(), mFileURI);
+                    String path = ChatUtil.getRealPathFromURIVideo(getActivity(), mFileURI);
                     File clip = new File(path);
                     uploadFileRetrofit(clip, Message.MSG_TYPE_PHOTO, sendingMessage);
                 }
@@ -620,7 +625,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             true, false, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                     listMessages.add(sendingMessage);
 
-                    String path = getRealPathFromURIVideo(getActivity(), mFileURI);
+                    String path = ChatUtil.getRealPathFromURIVideo(getActivity(), mFileURI);
                     File clip = new File(path);
                     uploadFileRetrofit(clip, Message.MSG_TYPE_PHOTO, sendingMessage);
                 }
@@ -732,14 +737,13 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     public void onGetConversationId(ConversationEventSuccess event) {
         mCid = event.mCid;
 
-        setChatSubTitle(mUserId + ":" + mPartnerId + " in " + mCid);
+        //setChatSubTitle(mUserId + ":" + mPartnerId + " in " + mCid);
 
         Log.i("mCid", mCid + "");
         Log.i("chatType", mChatType + "");
 
-        ApiBus.getInstance().post(new GetChatInfoEvent(mCid));
-        ApiBus.getInstance().post(new SubTitleEvent("Room:" + mCid));
-        ApiBus.getInstance().post(new HistoryEvent(mCid, 20, 1));
+        ApiBus.getInstance().postQueue(new GetChatInfoEvent(mCid));
+        ApiBus.getInstance().postQueue(new HistoryEvent(mCid, 20, 1));
     }
 
     @Subscribe public void onGetChatInfoSuccess(GetChatInfoSuccess event) {
@@ -752,16 +756,19 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             if(mId != mUserId) {
                 if( mPartnerId == null || mPartnerId == 0)
                     mPartnerId = mId;
-                ApiBus.getInstance().post(new TitleEvent("@" + member.getUsername()));
+                mPartnerName = member.getName();
+                mPartnerUsername = member.getUsername();
+                setChatTitle(Html.fromHtml(mPartnerName).toString());
+                setChatSubTitle("@" + mPartnerUsername);
                 ApiBus.getInstance().postQueue(new GetUserEvent(mPartnerId));
             }
         }
 
 
 
-        setChatSubTitle(mUserId + ":" + mPartnerId + " in " + mCid);
+        //setChatSubTitle(mUserId + ":" + mPartnerId + " in " + mCid);
 
-        setupToolbar();
+        //setupToolbar();
 
     }
 
@@ -844,7 +851,39 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         });
     }
 
+    private final TextWatcher watcher1 = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            if (chatEditText1.getText().toString().equals("")) {
+
+            } else {
+                //enterChatView1.setImageResource(R.drawable.ic_chat_send);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if(editable.length()==0){
+                //sendBtn.setImageResource(R.drawable.ic_chat_send);
+            }else{
+                //sendBtn.setImageResource(R.drawable.ic_chat_send_active);
+            }
+        }
+    };
+
+    EditText chatEditText1;
+    Button sendBtn;
+
     private void initMessageInputToolBox() {
+
+        chatEditText1 = (EditText) box.getEditText();
+        sendBtn = (Button) box.getSendButton();
+
+        chatEditText1.addTextChangedListener(watcher1);
 
         box.setOnOperationListener(new OnOperationListener() {
 
@@ -921,30 +960,38 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
         });
 
+
+
+        //https://www.vdomax.com/imgd.php?src=assets/items/tattoo/6_1418811172_1tt0201.png&width=100&height=100&fill-to-fit=ffffff
+
+        String prefix = "https://www.vdomax.com/imgd.php?src=";
+        String suffix = "&width=100&height=100&fill-to-fit=ffffff";
+
         // Add tattoo
         ArrayList<String> faceNameList5 = new ArrayList<>();
-        for (int x = 1; x <= 10; x++) {
-            faceNameList5.add("https://www.vdomax.com/themes/vdomax1.1/emoticons/tt05/tt05" + String.format("%02d", x) + ".png");
+        for (int x = 1; x <= 8; x++) {
+            //faceNameList5.add("https://www.vdomax.com/themes/vdomax1.1/emoticons/tt05/tt05" + String.format("%02d", x) + ".png");
+            faceNameList5.add(prefix + "themes/vdomax1.1/emoticons/tt05/tt05" + String.format("%02d", x) + ".png" + suffix);
         }
 
         ArrayList<String> faceNameList4 = new ArrayList<>();
-        for (int x = 1; x <= 10; x++) {
-            faceNameList4.add("https://www.vdomax.com/themes/vdomax1.1/emoticons/tt04/tt04" + String.format("%02d", x) + ".png");
+        for (int x = 1; x <= 8; x++) {
+            faceNameList4.add(prefix + "themes/vdomax1.1/emoticons/tt04/tt04" + String.format("%02d", x) + ".png" + suffix);
         }
 
         ArrayList<String> faceNameList3 = new ArrayList<>();
-        for (int x = 1; x <= 10; x++) {
-            faceNameList3.add("https://www.vdomax.com/themes/vdomax1.1/emoticons/tt03/tt03" + String.format("%02d", x) + ".png");
+        for (int x = 1; x <= 8; x++) {
+            faceNameList3.add(prefix + "themes/vdomax1.1/emoticons/tt03/tt03" + String.format("%02d", x) + ".png" + suffix);
         }
 
         ArrayList<String> faceNameList2 = new ArrayList<>();
-        for (int x = 1; x <= 10; x++) {
-            faceNameList2.add("https://www.vdomax.com/themes/vdomax1.1/emoticons/tt02/tt02" + String.format("%02d", x) + ".png");
+        for (int x = 1; x <= 8; x++) {
+            faceNameList2.add(prefix + "themes/vdomax1.1/emoticons/tt02/tt02" + String.format("%02d", x) + ".png" + suffix);
         }
 
         ArrayList<String> faceNameList1 = new ArrayList<>();
-        for (int x = 1; x <= 10; x++) {
-            faceNameList1.add("https://www.vdomax.com/themes/vdomax1.1/emoticons/tt01/tt01" + String.format("%02d", x) + ".png");
+        for (int x = 1; x <= 8; x++) {
+            faceNameList1.add(prefix + "themes/vdomax1.1/emoticons/tt01/tt01" + String.format("%02d", x) + ".png" + suffix);
         }
 
         Map<Integer, ArrayList<String>> faceData = new HashMap<>();
@@ -1320,13 +1367,13 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             if (m.senderId == mUserId) {
                 isSend = true;
             } else {
-                setChatTitle("@" + m.sender.username);
+                setChatSubTitle("@" + m.sender.username);
             }
 
-            if(m.data != null)
-                Log.e("JSONOBJHISTORY", m.data);
-            else
-                m.data = "{}";
+//            if(m.data != null)
+//                Log.e("JSONOBJHISTORY", m.data);
+//            else
+//                m.data = "{}";
 
             if (m.messageType == 0) {
 
@@ -1389,7 +1436,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
         adapter.notifyDataSetChanged();
 
-        listView.setSelection(listView.getBottom());
+        //listView.setSelection(listView.getBottom());
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -1571,11 +1618,6 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     private static final int PHOTO_SIZE_WIDTH = 100;
     private static final int PHOTO_SIZE_HEIGHT = 100;
 
-    private void startCropImage(String path) {
-
-        //Crop.of(path, path).asSquare().start(activity);
-    }
-
     public int getCameraPhotoOrientation(String imagePath) {
         int rotate = 0;
         try {
@@ -1608,91 +1650,18 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
     public static String getRealPath(Context context,Uri mFileURI) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            return getRealPathFromURIForKitKat(context,mFileURI);
+            return ChatUtil.getRealPathFromURIForKitKat(context, mFileURI);
         } else {
-            return getRealPathFromURI(context, mFileURI);
+            return ChatUtil.getRealPathFromURI(context, mFileURI);
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    public static String getRealPathFromURIForKitKat(Context context, Uri uri) {
-        // Will return "image:x*"
-        String wholeID = DocumentsContract.getDocumentId(uri);
-
-        // Split at colon, use second item in the array
-        String id = wholeID.split(":")[1];
-
-        String[] column = {MediaStore.Images.Media.DATA};
-
-        // where id is equal to
-        String sel = MediaStore.Images.Media._ID + "=?";
-
-        Cursor cursor = context.getContentResolver().
-                query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        column, sel, new String[]{id}, null);
-
-        String filePath = "";
-
-        int columnIndex = cursor.getColumnIndex(column[0]);
-
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(columnIndex);
-            cursor.close();
-            return filePath;
-        } else {
-            return getRealPathFromURI(context, uri);
-        }
-    }
-
-    public static String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            cursor = context.getContentResolver().query(contentUri, proj, null,
-                    null, null);
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-    public static String getRealPathFromURIVideo(Context context, Uri contentUri) {
-
-        String[] proj = { MediaStore.Video.Media.DATA };
-        Cursor cursor = context.getContentResolver().query(contentUri, proj, null,
-                null, null);
-        int column_index = cursor
-                .getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
     }
 
     public void setChatTitle(String title) {
         ApiBus.getInstance().postQueue(new TitleEvent(title));
-//        if(((BaseActivity) getActivity()).getToolbar() != null) {
-//            ((BaseActivity) getActivity()).getToolbar().setTitle(title);
-        //  }
-//        if(((BaseActivity) getActivity()).getToolbar() != null) {
-//            switch (mChatType) {
-//                case 0:
-//                    ((BaseActivity) getActivity()).getToolbar().setTitle("CHAT_TYPE: 1-1 :" + title);
-//                    break;
-//                case 1:
-//                    ((BaseActivity) getActivity()).getToolbar().setTitle("CHAT_TYPE: LIVE CHAT :" + title);
-//                    break;
-//                case 2:
-//                    ((ChatActivity) getActivity()).getToolbar().setTitle("CHAT_TYPE: GROUP CHAT :" + title);
-//                    break;
-//            }
-//        }
     }
 
     public void setChatSubTitle(String subTitle) {
+        ApiBus.getInstance().postQueue(new SubTitleEvent(subTitle));
         //((BaseActivity) getActivity()).getToolbar().setSubtitle(subTitle);
     }
 
@@ -1766,14 +1735,16 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
     @Subscribe public void onUpdateUserProfile(GetUserEventSuccess event) {
 
-        Toolbar toolbar = ((ChatActivity) getActivity()).getToolbar();
-        if(toolbar != null) {
-            if(event.userMe.getUser() != null) {
-                toolbar.setTitle(event.userMe.getUser().getName());
-                toolbar.setSubtitle("@" + event.userMe.getUser().getUsername());
-            }
+        if(event.userMe.getUser() != null) {
+            setChatTitle(event.userMe.getUser().getName());
+            setChatSubTitle("@" + event.userMe.getUser().getUsername());
         }
 
     }

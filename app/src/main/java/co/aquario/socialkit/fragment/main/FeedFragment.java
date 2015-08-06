@@ -6,6 +6,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -238,23 +239,25 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
     String oldQuery = "Search..";
 
+    boolean isSetupToolbar = false;
 
     Menu menu;
     void setupToolbar() {
         toolbar = ((BaseActivity) getActivity()).getToolbar();
         if(toolbar != null && getActivity().getLocalClassName().equals("MainActivity")) {
+            isSetupToolbar = true;
             toolbar.getMenu().clear();
             toolbar.setTitle("VDOMAX");
             toolbar.setSubtitle("Home");
+            toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.menu_main);
 
             menu = toolbar.getMenu();
 
             mSearchView = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
-            mSearchView.setIconifiedByDefault(true);
             //MenuItemCompat.expandActionView(toolbar.getMenu().findItem(R.id.action_search));
             mSearchView.setQueryHint(oldQuery);
-            mSearchView.setIconifiedByDefault(false);
+            //mSearchView.setIconifiedByDefault(false);
             mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
@@ -376,12 +379,40 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         setHasOptionsMenu(true);
     }
 
+    public static final String TAG = "FeedFragment";
+
+    public void fetchBadge(Context context) {
+        String userId = VMApp.mPref.userId().getOr("0");
+        if(!userId.equals("0")) {
+            String url = "http://chat.vdomax.com/noti/index.php?a=badge&user_id=" + userId;
+            AQuery aq = new AQuery(context);
+            HashMap<String,Object> params = new HashMap<>();
+
+            aq.ajax(url, JSONObject.class, this,
+                    "updateBadgeCb");
+            Log.e(TAG,"called bagdge");
+        }
+
+    }
+
+    public void updateBadgeCb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+
+        Log.e(TAG,jo.toString());
+
+        if (jo != null) {
+            VMApp.notiBadge = jo.optJSONObject("count").optInt("noti_unread");
+            Utils.showToast("Badge:" + VMApp.notiBadge );
+
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        VMApp.updateBadge(getActivity());
+        fetchBadge(getActivity());
 
         pref = VMApp.get(getActivity().getApplicationContext()).getPrefManager();
         if (getArguments() != null) {
@@ -452,8 +483,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
             //((MainActivity) getActivity()).getToolbar().setSubtitle("");
         }
-
-        setupToolbar();
+        if(!isSetupToolbar)
+            setupToolbar();
     }
 
     @Override
@@ -469,16 +500,16 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     @Subscribe public void onGetStoryEventSuccess(GetStorySuccessEvent event) {
         if(isRefresh)
             list.clear();
-        isRefresh = false;
-        swipeLayout.setRefreshing(false);
+        if(!isHashtag)
+            swipeLayout.setRefreshing(false);
 
         list.add(event.getPost());
 
         bAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
-        if(!isHashtag)
-            swipeLayout.setRefreshing(false);
+
         isLoadding = false;
+        isRefresh = false;
     }
 
     //animation
@@ -958,6 +989,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
     @Subscribe public void onLoadTimelineSuccess(LoadTimelineSuccessEvent event) {
 
+        if(menu != null && isSetupToolbar)
         new ActionItemBadgeAdder().act(getActivity()).menu(menu)
                 .title("NOTI").itemDetails(0, 12345, 1)
                 .showAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
@@ -973,12 +1005,9 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         if(list.size() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
             mProgressBarFeed.setVisibility(View.GONE);
-        }
-
-        if(list.size() == 0)
-            mEmptyView.setVisibility(View.VISIBLE);
-        else
+        } else {
             mEmptyView.setVisibility(View.GONE);
+        }
 
         bAdapter.notifyDataSetChanged();
         adapter.notifyDataSetChanged();
@@ -986,8 +1015,6 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             swipeLayout.setRefreshing(false);
         isLoadding = false;
         mProgressBarFeed.setVisibility(View.GONE);
-
-
 
     }
 

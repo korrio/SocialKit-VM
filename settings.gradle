@@ -1,2 +1,2 @@
-include ':app', ':emojicon', ':bookends', ':cvlibrary', ':iconic', ':PhotoPickerLib', ':ParseLoginUI', ':ChatWidget', ':apprtc', ':typehead'
+include ':app', ':emojicon', ':bookends', ':cvlibrary', ':iconic', ':PhotoPickerLib', ':ParseLoginUI', ':ChatWidget', ':apprtc', ':typehead', ':nice-tab'
 project(':emojicon').projectDir = new File('emoji')

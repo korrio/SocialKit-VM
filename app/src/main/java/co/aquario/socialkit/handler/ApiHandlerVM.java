@@ -632,7 +632,7 @@ public class ApiHandlerVM {
     }
 
     @Subscribe public void getUser(GetUserEvent event) {
-        api.getUser("", event.id, new Callback<UserMe>() {
+        api.getUser( event.id, new Callback<UserMe>() {
             @Override
             public void success(UserMe userMe, Response response) {
                 apiBus.post(new GetUserEventSuccess(userMe));

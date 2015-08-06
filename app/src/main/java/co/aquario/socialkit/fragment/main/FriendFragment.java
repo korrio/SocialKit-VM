@@ -104,10 +104,6 @@ public class FriendFragment extends BaseFragment {
         recyclerView.setLayoutManager(manager);
 
 
-        //LinearLayoutManager linearLayoutManager = toolbar LinearLayoutManager(getActivity());
-        //linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-
             recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(manager) {
                 @Override
                 public void onLoadMore(int current_page) {

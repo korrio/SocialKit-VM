@@ -343,9 +343,9 @@ public class PostStatusActivity2 extends Activity {
         boolean found = matcher.find();
         boolean isWhitespace = statusText.matches("^\\s*$");
 
-        if (statusText.length() == 0 || statusText.trim().equals("") || found || isWhitespace) {
+        if (statusText.length() == 0 || statusText.trim().equals("") || isWhitespace) {
             etStatus.setError("กรุณาพิมพ์ข้อความก่อนส่ง");
-            Log.e("YEAH", statusText.length() + " " + statusText.trim() + " " + found + " " + isWhitespace);
+            Log.e("YEAH", statusText.length() + " " + statusText.trim()  + " " + isWhitespace);
             return;
         } else {
             statusText = etStatus.getText().toString();

@@ -62,6 +62,7 @@ import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.pager.ChannelViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.HomeViewPagerFragment;
+import co.aquario.socialkit.fragment.pager.HomeViewPagerNiceTabFragment;
 import co.aquario.socialkit.fragment.pager.PhotoViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.SocialViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.VideoViewPagerFragment;
@@ -114,7 +115,9 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         VMApp.saveInstallation(Integer.parseInt(userId));
 
         if (savedInstanceState == null) {
-            HomeViewPagerFragment fragment = new HomeViewPagerFragment();
+            //HomeViewPagerFragment fragment = new HomeViewPagerFragment();
+            HomeViewPagerNiceTabFragment fragment = new HomeViewPagerNiceTabFragment();
+
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.sub_container, fragment);

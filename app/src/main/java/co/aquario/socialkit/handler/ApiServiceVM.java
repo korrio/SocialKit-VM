@@ -131,7 +131,7 @@ public interface ApiServiceVM {
     public void getFollowSuggestion(@Body String body, Callback<FollowSuggestionModel> responseJson);
 
     @GET("/user/{id}")
-    public void getUser(@Body String body, @Path("id") int id,Callback<UserMe> responseJson);
+    public void getUser(@Path("id") int id,Callback<UserMe> responseJson);
 
     @GET("/user/{id}/mention")
     public void getMentionList(@Path("id") int id ,

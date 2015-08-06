@@ -7,6 +7,7 @@ import co.aquario.chatapp.event.response.ChatInfo;
 import co.aquario.chatapp.event.response.HistoryDataResponse;
 import co.aquario.chatapp.model.SomeData;
 import co.aquario.chatapp.model.conversation.ConversationId;
+import co.aquario.chatapp.model.conversation.RecentChatResponse;
 import co.aquario.chatui.model.Block;
 import co.aquario.chatui.model.CreateGroup;
 import co.aquario.chatui.model.FindFriends;
@@ -43,7 +44,7 @@ public interface ChatApiService {
     public void getHistory(@Path("id") int id, @QueryMap Map<String, Integer> options,
                            Callback<HistoryDataResponse> responseJson);
 
-    @GET("/chat/{id}")
+    @GET("/chat/{id}/android")
     public void getChatById(@Path("id") int id,Callback<ChatInfo> responseJson);
 
     @FormUrlEncoded
@@ -118,6 +119,9 @@ public interface ChatApiService {
 
     @GET("/chat/group/{id}")
     public void getGroupList(@Body String body, @Path("id") int id,Callback<ShotGroup> callback);
+
+    @GET("/chat/recent/user/{id}/android")
+    public void getRecentChat(@Path("id") int id, Callback<RecentChatResponse> callback);
 
 
 
