@@ -3,7 +3,6 @@ package co.aquario.socialkit.fragment.newuser;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,10 +44,22 @@ import java.util.regex.Pattern;
 import co.aquario.chatui.utils.EndpointManager;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.event.upload.UpdateAvatarEvent;
+import co.aquario.socialkit.event.upload.UpdateCoverEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
+import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.handler.PostUploadService;
+import co.aquario.socialkit.model.UploadAvatarCallback;
+import co.aquario.socialkit.model.UploadCoverCallback;
 import co.aquario.socialkit.util.PathManager;
 import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedFile;
 
 public class EditProfileFragment extends BaseFragment {
 
@@ -70,7 +81,6 @@ public class EditProfileFragment extends BaseFragment {
 	String email;
 
 	AQuery aq;
-	Button updateButton;
 
     public EditProfileFragment() {
 
@@ -91,7 +101,7 @@ public class EditProfileFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fillProfile(VMApp.mPref.userId().getOr("0"));
+        fillProfile();
     }
 
     public void checkCb(String url, JSONObject jo, AjaxStatus status)
@@ -148,30 +158,30 @@ public class EditProfileFragment extends BaseFragment {
             }
         });
 
-
-
 		//updateButton = (Button) rootView.findViewById(R.id.updateButton);
         btnUpdate.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                updateProfile(VMApp.mPref.userId().getOr("0"));
+                updateProfile();
             }
         });
 
         return rootView;
 	}
 
-    private void updateProfile(String userId) {
+    private void updateProfile() {
         VMApp.mPref.name().put(txtName.getText() + " " + txtLastname.getText())
                 .username().put(txtUsername.getText().toString())
                 .avatar().put("")
                 .commit();
+
+        Utils.showToast("Profile updated!");
     }
 
 
 
-	public void fillProfile(String uid) {
+	public void fillProfile() {
         String fullName = VMApp.mPref.name().getOr("");
         String[] parts = fullName.split(" ");
         if(parts[0] != null)
@@ -190,42 +200,132 @@ public class EditProfileFragment extends BaseFragment {
                 .into(avatar);
 	}
 
+    private void uploadFileRetrofit(File file, String timelineId,String type) {
+        //FileUploadService service = ServiceGenerator.createService(FileUpload.class, FileUpload.BASE_URL);
+
+        PostUploadService service = buildUploadApi();
+        TypedFile typedFile = new TypedFile("multipart/form-data", file);
+
+        Map<String, String> options = new HashMap<String, String>();
+        //t=avatar&a=new
+        options.put("t", type);
+        options.put("a", "new");
+        options.put("user_id", VMApp.mPref.userId().getOr("0"));
+        options.put("user_pass", VMApp.mPref.password().getOr("0"));
+        options.put("token", "123456");
+        options.put("mobile", Integer.toString(1));
+
+        if(type.equals("avatar")) {
+            service.uploadAvatar(timelineId, typedFile,options, new Callback<UploadAvatarCallback>() {
+                @Override
+                public void success(UploadAvatarCallback uploadAvatarCallback, Response response) {
+
+                        Picasso.with(getActivity())
+                                .load(uploadAvatarCallback.avatarUrl)
+                                .centerCrop()
+                                .resize(200, 200)
+                                .transform(new RoundedTransformation(100, 2))
+                                .into(avatar);
+                        Log.e("myAvatarUrl", uploadAvatarCallback.avatarUrl + "");
+                        Utils.showToast("Update avatar success!");
+                        String myAvatar = uploadAvatarCallback.avatarUrl;
+                        myAvatar = myAvatar.replace("https://www.vdomax.com/","");
+                        ApiBus.getInstance().postQueue(new UpdateAvatarEvent(myAvatar));
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("myAvatarUrl", error.getMessage() + "");
+                    Utils.showToast("Update avatar failed!");
+
+                }
+            });
+        } else {
+            service.uploadCover(timelineId, typedFile, options, new Callback<UploadCoverCallback>() {
+                @Override
+                public void success(UploadCoverCallback uploadCoverCallback, Response response) {
+
+//                        Picasso.with(getActivity())
+//                                .load(uploadCoverCallback.coverUrl)
+//                                .fit().centerCrop()
+//                                .into(cover);
+                    Log.e("myCoverUrl", uploadCoverCallback.coverUrl + "");
+                    String myCover = uploadCoverCallback.coverUrl;
+                    myCover = myCover.replace("https://www.vdomax.com/", "");
+                    Utils.showToast("Update cover success!");
+                    ApiBus.getInstance().postQueue(new UpdateCoverEvent(myCover));
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("myCoverUrl", error.getMessage() + "");
+                    Utils.showToast("Update avatar failed!");
+
+                }
+            });
+        }
+
+
+    }
+
+    PostUploadService buildUploadApi() {
+        String BASE_URL = "https://www.vdomax.com";
+
+        return new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(BASE_URL)
+
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override public void intercept(RequestFacade request) {
+                        //request.addQueryParam("p1", "var1");
+                        //request.addQueryParam("p2", "");
+                    }
+                })
+                .build()
+                .create(PostUploadService.class);
+    }
+
 
 	public void uploadAvatar() {
-		String url = "https://www.vdomax.com/ajax.php?mobile=1&t=avatar&a=new&user_id="+VMApp.mPref.userId().getOr("0")+"&token=123456&user_pass="+VMApp.mPref.password().getOr("");
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("timeline_id", VMApp.mPref.userId().getOr("0"));
-		params.put("image", tempFile);
-		ProgressDialog dialog = new ProgressDialog(getActivity());
-		dialog.setIndeterminate(true);
-		dialog.setCancelable(true);
-		dialog.setInverseBackgroundForced(false);
-		dialog.setCanceledOnTouchOutside(true);
-		dialog.setTitle("Uploading");
-		aq.progress(dialog).ajax(url, params, JSONObject.class, context,
-                "uploadAvatarCb");
+
+        uploadFileRetrofit(tempFile,VMApp.mPref.userId().getOr("0"),"avatar");
+
+//		String url = "https://www.vdomax.com/ajax.php?mobile=1&t=avatar&a=new&user_id="+VMApp.mPref.userId().getOr("0")+"&token=123456&user_pass="+VMApp.mPref.password().getOr("");
+//		Map<String, Object> params = new HashMap<String, Object>();
+//		params.put("timeline_id", VMApp.mPref.userId().getOr("0"));
+//		params.put("image", tempFile);
+//		ProgressDialog dialog = new ProgressDialog(getActivity());
+//		dialog.setIndeterminate(true);
+//		dialog.setCancelable(true);
+//		dialog.setInverseBackgroundForced(false);
+//		dialog.setCanceledOnTouchOutside(true);
+//		dialog.setTitle("Uploading");
+//		aq.progress(dialog).ajax(url, params, JSONObject.class, context,
+//                "uploadAvatarCb");
 
 	}
 
-    public void uploadAvatarCb(String url, JSONObject jo, AjaxStatus status)
-            throws JSONException {
-
-        if (jo != null) {
-            Utils.showToast("Your avatar is uploaded");
-            String avatarUrl = jo.optString("avatar_url");
-            if(avatarUrl != null)
-                Picasso.with(context)
-
-                        .load(avatarUrl)
-                                //.error(R.drawable.avatar_default)
-                                //.centerCrop()
-                        .resize(200, 200)
-                        .transform(new RoundedTransformation(100, 4))
-                        .into(avatar);
-
-
-        }
-    }
+//    public void uploadAvatarCb(String url, JSONObject jo, AjaxStatus status)
+//            throws JSONException {
+//
+//        if (jo != null) {
+//            Utils.showToast("Your avatar is uploaded");
+//            String avatarUrl = jo.optString("avatar_url");
+//            if(avatarUrl != null)
+//                Picasso.with(context)
+//
+//                        .load(avatarUrl)
+//                                //.error(R.drawable.avatar_default)
+//                                //.centerCrop()
+//                        .resize(200, 200)
+//                        .transform(new RoundedTransformation(100, 4))
+//                        .into(avatar);
+//
+//
+//        }
+//    }
 
     private void setAvatar(String pathStr) {
         Picasso.with(context)

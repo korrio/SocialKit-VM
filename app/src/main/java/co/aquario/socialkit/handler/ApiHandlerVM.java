@@ -33,6 +33,8 @@ import co.aquario.socialkit.event.FollowRegisterEvent;
 import co.aquario.socialkit.event.FollowUserResponse;
 import co.aquario.socialkit.event.FollowUserSuccessEvent;
 import co.aquario.socialkit.event.FriendListDataResponse;
+import co.aquario.socialkit.event.GetFriendProfileEvent;
+import co.aquario.socialkit.event.GetFriendProfileSuccessEvent;
 import co.aquario.socialkit.event.GetStoryEvent;
 import co.aquario.socialkit.event.GetStorySuccessEvent;
 import co.aquario.socialkit.event.GetUserProfileEvent;
@@ -311,6 +313,29 @@ public class ApiHandlerVM {
         });
     }
 
+    @Subscribe public void onGetFriendProfile(GetFriendProfileEvent event) {
+
+        Map<String, String> options = new HashMap<String, String>();
+        String userId = VMApp.mPref.userId().getOr("0");
+        if (!userId.equals("0"))
+            options.put("user_id", userId);
+
+            api.getProfile(options, Integer.parseInt(event.getUserId()), new Callback<UserProfileDataResponse>() {
+                @Override
+                public void success(UserProfileDataResponse userProfileDataResponse, Response response) {
+                    GetFriendProfileSuccessEvent event = new GetFriendProfileSuccessEvent(userProfileDataResponse.user, userProfileDataResponse.count);
+                    ApiBus.getInstance().post(event);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("error", error.toString());
+                }
+
+            });
+
+    }
+
     @Subscribe public void onGetUserProfile(GetUserProfileEvent event) {
 
         Map<String, String> options = new HashMap<String, String>();
@@ -572,7 +597,13 @@ public class ApiHandlerVM {
     @Subscribe
     public void getFriendsList(GetFriendsEvent data){
 
-        api.getFriends("", Integer.parseInt(data.getUserId()), new Callback<FriendsModel>() {
+        Map<String, String> options = new HashMap<String, String>();
+
+        //options.put("type", event.getType());
+        options.put("page", Integer.toString(1));
+        options.put("per_page", Integer.toString(100));
+
+        api.getFriends("", Integer.parseInt(data.getUserId()),options, new Callback<FriendsModel>() {
             @Override
             public void success(FriendsModel frindModel, Response response) {
                 apiBus.post(new GetFriendSuccessEvent(frindModel));
@@ -587,7 +618,13 @@ public class ApiHandlerVM {
 
     @Subscribe public void getFollowingsList(GetFollowingsEvent data){
 
-        api.getFollowings("", Integer.parseInt(data.getUserId()), new Callback<FollowersModel>() {
+        Map<String, String> options = new HashMap<String, String>();
+
+        //options.put("type", event.getType());
+        options.put("page", Integer.toString(1));
+        options.put("per_page", Integer.toString(100));
+
+        api.getFollowings("", Integer.parseInt(data.getUserId()),options, new Callback<FollowersModel>() {
             @Override
             public void success(FollowersModel followingsModel, Response response) {
                 apiBus.post(new GetFollowingsSuccessEvent(followingsModel));
@@ -602,7 +639,13 @@ public class ApiHandlerVM {
 
     @Subscribe public void getFollowersList(GetFollowersEvent data){
 
-        api.getFollowers("", Integer.parseInt(data.getUserId()), new Callback<FollowersModel>() {
+        Map<String, String> options = new HashMap<String, String>();
+
+        //options.put("type", event.getType());
+        options.put("page", Integer.toString(1));
+        options.put("per_page", Integer.toString(100));
+
+        api.getFollowers("", Integer.parseInt(data.getUserId()),options, new Callback<FollowersModel>() {
             @Override
             public void success(FollowersModel followersModel, Response response) {
                 apiBus.post(new GetFollowersSuccessEvent2(followersModel));

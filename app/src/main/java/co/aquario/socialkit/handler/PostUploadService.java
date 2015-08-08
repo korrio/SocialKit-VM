@@ -1,11 +1,16 @@
 package co.aquario.socialkit.handler;
 
 
+import java.util.Map;
+
+import co.aquario.socialkit.model.UploadAvatarCallback;
+import co.aquario.socialkit.model.UploadCoverCallback;
 import co.aquario.socialkit.model.UploadPostCallback;
 import retrofit.Callback;
 import retrofit.http.Multipart;
 import retrofit.http.POST;
 import retrofit.http.Part;
+import retrofit.http.QueryMap;
 import retrofit.mime.TypedFile;
 
 public interface PostUploadService {
@@ -27,4 +32,23 @@ public interface PostUploadService {
             @Part("recipient_id") String recipientId,
             @Part("clips[]") TypedFile file,
             Callback<UploadPostCallback> cb);
+
+    @Multipart
+    //ajax.php?mobile=1&t=avatar&a=new&user_id="+ +"&token=123456&user_pass="+VMApp.mPref.password().getOr("");
+    @POST("/ajax.php")
+    void uploadAvatar(
+            @Part("timeline_id") String timelineId,
+            @Part("image") TypedFile file,
+            @QueryMap Map<String, String> options,
+            Callback<UploadAvatarCallback> cb);
+
+    @Multipart
+    //ajax.php?mobile=1&t=avatar&a=new&user_id="+ +"&token=123456&user_pass="+VMApp.mPref.password().getOr("");
+    @POST("/ajax.php")
+    void uploadCover(
+            @Part("timeline_id") String timelineId,
+            @Part("image") TypedFile file,
+            @QueryMap Map<String, String> options,
+            Callback<UploadCoverCallback> cb);
+
 }

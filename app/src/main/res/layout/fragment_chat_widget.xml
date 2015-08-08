@@ -11,20 +11,27 @@
 
     </RelativeLayout>
 
-    <include
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        layout="@layout/inc_music_player"/>
-
-    <ListView
-        android:id="@+id/messageListview"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:cacheColorHint="#00000000"
-        android:divider="@null"
-        android:dividerHeight="3dp"
-        android:scrollbarStyle="outsideOverlay" />
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/messageListview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:cacheColorHint="#00000000"
+            android:divider="@null"
+            android:dividerHeight="3dp"
+            android:scrollbarStyle="outsideOverlay" />
+
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            layout="@layout/inc_music_player"/>
+
+    </FrameLayout>
 
     <View
         android:layout_width="match_parent"

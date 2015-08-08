@@ -342,8 +342,8 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder.photoImageView.setVisibility(View.VISIBLE);
                 viewHolder.faceImageView.setVisibility(View.GONE);
 
-                if(dataObj != null)
-                    Picasso.with(mContext).load(dataObj.optString("trackImage")).into(viewHolder.photoImageView);
+                if(dataObj != null && !dataObj.optString("trackImage").equals(""))
+                    Picasso.with(mContext).load(dataObj.optString("trackImage")).error(R.drawable.avatar).into(viewHolder.photoImageView);
 
                 if(m.getIsSender()) {
                     sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
@@ -366,10 +366,10 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_call_white_24dp, 0, 0, 0);
 
                 if(m.getIsSender()) {
-                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
                     viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
                 } else {
-                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.textTextView);
                     viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
                 }
 
@@ -384,10 +384,10 @@ public class MessageAdapter extends BaseAdapter {
                 viewHolder.textTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_videocam_white_24dp, 0, 0, 0);
 
                 if(m.getIsSender()) {
-                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.photoImageView);
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.LEFT_OF, R.id.textTextView);
                     viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
                 } else {
-                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.photoImageView);
+                    sendTimeTextViewLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.textTextView);
                     viewHolder.sendTimeTextView.setLayoutParams(sendTimeTextViewLayoutParams);
                 }
 

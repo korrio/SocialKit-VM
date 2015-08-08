@@ -9,14 +9,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import co.aquario.chatapp.CallActivityLauncher;
 import co.aquario.chatapp.ChatActivity;
 import co.aquario.chatapp.push.DialogService;
+import co.aquario.chatui.ChatUIActivity;
 import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
@@ -44,6 +45,7 @@ public class PushManage extends Activity {
 	public static int TYPES_chatFreeCall = 504;
 	public static int TYPES_chatVideoCall = 505;
 	public static int TYPES_chatInviteGroup = 506;
+    public static int TYPES_chatInviteGroup2 = 520;
 	public static int TYPES_confInvite = 600;
 	public static int TYPES_confCreate = 601;
 	public static int TYPES_confJoin = 602;
@@ -60,12 +62,13 @@ public class PushManage extends Activity {
 	// "502" => "{0} sent you a file ",
 	// );
 
-	private int fromId;
-    private int toId;
+	private String fromId;
+    private String toId;
 	private String fromName;
 	private String roomName;
-	private int postId;
+	private String postId;
     private String customdata;
+    private int mCid;
 	String currentActivity;
 
 	@Override
@@ -138,9 +141,10 @@ public class PushManage extends Activity {
 					|| type.equals(TYPES_chatSticker + "")
 					|| type.equals(TYPES_chatFile + "")
 					|| type.equals(TYPES_chatLocation + "")) {
-				fromId = Integer.parseInt(json.getString("from_id"));
+				fromId = json.optString("from_id", json.optInt("from_id") + "");
 				fromName = json.getString("from_name");
-                toId = Integer.parseInt(json.getString("to_id"));
+                toId = json.optString("to_id", json.optInt("to_id") + "");
+                mCid = Integer.parseInt(json.optString("conversation_id", json.optInt("conversation_id") + ""));
 
 
 
@@ -163,20 +167,20 @@ public class PushManage extends Activity {
 				*/
 				//DataUser.VM_CHAT_N = n;
 			} else if (type.equals(TYPES_confInvite + "")) {
-				roomName = json.getString("room_name");
+				roomName = json.optString("room_name");
 			} else if (type.equals(TYPES_confCreate + "")
 					|| type.equals(TYPES_confJoin + "")) {
-				roomName = json.getString("room_name");
+				roomName = json.optString("room_name");
 			} else if (type.equals(TYPES_liveNow + "")) {
-				fromId = Integer.parseInt(json.getString("from_id"));
-				fromName = json.getString("from_name");
-				postId = Integer.parseInt(json.getString("post_id"));
+                fromId = json.optString("from_id", json.optInt("from_id") + "");
+                fromName = json.getString("from_name");
+//				postId = json.optString("post_id", json.optInt("post_id") + "");
 			} else if (type.equals(TYPES_commentFeed + "")
 					|| type.equals(TYPES_likeFeed + "")) {
-				fromId = Integer.parseInt(json.getString("from_id"));
+				fromId = json.optString("from_id", json.optInt("from_id") + "");
 				fromName = json.getString("from_name");
-				postId = Integer.parseInt(json.getString("post_id"));
-			} else if (type.equals(TYPES_chatInviteGroup + "")) {
+				postId = json.optString("post_id", json.optInt("post_id") + "");
+			} else if (type.equals(TYPES_chatInviteGroup + "") || type.equals(TYPES_chatInviteGroup2 + "")) {
 				Log.e("chatInvite",json.toString());
 			} else if (type.equals(TYPES_chatVideoCall + "")) {
 				customdata = json.optString("customdata");
@@ -222,11 +226,11 @@ public class PushManage extends Activity {
             routeIntent.putExtra("post_id", postId);
             startActivity(routeIntent);
         } else if (type == TYPES_liveNow) {
-			Intent routeIntent = new Intent(this, MainActivity.class);
-			routeIntent.putExtra("type", "post");
-			routeIntent.putExtra("post_id", postId);
-			routeIntent.putExtra("user_id", fromId);
-            startActivity(routeIntent);
+            Intent i = new Intent(this, NewProfileActivity.class);
+            i.putExtra("USER_ID",fromId + "");
+            startActivity(i);
+
+
 			/*
 			 * toDetail = new Intent(ManagePush.this, PlayActivity.class);
 			 * toDetail.putExtra("isPlay", "1"); toDetail.putExtra("roomId",
@@ -245,7 +249,7 @@ public class PushManage extends Activity {
 		} else if (type == TYPES_chatMessage || type == TYPES_chatSticker
 				|| type == TYPES_chatFile || type == TYPES_chatLocation) {
 
-            ChatActivity.startChatActivity(this,postId,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            ChatActivity.startChatActivity(this,Integer.parseInt(postId),Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,Integer.parseInt(fromId),0);
 
 		}
 //        else if (type == TYPES_confCreate || type == TYPES_confJoin
@@ -258,15 +262,48 @@ public class PushManage extends Activity {
 //
 //		}
         else if (type == TYPES_chatFreeCall) {
-            ChatActivity.startChatActivity(PushManage.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
-            CallActivityLauncher.startCallActivity(PushManage.this, customdata, false);
+            ChatActivity.startChatActivity(PushManage.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,Integer.parseInt(fromId),0);
+            notifyUser(TYPES_chatFreeCall, customdata,Integer.parseInt(fromId));
+            ChatUIActivity.connectToRoom(PushManage.this, customdata, false);
 		} else if (type == TYPES_chatVideoCall) {
-            ChatActivity.startChatActivity(PushManage.this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
-            CallActivityLauncher.startCallActivity(PushManage.this, customdata, true);
-		} else if (type == TYPES_chatInviteGroup) {
-            ChatActivity.startChatActivity(PushManage.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            ChatActivity.startChatActivity(PushManage.this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,Integer.parseInt(fromId),0);
+            notifyUser(TYPES_chatVideoCall, customdata,Integer.parseInt(fromId));
+            ChatUIActivity.connectToRoom(PushManage.this, customdata, true);
+		} else if (type == TYPES_chatInviteGroup || type == TYPES_chatInviteGroup2) {
+            ChatActivity.startChatActivity(PushManage.this,mCid, Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,Integer.parseInt(fromId),2);
 		}
 
 		this.finish();
 	}
+
+    private void notifyUser(int notiType,String roomName,int toId) {
+
+        String fromName = VMApp.mPref.username().getOr("");
+
+        String title = "VDOMAX";
+        String message = "";
+        if(notiType == TYPES_chatFreeCall)
+            message = fromName + " is calling you (Audio Call)";
+        else
+            message = fromName + " is calling you (Video Call)";
+
+        AQuery aq = new AQuery(this);
+        String url = "http://api.vdomax.com/noti/index.php?" +
+                "title=" + title +
+                "&m=" + message  +
+                "&f=" + fromId +
+                "&n=" + fromName +
+                "&t=" + toId +
+                "&type=" + notiType +
+                "&conversation_id=" + mCid +
+                "&customdata=" + roomName;
+
+        aq.ajax(url, JSONObject.class, this, "notifyCb");
+    }
+
+    public void getjson(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        if(jo != null)
+            Log.e("notiJson",jo.toString(4));
+    }
 }

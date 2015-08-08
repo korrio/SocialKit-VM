@@ -25,6 +25,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxStatus;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
@@ -118,11 +124,16 @@ public class PostLiveStreamingFragment extends BaseFragment {
     View rootView;
 
 
+    String mUsername = "";
+    String mUserId = "";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_live_streamer, container, false);
         this.rootView = rootView;
+
+        mUsername = VMApp.mPref.username().getOr("");
+        mUserId = VMApp.mPref.userId().getOr("");
 
         sp = getActivity().getSharedPreferences("SrsPublisher", getActivity().MODE_PRIVATE);
 
@@ -212,10 +223,42 @@ public class PostLiveStreamingFragment extends BaseFragment {
                 publish(fetchVideoFromDevice(), preview.getHolder());
                 btnPublish.setEnabled(false);
                 btnStop.setEnabled(true);
+
+                notifyUser(200,mUsername);
             }
         });
 
         return rootView;
+    }
+
+    private void notifyUser(int notiType,String roomName) {
+
+        //jsonObjStr = "{'roomName':'" + roomName + "'}";
+
+        String fromName = VMApp.mPref.username().getOr("");
+
+        String title = "VDOMAX";
+        String message = "" + fromName + " กำลังถ่ายทอดสด";
+        String mPartnerId = "0";
+
+        AQuery aq = new AQuery(getActivity());
+        String url = "http://api.vdomax.com/noti/index.php?" +
+                "title=" + title +
+                "&m=" + message  +
+                "&f=" + mUserId +
+                "&n=" + fromName +
+                "&t=" + mPartnerId +
+                "&type=" + notiType +
+                "&customdata" + roomName +
+                "&all=1";
+
+        aq.ajax(url, JSONObject.class, this, "notifyCb");
+    }
+
+    public void getjson(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        if(jo != null)
+            Log.e("notiJson",jo.toString(4));
     }
 
 

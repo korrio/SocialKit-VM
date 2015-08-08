@@ -50,6 +50,8 @@ public class SearchPagerFragment extends BaseFragment implements SearchListener 
 
     Toolbar toolbar;
     SearchView mSearchView;
+
+    String oldQuery;
     void setupToolbar() {
         if(((BaseActivity)getActivity()).getToolbar() != null) {
             toolbar = ((BaseActivity) getActivity()).getToolbar();
@@ -61,7 +63,8 @@ public class SearchPagerFragment extends BaseFragment implements SearchListener 
 
 
             if (mSearchView != null) {
-                //mSearchView.setQueryHint(oldQuery);
+
+                mSearchView.setQueryHint(oldQuery);
                 MenuItemCompat.expandActionView(toolbar.getMenu().findItem(R.id.action_search));
                 mSearchView.setIconifiedByDefault(false);
                 mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -74,7 +77,9 @@ public class SearchPagerFragment extends BaseFragment implements SearchListener 
                         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
                         toolbar.setTitle('"' + s + '"');
                         toolbar.setSubtitle("Searching");
-                        //oldQuery = s;
+                        oldQuery = s;
+
+                        mSearchView.setQuery(s,false);
                     }
 
                     return false;

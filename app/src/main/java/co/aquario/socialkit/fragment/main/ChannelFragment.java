@@ -36,7 +36,7 @@ public class ChannelFragment extends BaseFragment {
     // tab 0
     String liveChannelUrl = endpoint + "/live/now?a=1";
     // tab 1
-    String channelUrl = endpoint + "/search/channel?page=1&sort=F";
+    String channelUrl = endpoint + "/search/channel?page=1&sort=F" + "&limit=100";
     int currentPage;
     boolean isRefresh = false;
     boolean isLoadding = false;
@@ -170,7 +170,7 @@ public class ChannelFragment extends BaseFragment {
             public void onLoadMore(int page, int totalItemsCount) {
                 currentPage = page;
                 isRefresh = false;
-                String loadMoreUrl = endpoint + "/search/channel?sort=F&page=" + page;
+                String loadMoreUrl = endpoint + "/search/channel?sort=F&page=" + page + "&limit=100";
                 if (!isLoadding) {
                     aq.ajax(loadMoreUrl, JSONObject.class, fragment, "getJson");
                     Log.e("loadMoreUrl", loadMoreUrl);
@@ -185,7 +185,7 @@ public class ChannelFragment extends BaseFragment {
             aq.ajax(liveChannelUrl, JSONObject.class, this, "getJsonLive");
             Log.e("liveChannelUrl",liveChannelUrl);
         } else {
-            aq.ajax(channelUrl, JSONObject.class, this, "getJsonMostFollower");
+            aq.ajax(channelUrl  , JSONObject.class, this, "getJsonMostFollower");
             Log.e("channelUrl", channelUrl);
         }
 

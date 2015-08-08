@@ -54,6 +54,8 @@ public class CallActivityLauncher extends Activity{
 
         setContentView(R.layout.activity_empty);
 
+        Utils.showToast("CallActivityLauncher");
+
         // Get setting keys.
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);

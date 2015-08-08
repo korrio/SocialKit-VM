@@ -2,7 +2,6 @@ package co.aquario.chatui;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +25,8 @@ public class TattooDetailActivity extends ActionBarActivity {
     TextView price;
     GridView gridView;
 
+    TattooStore tattoo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,31 +39,24 @@ public class TattooDetailActivity extends ActionBarActivity {
         price = (TextView) findViewById(R.id.price);
         gridView = (GridView) findViewById(R.id.gridView);
 
-        TattooStore tattoo = Parcels.unwrap(getIntent().getBundleExtra("bundle").getParcelable("tattoo"));
 
-        title_vdomax.setText(tattoo.getCreate_by_name());
-        name_sticker.setText(tattoo.getItem_set_name());
+        if(getIntent() != null) {
+            tattoo = Parcels.unwrap(getIntent().getBundleExtra("bundle").getParcelable("tattoo"));
+            title_vdomax.setText(tattoo.getCreate_by_name());
+            name_sticker.setText(tattoo.getItem_set_name());
 
-        String path = tattoo.getImageLogo();
+            String path = tattoo.getImageLogo();
 
-        //path = path + "&width=100&height=100&fill-to-fit=ffffff";
+            Picasso.with(getApplicationContext())
+                    .load(path)
+                    .into(sticker);
 
-        //path = path.replace("assets","imgd.php?src=assets");
-
-
-
-
-
-        Log.e("tattoopath", path);
-
-        Picasso.with(getApplicationContext())
-                .load(path)
-                .into(sticker);
+            adapterTattooStroe = new TattooStoreDetailAdapter(getApplicationContext(),tattoo.getTitle_vdomax());
+            gridView.setAdapter(adapterTattooStroe);
+        }
 
 
 
-        adapterTattooStroe = new TattooStoreDetailAdapter(getApplicationContext(),tattoo.getTitle_vdomax());
-        gridView.setAdapter(adapterTattooStroe);
     }
 
 

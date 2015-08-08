@@ -25,6 +25,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxStatus;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Date;
@@ -95,6 +101,8 @@ public class PostLiveStreamingActivity extends Activity {
         muxer = null;
     }
 
+    String mUsername = "";
+    String mUserId = "";
 
 
     @Override
@@ -107,7 +115,10 @@ public class PostLiveStreamingActivity extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_live_streamer);
 
-        flv_url = "http://chat.vdomax.com:8936/live/"+ VMApp.mPref.username().getOr("test")+".flv";
+        mUsername = VMApp.mPref.username().getOr("test");
+        mUserId = VMApp.mPref.userId().getOr("test");
+
+        flv_url = "http://chat.vdomax.com:8936/live/"+ mUsername +".flv";
 
         // restore data.
         //flv_url = sp.getString("FLV_URL", flv_url);
@@ -193,8 +204,39 @@ public class PostLiveStreamingActivity extends Activity {
                 publish(fetchVideoFromDevice(), preview.getHolder());
                 btnPublish.setEnabled(false);
                 btnStop.setEnabled(true);
+                notifyUser(200,mUsername);
             }
         });
+    }
+
+    private void notifyUser(int notiType,String roomName) {
+
+        //jsonObjStr = "{'roomName':'" + roomName + "'}";
+
+        String fromName = VMApp.mPref.username().getOr("");
+
+        String title = "VDOMAX";
+        String message = "" + fromName + " กำลังถ่ายทอดสด";
+        String mPartnerId = "0";
+
+        AQuery aq = new AQuery(this);
+        String url = "http://api.vdomax.com/noti/index.php?" +
+                "title=" + title +
+                "&m=" + message  +
+                "&f=" + mUserId +
+                "&n=" + fromName +
+                "&t=" + mPartnerId +
+                "&type=" + notiType +
+                "&customdata" + roomName +
+                "&all=1";
+
+        aq.ajax(url, JSONObject.class, this, "notifyCb");
+    }
+
+    public void getjson(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        if(jo != null)
+            Log.e("notiJson",jo.toString(4));
     }
 
 

@@ -89,6 +89,7 @@ import co.aquario.chatapp.util.ChatUtil;
 import co.aquario.chatui.ChatUIActivity;
 import co.aquario.chatui.event.GetUserEvent;
 import co.aquario.chatui.event.GetUserEventSuccess;
+import co.aquario.chatui.fragment.TattooStoreFragment;
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
@@ -177,7 +178,12 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         String fromName = VMApp.mPref.username().getOr("");
 
         String title = "VDOMAX";
-        String message = "VDOMAX";
+
+        String message = "";
+        if(notiType == 504)
+            message = fromName + " is calling you (Audio Call)";
+        else
+            message = fromName + " is calling you (Video Call)";
 
         AQuery aq = new AQuery(getView());
         String url = "http://api.vdomax.com/noti/index.php?" +
@@ -215,9 +221,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 public boolean onMenuItemClick(MenuItem item) {
 
                     String roomName = "VM_" + mUserId + "_" + mPartnerId + "_" + System.currentTimeMillis();
+
+                    String jsonObjStr = "{'roomName':'"+roomName+"'}";
                     switch (item.getItemId()) {
                         case R.id.action_audio_call:
-                            notifyUser(504, roomName);
+                            //notifyUser(504, roomName);
 
                             Message audioMsg = new Message(Message.MSG_TYPE_AUDIO_CALL, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", roomName, true, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                             listMessages.add(audioMsg);
@@ -226,11 +234,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             ChatUIActivity.connectToRoom(getActivity(), roomName, false);
                             return true;
                         case R.id.action_video_call:
-                            notifyUser(505, roomName);
+                            //notifyUser(505, roomName);
 
                             Message videoMsg = new Message(Message.MSG_TYPE_VIDEO_CALL, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", roomName, true, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                             listMessages.add(videoMsg);
-                            attemptSendMessageToServer(Message.MSG_TYPE_VIDEO_CALL, "Voice Calling", jsonObjStr);
+                            attemptSendMessageToServer(Message.MSG_TYPE_VIDEO_CALL, "Video Calling", jsonObjStr);
 
                             ChatUIActivity.connectToRoom(getActivity(), roomName, true);
                             return true;
@@ -360,7 +368,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         initMusicPlayer();
         initConnect();
 
-
+        final ArrayList<co.aquario.chatui.model.TattooStore> tattooList = new ArrayList<co.aquario.chatui.model.TattooStore>();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -381,6 +389,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     case 0:
                         break;
                     case 1:
+                        TattooStoreFragment tattooFragment = TattooStoreFragment.newInstance(2);
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction().replace(R.id.sub_container, tattooFragment, "TATTOO_STORE")
+                                .addToBackStack(null).commit();
+
 //                        getActivity().getSupportFragmentManager()
 //                                .beginTransaction().replace(R.id.sub_container, TattooFragment.newInstance(), "TATTOO_STORE")
 //                                .addToBackStack(null).commit();
@@ -457,10 +470,12 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                         break;
                     case 4:
                         // intent audio call
+                        notifyUser(504, dataObj.optString("roomName"));
                         ChatUIActivity.connectToRoom(getActivity(), dataObj.optString("roomName"), false);
                         break;
                     case 5:
                         // intent video call
+                        notifyUser(505, dataObj.optString("roomName"));
                         ChatUIActivity.connectToRoom(getActivity(), dataObj.optString("roomName"), true);
                         break;
                     case 6:
@@ -480,6 +495,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
                 if (!loading) {
+                    currentPage = page;
                     ApiBus.getInstance().post(new HistoryEvent(mCid, 20, page));
                 }
 
@@ -488,6 +504,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         return view;
     }
 
+
+    int currentPage = 0;
     boolean loading = false;
 
     File imagePathToFile(Uri selectedImageUri, String path) {
@@ -513,6 +531,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("onActivityResult", requestCode + " + " + resultCode);
+        box.hide();
         if (resultCode == Activity.RESULT_OK) {
 
             File f = new File(Environment.getExternalStorageDirectory()
@@ -727,10 +746,10 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             }
 
             adapter.notifyDataSetChanged();
-            listView.setSelection(listView.getBottom());
+
         }
         // Don't forget to check requestCode before continuing your job
-
+        listView.setSelection(listView.getBottom());
     }
 
     @Subscribe
@@ -746,6 +765,10 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         ApiBus.getInstance().postQueue(new HistoryEvent(mCid, 20, 1));
     }
 
+    private void displayInviteToolbar() {
+        buildJoinGroupDialog();
+    }
+
     @Subscribe public void onGetChatInfoSuccess(GetChatInfoSuccess event) {
         List<ChatInfo.ConversationMembersEntity> conversationMembers = event.info.getConversationMembers();
 
@@ -758,9 +781,14 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     mPartnerId = mId;
                 mPartnerName = member.getName();
                 mPartnerUsername = member.getUsername();
+
                 setChatTitle(Html.fromHtml(mPartnerName).toString());
                 setChatSubTitle("@" + mPartnerUsername);
                 ApiBus.getInstance().postQueue(new GetUserEvent(mPartnerId));
+            } else {
+                if(mChatType == 2 &&  member.getInviteAcceptFlag() == 0)
+                    displayInviteToolbar();
+
             }
         }
 
@@ -966,6 +994,9 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
         String prefix = "https://www.vdomax.com/imgd.php?src=";
         String suffix = "&width=100&height=100&fill-to-fit=ffffff";
+
+
+
 
         // Add tattoo
         ArrayList<String> faceNameList5 = new ArrayList<>();
@@ -1174,9 +1205,6 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             e.printStackTrace();
         }
 
-
-
-
         mSocket.emit("SendMessage", jObj);
         Log.e("SendMessage", "sent");
     }
@@ -1196,6 +1224,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 if (cb.getFileType() != null) {
                     if (cb.getFileType().equals("image/jpeg") || cb.getFileType().equals("image/png") || cb.getFileType().equals("image/gif"))
                         dataJson = "{'url':'" + cb.getFull_path() + "'" +
+                                ",'full_path':'" + cb.getFull_path() + "'" +
                                 ",'fileName':'" + cb.getFileName() + "'" +
                                 ",'id':'" + cb.getId() + "'" +
                                 ",'active':'" + cb.getActive() + "'" +
@@ -1203,6 +1232,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                                 ",'fileType':'" + cb.getFileType() + "'}";
                     else
                         dataJson = "{'url':'" + cb.getFull_path() + "'" +
+                                ",'full_path':'" + cb.getFull_path() + "'" +
                                 ",'fileName':'" + cb.getFileName() + "'" +
                                 ",'id':'" + cb.getId() + "'" +
                                 ",'active':'" + cb.getActive() + "'" +
@@ -1296,6 +1326,38 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(f));
         // intent.putExtra("crop", "true");
         startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+    }
+
+    private void joinGroup() {
+        AQuery aq = new AQuery(getView());
+        String confirmJoinUrl = "https://chat.vdomax.com:1314/api/chat/group/"+mCid+"/invite/"+mUserId+"/accept";
+        aq.ajax(confirmJoinUrl, JSONObject.class, this, "joinGroupCb");
+    }
+
+    private void declineGroup() {
+        AQuery aq = new AQuery(getView());
+        String confirmJoinUrl = "https://chat.vdomax.com:1314/api/chat/group/"+mCid+"/invite/"+mUserId+"/decline";
+        aq.ajax(confirmJoinUrl, JSONObject.class, this, "declineGroupCb");
+    }
+
+    public void buildJoinGroupDialog() {
+        final CharSequence[] items = {"Join", "No"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Do you want to join this group?");
+        builder.setPositiveButton("Join", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                joinGroup();
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                declineGroup();
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 
     public void buildVideoDialog() {
@@ -1436,7 +1498,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
         adapter.notifyDataSetChanged();
 
-        //listView.setSelection(listView.getBottom());
+        if(currentPage <= 1)
+            listView.setSelection(listView.getBottom());
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -1672,23 +1735,47 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     private ProgressBar mProgressBar;
 
     private void toggleSongState() {
-        if (mMediaPlayer.isPlaying()){
-            mMediaPlayer.pause();
-            mPlayerStateButton.setImageResource(R.drawable.ic_play);
-        }else{
-            mMediaPlayer.start();
-            toggleProgressBar();
-            mPlayerStateButton.setImageResource(R.drawable.ic_pause);
+        if(mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()){
+                mMediaPlayer.pause();
+                mPlayerStateButton.setImageResource(R.drawable.ic_play);
+            }else{
+                mMediaPlayer.start();
+                toggleProgressBar();
+                mPlayerStateButton.setImageResource(R.drawable.ic_pause);
+            }
+        } else {
+            initMusicPlayer();
+            if (mMediaPlayer.isPlaying()){
+                mMediaPlayer.pause();
+                mPlayerStateButton.setImageResource(R.drawable.ic_play);
+            }else{
+                mMediaPlayer.start();
+                toggleProgressBar();
+                mPlayerStateButton.setImageResource(R.drawable.ic_pause);
+            }
         }
+
     }
 
     private void toggleProgressBar() {
-        if (mMediaPlayer.isPlaying()){
-            mProgressBar.setVisibility(View.INVISIBLE);
-            mPlayerStateButton.setVisibility(View.VISIBLE);
-        }else{
-            mProgressBar.setVisibility(View.VISIBLE);
-            mPlayerStateButton.setVisibility(View.INVISIBLE);
+        if(mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mPlayerStateButton.setVisibility(View.VISIBLE);
+            } else {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mPlayerStateButton.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            initMusicPlayer();
+            if (mMediaPlayer.isPlaying()) {
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mPlayerStateButton.setVisibility(View.VISIBLE);
+            } else {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mPlayerStateButton.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -1703,7 +1790,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             toggleProgressBar();
 
             trackTitleTv.setText(title);
-            trackSubTitleTv.setText("from @" + fromUsername);
+            trackSubTitleTv.setText("from @" + mUsername);
+            if(thumbUrl != "")
             Picasso.with(getActivity()).load(thumbUrl).centerCrop().resize(200,200).into(trackThumb);
 
             try {

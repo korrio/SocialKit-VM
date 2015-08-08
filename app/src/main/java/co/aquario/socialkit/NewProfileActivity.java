@@ -17,12 +17,14 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.otto.Subscribe;
 
 import co.aquario.chatapp.ChatActivity;
-import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
+import co.aquario.socialkit.event.GetFriendProfileEvent;
+import co.aquario.socialkit.event.GetFriendProfileSuccessEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
+import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.main.LiveFragment;
 import co.aquario.socialkit.fragment.main.PhotoGridProfileFragment;
-import co.aquario.socialkit.fragment.newuser.EditProfileFragment;
+import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.Channel;
 import co.aquario.socialkit.util.PrefManager;
 
@@ -32,8 +34,6 @@ public class NewProfileActivity extends BaseActivity {
 
     String userId;
     String username = "";
-
-
 
     PrefManager pref;
     Toolbar toolbar;
@@ -80,6 +80,8 @@ public class NewProfileActivity extends BaseActivity {
             userId = pref.userId().getOr("0");
         }
 
+        ApiBus.getInstance().post(new GetFriendProfileEvent(userId));
+
 
         setupToolbar();
 
@@ -97,9 +99,7 @@ public class NewProfileActivity extends BaseActivity {
         tabs.setDividerColor(getResources().getColor(android.R.color.transparent));
         pager = (ViewPager) findViewById(R.id.pager);
 
-        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(adapter);
-        tabs.setViewPager(pager);
+
 
 
         //final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
@@ -136,10 +136,11 @@ public class NewProfileActivity extends BaseActivity {
                             ChatActivity.startChatActivity(mActivity, Integer.parseInt(pref.userId().getOr("0")), Integer.parseInt(userId), 0);
                             break;
                         case R.id.action_edit_profile:
-                            EditProfileFragment editProfileFragment = EditProfileFragment.newInstance();
+                            //EditProfileFragment editProfileFragment = EditProfileFragment.newInstance();
+                            SettingFragment settingFragment = SettingFragment.newInstance(pref.userId().getOr("0"));
                             FragmentManager manager = getSupportFragmentManager();
                             FragmentTransaction transaction = manager.beginTransaction();
-                            transaction.add(R.id.sub_container, editProfileFragment).addToBackStack(null);
+                            transaction.add(R.id.sub_container, settingFragment).addToBackStack(null);
                             transaction.commit();
                             break;
                         case android.R.id.home:
@@ -256,7 +257,7 @@ public class NewProfileActivity extends BaseActivity {
         }
     }
 
-    @Subscribe public void onLoadProfile(GetUserProfileSuccessEvent event) {
+    @Subscribe public void onLoadProfile(GetFriendProfileSuccessEvent event) {
         if(toolbar != null) {
             toolbar.setTitle(event.getUser().name);
             toolbar.setSubtitle("@" + event.getUser().username);
@@ -269,6 +270,9 @@ public class NewProfileActivity extends BaseActivity {
             LivePagerAdapter adapter = new LivePagerAdapter(getSupportFragmentManager(),channel);
             pager.setAdapter(adapter);
 
+        } else {
+            MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
+            pager.setAdapter(adapter);
         }
 
         tabs.setViewPager(pager);

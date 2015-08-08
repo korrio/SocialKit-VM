@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -62,6 +64,9 @@ public class LiveHistoryFragment extends BaseFragment {
         mActivity = getActivity();
     }
 
+    ProgressBar progressBar;
+    TextView empty;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
@@ -69,6 +74,11 @@ public class LiveHistoryFragment extends BaseFragment {
         recList = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
         adapter = new LiveHistoryRecyclerAdapter(mActivity, list);
+
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar1);
+        empty = (TextView) rootView.findViewById(R.id.emptyText);
+
+        progressBar.setVisibility(View.VISIBLE);
 
         recList.setHasFixedSize(true);
         if(Utils.isTablet(mActivity))
@@ -128,30 +138,39 @@ public class LiveHistoryFragment extends BaseFragment {
     public void getJson(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {
         AQUtility.debug("jo", jo);
+        progressBar.setVisibility(View.GONE);
         if (jo != null) {
             JSONArray ja = jo.getJSONArray("history");
-            for (int i = 0; i < ja.length(); i++) {
-                JSONObject obj = ja.getJSONObject(i);
 
-                String userId = obj.optString("user_id");
-                String  nameLive = obj.optString("username");
-                String urlLive = obj.optString("url");
-                String photoLive = obj.optString("thumb");
-                String avatar = obj.optString("avatar");
-                String date = obj.optString("date");
+            if(ja == null || ja.length() == 0) {
+                empty.setVisibility(View.VISIBLE);
+            } else {
+                for (int i = 0; i < ja.length(); i++) {
+                    JSONObject obj = ja.getJSONObject(i);
 
-                JSONObject media = obj.getJSONObject("duration");
+                    String userId = obj.optString("user_id");
+                    String  nameLive = obj.optString("username");
+                    String urlLive = obj.optString("url");
+                    String photoLive = obj.optString("thumb");
+                    String avatar = obj.optString("avatar");
+                    String date = obj.optString("date");
 
-                String hours = media.optString("hours");
-                String minutes = media.optString("minutes");
-                String seconds = media.optString("seconds");
+                    JSONObject media = obj.getJSONObject("duration");
 
-                Live liveList = new Live(urlLive,photoLive,nameLive,hours,minutes,seconds,null,avatar,date,userId);
-                list.add(liveList);
+                    String hours = media.optString("hours");
+                    String minutes = media.optString("minutes");
+                    String seconds = media.optString("seconds");
 
+                    Live liveList = new Live(urlLive,photoLive,nameLive,hours,minutes,seconds,null,avatar,date,userId);
+                    list.add(liveList);
+
+                }
+                adapter.notifyDataSetChanged();
+                empty.setVisibility(View.GONE);
+                AQUtility.debug("done");
             }
-            adapter.notifyDataSetChanged();
-            AQUtility.debug("done");
+
+
 
         } else {
             AQUtility.debug("error!");

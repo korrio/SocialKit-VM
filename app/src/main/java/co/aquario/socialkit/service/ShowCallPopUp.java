@@ -18,8 +18,10 @@ import com.squareup.picasso.Picasso;
 
 import org.appspot.apprtc.CallActivity;
 
+import co.aquario.chatapp.ChatActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
 
 public class ShowCallPopUp extends Activity implements OnClickListener {
@@ -77,10 +79,14 @@ public class ShowCallPopUp extends Activity implements OnClickListener {
 
               //Toast.makeText(this,type,Toast.LENGTH_LONG).show();
 
+              Utils.showToast(customdata);
+
         	  if(type.equals("504")) {
                   connectToRoom(customdata,false);
+                  ChatActivity.startChatActivity(ShowCallPopUp.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")), Integer.parseInt(from_id), 0);
         	  } else if(type.equals("505")) {
                   connectToRoom(customdata,true);
+                  ChatActivity.startChatActivity(ShowCallPopUp.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")), Integer.parseInt(from_id), 0);
         	  }
 
 

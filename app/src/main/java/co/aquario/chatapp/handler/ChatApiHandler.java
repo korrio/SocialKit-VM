@@ -175,9 +175,12 @@ public class ChatApiHandler {
         api.getChatById(event.cid, new Callback<ChatInfo>() {
             @Override
             public void success(ChatInfo chatInfo, Response response) {
-                if(chatInfo.getConversationMembers().size() != 0)
-                    Log.e("conversationmembers",chatInfo.getConversationMembers().size()+ "");
-                ApiBus.getInstance().postQueue(new GetChatInfoSuccess(chatInfo));
+                if(chatInfo != null) {
+                    if(chatInfo.getConversationMembers().size() != 0)
+                        Log.e("conversationmembers",chatInfo.getConversationMembers().size()+ "");
+                    ApiBus.getInstance().postQueue(new GetChatInfoSuccess(chatInfo));
+                }
+
             }
 
             @Override

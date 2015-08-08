@@ -119,13 +119,13 @@ public interface ApiServiceVM {
 
     // some social api used in chat:ui
     @POST("/1.0/friends/{id}")
-    public void getFriends(@Body String body,@Path("id") int id, Callback<FriendsModel> responseJson);
+    public void getFriends(@Body String body,@Path("id") int id,@QueryMap Map<String, String> options, Callback<FriendsModel> responseJson);
 
     @POST("/1.0/followings/{id}")
-    public void getFollowings(@Body String body, @Path("id") int id, Callback<FollowersModel> responseJson);
+    public void getFollowings(@Body String body, @Path("id") int id,@QueryMap Map<String, String> options, Callback<FollowersModel> responseJson);
 
     @POST("/1.0/followers/{id}")
-    public void getFollowers(@Body String body, @Path("id") int id,Callback<FollowersModel> responseJson);
+    public void getFollowers(@Body String body, @Path("id") int id,@QueryMap Map<String, String> options,Callback<FollowersModel> responseJson);
 
     @POST("/1.0/follow_suggestion")
     public void getFollowSuggestion(@Body String body, Callback<FollowSuggestionModel> responseJson);

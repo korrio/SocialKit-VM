@@ -205,7 +205,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         mBundle.putBoolean(IS_HOMETIMELINE, isHomeTimeline);
         mBundle.putBoolean(IS_HASHTAG, false);
         mBundle.putBoolean(IS_STORY,false);
-        mBundle.putBoolean(IS_SEARCH,false);
+        mBundle.putBoolean(IS_SEARCH, false);
         mFragment.setArguments(mBundle);
 		return mFragment;
 	}
@@ -232,6 +232,16 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         mBundle.putBoolean(IS_SEARCH,false);
         mFragment.setArguments(mBundle);
         return mFragment;
+    }
+
+    private Bundle bundleState;
+
+    @Override
+    public void onDestroyView() {
+        bundleState = new Bundle();
+        bundleState.putParcelable("posts", Parcels.wrap(list));
+
+        super.onDestroyView();
     }
 
     SearchView mSearchView;
@@ -392,17 +402,15 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                     "updateBadgeCb");
             Log.e(TAG,"called bagdge");
         }
-
     }
 
     public void updateBadgeCb(String url, JSONObject jo, AjaxStatus status)
             throws JSONException {
 
         Log.e(TAG,jo.toString());
-
         if (jo != null) {
             VMApp.notiBadge = jo.optJSONObject("count").optInt("noti_unread");
-            Utils.showToast("Badge:" + VMApp.notiBadge );
+            //Utils.showToast("Badge:" + VMApp.notiBadge );
 
         }
     }
@@ -483,7 +491,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
             //((MainActivity) getActivity()).getToolbar().setSubtitle("");
         }
-        if(!isSetupToolbar)
+        if(!isSetupToolbar && !isSearch)
             setupToolbar();
     }
 
@@ -573,6 +581,10 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         // TODO Auto-generated method stub
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
         this.rootView = rootView;
+
+        if (bundleState != null) {
+            list = Parcels.unwrap(bundleState.getParcelable("posts"));
+        }
 
         mEmptyView = (TextView) rootView.findViewById(R.id.empty);
         mProgressBarFeed = (ProgressBar) rootView.findViewById(R.id.progressBar3);
@@ -987,13 +999,17 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             mProgressBarFeed.setVisibility(View.GONE);
     }
 
+    boolean isSetBadge = false;
+
     @Subscribe public void onLoadTimelineSuccess(LoadTimelineSuccessEvent event) {
 
-        if(menu != null && isSetupToolbar)
-        new ActionItemBadgeAdder().act(getActivity()).menu(menu)
-                .title("NOTI").itemDetails(0, 12345, 1)
-                .showAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                .add(UIUtil.getCompatDrawable(getActivity(), R.drawable.ic_notification), ActionItemBadge.BadgeStyles.RED.getStyle(), VMApp.getNotiBadge());
+        if(menu != null && !isSetBadge) {
+            new ActionItemBadgeAdder().act(getActivity()).menu(menu)
+                    .title("NOTI").itemDetails(0, 12345, 1)
+                    .showAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                    .add(UIUtil.getCompatDrawable(getActivity(), R.drawable.ic_notification), ActionItemBadge.BadgeStyles.RED.getStyle(), VMApp.getNotiBadge());
+            isSetBadge = true;
+        }
 
         if(isRefresh)
             list.clear();
@@ -1265,8 +1281,6 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 e.printStackTrace();
             }
         }
-
-
     }
 
     @Override
@@ -1325,8 +1339,6 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 isRefresh = true;
                 TYPE = "live";
                 break;
-
-
             default:
                 //isRefresh = true;
                 break;
@@ -1356,13 +1368,9 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 if(!isHashtag && !isSearch)
                     swipeLayout.setRefreshing(true);
 
-
                 ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
                 break;
         }
-
-
-
         return true;
     }
 

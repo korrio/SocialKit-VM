@@ -3,7 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dip" >
+    android:padding="5dip"
+                android:background="#fff">
 
     <!--  ListRow Left sied Thumbnail image -->
     <LinearLayout android:id="@+id/thumbnail"
@@ -29,7 +30,7 @@
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
         android:text="Rihanna Love the way lie"
-        android:textColor="#000000"
+        android:textColor="#252525"
         android:typeface="sans"
         android:textSize="15dip"
         android:textStyle="bold"/>
@@ -54,12 +55,13 @@
         android:gravity="right"
         android:text="5:45"
         android:textSize="10dip"
-        android:textColor="#000000"
+        android:textColor="@color/md_grey_500"
         android:textStyle="bold"
         android:layout_below="@+id/artist"
         android:layout_alignLeft="@+id/artist"
         android:layout_alignStart="@+id/artist"
-        android:layout_marginTop="6dp"/>
+        android:layout_marginTop="6dp"
+        />
 
 
 

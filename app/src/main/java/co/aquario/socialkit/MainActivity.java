@@ -31,7 +31,6 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.MiniDrawer;
 import com.mikepenz.materialdrawer.interfaces.OnCheckedChangeListener;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.parse.ParseAnalytics;
 import com.soundcloud.android.crop.Crop;
@@ -54,6 +53,8 @@ import co.aquario.socialkit.activity.search.SearchPagerFragment;
 import co.aquario.socialkit.event.ActivityResultEvent;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
+import co.aquario.socialkit.event.upload.UpdateAvatarEvent;
+import co.aquario.socialkit.event.upload.UpdateCoverEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
 import co.aquario.socialkit.fragment.NotiFragment;
 import co.aquario.socialkit.fragment.SettingFragment;
@@ -61,7 +62,6 @@ import co.aquario.socialkit.fragment.WebViewFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.pager.ChannelViewPagerFragment;
-import co.aquario.socialkit.fragment.pager.HomeViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.HomeViewPagerNiceTabFragment;
 import co.aquario.socialkit.fragment.pager.PhotoViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.SocialViewPagerFragment;
@@ -117,7 +117,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         if (savedInstanceState == null) {
             //HomeViewPagerFragment fragment = new HomeViewPagerFragment();
             HomeViewPagerNiceTabFragment fragment = new HomeViewPagerNiceTabFragment();
-
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.sub_container, fragment);
@@ -345,7 +344,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                 )
                 .addStickyDrawerItems(
-                        new SwitchDrawerItem().withName(R.string.action_notification).withIcon(FontAwesome.Icon.faw_newspaper_o).withIdentifier(9),
+                        //new SwitchDrawerItem().withName(R.string.action_notification).withIcon(FontAwesome.Icon.faw_newspaper_o).withIdentifier(9),
                         new SecondaryDrawerItem().withName(R.string.action_logout).withIcon(FontAwesome.Icon.faw_sign_out).withIdentifier(10)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -356,7 +355,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Home");
 
-                            HomeViewPagerFragment fragment = new HomeViewPagerFragment();
+                            //HomeViewPagerFragment fragment = new HomeViewPagerFragment();
+                            HomeViewPagerNiceTabFragment fragment = new HomeViewPagerNiceTabFragment();
                             FragmentManager manager = getSupportFragmentManager();
                             FragmentTransaction transaction = manager.beginTransaction();
                             transaction.replace(R.id.sub_container, fragment);
@@ -418,7 +418,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             getToolbar().setSubtitle("Search");
 
                             getToolbar().getMenu().clear();
-                            SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),"สวย");
+                            SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"),"youlove");
                             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
 
 
@@ -480,8 +480,8 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         ImageView videoMenu = (ImageView) result.getHeader().findViewById(R.id.video_menu);
         ImageView photoMenu = (ImageView) result.getHeader().findViewById(R.id.photo_menu);
 
-        ImageView avatarMenu = (ImageView) result.getHeader().findViewById(R.id.header_avatar);
-        ImageView coverMenu = (ImageView) result.getHeader().findViewById(R.id.header_cover);
+        avatarMenu = (ImageView) result.getHeader().findViewById(R.id.header_avatar);
+        coverMenu = (ImageView) result.getHeader().findViewById(R.id.header_cover);
         TextView nameMenu = (TextView) result.getHeader().findViewById(R.id.header_name);
         TextView usernameMenu = (TextView) result.getHeader().findViewById(R.id.header_username);
 
@@ -571,7 +571,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             @Override
             public void onClick(View view) {
 
-
                 PhotoViewPagerFragment fragment = new PhotoViewPagerFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "PHOTO_MAIN").addToBackStack(null).commit();
 
@@ -581,6 +580,22 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                 result.closeDrawer();
             }
         });
+    }
+
+    ImageView avatarMenu;
+    ImageView coverMenu;
+
+    @Subscribe public void onUpdateAvatar(UpdateAvatarEvent event) {
+        Picasso.with(this).load(EndpointManager.getAvatarPath(event.avatar)).placeholder(R.drawable.avatar_default).centerCrop()
+                .resize(100, 100).transform(new RoundedTransformation(50, 4)).into(avatarMenu);
+        mPref.avatar().put(event.avatar).commit();
+
+    }
+
+    @Subscribe public void onUpdateCover(UpdateCoverEvent event) {
+        Picasso.with(this).load(EndpointManager.getAvatarPath(event.cover)).placeholder(R.drawable.cover_default).centerCrop()
+                .resize(360, 80).into(coverMenu);
+        mPref.cover().put(event.cover).commit();
     }
 
     @Subscribe public void onUpdateTitle(TitleEvent event) {
@@ -598,6 +613,11 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == 12345) {
             //toolbar.getMenu().clear();
+            if(getToolbar() != null) {
+                getToolbar().setTitle("VDOMAX");
+                getToolbar().setSubtitle("Notification");
+            }
+
             NotiFragment notiFragment = NotiFragment.newInstance(VMApp.mPref.userId().getOr(""),"ALL");
             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, notiFragment, "NOTIFICATION").addToBackStack(null).commit();
             ActionItemBadge.update(item, VMApp.getNotiBadge());

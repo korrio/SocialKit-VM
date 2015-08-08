@@ -3,17 +3,10 @@ package co.aquario.socialkit.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.provider.MediaStore.Images.Media;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.Html;
@@ -37,21 +30,10 @@ import com.androidquery.callback.AjaxStatus;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,13 +44,25 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.GetUserProfileEvent;
 import co.aquario.socialkit.event.GetUserProfileSuccessEvent;
+import co.aquario.socialkit.event.upload.UpdateAvatarEvent;
+import co.aquario.socialkit.event.upload.UpdateCoverEvent;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.handler.PostUploadService;
+import co.aquario.socialkit.model.UploadAvatarCallback;
+import co.aquario.socialkit.model.UploadCoverCallback;
+import co.aquario.socialkit.util.PhotoUtils;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 import co.aquario.socialkit.widget.RoundedTransformation;
+import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import retrofit.mime.TypedFile;
 
 
@@ -113,7 +107,8 @@ public class SettingFragment extends BaseFragment {
     private Calendar cal = Calendar.getInstance();
     Bitmap bitmap;
     public static final int REQUEST_GALLERY = 1;
-    public static final int CAMERA_REQUEST_CODE = 2;
+    public static final int REQUEST_CAMERA = 2;
+
 
 
     public static SettingFragment newInstance(String userId) {
@@ -149,12 +144,51 @@ public class SettingFragment extends BaseFragment {
     LinearLayout countLayout;
     Button btnFollow;
 
+    public void checkCb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        Log.e("hahaha", jo.toString(4));
+
+        if(jo.optString("status").equals("1"))
+            userName.setError("Username is not available");
+
+        Utils.showToast("Username is not available");
+    }
+
+    ImageView cameraOverlay;
+    ImageView cameraOverlay2;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
         ButterKnife.inject(this, rootView);
+
+        if(userName != null)
+            userName.addTextChangedListener(new TextWatcher() {
+                public void afterTextChanged(Editable s) {   //Convert the Text to String
+                    String inputText = userName.getText().toString();
+                    AQuery aq = new AQuery(getActivity());
+
+                    String url = "http://api.vdomax.com/user/"+inputText+"/available";
+                    aq.ajax(url, JSONObject.class, this, "checkCb");
+
+                }
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // TODO Auto-generated method stub
+                }
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // TODO Auto-generated method stub
+                }
+            });
+
+        cameraOverlay = (ImageView) rootView.findViewById(R.id.camera_overlay);
+        cameraOverlay2 = (ImageView) rootView.findViewById(R.id.camera_overlay2);
+
+        if(cameraOverlay != null && cameraOverlay2 != null) {
+            cameraOverlay.setVisibility(View.VISIBLE);
+            cameraOverlay2.setVisibility(View.VISIBLE);
+        }
 
         btnFollow = (Button) rootView.findViewById(R.id.btn_follow);
         btnFollow.setVisibility(View.GONE);
@@ -252,6 +286,8 @@ public class SettingFragment extends BaseFragment {
         ApiBus.getInstance().post(new GetUserProfileEvent(userId));
     }
 
+    boolean isAvatar = true;
+
     @Subscribe
     public void onGetUserProfile(GetUserProfileSuccessEvent event) {
 
@@ -272,8 +308,20 @@ public class SettingFragment extends BaseFragment {
         avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectVideo();
-                Toast.makeText(getActivity(), "Hey", Toast.LENGTH_SHORT).show();
+                isAvatar = true;
+                selectAvatar();
+
+                Toast.makeText(getActivity(), "Avatar", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isAvatar = false;
+                selectAvatar();
+
+                Toast.makeText(getActivity(), "Cover", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -309,267 +357,225 @@ public class SettingFragment extends BaseFragment {
 
     }
 
-//    public void updateProfile() {
-//
-//
-//        dialog = new ProgressDialog(getActivity());
-//        dialog.setIndeterminate(true);
-//        dialog.setCancelable(false);
-//        dialog.setInverseBackgroundForced(false);
-//        dialog.setCanceledOnTouchOutside(false);
-//        dialog.setTitle("Updating profile");
-//        dialog.setMessage("กำลังอัพเดทข้อมูลส่วนตัว..");
-//        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//        dialog.setIndeterminate(false);
-//        dialog.setMax(100);
-//
-//
-//        new UploadFileToServer().execute();
-//
-//    }
+    private void uploadFileRetrofit(File file, String timelineId,String type) {
+        //FileUploadService service = ServiceGenerator.createService(FileUpload.class, FileUpload.BASE_URL);
 
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
-        @Override
-        protected void onPreExecute() {
+        PostUploadService service = buildUploadApi();
+        TypedFile typedFile = new TypedFile("multipart/form-data", file);
 
-            dialog.show();
-            dialog.setProgress(0);
-            super.onPreExecute();
+        Map<String, String> options = new HashMap<String, String>();
+        //t=avatar&a=new
+        options.put("t", type);
+        options.put("a", "new");
+        options.put("user_id", VMApp.mPref.userId().getOr("0"));
+        options.put("user_pass", VMApp.mPref.password().getOr("0"));
+        options.put("token", "123456");
+        options.put("mobile", Integer.toString(1));
+
+        if(type.equals("avatar")) {
+            service.uploadAvatar(timelineId, typedFile,options, new Callback<UploadAvatarCallback>() {
+                @Override
+                public void success(UploadAvatarCallback uploadAvatarCallback, Response response) {
+
+                        Picasso.with(getActivity())
+                                .load(uploadAvatarCallback.avatarUrl)
+                                .centerCrop()
+                                .resize(200, 200)
+                                .transform(new RoundedTransformation(100, 2))
+                                .into(avatar);
+                        Log.e("myAvatarUrl", uploadAvatarCallback.avatarUrl + "");
+                        Utils.showToast("Update avatar success!");
+                        String myAvatar = uploadAvatarCallback.avatarUrl;
+                        myAvatar = myAvatar.replace("https://www.vdomax.com/","");
+                        ApiBus.getInstance().postQueue(new UpdateAvatarEvent(myAvatar));
+
+                    if(cameraOverlay != null && cameraOverlay2 != null) {
+                        cameraOverlay.setVisibility(View.GONE);
+                        cameraOverlay2.setVisibility(View.GONE);
+                    }
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("myAvatarUrl", error.getMessage() + "");
+                    Utils.showToast("Update avatar failed!");
+
+                }
+            });
+        } else {
+            service.uploadCover(timelineId, typedFile, options, new Callback<UploadCoverCallback>() {
+                @Override
+                public void success(UploadCoverCallback uploadCoverCallback, Response response) {
+
+                    Picasso.with(getActivity())
+                            .load(uploadCoverCallback.coverUrl)
+                            .fit().centerCrop()
+                            .into(cover);
+                    Log.e("myCoverUrl", uploadCoverCallback.coverUrl + "");
+                    String myCover = uploadCoverCallback.coverUrl;
+                    myCover = myCover.replace("https://www.vdomax.com/", "");
+                    Utils.showToast("Update cover success!");
+                    ApiBus.getInstance().postQueue(new UpdateCoverEvent(myCover));
+
+                    if(cameraOverlay != null && cameraOverlay2 != null) {
+                        cameraOverlay.setVisibility(View.GONE);
+                        cameraOverlay2.setVisibility(View.GONE);
+                    }
+
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("myCoverUrl", error.getMessage() + "");
+                    Utils.showToast("Update avatar failed!");
+
+                }
+            });
         }
 
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
 
-            dialog.setProgress(progress[0]);
+    }
 
+    PostUploadService buildUploadApi() {
+        String BASE_URL = "https://www.vdomax.com";
 
-            dialog.setTitle(String.valueOf(progress[0]) + "%");
+        return new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.FULL)
+                .setEndpoint(BASE_URL)
 
-        }
+                .setRequestInterceptor(new RequestInterceptor() {
+                    @Override public void intercept(RequestFacade request) {
+                        //request.addQueryParam("p1", "var1");
+                        //request.addQueryParam("p2", "");
+                    }
+                })
+                .build()
+                .create(PostUploadService.class);
+    }
 
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
+            private void uploadAvatar(File file) {
 
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
+                TypedFile typedFile = new TypedFile("multipart/form-data", file);
 
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(url);
+                AQuery aq = new AQuery(getActivity());
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("timeline_id", userName.getText());
+                params.put("image", typedFile);
 
-            try {
-//                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-//                        new AndroidMultiPartEntity.ProgressListener() {
-//
-//                            @Override
-//                            public void transferred(long num) {
-//                                publishProgress((int) ((num / (float) totalSize) * 100));
-//                                dialog.setProgress((int) ((num / (float) totalSize) * 100));
-//                            }
-//                        });
+                aq.ajax(url, params, JSONObject.class, this, "updateProfile");
 
+            }
 
+            private void uploadProfile(String userId) {
                 Charset chars = Charset.forName("UTF-8");
+                String url = "http://api.vdomax.com/user/update/" + userId;
 
-//                entity.addPart("username", new StringBody(userName.getText().toString(), chars));
-//                entity.addPart("name", new StringBody(fullName.getText().toString(), chars));
-//                entity.addPart("about", new StringBody(about.getText().toString(), chars));
-//                entity.addPart("email", new StringBody(email.getText().toString(), chars));
-//
-//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(0, 2), chars));
-//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(3, 5), chars));
-//                entity.addPart("birthday[]", new StringBody(birthDay.getText().toString().substring(6, 10), chars));
-//
-//
-//                entity.addPart("gender", new StringBody("male", chars));
-//                entity.addPart("current_city", new StringBody(city.getText().toString(), chars));
-//                entity.addPart("hometown", new StringBody(homeTown.getText().toString(), chars));
-//                entity.addPart("timezone", new StringBody(timeZone.getText().toString(), chars));
-//
-//                //entity.addPart("photos[]", toolbar FileBody(sourceFile));
-//
-//                totalSize = entity.getContentLength();
-//                httppost.setEntity(entity);
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.put("username", userName.getText());
+                params.put("name", fullName.getText());
+                params.put("about", about.getText());
+                params.put("email", email.getText());
+                params.put("birthday[]", birthDay.getText().toString().substring(0, 2));
+                params.put("birthday[]", birthDay.getText().toString().substring(3, 5));
+                params.put("birthday[]", birthDay.getText().toString().substring(6, 10));
 
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
+                params.put("gender", "male");
+                params.put("current_city", city.getText());
 
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
+                params.put("hometown", homeTown.getText());
+                params.put("timezone", timeZone.getText());
 
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
+                AQuery aq = new AQuery(getActivity());
+                aq.ajax(url, params, JSONObject.class, this, "updateProfile");
             }
 
-            return responseString;
+            public void updateProfile(String url, JSONObject jo, AjaxStatus status)
+                    throws JSONException {
+                Log.e("hahaha", jo.toString(4));
+                Utils.showToast("Update complete!");
+            }
 
-        }
+            public void selectAvatar() {
+                final CharSequence[] items = {"Choose from Gallery", "Take from Camera",
+                        "Cancel"};
 
-        @Override
-        protected void onPostExecute(String result) {
-            dialog.dismiss();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                if(isAvatar)
+                    builder.setTitle("Update avatar");
+                else
+                    builder.setTitle("Update cover");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (items[item].equals("Choose from Gallery")) {
+                            pickImage();
+                        } else if (items[item].equals("Take from Camera")) {
+                            pickCamera();
+                        } else if (items[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+            }
 
-            super.onPostExecute(result);
-        }
+            public void pickImage() {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, REQUEST_GALLERY);
+            }
 
-    }
+            public void pickCamera() {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, REQUEST_CAMERA);
+            }
 
-    private void uploadAvatar(File file){
-
-        TypedFile typedFile = new TypedFile("multipart/form-data",file);
-
-        AQuery aq = new AQuery(getActivity());
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("timeline_id", userName.getText());
-        params.put("image", typedFile);
-
-
-        aq.ajax(url, params, JSONObject.class, this, "updateProfile");
-
-    }
-
-    private void uploadProfile(String userId) {
-        Charset chars = Charset.forName("UTF-8");
-        String url = "http://api.vdomax.com/user/update/" + userId;
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("username", userName.getText());
-        params.put("name", fullName.getText());
-        params.put("about", about.getText());
-        params.put("email", email.getText());
-        params.put("birthday[]", birthDay.getText().toString().substring(0, 2));
-        params.put("birthday[]", birthDay.getText().toString().substring(3, 5));
-        params.put("birthday[]", birthDay.getText().toString().substring(6, 10));
-
-        params.put("gender", "male");
-        params.put("current_city", city.getText());
-
-        params.put("hometown", homeTown.getText());
-        params.put("timezone", timeZone.getText());
-
-        AQuery aq = new AQuery(getActivity());
-        aq.ajax(url, params, JSONObject.class, this, "updateProfile");
-    }
-
-    public void updateProfile(String url, JSONObject jo, AjaxStatus status)
-            throws JSONException {
-        Log.e("hahaha", jo.toString(4));
-        Utils.showToast("Update complete!");
-    }
-
-    public void selectVideo() {
-        final CharSequence[] items = {"Choose from Gallery", "Take from Camera",
-                "Cancel"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        //builder.setTitle("Add Video!");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("Choose from Gallery")) {
-                    pickImage();
-                } else if (items[item].equals("Take from Camera")) {
-                    pickCamera();
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
+            public void onActivityResult(int requestCode, int resultCode
+                    , Intent data) {
+                super.onActivityResult(requestCode, resultCode, data);
+                Log.e("onActivityResult", requestCode + " + " + resultCode);
+                if (requestCode == REQUEST_GALLERY && resultCode == getActivity().RESULT_OK) {
+
+                    String selectedImagePath = PhotoUtils.getImagePath(data,getActivity());
+
+                    //Bitmap bmp = PhotoUtils.createScaledBitmap(selectedImagePath,200,200)
+                    Picasso.with(getActivity())
+                            .load(selectedImagePath)
+                            .centerCrop()
+                            .resize(200, 200)
+                            .transform(new RoundedTransformation(100, 2))
+                            .into(avatar);
+
+                    File file = new File(selectedImagePath);
+                    if(isAvatar)
+                        uploadFileRetrofit(file, userId,"avatar");
+                    else
+                        uploadFileRetrofit(file, userId,"cover");
+
+
+                } else if (requestCode == REQUEST_CAMERA && resultCode == getActivity().RESULT_OK) {
+                    //Uri selectedImageUri = data.getData();
+                    String selectedImagePath = PhotoUtils.getImagePath(data, getActivity());
+
+
+                    Picasso.with(getActivity())
+                            .load(selectedImagePath)
+                            .centerCrop()
+                            .resize(200, 200)
+                            .transform(new RoundedTransformation(100, 2))
+                            .into(avatar);
+
+                    File file = new File(selectedImagePath);
+                    if(isAvatar)
+                        uploadFileRetrofit(file, userId,"avatar");
+                    else
+                        uploadFileRetrofit(file, userId,"cover");
+
                 }
             }
-        });
-        builder.show();
-    }
-
-    public void pickImage() {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, REQUEST_GALLERY);
-    }
-
-    public void pickCamera() {
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode
-            , Intent data) {
-        if (requestCode == REQUEST_GALLERY && resultCode == getActivity().RESULT_OK) {
-            Uri selectedImageUri = data.getData();
-
-            String path = getRealPathFromURI(getActivity(), selectedImageUri);
-            File file = imagePathToFile(selectedImageUri, path);
-            uploadAvatar(file);
-            Log.e("CheckImage:",file+"");
-
-           /* try {
-                //bitmap = Media.getBitmap(getActivity().getContentResolver(), uri);
-                //Log.e("CheckImage:",bitmap+"");
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-        }else if(requestCode == CAMERA_REQUEST_CODE && resultCode == getActivity().RESULT_OK){
-            Uri uri = data.getData();
-            try {
-                bitmap = Media.getBitmap(getActivity().getContentResolver(), uri);
-                Log.e("CheckCamera:",bitmap+"");
 
 
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-    }
-
-    public static String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            cursor = context.getContentResolver().query(contentUri, proj, null,
-                    null, null);
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-    File imagePathToFile(Uri selectedImageUri, String path) {
-        Bitmap bm;
-        BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-
-        bm = BitmapFactory.decodeFile(path, btmapOptions);
-        OutputStream fOut = null;
-        File file = new File(path);
-        try {
-            fOut = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG, 70, fOut);
-            fOut.flush();
-            fOut.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return file;
-    }
-
-}

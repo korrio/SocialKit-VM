@@ -262,6 +262,8 @@ public class LoginFragment extends BaseFragment {
         prefManager
                 .name().put(event.getLoginData().user.name)
                 .username().put(event.getLoginData().user.username)
+                .password().put(event.getLoginData().user.password)
+                .email().put(event.getLoginData().user.email)
                 .userId().put(event.getLoginData().user.id)
                 .token().put(event.getLoginData().token)
                 .cover().put(event.getLoginData().user.cover)

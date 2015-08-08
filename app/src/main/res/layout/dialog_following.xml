@@ -6,11 +6,27 @@
     android:layout_height="wrap_content"
     android:background="#fff">
 
+
+
     <ImageView
         android:scaleType="centerCrop"
         android:id="@+id/cover"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp" >
+
+        </ImageView>
+
+    <Button
+        android:id="@+id/btn_follow"
+        android:textStyle="bold"
+        android:textSize="13dp"
+        android:layout_width="96dp"
+        android:layout_height="36dp"
+        android:background="@drawable/follow_button_selector"
+        android:text="Loading"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="6dp"/>
 
     <RelativeLayout
         android:id="@+id/image_poster_cardview"
@@ -81,7 +97,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout">
+        android:layout_below="@+id/linearLayout"
+        android:visibility="gone">
 
         <include layout="@layout/button_following" />
     </LinearLayout>

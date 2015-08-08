@@ -105,9 +105,10 @@ public class YoutubeActivity extends YouTubeBaseActivity implements YouTubePlaye
         player.setPlayerStateChangeListener(playerStateChangeListener);
         player.setPlaybackEventListener(playbackEventListener);
 
+
         /** Start buffering **/
         if (!wasRestored) {
-            player.cueVideo(VIDEO_ID);
+            player.loadVideo(VIDEO_ID);
         }
     }
 
@@ -134,6 +135,8 @@ public class YoutubeActivity extends YouTubeBaseActivity implements YouTubePlaye
         }
 
     };
+
+
 
     private YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
 
