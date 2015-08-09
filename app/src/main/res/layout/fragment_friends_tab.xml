@@ -4,7 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
               android:background="#f4f4f4">
-        <ListView
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_filter"
+        android:textColor="#252525"
+        android:layout_margin="6dp"
+        />
+
+    <ListView
             android:id="@+id/epFriendList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

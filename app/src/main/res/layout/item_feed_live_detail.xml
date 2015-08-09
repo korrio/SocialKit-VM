@@ -97,7 +97,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_margin="6dp"
                 android:text="312 views"
-                android:textColor="#FFFFFF" />
+                android:textColor="#FFFFFF"
+                android:visibility="gone"/>
 
 
         </RelativeLayout>

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import co.aquario.chatapp.CallActivityLauncher;
 import co.aquario.chatapp.ChatActivity;
 import co.aquario.chatapp.event.request.NotiListEvent;
 import co.aquario.chatapp.event.response.NotiListEventSuccess;
@@ -102,7 +101,7 @@ public class NotiFragment extends BaseFragment {
                     public void onItemClick(View view, int position) {
                         intentManage(Integer.parseInt(notiList.get(position).type),
                                 Integer.parseInt(notiList.get(position).from_id),
-                                Integer.parseInt(notiList.get(position).to_id));
+                                Integer.parseInt(notiList.get(position).to_id), Integer.parseInt(notiList.get(position).post_id));
                     }
                 }));
 
@@ -135,7 +134,7 @@ public class NotiFragment extends BaseFragment {
         notiAdapter.updateItems();
     }
 
-    public void intentManage(int type,int postId,int fromId) {
+    public void intentManage(int type,int fromId,int toId,int postId) {
 
         String customdata = "";
         if (type == TYPES_likeFeed) {
@@ -171,10 +170,13 @@ public class NotiFragment extends BaseFragment {
 //			startActivity(profileIntent);
 
         } else if (type == TYPES_chatMessage || type == TYPES_chatSticker
-                || type == TYPES_chatFile || type == TYPES_chatLocation) {
+                || type == TYPES_chatFile || type == TYPES_chatLocation
+                || type == 507 || type == 508 || type == 509) {
 
             ChatActivity.startChatActivity(getActivity(),postId, Integer.parseInt(VMApp.mPref.userId().getOr("0")), fromId, 0);
 
+        }else if (type == TYPES_chatInviteGroup || type == TYPES_chatInviteGroup2) {
+            ChatActivity.startChatActivity(getActivity(),postId, Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,2);
         }
 //        else if (type == TYPES_confCreate || type == TYPES_confJoin
 //				|| type == TYPES_confInvite) {
@@ -186,13 +188,11 @@ public class NotiFragment extends BaseFragment {
 //
 //		}
         else if (type == TYPES_chatFreeCall) {
-            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
-            CallActivityLauncher.startCallActivity(getActivity(), customdata, false);
+            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")), fromId, 0);
+            //CallActivityLauncher.startCallActivity(getActivity(), customdata, false);
         } else if (type == TYPES_chatVideoCall) {
-            ChatActivity.startChatActivity(getActivity(),Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
-            CallActivityLauncher.startCallActivity(getActivity(), customdata, true);
-        } else if (type == TYPES_chatInviteGroup) {
-            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,fromId,0);
+            ChatActivity.startChatActivity(getActivity(), Integer.parseInt(VMApp.mPref.userId().getOr("0")), fromId, 0);
+            //CallActivityLauncher.startCallActivity(getActivity(), customdata, true);
         }
 
 
@@ -211,6 +211,7 @@ public class NotiFragment extends BaseFragment {
     public static int TYPES_chatFreeCall = 504;
     public static int TYPES_chatVideoCall = 505;
     public static int TYPES_chatInviteGroup = 506;
+    public static int TYPES_chatInviteGroup2 = 506;
     public static int TYPES_confInvite = 600;
     public static int TYPES_confCreate = 601;
     public static int TYPES_confJoin = 602;

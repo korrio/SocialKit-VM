@@ -2,9 +2,11 @@ package co.aquario.socialkit;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Application.ActivityLifecycleCallbacks;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
@@ -67,7 +69,7 @@ import retrofit.converter.GsonConverter;
         formUriBasicAuthLogin = "user",
         formUriBasicAuthPassword = "12345"
 )
-public class VMApp extends Application {
+public class VMApp extends Application implements ActivityLifecycleCallbacks {
 
     public static String VERSION;
 
@@ -164,11 +166,10 @@ public class VMApp extends Application {
         return handle;
     }
 
-
-
-
     @Override public void onCreate() {
         super.onCreate();
+        registerActivityLifecycleCallbacks(this);
+
 
         //LeakCanary.install(this);
         sContext = this;
@@ -382,4 +383,43 @@ public class VMApp extends Application {
                 .create(PostUploadService.class);
     }
 
+    public static boolean applicationOnPause = false;
+
+    @Override
+    public void onActivityCreated(Activity arg0, Bundle arg1) {
+        Log.e("VMVMVM","onActivityCreated");
+
+    }
+    @Override
+    public void onActivityDestroyed(Activity activity) {
+        Log.e("VMVMVM","onActivityDestroyed ");
+
+    }
+    @Override
+    public void onActivityPaused(Activity activity) {
+        applicationOnPause = true;
+        Log.e("VMVMVM","onActivityPaused "+activity.getClass());
+
+    }
+    @Override
+    public void onActivityResumed(Activity activity) {
+        applicationOnPause = false;
+        Log.e("VMVMVM","onActivityResumed "+activity.getClass());
+
+    }
+    @Override
+    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+        Log.e("VMVMVM","onActivitySaveInstanceState");
+
+    }
+    @Override
+    public void onActivityStarted(Activity activity) {
+        Log.e("VMVMVM","onActivityStarted");
+
+    }
+    @Override
+    public void onActivityStopped(Activity activity) {
+        Log.e("VMVMVM","onActivityStopped");
+
+    }
 }

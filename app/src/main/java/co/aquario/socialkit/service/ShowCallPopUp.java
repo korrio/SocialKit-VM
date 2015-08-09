@@ -82,12 +82,14 @@ public class ShowCallPopUp extends Activity implements OnClickListener {
               Utils.showToast(customdata);
 
         	  if(type.equals("504")) {
-                  connectToRoom(customdata,false);
+
                   ChatActivity.startChatActivity(ShowCallPopUp.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")), Integer.parseInt(from_id), 0);
-        	  } else if(type.equals("505")) {
+                  connectToRoom(customdata, false);
+              } else if(type.equals("505")) {
+
+                  ChatActivity.startChatActivity(ShowCallPopUp.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")), Integer.parseInt(from_id), 0);
                   connectToRoom(customdata,true);
-                  ChatActivity.startChatActivity(ShowCallPopUp.this, Integer.parseInt(VMApp.mPref.userId().getOr("0")), Integer.parseInt(from_id), 0);
-        	  }
+        	   }
 
 
         	  

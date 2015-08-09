@@ -43,7 +43,8 @@
         android:id="@+id/vbitrate"
         android:layout_alignTop="@+id/flv_url"
         android:layout_alignRight="@+id/camera_preview"
-        android:layout_alignEnd="@+id/camera_preview"/>
+        android:layout_alignEnd="@+id/camera_preview"
+        android:visibility="gone"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -52,6 +53,7 @@
         android:id="@+id/flv_url"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/camera_preview"
-        android:layout_alignStart="@+id/camera_preview"/>
+        android:layout_alignStart="@+id/camera_preview"
+        android:visibility="gone"/>
 
 </RelativeLayout>

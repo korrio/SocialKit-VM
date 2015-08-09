@@ -34,11 +34,13 @@ import android.widget.MediaController;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+import com.facebook.share.widget.LikeView;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.VideoSurfaceView;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.util.Util;
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 
 import org.json.JSONObject;
 
@@ -71,7 +73,13 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
   private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
   private AudioCapabilities audioCapabilities;
 
-  public static ExoSurfaceFragment newInstance(String url){
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        FBLikeView.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public static ExoSurfaceFragment newInstance(String url){
     ExoSurfaceFragment mFragment = new ExoSurfaceFragment();
     Bundle mBundle = new Bundle();
     mBundle.putString("PATH", url);
@@ -97,6 +105,8 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
     TextView statusText;
     ImageView btnFullscreen;
     ImageView btnShareFb;
+
+    FBLikeView fbLike;
 
     private View mTopView;
     private View mBottomView;
@@ -135,6 +145,12 @@ public class ExoSurfaceFragment extends BaseFragment implements SurfaceHolder.Ca
 
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.activity_simple_exo_player, container, false);
+
+      String shareUrl = "https://www.vdomax.com/live/" + mUsername;
+
+      fbLike = (FBLikeView) rootView.findViewById(R.id.fbLikeView2);
+      fbLike.getLikeView().setObjectIdAndType(shareUrl, LikeView.ObjectType.OPEN_GRAPH);
+
 
       mTopView = rootView.findViewById(R.id.top_layout);
       mBottomView = rootView.findViewById(R.id.bottom_layout);

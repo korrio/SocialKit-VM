@@ -203,4 +203,6 @@ dependencies {
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
     compile 'com.inthecheesefactory.thecheeselibrary:fb-like:1.0.0'
 
+    compile 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.2'
+
 }

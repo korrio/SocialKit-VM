@@ -795,7 +795,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
                     }
                     else {
-                        oldLoveCount = Integer.parseInt(btnLove.getText().toString());
+                        //oldLoveCount = Integer.parseInt(btnLove.getText().toString());
                         oldLoveCount--;
                         btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_outline_grey,0,0,0);
                     }

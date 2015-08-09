@@ -11,10 +11,11 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -59,13 +60,15 @@ import co.aquario.chatui.fragment.a.ConversationViewPagerFragment;
 import co.aquario.chatui.fragment.addfriend.AddFriendByIdFragment;
 import co.aquario.chatui.model.UserMe;
 import co.aquario.chatui.model.friendmodel.FriendsModel;
+import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
-import co.aquario.socialkit.handler.ApiBus;
+import co.aquario.socialkit.VMApp;
+import co.aquario.socialkit.activity.search.SearchPagerFragment;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 
 
-public class ChatUIActivity extends AppCompatActivity {
+public class ChatUIActivity extends BaseActivity {
 
     enum TYPE_MENU{
         CONTACT_LIST , MESSAGE_LIST , TATTOO_LIST
@@ -124,15 +127,22 @@ public class ChatUIActivity extends AppCompatActivity {
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
+    Menu menu;
+    SearchView mSearchView;
+
+    String oldQuery;
+
     void setupToolbar() {
         if(toolbar != null) {
 //            setSupportActionBar(toolbar);
 //            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
 //            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            toolbar.setTitle("Chat");
             toolbar.getMenu().clear();
-            toolbar.inflateMenu(R.menu.menu_add);
+            toolbar.inflateMenu(R.menu.menu_search);
+            toolbar.setTitle("Chat");
+
+            //toolbar.inflateMenu(R.menu.menu_add);
             toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
@@ -155,6 +165,39 @@ public class ChatUIActivity extends AppCompatActivity {
                     onBackPressed();
                 }
             });
+
+
+
+            menu = toolbar.getMenu();
+
+            mSearchView = (SearchView) toolbar.getMenu().findItem(R.id.action_search).getActionView();
+            //MenuItemCompat.expandActionView(toolbar.getMenu().findItem(R.id.action_search));
+            mSearchView.setQueryHint(oldQuery);
+            //mSearchView.setIconifiedByDefault(false);
+            mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+
+                    if(mActivity != null) {
+                        Utils.hideKeyboard(mActivity);
+
+                        SearchPagerFragment fragment = new SearchPagerFragment().newInstance(VMApp.mPref.userId().getOr("0"), s);
+                        ((ChatUIActivity) mActivity).getSupportFragmentManager().beginTransaction().replace(R.id.frameFragment, fragment, "MAIN_SEARCH").addToBackStack(null).commit();
+                        toolbar.setTitle('"' + s + '"');
+                        toolbar.setSubtitle("Searching");
+                        oldQuery = s;
+                    }
+
+
+
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
         }
     }
 
@@ -174,7 +217,7 @@ public class ChatUIActivity extends AppCompatActivity {
         initCallPref(this);
         mActivity = this;
 
-        footerClickFragment(TYPE_MENU.CONTACT_LIST);
+        footerClickFragment(TYPE_MENU.MESSAGE_LIST);
 
         //mManager  = new UserManager(this);
         //ParseAnalytics.trackAppOpenedInBackground(getIntent());
@@ -403,6 +446,8 @@ public class ChatUIActivity extends AppCompatActivity {
         boolean noAudioProcessing = sharedPref.getBoolean(
                 keyprefNoAudioProcessingPipeline,
                 Boolean.valueOf(activity.getString(R.string.pref_noaudioprocessing_default)));
+
+
 
         // Get video resolution from settings.
         int videoWidth = 0;
@@ -671,14 +716,14 @@ public class ChatUIActivity extends AppCompatActivity {
 //            }
 //
 //        }
-        ApiBus.getInstance().register(ChatUIActivity.this);
+        //ApiBus.getInstance().register(ChatUIActivity.this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
        // Toast.makeText(this , "Main onPause" , Toast.LENGTH_SHORT).show();
-        ApiBus.getInstance().unregister(ChatUIActivity.this);
+        //ApiBus.getInstance().unregister(ChatUIActivity.this);
     }
 
     @OnClick(R.id.navIconLeft)

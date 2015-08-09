@@ -782,13 +782,15 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 mPartnerName = member.getName();
                 mPartnerUsername = member.getUsername();
 
-                setChatTitle(Html.fromHtml(mPartnerName).toString());
-                setChatSubTitle("@" + mPartnerUsername);
-                ApiBus.getInstance().postQueue(new GetUserEvent(mPartnerId));
-            } else {
-                if(mChatType == 2 &&  member.getInviteAcceptFlag() == 0)
-                    displayInviteToolbar();
+                if(mChatType != 2 && mChatType != 1) {
+                    setChatTitle(Html.fromHtml(mPartnerName).toString());
+                    setChatSubTitle("@" + mPartnerUsername);
+                } else {
+                    setChatTitle(event.info.getName());
+                    setChatSubTitle("PRIVATE GROUP");
+                }
 
+                ApiBus.getInstance().postQueue(new GetUserEvent(mPartnerId));
             }
         }
 
@@ -921,7 +923,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 adapter.getData().add(message);
                 listView.setSelection(listView.getBottom());
 
-                attemptSendMessageToServer(Message.MSG_TYPE_TEXT, content,"{}");
+                attemptSendMessageToServer(Message.MSG_TYPE_TEXT, content, "{}");
+                //box.hide();
 
             }
 
@@ -934,7 +937,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 adapter.getData().add(message);
                 listView.setSelection(listView.getBottom());
 
-                attemptSendMessageToServer(Message.MSG_TYPE_FACE, content,jsonObjStr);
+                attemptSendMessageToServer(Message.MSG_TYPE_FACE, content, jsonObjStr);
+                //box.hide();
             }
 
 
@@ -983,7 +987,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     default:
                         break;
                 }
-
+                //box.hide();
             }
 
         });
@@ -992,11 +996,11 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
         //https://www.vdomax.com/imgd.php?src=assets/items/tattoo/6_1418811172_1tt0201.png&width=100&height=100&fill-to-fit=ffffff
 
-        String prefix = "https://www.vdomax.com/imgd.php?src=";
-        String suffix = "&width=100&height=100&fill-to-fit=ffffff";
+//        String prefix = "https://www.vdomax.com/imgd.php?src=";
+//        String suffix = "&width=100&height=100&fill-to-fit=ffffff";
 
-
-
+        String prefix = "https://www.vdomax.com/";
+        String suffix = "";
 
         // Add tattoo
         ArrayList<String> faceNameList5 = new ArrayList<>();
@@ -1831,8 +1835,10 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
     @Subscribe public void onUpdateUserProfile(GetUserEventSuccess event) {
 
         if(event.userMe.getUser() != null) {
-            setChatTitle(event.userMe.getUser().getName());
-            setChatSubTitle("@" + event.userMe.getUser().getUsername());
+            if(mChatType != 2 && mChatType != 1) {
+                setChatTitle(event.userMe.getUser().getName());
+                setChatSubTitle("@" + event.userMe.getUser().getUsername());
+            }
         }
 
     }

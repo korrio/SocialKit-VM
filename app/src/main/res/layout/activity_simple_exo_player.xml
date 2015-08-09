@@ -37,6 +37,18 @@
             android:layout_height="50dp"
             >
 
+            <com.inthecheesefactory.lib.fblike.widget.FBLikeView
+                android:id="@+id/fbLikeView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/status"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_alignParentLeft="true"
+                android:visibility="gone"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,7 +57,8 @@
                 android:singleLine="true"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
-                android:id="@+id/status"/>
+                android:id="@+id/status"
+                android:visibility="gone"/>
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -66,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:padding="16dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -99,7 +112,8 @@
             android:layout_marginEnd="30dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/imageView13"
-            android:layout_toStartOf="@+id/imageView13"/>
+            android:layout_toStartOf="@+id/imageView13"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

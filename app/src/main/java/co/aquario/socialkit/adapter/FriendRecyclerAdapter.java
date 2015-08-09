@@ -1,6 +1,7 @@
 package co.aquario.socialkit.adapter;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +18,16 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import co.aquario.socialkit.R;
+import co.aquario.chatapp.ChatActivity;
+import co.aquario.chatui.ChatUIActivity;
+import co.aquario.chatui.ui.CircleTransform;
 import co.aquario.socialkit.NewProfileActivity;
+import co.aquario.socialkit.R;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.FollowRegisterEvent;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.model.User;
+import co.aquario.socialkit.util.NotiUtils;
 import co.aquario.socialkit.widget.RoundedTransformation;
 
 
@@ -32,6 +38,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
     public ArrayList<User> list = new ArrayList<>();
 
     public OnItemClickListener mItemClickListener;
+    public OnItemLongClickListener mItemLongClickListener;
 
     public FriendRecyclerAdapter(Activity mActivity, ArrayList<User> list) {
         FriendRecyclerAdapter.mActivity = mActivity;
@@ -45,12 +52,12 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
 
         ApiBus.getInstance().register(this);
 
-        return new ViewHolder(sView,new OnItemClickListener() {
+        return new ViewHolder(sView, new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
 
                 Intent i = new Intent(mActivity, NewProfileActivity.class);
-                i.putExtra("USER_ID",list.get(position).getId());
+                i.putExtra("USER_ID", list.get(position).getId());
                 mActivity.startActivity(i);
 /*
                 FeedFragment fragment = toolbar FeedFragment().newInstance(listStory.get(position).getId(), false);
@@ -64,7 +71,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
             @Override
             public void onFollowClick(View view, int position) {
                 Button button = (Button) view;
-                Log.v("isFollowing:",list.get(position).getIsFollowing() + "");
+                Log.v("isFollowing:", list.get(position).getIsFollowing() + "");
                 if (list.get(position).getIsFollowing()) {
                     toggleUnfollow(button);
 
@@ -75,6 +82,90 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
                 ApiBus.getInstance().post(new FollowRegisterEvent(list.get(position).getId()));
                 list.get(position).setIsFollowing(!list.get(position).getIsFollowing());
 
+            }
+        }, new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(View view, int position) {
+                final User user = list.get(position);
+
+                final String imageProfile = user.getAvatar();
+                final String nameProfile = user.getName();
+                final String coverProfile = user.getCover();
+                final String username = user.getUsername();
+                final String userId = user.getId();
+
+                String ImageProfileFillUrl = "https://www.vdomax.com/" + imageProfile + "";
+                final String ImageCoverFillUrl = "https://www.vdomax.com/" + coverProfile + "";
+                final Dialog dialog = new Dialog(mActivity, R.style.FullHeightDialog);
+                dialog.setContentView(R.layout.dialog_followers);
+
+                ImageView proFileImage;
+                final ImageView coverImage;
+                final TextView titleName;
+                final TextView userName;
+                final TextView nameAt;
+                final TextView txtChat;
+                final TextView audioChat;
+                final TextView vdoChat;
+
+                proFileImage = (ImageView) dialog.findViewById(R.id.avatar);
+                titleName = (TextView) dialog.findViewById(R.id.name_title);
+                coverImage = (ImageView) dialog.findViewById(R.id.cover);
+                userName = (TextView) dialog.findViewById(R.id.name_username);
+                nameAt = (TextView) dialog.findViewById(R.id.name_at);
+                txtChat = (TextView) dialog.findViewById(R.id.txtChat);
+                audioChat = (TextView) dialog.findViewById(R.id.voiceChat);
+                vdoChat = (TextView) dialog.findViewById(R.id.vdoChat);
+
+                nameAt.setText(nameProfile);
+                userName.setText(username);
+                titleName.setText(nameProfile);
+                Picasso.with(mActivity)
+                        .load(ImageProfileFillUrl)
+                        .resize(200, 200)
+                        .transform(new CircleTransform())
+                        .into(proFileImage);
+
+                Picasso.with(mActivity)
+                        .load(ImageCoverFillUrl)
+                        .into(coverImage);
+
+                final int mUserId = Integer.parseInt(VMApp.mPref.userId().getOr("0"));
+
+                vdoChat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String roomName = "VM_" + mUserId + "_" + userId + "_" + System.currentTimeMillis();
+                        NotiUtils.notifyUser(mActivity, 504, mUserId, Integer.parseInt(userId), roomName);
+                        ChatUIActivity.connectToRoom(mActivity, roomName, true);
+                    }
+                });
+
+                audioChat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String roomName = "VM_" + mUserId + "_" + userId + "_" + System.currentTimeMillis();
+                        NotiUtils.notifyUser(mActivity,504,mUserId, Integer.parseInt(userId), roomName);
+                        ChatUIActivity.connectToRoom(mActivity, roomName, false);
+                    }
+                });
+
+                txtChat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        ChatActivity.startChatActivity(mActivity, mUserId, Integer.parseInt(userId), 0);
+
+//                        ChatWidgetFragmentClient fragment = ChatWidgetFragmentClient.newInstance(mUserId,userId,0);
+//                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frameFragment, fragment, "CHAT_MAIN").addToBackStack(null).commit();
+
+                        dialog.dismiss();
+                    }
+                });
+
+
+                dialog.show();
             }
         });
     }
@@ -149,25 +240,33 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
         void onFollowClick(View view, int position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public interface OnItemLongClickListener {
+        void onItemLongClick(View view, int position);
+
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         TextView name;
         ImageView avatar;
         Button btnFollow;
 
         OnItemClickListener listener;
+        OnItemLongClickListener longListener;
         boolean isFollowing = false;
 
-        public ViewHolder(View view, OnItemClickListener listener) {
+        public ViewHolder(View view, OnItemClickListener listener, OnItemLongClickListener longListener) {
             super(view);
 
             this.listener = listener;
+            this.longListener = longListener;
 
             name = (TextView) view.findViewById(R.id.profile_name);
             avatar = (ImageView) view.findViewById(R.id.profile_image);
             btnFollow = (Button) view.findViewById(R.id.btn_follow);
 
             avatar.setOnClickListener(this);
+            avatar.setOnLongClickListener(this);
             btnFollow.setOnClickListener(this);
 
             view.setOnClickListener(this);
@@ -202,6 +301,17 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
         }
 
 
-
+        @Override
+        public boolean onLongClick(View v) {
+            switch (v.getId()) {
+                case R.id.profile_image:
+                    longListener.onItemLongClick(v, getLayoutPosition());
+                    break;
+                case R.id.btn_follow:
+                    longListener.onItemLongClick(v, getLayoutPosition());
+                    break;
+            }
+            return true;
+        }
     }
 }

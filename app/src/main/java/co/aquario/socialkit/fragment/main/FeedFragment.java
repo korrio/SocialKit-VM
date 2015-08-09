@@ -171,6 +171,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     private boolean isHomeTimeline = false;
     private boolean isHashtag = false;
     private boolean isStory = false;
+    //private SwipeRefreshLayout swipeLayout;
     private SwipeRefreshLayout swipeLayout;
     private FloatingActionButton postLive;
     private FloatingActionButton postPhotoBtn;
@@ -592,6 +593,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         mProgressBarFeed.setVisibility(View.VISIBLE);
 
         swipeLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_container);
+
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -602,7 +604,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             }
         });
 
-        swipeLayout.setRefreshing(true);
+        //swipeLayout.setRefreshing(true);
 
         fabLayout = (RelativeLayout) rootView.findViewById(R.id.layoutMenu);
 

@@ -211,8 +211,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             }
 
             if (requestCode == REQUEST_TAKE_PHOTO) {
-
-
                     Bitmap bm;
                     BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
 
@@ -303,8 +301,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             if (isChecked){
                 mPref.isNoti().put(true).commit();
 
-
-
                 Toast.makeText(MainActivity.this, "turn on notification", Toast.LENGTH_SHORT).show();
             } else{
                 mPref.isNoti().put(false).commit();
@@ -346,7 +342,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
                 )
                 .addStickyDrawerItems(
-                        //new SwitchDrawerItem().withName(R.string.action_notification).withIcon(FontAwesome.Icon.faw_newspaper_o).withIdentifier(9),
+                        new SecondaryDrawerItem().withName(R.string.action_notification).withIcon(FontAwesome.Icon.faw_newspaper_o).withIdentifier(9),
                         new SecondaryDrawerItem().withName(R.string.action_logout).withIcon(FontAwesome.Icon.faw_sign_out).withIdentifier(10)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -623,6 +619,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
             NotiFragment notiFragment = NotiFragment.newInstance(VMApp.mPref.userId().getOr(""),"ALL");
             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, notiFragment, "NOTIFICATION").addToBackStack(null).commit();
             ActionItemBadge.update(item, VMApp.getNotiBadge());
+
         }
 
         return super.onOptionsItemSelected(item);

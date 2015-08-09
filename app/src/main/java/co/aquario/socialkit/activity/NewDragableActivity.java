@@ -60,6 +60,8 @@ public class NewDragableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_watch_dragable);
         ButterKnife.inject(this);
 
+
+
         video = Parcels.unwrap((Parcelable) getIntent().getExtras().get("obj"));
 
         userId = video.getpUserId();

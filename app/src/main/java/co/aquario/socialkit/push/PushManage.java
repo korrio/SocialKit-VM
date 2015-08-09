@@ -137,16 +137,15 @@ public class PushManage extends Activity {
 			JSONObject json = new JSONObject(jsonData);
 			String type = json.getString("type");
 
+            fromId = json.optString("from_id", json.optInt("from_id") + "");
+            fromName = json.optString("from_name");
+            toId = json.optString("to_id", json.optInt("to_id") + "");
+            mCid = Integer.parseInt(json.optString("conversation_id", json.optInt("conversation_id") + ""));
+
 			if (type.equals(TYPES_chatMessage + "")
 					|| type.equals(TYPES_chatSticker + "")
 					|| type.equals(TYPES_chatFile + "")
 					|| type.equals(TYPES_chatLocation + "")) {
-				fromId = json.optString("from_id", json.optInt("from_id") + "");
-				fromName = json.getString("from_name");
-                toId = json.optString("to_id", json.optInt("to_id") + "");
-                mCid = Integer.parseInt(json.optString("conversation_id", json.optInt("conversation_id") + ""));
-
-
 
                 /*
                 chatUrl += fromId;
@@ -166,19 +165,22 @@ public class PushManage extends Activity {
 				n++;
 				*/
 				//DataUser.VM_CHAT_N = n;
-			} else if (type.equals(TYPES_confInvite + "")) {
-				roomName = json.optString("room_name");
-			} else if (type.equals(TYPES_confCreate + "")
-					|| type.equals(TYPES_confJoin + "")) {
-				roomName = json.optString("room_name");
-			} else if (type.equals(TYPES_liveNow + "")) {
+			}
+//            else if (type.equals(TYPES_confInvite + "")) {
+//				roomName = json.optString("room_name");
+//			} else if (type.equals(TYPES_confCreate + "")
+//					|| type.equals(TYPES_confJoin + "")) {
+//				roomName = json.optString("room_name");
+//			}
+
+            else if (type.equals(TYPES_liveNow + "")) {
                 fromId = json.optString("from_id", json.optInt("from_id") + "");
-                fromName = json.getString("from_name");
+                fromName = json.optString("from_name");
 //				postId = json.optString("post_id", json.optInt("post_id") + "");
 			} else if (type.equals(TYPES_commentFeed + "")
 					|| type.equals(TYPES_likeFeed + "")) {
 				fromId = json.optString("from_id", json.optInt("from_id") + "");
-				fromName = json.getString("from_name");
+				fromName = json.optString("from_name");
 				postId = json.optString("post_id", json.optInt("post_id") + "");
 			} else if (type.equals(TYPES_chatInviteGroup + "") || type.equals(TYPES_chatInviteGroup2 + "")) {
 				Log.e("chatInvite",json.toString());
@@ -249,7 +251,10 @@ public class PushManage extends Activity {
 		} else if (type == TYPES_chatMessage || type == TYPES_chatSticker
 				|| type == TYPES_chatFile || type == TYPES_chatLocation) {
 
-            ChatActivity.startChatActivity(this,Integer.parseInt(postId),Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,Integer.parseInt(fromId),0);
+            if(postId != null)
+                ChatActivity.startChatActivity(this,Integer.parseInt(postId),Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,Integer.parseInt(fromId),0);
+            else
+                ChatActivity.startChatActivity(this,Integer.parseInt(VMApp.mPref.userId().getOr("0")) ,Integer.parseInt(fromId),0);
 
 		}
 //        else if (type == TYPES_confCreate || type == TYPES_confJoin

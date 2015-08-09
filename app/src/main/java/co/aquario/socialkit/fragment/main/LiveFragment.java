@@ -130,27 +130,7 @@ public class LiveFragment extends BaseFragment {
         draggablePanel.setFragmentManager(getActivity().getSupportFragmentManager());
         draggablePanel.setTopFragment(oneFragment);
 
-/*
-        Bundle data = toolbar Bundle();
-        LivePosterFragment moviePosterFragment = toolbar LivePosterFragment();
-        moviePosterFragment.setPoster(cover);
-        moviePosterFragment.setPosterTitle("DUMMY");
-        data.putString("name",profileName);
-        data.putString("avatar",userProfile);
-        data.putString("title",title);
-        data.putString("desc",description);
-        data.putString("userId",userId);
-        moviePosterFragment.setArguments(data);
-        draggablePanel.setBottomFragment(moviePosterFragment);
-        */
-
-        //SimpleChatFragment simpleChatFragment = SimpleChatFragment.newInstance(profileName);
-
         ChatWidgetFragmentClient chatFragment = ChatWidgetFragmentClient.newInstance(Integer.parseInt(prefManager.userId().getOr("0")),Integer.parseInt(userId),1);
-
-
-
-        //chatFragment.setArguments(chatBundle);
 
         draggablePanel.setBottomFragment(chatFragment);
         draggablePanel.initializeView();
