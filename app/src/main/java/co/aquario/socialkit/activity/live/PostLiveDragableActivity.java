@@ -1,11 +1,13 @@
 package co.aquario.socialkit.activity.live;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggablePanel;
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -42,6 +44,12 @@ public class PostLiveDragableActivity extends BaseActivity {
             height = DensityUtil.getHeightInPx(this);
         }
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        FBLikeView.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

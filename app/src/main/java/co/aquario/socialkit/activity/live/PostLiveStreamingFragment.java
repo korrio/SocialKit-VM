@@ -27,6 +27,8 @@ import android.widget.EditText;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.facebook.share.widget.LikeView;
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -122,7 +124,7 @@ public class PostLiveStreamingFragment extends BaseFragment {
     }
 
     View rootView;
-
+    FBLikeView fbLikeBtn;
 
     String mUsername = "";
     String mUserId = "";
@@ -131,6 +133,11 @@ public class PostLiveStreamingFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_live_streamer, container, false);
         this.rootView = rootView;
+
+        String shareUrl = "https://www.vdomax.com/live/" + VMApp.mPref.username().getOr("test");
+
+        fbLikeBtn = (FBLikeView) rootView.findViewById(R.id.fbLikeView1);
+        fbLikeBtn.getLikeView().setObjectIdAndType(shareUrl, LikeView.ObjectType.OPEN_GRAPH);
 
         mUsername = VMApp.mPref.username().getOr("");
         mUserId = VMApp.mPref.userId().getOr("");

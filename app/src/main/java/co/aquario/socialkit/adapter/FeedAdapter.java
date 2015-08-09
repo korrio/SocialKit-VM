@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.facebook.share.widget.LikeView;
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 import com.squareup.picasso.Picasso;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -221,11 +223,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
     public void onBindViewHolder(ViewHolder holder, int position) {
         final PostStory item = list.get(position);
 
+        String shareUrl = "https://www.vdomax.com/share/" + item.id;
+
         if(item.isLoved)
             holder.btnLove.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red,0,0,0);
 
         if(item.isShared)
             holder.btnShare.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_share_blue,0,0,0);
+
+        holder.fbLikeView1.getLikeView().setObjectIdAndType(shareUrl, LikeView.ObjectType.OPEN_GRAPH);
 
         PrettyTime p = new PrettyTime();
         long agoLong = Integer.parseInt(item.time);
@@ -534,6 +540,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
         Button btnComment;
         Button btnShare;
 
+        FBLikeView fbLikeView1;
+
         RelativeLayout mediaLayout;
         RelativeLayout soundCloudLayout;
 
@@ -560,6 +568,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
 
         public ViewHolder(View view) {
             super(view);
+
+
+
+            fbLikeView1 = (FBLikeView) view.findViewById(R.id.fbLikeView1);
 
 
             feedThumb = (RelativeLayout) view.findViewById(R.id.feed_thumb_group);
@@ -615,6 +627,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
             btnLove.setOnClickListener(this);
             btnShare.setOnClickListener(this);
             view.setOnClickListener(this);
+
+
         }
 
         @Override

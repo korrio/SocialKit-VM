@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.crossfader.util.UIUtils;
 import com.mikepenz.iconics.typeface.FontAwesome;
@@ -197,6 +198,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         super.onActivityResult(requestCode, resultCode, data);
         ActivityResultBus.getInstance().postQueue(
                 new ActivityResultEvent(requestCode, resultCode, data));
+        FBLikeView.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
             File f = new File(Environment.getExternalStorageDirectory()

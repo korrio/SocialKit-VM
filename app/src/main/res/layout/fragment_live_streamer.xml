@@ -27,13 +27,26 @@
         android:layout_below="@+id/capture"
         android:layout_alignParentRight="true"/>
 
+    <com.inthecheesefactory.lib.fblike.widget.FBLikeView
+        android:id="@+id/fbLikeView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="6dp"
+        android:layout_below="@+id/stop"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="v0.0.1"
         android:id="@+id/txt_version"
-        android:layout_toRightOf="@id/stop"
+        android:layout_toRightOf="@id/fbLikeView1"
         android:layout_marginTop="10dp"
         android:visibility="gone"/>
 

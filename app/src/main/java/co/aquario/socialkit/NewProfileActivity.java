@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 import com.squareup.otto.Subscribe;
 
 import co.aquario.chatapp.ChatActivity;
@@ -107,7 +108,11 @@ public class NewProfileActivity extends BaseActivity {
         //pager.setOffscreenPageLimit(5);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        FBLikeView.onActivityResult(requestCode, resultCode, data);
+    }
 
     void setupToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -201,5 +201,6 @@ dependencies {
     compile 'ch.acra:acra:4.6.1'
 
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
+    compile 'com.inthecheesefactory.thecheeselibrary:fb-like:1.0.0'
 
 }

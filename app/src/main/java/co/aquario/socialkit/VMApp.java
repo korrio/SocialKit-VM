@@ -12,6 +12,8 @@ import com.androidquery.AQuery;
 import com.androidquery.auth.FacebookHandle;
 import com.androidquery.callback.AjaxStatus;
 import com.crashlytics.android.Crashlytics;
+import com.facebook.FacebookSdk;
+import com.facebook.LoggingBehavior;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -171,7 +173,6 @@ public class VMApp extends Application {
         //LeakCanary.install(this);
         sContext = this;
 
-
         PackageInfo pInfo;
         try {
             pInfo = sContext.getPackageManager().getPackageInfo(sContext.getPackageName(), 0);
@@ -184,6 +185,13 @@ public class VMApp extends Application {
         Fabric.with(this, new Crashlytics());
         ParseCrashReporting.enable(this);
         ACRA.init(this);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        FacebookSdk.setIsDebugEnabled(true);
+        FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS);
+        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+        FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS);
 
         String applicationID = "j6DTfeUL6JvI9PunllRInpQbUg3dJLCVNTvaAOfY";
         String clientKey = "VLESF9CjbpiRJ97A1XVllHZuBgO0TJrRJyNA3OL8";

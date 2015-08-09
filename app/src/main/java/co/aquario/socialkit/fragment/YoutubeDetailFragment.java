@@ -20,9 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.facebook.share.widget.LikeView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
@@ -117,6 +119,8 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
     Button btnLove;
     Button btnComment;
     Button btnShare;
+
+    FBLikeView fbLikeBtn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -137,10 +141,14 @@ public class YoutubeDetailFragment extends BaseFragment implements ObservableScr
 
         btnFollow.setOnClickListener(this);
 
+        String shareUrl = "https://www.vdomax.com/share/" + postId;
 
         btnLove = (Button) view.findViewById(R.id.btn_love);
         btnComment = (Button) view.findViewById(R.id.btn_comment);
         btnShare = (Button) view.findViewById(R.id.btn_share);
+
+        fbLikeBtn = (FBLikeView) view.findViewById(R.id.fbLikeView1);
+        fbLikeBtn.getLikeView().setObjectIdAndType(shareUrl, LikeView.ObjectType.OPEN_GRAPH);
 
         btnLove.setOnClickListener(this);
         btnComment.setOnClickListener(this);

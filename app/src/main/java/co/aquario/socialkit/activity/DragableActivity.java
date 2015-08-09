@@ -1,5 +1,6 @@
 package co.aquario.socialkit.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import com.github.pedrovgs.DraggablePanel;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 
 import org.parceler.Parcels;
 
@@ -45,6 +47,12 @@ public class DragableActivity extends AppCompatActivity {
     private ExoSurfaceFragment surfaceFragment;
     //private VideoViewNativeFragment videoViewFragment;
     private Video video;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        FBLikeView.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
