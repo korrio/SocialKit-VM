@@ -96,6 +96,10 @@
         <item>Facebook</item>
     </string-array>
 
+    <string name="term_of_use"><u>Terms of Use</u></string>
+    <string name="progress_dialog">VDOMAX</string>
+    <string name="please_wait">Please wait</string>
+
     <!-- Chat String -->
     <string name="title">(VMChat)</string>
     <string name="author_name">By VDOMAX</string>

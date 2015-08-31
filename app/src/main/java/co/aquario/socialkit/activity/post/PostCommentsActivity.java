@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -34,6 +33,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.Optional;
+import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.adapter.CommentAdapter;
@@ -53,7 +53,7 @@ import github.ankushsachdeva.emojicon.EmojiconsPopup;
 import github.ankushsachdeva.emojicon.emoji.Emojicon;
 
 
-public class PostCommentsActivity extends ActionBarActivity implements SendCommentButton.OnSendClickListener {
+public class PostCommentsActivity extends BaseActivity implements SendCommentButton.OnSendClickListener {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
     public static final String ARG_COMMENT_LIST = "arg_comment_list";
 
@@ -100,13 +100,13 @@ public class PostCommentsActivity extends ActionBarActivity implements SendComme
     @Override
     protected void onResume() {
         super.onResume();
-        ApiBus.getInstance().register(this);
+        //ApiBus.getInstance().register(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ApiBus.getInstance().unregister(this);
+        //ApiBus.getInstance().unregister(this);
     }
 
     @Override
@@ -121,9 +121,9 @@ public class PostCommentsActivity extends ActionBarActivity implements SendComme
         ApiBus.getInstance().post(new GetStoryEvent(postId));
         //commentList = getIntent().getParcelableArrayListExtra(ARG_COMMENT_LIST);
         pref = VMApp.get(this).getPrefManager();
-        userId = pref.userId().getOr("3");
-        avatar = pref.avatar().getOr("");
-        name = pref.name().getOr("");
+        userId = pref.userId().getOr("0");
+        avatar = pref.avatar().getOr("null");
+        name = pref.name().getOr("null");
 
         setupComments();
         setupSendCommentButton();
@@ -267,7 +267,7 @@ public class PostCommentsActivity extends ActionBarActivity implements SendComme
         commentsAdapter = new CommentAdapter(this,commentList);
         rvComments.setAdapter(commentsAdapter);
         rvComments.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        rvComments.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        rvComments.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {

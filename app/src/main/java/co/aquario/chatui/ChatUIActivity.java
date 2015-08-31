@@ -64,6 +64,8 @@ import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.activity.search.SearchPagerFragment;
+import co.aquario.socialkit.event.ActivityResultEvent;
+import co.aquario.socialkit.handler.ActivityResultBus;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
 
@@ -140,6 +142,7 @@ public class ChatUIActivity extends BaseActivity {
 //            getSupportActionBar().setDisplayShowHomeEnabled(true);
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.menu_search);
+            toolbar.inflateMenu(R.menu.menu_add);
             toolbar.setTitle("Chat");
 
             //toolbar.inflateMenu(R.menu.menu_add);
@@ -148,11 +151,21 @@ public class ChatUIActivity extends BaseActivity {
                 public boolean onMenuItemClick(MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.action_add_friend:
-                            initListAddFriendDialog();
+
+                            FragmentManager manager = getSupportFragmentManager();
+                            FragmentTransaction transaction = manager.beginTransaction();
+                            transaction.add(R.id.frameFragment, AddFriendByIdFragment.newInstance());
+                            transaction.addToBackStack(null);
+                            transaction.commitAllowingStateLoss();
+
                             break;
-//                        case R.id.action_add_friends_to_group:
-//                            initGridFriendsDialog();
-//                            break;
+                        case R.id.action_add_friends_to_group:
+
+                            Intent  i = new Intent(getApplication(),ListViewCheckboxesActivity.class);
+                            startActivity(i);
+
+                            //initGridFriendsDialog();
+                            break;
                     }
                     return false;
                 }
@@ -284,6 +297,10 @@ public class ChatUIActivity extends BaseActivity {
     };
 
     public void initGridFriendsDialog() {
+
+
+
+
         holder = new GridHolder(3);
         isGrid = true;
         //holder = new ListHolder();
@@ -323,7 +340,9 @@ public class ChatUIActivity extends BaseActivity {
         title.setText(titleStr);
         subtitle.setText(subTitleStr);
         View footerView = dialog.getFooterView();
+
         dialog.show();
+
 
     }
 
@@ -372,6 +391,10 @@ public class ChatUIActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ActivityResultBus.getInstance().postQueue(
+                new ActivityResultEvent(requestCode, resultCode, data));
+
         if (requestCode == CONNECTION_REQUEST && commandLineRun) {
             Log.d("HEYHEYHEY", "Return: " + resultCode);
             setResult(resultCode);
@@ -404,7 +427,7 @@ public class ChatUIActivity extends BaseActivity {
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix matrix = null;
         try {
-            matrix = writer.encode(text, BarcodeFormat.QR_CODE, 100, 100);
+            matrix = writer.encode(text, BarcodeFormat.QR_CODE, width, width);
         } catch (WriterException ex) {
             ex.printStackTrace();
         }

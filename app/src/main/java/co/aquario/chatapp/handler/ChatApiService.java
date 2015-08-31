@@ -1,6 +1,5 @@
 package co.aquario.chatapp.handler;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import co.aquario.chatapp.event.response.ChatInfo;
@@ -18,7 +17,6 @@ import co.aquario.chatui.model.UpdateGroup;
 import co.aquario.chatui.model_chat.ConversationChat;
 import retrofit.Callback;
 import retrofit.http.Body;
-import retrofit.http.EncodedQuery;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -51,9 +49,9 @@ public interface ChatApiService {
     @POST("/chat/group/create")
     public void getConversationGroup
             (@Field("name") String name,
-             @EncodedQuery("inviteUserIds[]") ArrayList<Integer> inviteUserIds,
+             @Field("inviteUserIds")  String inviteUserIds,
              @Field("createdBy") int createdBy
-             //,@Header("Content-Type") String contentType
+             //@Header("Content-Type") String contentType
                     , Callback<ConversationId> responseJson);
 
     @FormUrlEncoded

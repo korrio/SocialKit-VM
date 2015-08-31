@@ -277,7 +277,6 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 Message videoMsg = new Message(Message.MSG_TYPE_VIDEO_CALL, Message.MSG_STATE_SUCCESS, "", mAvatarUrl, "", "", "", roomName, true, true, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24) * 8));
                 listMessages.add(videoMsg);
 
-
                 attemptSendMessageToServer(Message.MSG_TYPE_VIDEO_CALL,"Voice Calling",jsonObjStr);
                 ChatUIActivity.connectToRoom(getActivity(), roomName, true);
                 return true;
@@ -316,7 +315,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         if (getArguments() != null) {
             mUserId = getArguments().getInt("USER_ID_1",Integer.parseInt(VMApp.mPref.userId().getOr("0")));
             mPartnerId = getArguments().getInt("USER_ID_2",0);
-            mChatType = getArguments().getInt("CHAT_TYPE", 0);
+            mChatType = getArguments().getInt("CHAT_TYPE");
             mCid = getArguments().getInt("CONVERSATION_ID",0);
         }
 
@@ -782,16 +781,18 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                 mPartnerName = member.getName();
                 mPartnerUsername = member.getUsername();
 
-                if(mChatType != 2 && mChatType != 1) {
-                    setChatTitle(Html.fromHtml(mPartnerName).toString());
-                    setChatSubTitle("@" + mPartnerUsername);
-                } else {
-                    setChatTitle(event.info.getName());
-                    setChatSubTitle("PRIVATE GROUP");
-                }
+
 
                 ApiBus.getInstance().postQueue(new GetUserEvent(mPartnerId));
             }
+        }
+
+        if(mChatType != 2 && mChatType != 1) {
+            setChatTitle(Html.fromHtml(mPartnerName).toString());
+            setChatSubTitle("@" + mPartnerUsername);
+        } else {
+            setChatTitle(event.info.getName());
+            setChatSubTitle("PRIVATE GROUP");
         }
 
 
@@ -1088,6 +1089,8 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         }
 
 
+        mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
+
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("Authenticate:Success", onAuthSuccess);
@@ -1103,6 +1106,27 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         //mSocket.on("login" , onLogin);
         mSocket.on("OnlineUser", onOnlineUser);
         mSocket.connect();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mSocket.disconnect();
+        mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+        mSocket.off("Authenticate:Success", onAuthSuccess);
+        mSocket.off("Authenticate:Failure", onAuthFailure);
+        mSocket.off("JoinRoomSuccess", onUserJoined);
+        //mSocket.on("JoinRoomFailure", null);
+
+        mSocket.off("SendMessage", onSendMessage);
+        mSocket.off("LeaveRoom", onUserLeft);
+        //mSocket.on("Typing", onTyping);
+        //mSocket.on("StopTyping", onStopTyping);
+        //mSocket.on("Read",null);
+        //mSocket.on("login" , onLogin);
+        mSocket.off("OnlineUser", onOnlineUser);
     }
 
     TextView trackTitleTv;
@@ -1549,17 +1573,27 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         }
     };
 
+    private Emitter.Listener onDisconnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            Log.e("CHAT","onDisconnected");
+            //Utils.showToast("disconnected");
+
+        }
+    };
+
 
     private Emitter.Listener onOnlineUser = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
 
-            JSONObject data = (JSONObject) args[0];
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
                     JSONObject data = (JSONObject) args[0];
+
+                    Log.e("OnlineUser",data.toString());
 
 //                    try {
 //                        Toast.makeText(getActivity(),data.toString(4),Toast.LENGTH_LONG).show();

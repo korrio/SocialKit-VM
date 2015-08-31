@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.aquario.socialkit">
 
+    <uses-permission android:name="com.android.vending.BILLING" />
+
     <!-- GCM connects to Internet Services. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -300,7 +302,7 @@
         <activity
             android:name=".activity.post.PostCommentsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.WithoutActionBar" />
 
 
         <activity
@@ -408,7 +410,7 @@
                   android:name="com.facebook.FacebookContentProvider"
                   android:exported="true"/>
 
-
+            <activity android:name="co.aquario.chatui.ListViewCheckboxesActivity"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="4febdfa6cbfed68d21e3027d362303f92ad70712" />

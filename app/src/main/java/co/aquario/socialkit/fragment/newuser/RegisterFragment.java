@@ -5,15 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.dd.processbutton.FlatButton;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
@@ -99,6 +104,7 @@ public class RegisterFragment extends BaseFragment {
     }
 
     String genderStr;
+    TextView terms;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -167,9 +173,39 @@ public class RegisterFragment extends BaseFragment {
             }
         });
 
+        terms = (TextView) rootView.findViewById(R.id.terms);
+        terms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showWebViewDialog("https://www.vdomax.com/ajax.php?t=getDisclaimer&lang=en");
+            }
+        });
+
 
 
         return rootView;
+    }
+
+    private void showWebViewDialog(String url) {
+        final View customView;
+        try {
+            customView = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_webview, null);
+        } catch (InflateException e) {
+            throw new IllegalStateException("This device does not support Web Views.");
+        }
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .theme(Theme.DARK)
+                .title("Term of Uses")
+                .customView(customView, false)
+                .positiveText(android.R.string.ok)
+                .build();
+
+
+
+        final WebView webView = (WebView) customView.findViewById(R.id.webView);
+        webView.loadUrl(url);
+
+        dialog.show();
     }
 
     @Subscribe public void onRegisterSuccess(RegisterSuccessEvent event) {

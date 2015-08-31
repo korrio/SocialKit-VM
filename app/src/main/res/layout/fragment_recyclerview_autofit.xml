@@ -10,7 +10,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
     <co.aquario.socialkit.view.AutofitRecyclerView
         android:id="@+id/recycler_view"
@@ -21,6 +22,25 @@
         android:clipToPadding="false"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:padding="6dp"
+        android:layout_margin="6dp"
+        android:background="@drawable/bg_tattoo"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Try long press... on friends avatar"
+            android:id="@+id/textView20"
+            android:layout_gravity="center"
+            android:textColor="@color/text_80"
+            android:textSize="16dp"/>
+    </FrameLayout>
 
     <ProgressBar
         android:id="@+id/progressBar1"
@@ -38,8 +58,6 @@
         android:text="No data available"
         android:visibility="gone"
         android:textColor="#252525"/>
-
-
 
 
 </FrameLayout>

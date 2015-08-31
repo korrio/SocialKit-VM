@@ -60,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         mPref = VMApp.get(getApplicationContext()).getPrefManager();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null && toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setElevation(0);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

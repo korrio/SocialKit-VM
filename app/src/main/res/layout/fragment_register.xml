@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageView11"
-            android:src="@drawable/tt0101"/>
+            android:src="@drawable/tt0306"/>
 
 
         <co.aquario.socialkit.view.ParkedTextView
@@ -127,6 +127,30 @@
 
     <LinearLayout
         android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="12dp">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Agree"
+            android:id="@+id/checkBox2"
+            android:textSize="24dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/term_of_use"
+            android:id="@+id/terms"
+            android:layout_marginLeft="6dp"
+            android:textStyle="bold"
+            android:textSize="24dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:visibility="gone">
@@ -190,8 +214,9 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/indigo_500">
+        android:layout_marginTop="6dp"
+        android:background="@color/indigo_500"
+        android:gravity="bottom">
 
         <TextView
             android:id="@+id/tv_register"

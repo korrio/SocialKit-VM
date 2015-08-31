@@ -19,8 +19,8 @@ android {
         applicationId "co.aquario.socialkit"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 105
-        versionName "1.0.5"
+        versionCode 109
+        versionName "1.0.9"
         multiDexEnabled true
         renderscriptSupportModeEnabled true
     }
@@ -203,6 +203,6 @@ dependencies {
     compile 'com.soundcloud.android:android-crop:1.0.0@aar'
     compile 'com.inthecheesefactory.thecheeselibrary:fb-like:1.0.0'
 
-    compile 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.2'
+
 
 }

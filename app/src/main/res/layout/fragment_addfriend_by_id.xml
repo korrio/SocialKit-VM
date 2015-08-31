@@ -17,22 +17,55 @@
             android:src="@drawable/tt0101"
             android:visibility="visible"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Username:"
-            android:textColor="#252525"
-            android:layout_marginLeft="16dp"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="LuZee"
-            android:id="@+id/usernameTv"
-            android:textColor="#666666"
-            android:layout_marginLeft="6dp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Username:"
+                    android:textColor="#252525"
+                    android:layout_marginLeft="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="LuZee"
+                    android:id="@+id/usernameTv"
+                    android:textColor="#666666"
+                    android:layout_marginLeft="6dp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scan QR"
+                    android:id="@+id/scanBtn"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My QR"
+                    android:id="@+id/showBtn"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </LinearLayout>
 
 
     </LinearLayout>
@@ -51,6 +84,7 @@
             android:id="@+id/searchUsernameEt"
             android:inputType="text"
             android:layout_margin="6dp"
+            android:textColorHint="#acacac"
             android:padding="6dp"
             android:hint="Your friend username"
             android:textColor="#252525"

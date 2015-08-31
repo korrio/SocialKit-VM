@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/search_filter"
         android:textColor="#252525"
+        android:hint="Search friend\'s name or username"
         android:layout_margin="6dp"
         />
 

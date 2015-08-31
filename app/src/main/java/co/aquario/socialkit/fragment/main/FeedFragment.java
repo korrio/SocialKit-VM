@@ -375,6 +375,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                             userId = VMApp.mPref.userId().getOr("0");
 
                             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+                            //dialog.show();
                             break;
                     }
 
@@ -416,12 +417,23 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
         }
     }
 
+    MaterialDialog dialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
         fetchBadge(getActivity());
+
+        dialog = new MaterialDialog.Builder(getActivity())
+                .title(R.string.progress_dialog)
+                .content(R.string.please_wait)
+                .progress(true, 0)
+                .widgetColorRes(R.color.materialize_primary)
+                .build();
+
+        dialog.show();
 
         pref = VMApp.get(getActivity().getApplicationContext()).getPrefManager();
         if (getArguments() != null) {
@@ -457,6 +469,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                             ApiBus.getInstance().post(new GetUserProfileEvent(username, true));
                         } else {
                             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
+                            if(!isSearch)
+                            dialog.show();
                             if(!isHomeTimeline) // USER_TIMELINE -> userId
                             {
                                 ApiBus.getInstance().post(new GetUserProfileEvent(userId));
@@ -490,6 +504,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
             userId = pref.userId().getOr("0");
             isHomeTimeline = true;
             ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId),TYPE,1,PER_PAGE,isHomeTimeline));
+            if(!isSearch)
+                dialog.show();
             //((MainActivity) getActivity()).getToolbar().setSubtitle("");
         }
         if(!isSetupToolbar && !isSearch)
@@ -519,6 +535,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
         isLoadding = false;
         isRefresh = false;
+
+        dialog.hide();
     }
 
     //animation
@@ -726,6 +744,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                     ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, page, PER_PAGE, isHomeTimeline));
                 isLoadding = true;
                 Log.e("thispageis", page + "");
+                //dialog.show();
             }
         });
 
@@ -776,6 +795,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 if (!isHomeTimeline)
                     position--;
                 ApiBus.getInstance().post(new PostLoveEvent(userId, list.get(position).postId));
+                //dialog.show();
             }
         });
 
@@ -821,6 +841,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                     //recordVideo();
                 } else if (i == 1) {
                     ApiBus.getInstance().postQueue(new PostShareEvent(userId, postId + ""));
+
                     //pickVideo();
                 } else if (i == 2) {
                     dialog.dismiss();
@@ -956,6 +977,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     @Subscribe public void onRefreshFeed(RefreshEvent event) {
         ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
         Log.e("onRefreshFeed", "true");
+        dialog.hide();
     }
 
     /**
@@ -997,13 +1019,18 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
     @Override
     public void onResume() {
         super.onResume();
-        if(mProgressBarFeed != null && !isLoadding)
-            mProgressBarFeed.setVisibility(View.GONE);
+//        if(mProgressBarFeed != null && !isLoadding)
+//            mProgressBarFeed.setVisibility(View.GONE);
+
+        if(dialog != null)
+            dialog.hide();
     }
 
     boolean isSetBadge = false;
 
     @Subscribe public void onLoadTimelineSuccess(LoadTimelineSuccessEvent event) {
+
+        dialog.hide();
 
         if(menu != null && !isSetBadge) {
             new ActionItemBadgeAdder().act(getActivity()).menu(menu)
@@ -1022,7 +1049,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
         if(list.size() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
-            mProgressBarFeed.setVisibility(View.GONE);
+
         } else {
             mEmptyView.setVisibility(View.GONE);
         }
@@ -1059,6 +1086,8 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
 
     @Subscribe
     public void onLoadProfile(final GetUserProfileSuccessEvent event) {
+
+        dialog.hide();
 
         userId = event.getUser().getId();
 
@@ -1345,6 +1374,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                 //isRefresh = true;
                 break;
         }
+
         //myTitanicTextView.setVisibility(View.VISIBLE);
         switch (item.getItemId()) {
             case R.id.action_search:
@@ -1371,6 +1401,7 @@ public class FeedFragment extends BaseFragment implements BaseFragment.SearchLis
                     swipeLayout.setRefreshing(true);
 
                 ApiBus.getInstance().post(new LoadTimelineEvent(Integer.parseInt(userId), TYPE, 1, PER_PAGE, isHomeTimeline));
+                //dialog.show();
                 break;
         }
         return true;

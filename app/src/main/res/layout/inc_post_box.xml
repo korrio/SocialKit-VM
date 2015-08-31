@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:background="#fff">
 
         <ImageView
 
@@ -17,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="4dp"
-            android:src="@drawable/ic_action_emoji"
+            android:src="@drawable/tt0501"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true" />
 
@@ -29,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:textColor="#252525"
+            android:textColorHint="#AAA"
             app:ag_threshold="2"
             />
 

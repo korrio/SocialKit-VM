@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".MainActivity">
+
+
+
+    <ImageButton
+        android:id="@+id/button_call_disconnect"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="เสร็จ"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginBottom="43dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Chonlakant"
+        android:id="@+id/contact_name_call"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="กำลังโทร...."
+        android:id="@+id/textView3"
+        android:textSize="15dp"
+        android:layout_below="@+id/contact_name_call"
+        android:layout_alignRight="@+id/contact_name_call"
+        android:layout_alignEnd="@+id/contact_name_call" />
+    <ImageButton
+        android:background="@drawable/ic_action_return_from_full_screen"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/button_call_scaling_mode"
+        android:layout_marginLeft="0dp" />
+
+    <ImageButton
+        android:background="@android:drawable/ic_menu_camera"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/button_call_switch_camera"
+        android:layout_marginLeft="40dp" />
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <include layout="@layout/item_vdo_call"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <include layout="@layout/item_audio_call"/>
+    </RelativeLayout>
+</RelativeLayout>

@@ -97,7 +97,8 @@ public class SocialViewPagerFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
     	ViewPager mViewPager = (ViewPager) view.findViewById(R.id.pager);
 
-        setupToolbar();
+        if(getActivity().getClass().getSimpleName().equals("MainActivity") || getActivity().getClass().getSimpleName().equals("BaseActivity"))
+            setupToolbar();
     	
     	mViewPager.setOffscreenPageLimit(6);
         mViewPager.setAdapter(new SocialViewPagerAdapter(getChildFragmentManager(), mTabs));

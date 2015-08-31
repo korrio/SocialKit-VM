@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#EEE"
+    android:background="@drawable/bg_tattoo"
     android:minHeight="90dp"
     android:padding="4dp"
     tools:ignore="HardcodedText,ContentDescription">
@@ -14,7 +14,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView15"
+            android:src="@drawable/tt0301"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Tattoo Store"
+            android:id="@+id/textView"
+            android:textColor="#252525"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
+
+    </LinearLayout>
 
 
 </RelativeLayout>

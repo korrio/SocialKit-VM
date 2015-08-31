@@ -1,6 +1,7 @@
 package co.aquario.socialkit.fragment.main;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -90,6 +91,16 @@ public class FriendFragment extends BaseFragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recyclerview_autofit, container, false);
+
+        Snackbar
+                .make(rootView,"Long pressing your friends to chat", Snackbar.LENGTH_LONG)
+                .setAction("OK", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                    }
+                })
+                .show();
 
         recyclerView = (AutofitRecyclerView) rootView.findViewById(R.id.recycler_view);
         emptyView = (TextView) rootView.findViewById(R.id.emptyText);

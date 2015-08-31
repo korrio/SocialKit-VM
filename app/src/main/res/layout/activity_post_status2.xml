@@ -34,7 +34,8 @@
                 android:layout_gravity="center"
                 emojicon:emojiconSize="120sp"
                 android:background="#00000000"
-                android:cursorVisible="false"/>
+                android:cursorVisible="false"
+                android:text="ԁ"/>
         </FrameLayout>
 
         <LinearLayout

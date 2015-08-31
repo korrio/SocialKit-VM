@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.androidquery.AQuery;
 import com.androidquery.auth.FacebookHandle;
 import com.androidquery.callback.AjaxStatus;
@@ -175,8 +176,16 @@ public class LoginFragment extends BaseFragment {
         fbBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.progress_dialog)
+                        .content(R.string.please_wait)
+                        .progress(true, 0)
+                        .show();
                 //LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile", "user_friends"));
                 authFacebook();
+
+
+
             }
         });
 
@@ -198,6 +207,11 @@ public class LoginFragment extends BaseFragment {
                 else
                     Toast.makeText(getActivity().getApplicationContext(),getResources().getString(R.string.empty_input),Toast.LENGTH_SHORT).show();
 
+                new MaterialDialog.Builder(getActivity())
+                        .title(R.string.progress_dialog)
+                        .content(R.string.please_wait)
+                        .progress(true, 0)
+                        .show();
             }
         });
 

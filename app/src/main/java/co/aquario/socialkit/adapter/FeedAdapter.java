@@ -708,7 +708,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> im
                             } else {
 
                                 //String sample = "https://stream-1.vdomax.com/vod/__definst__/mp4:110559/110559_720p.mp4/playlist.m3u8";
-                                String clipURL = "http://stream-1.vdomax.com:1935/vod/__definst__/mp4:"+post.clip.id+"/"+post.clip.id+"_720p.mp4/playlist.m3u8";
+                                //http://stream-1.vdomax.com:1935/vod/_definst_/mp4:118005/118005_720p.mp4/playlist.m3u8
+                                String clipURL = "http://stream-1.vdomax.com:1935/vod/_definst_/mp4:"+post.clip.id+"/"+post.clip.id+"_720p.mp4/playlist.m3u8";
                                 Log.e("fromFeedAdapter", clipURL);
 
                                 Video clip = new Video("clip",post.postId, post.author.name, "@"+post.author.username, clipURL, post.text, post.timestamp, post.view, post.author.id, post.author.name, post.author.getAvatarPath(), post.loveCount, post.commentCount, post.shareCount);

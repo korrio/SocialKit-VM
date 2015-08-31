@@ -8,6 +8,7 @@ import com.squareup.otto.Subscribe;
 import java.util.HashMap;
 import java.util.Map;
 
+import co.aquario.chatapp.ChatActivity;
 import co.aquario.chatapp.event.request.BlockUserEvent;
 import co.aquario.chatapp.event.request.ConversationGroupEvent;
 import co.aquario.chatapp.event.request.ConversationOneToOneEvent;
@@ -27,10 +28,12 @@ import co.aquario.chatapp.event.response.SuccessEvent;
 import co.aquario.chatapp.model.SomeData;
 import co.aquario.chatapp.model.conversation.ConversationId;
 import co.aquario.chatapp.model.conversation.RecentChatResponse;
+import co.aquario.chatui.event_chat.request.InviteFriendToGroupChatEvent;
 import co.aquario.chatui.event_chat.response.SearchUserEventSuccess;
 import co.aquario.chatui.event_chat.response.SearchUserNotFoundEvent;
 import co.aquario.chatui.model.Block;
 import co.aquario.chatui.model.FindFriends;
+import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.handler.ApiBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -175,9 +178,9 @@ public class ChatApiHandler {
         api.getChatById(event.cid, new Callback<ChatInfo>() {
             @Override
             public void success(ChatInfo chatInfo, Response response) {
-                if(chatInfo != null) {
-                    if(chatInfo.getConversationMembers().size() != 0)
-                        Log.e("conversationmembers",chatInfo.getConversationMembers().size()+ "");
+                if (chatInfo != null) {
+                    if (chatInfo.getConversationMembers().size() != 0)
+                        Log.e("conversationmembers", chatInfo.getConversationMembers().size() + "");
                     ApiBus.getInstance().postQueue(new GetChatInfoSuccess(chatInfo));
                 }
 
@@ -194,7 +197,7 @@ public class ChatApiHandler {
         api.getRecentChat(event.userId, new Callback<RecentChatResponse>() {
             @Override
             public void success(RecentChatResponse recentChatResponse, Response response) {
-                if(recentChatResponse.getContent().size() != 0)
+                if (recentChatResponse.getContent().size() != 0)
                     ApiBus.getInstance().postQueue(new GetRecentChatSuccess(recentChatResponse));
             }
 
@@ -203,6 +206,47 @@ public class ChatApiHandler {
 
             }
         });
+    }
+
+    private static String removeLastChar(String str) {
+        return str.substring(0,str.length()-1);
+    }
+
+    @Subscribe public void createGroupChat(InviteFriendToGroupChatEvent event) {
+
+        String inviteUserIdStr = "[";
+
+        for(int i = 0; i< event.userIdsInt.size() ; i ++) {
+            inviteUserIdStr = inviteUserIdStr.concat(event.userIdsInt.get(i) + ",");
+        }
+
+        if(inviteUserIdStr.endsWith(","))
+        {
+            inviteUserIdStr = inviteUserIdStr.substring(0,inviteUserIdStr.length() - 1);
+        }
+
+        inviteUserIdStr = inviteUserIdStr.concat("]");
+
+
+        if(inviteUserIdStr.startsWith("[") && inviteUserIdStr.endsWith("]")) {
+            Log.e("mystring",inviteUserIdStr);
+            api.getConversationGroup(event.groupName,inviteUserIdStr , Integer.parseInt(event.userId), new Callback<ConversationId>() {
+                @Override
+                public void success(ConversationId conversationId, Response response) {
+                    ApiBus.getInstance().postQueue(new ConversationEventSuccess(conversationId.id));
+                    ChatActivity.startChatActivity(VMApp.currentActivity, conversationId.id, 2);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
+        } else {
+            Log.e("mystring",inviteUserIdStr);
+        }
+
+
     }
 
 

@@ -48,6 +48,9 @@ public class ChatActivity extends BaseActivity {
 
     }
 
+    int mCid;
+    int chatType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,8 +67,8 @@ public class ChatActivity extends BaseActivity {
 
         if(getIntent() != null) {
 
-            int mCid = getIntent().getExtras().getInt("CONVERSATION_ID");
-            int chatType = getIntent().getExtras().getInt("CHAT_TYPE");
+            mCid = getIntent().getExtras().getInt("CONVERSATION_ID");
+            chatType = getIntent().getExtras().getInt("CHAT_TYPE");
 
             Log.e("CONVERSATION_ID",mCid + "");
             Log.e("CHAT_TYPE",chatType + "");
@@ -173,7 +176,7 @@ public class ChatActivity extends BaseActivity {
 
     @Subscribe public void onUpdateUserProfile(GetUserEventSuccess event) {
         if(toolbar != null) {
-            if(event.userMe.getUser() != null) {
+            if(event.userMe.getUser() != null && chatType != 1 && chatType != 2) {
                 getToolbar().setTitle(event.userMe.getUser().getName());
                 getToolbar().setSubtitle("@" + event.userMe.getUser().getUsername());
             }

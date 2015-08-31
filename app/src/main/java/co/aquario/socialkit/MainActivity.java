@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -24,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
-import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.crossfader.util.UIUtils;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
@@ -57,12 +57,14 @@ import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.event.upload.UpdateAvatarEvent;
 import co.aquario.socialkit.event.upload.UpdateCoverEvent;
 import co.aquario.socialkit.fragment.LiveHistoryFragment;
+import co.aquario.socialkit.fragment.MaxpointFragment;
 import co.aquario.socialkit.fragment.NotiFragment;
 import co.aquario.socialkit.fragment.SettingFragment;
 import co.aquario.socialkit.fragment.WebViewFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.fragment.main.FeedFragment;
 import co.aquario.socialkit.fragment.pager.ChannelViewPagerFragment;
+import co.aquario.socialkit.fragment.pager.HomeViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.HomeViewPagerNiceTabFragment;
 import co.aquario.socialkit.fragment.pager.PhotoViewPagerFragment;
 import co.aquario.socialkit.fragment.pager.SocialViewPagerFragment;
@@ -116,8 +118,14 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
         VMApp.saveInstallation(Integer.parseInt(userId));
 
         if (savedInstanceState == null) {
-            //HomeViewPagerFragment fragment = new HomeViewPagerFragment();
-            HomeViewPagerNiceTabFragment fragment = new HomeViewPagerNiceTabFragment();
+
+            BaseFragment fragment;
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                fragment = new HomeViewPagerNiceTabFragment();// tab bar with text and icon
+            } else {
+                fragment = new HomeViewPagerFragment(); // tab bar with only icon
+            }
+
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.sub_container, fragment);
@@ -335,7 +343,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                         new SecondaryDrawerItem().withName("Chat").withIcon(FontAwesome.Icon.faw_envelope).withIdentifier(1),
                         new SecondaryDrawerItem().withName("Live History").withIcon(FontAwesome.Icon.faw_history).withIdentifier(2),
                         new SecondaryDrawerItem().withName("Setting").withIcon(FontAwesome.Icon.faw_cog).withIdentifier(3),
-                       // new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc).withIdentifier(4),
+                        new SecondaryDrawerItem().withName("Maxpoint").withIcon(FontAwesome.Icon.faw_btc).withIdentifier(4),
                         new SecondaryDrawerItem().withName("Tattoo Store").withIcon(FontAwesome.Icon.faw_shopping_cart).withIdentifier(5),
                         new SecondaryDrawerItem().withName("Term & Policies").withIcon(FontAwesome.Icon.faw_terminal).withIdentifier(6)
                         //new SecondaryDrawerItem().withName("Log Out").withIcon(FontAwesome.Icon.faw_sign_out)
@@ -391,6 +399,10 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
                             // Maxpoint
                             getToolbar().setTitle("VDOMAX");
                             getToolbar().setSubtitle("Maxpoint");
+                            MaxpointFragment fragment = MaxpointFragment.newInstance(userId);
+                            getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, fragment, "MAXPOINT").addToBackStack(null).commit();
+
+
 
                         } else if(drawerItem.getIdentifier() == 5){
                             getToolbar().setTitle("VDOMAX");
@@ -618,7 +630,11 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
 
             NotiFragment notiFragment = NotiFragment.newInstance(VMApp.mPref.userId().getOr(""),"ALL");
             getSupportFragmentManager().beginTransaction().replace(R.id.sub_container, notiFragment, "NOTIFICATION").addToBackStack(null).commit();
-            ActionItemBadge.update(item, VMApp.getNotiBadge());
+
+            VMApp.clearBadge(getApplicationContext(),item);
+
+
+
 
         }
 

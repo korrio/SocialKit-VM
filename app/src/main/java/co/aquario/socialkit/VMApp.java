@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.androidquery.AQuery;
 import com.androidquery.auth.FacebookHandle;
@@ -23,6 +24,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.parse.Parse;
 import com.parse.ParseCrashReporting;
 import com.parse.ParseInstallation;
@@ -56,7 +58,6 @@ import co.aquario.socialkit.handler.PostUploadService;
 import co.aquario.socialkit.push.PushManage;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.StorageUtils;
-import co.aquario.socialkit.util.Utils;
 import io.fabric.sdk.android.Fabric;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -103,6 +104,33 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
         return notiBadge;
     }
 
+    public static MenuItem badgeItem;
+
+    public static void clearBadge(Context context,MenuItem item) {
+        String userId = VMApp.mPref.userId().getOr("0");
+        badgeItem = item;
+        if(!userId.equals("0")) {
+            long unixTime = System.currentTimeMillis() / 1000L;
+            String url = "http://chat.vdomax.com/noti/index.php?a=readAll&user_id="+userId+"&timestamp="+unixTime;
+            AQuery aq = new AQuery(context);
+            HashMap<String,Object> params = new HashMap<>();
+
+            aq.ajax(url, JSONObject.class, context,
+                    "clearBadgeCb");
+        }
+
+    }
+
+    public void clearBadgeCb(String url, JSONObject jo, AjaxStatus status)
+            throws JSONException {
+        if (jo != null) {
+            if(VMApp.getNotiBadge() > 0)
+                ActionItemBadge.update(badgeItem, VMApp.getNotiBadge());
+            else
+                ActionItemBadge.hide(badgeItem);
+        }
+    }
+
     public static void fetchBadge(Context context) {
         String userId = VMApp.mPref.userId().getOr("0");
         if(!userId.equals("0")) {
@@ -120,7 +148,8 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
             throws JSONException {
         if (jo != null) {
             notiBadge = jo.optJSONObject("count").optInt("noti_unread");
-            Utils.showToast("Badge:" + notiBadge);
+            ActionItemBadge.update(badgeItem, VMApp.getNotiBadge());
+            //Utils.showToast("Badge:" + notiBadge);
 
         }
     }
@@ -295,7 +324,7 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
 
     ChatApiService buildChatApi() {
         return new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint(CHAT_ENDPOINT)
 
                 .setRequestInterceptor(new RequestInterceptor() {
@@ -311,7 +340,7 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
 
     NotiApiService buildNotiApi() {
         return new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
+                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint(NOTI_ENDPOINT)
 
                 .setRequestInterceptor(new RequestInterceptor() {
@@ -384,9 +413,11 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
     }
 
     public static boolean applicationOnPause = false;
+    public static Activity currentActivity;
 
     @Override
     public void onActivityCreated(Activity arg0, Bundle arg1) {
+        currentActivity = arg0;
         Log.e("VMVMVM","onActivityCreated");
 
     }
@@ -403,6 +434,7 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
     }
     @Override
     public void onActivityResumed(Activity activity) {
+        currentActivity = activity;
         applicationOnPause = false;
         Log.e("VMVMVM","onActivityResumed "+activity.getClass());
 
@@ -414,6 +446,7 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
     }
     @Override
     public void onActivityStarted(Activity activity) {
+        currentActivity = activity;
         Log.e("VMVMVM","onActivityStarted");
 
     }
