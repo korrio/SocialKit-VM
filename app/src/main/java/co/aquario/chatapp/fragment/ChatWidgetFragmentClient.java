@@ -96,10 +96,12 @@ import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
+import co.aquario.socialkit.fragment.FullScreenVideoFragment;
 import co.aquario.socialkit.fragment.VideoViewNativeFragment;
 import co.aquario.socialkit.fragment.main.BaseFragment;
 import co.aquario.socialkit.handler.ApiBus;
 import co.aquario.socialkit.search.soundcloud.SoundCloudService;
+import co.aquario.socialkit.search.youtube.YouTubeData;
 import co.aquario.socialkit.util.EndpointManager;
 import co.aquario.socialkit.util.PrefManager;
 import co.aquario.socialkit.util.Utils;
@@ -452,14 +454,23 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                     case 31:
                         // intent youtube player activity
                         String ytUrl = dataObj.optString("ytUrl");
-                        Log.e("myYtUrl", ytUrl);
-                        String[] split = ytUrl.split("v=");
-                        String yid = split[1];
-                        //String yid = YouTubeData.getYouTubeVideoId(ytUrl);
-                        //Intent lVideoIntent = new Intent(null, Uri.parse("ytv://" + yid), getActivity(), OpenYouTubePlayerActivity.class);
-                        //Intent lVideoIntent = new Intent(getActivity(), YoutubeActivity.class);
-                        //lVideoIntent.putExtra("id", yid);
-                        //startActivity(lVideoIntent);
+                        if(ytUrl != null) {
+                            String ytId = YouTubeData.getYouTubeVideoId(ytUrl);
+
+                            String url = "";
+                            try {
+                                url = YouTubeData.calculateYouTubeUrl("22", true, ytId);
+                                url = java.net.URLDecoder.decode(url, "UTF-8");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            FullScreenVideoFragment fullScreenVideoFragment = FullScreenVideoFragment.newInstance(url);
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction().replace(R.id.sub_container, fullScreenVideoFragment, "YOUTUBE_PLAYER")
+                                    .addToBackStack(null).commit();
+                        }
+
                         break;
                     case 32:
                         // play soundcloud

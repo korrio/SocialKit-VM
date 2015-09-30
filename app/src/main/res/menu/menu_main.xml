@@ -35,14 +35,14 @@
         <item
             android:id="@+id/menu_sort_video"
             android:orderInCategory="4"
-            android:title="Video"
+            android:title="Clip"
             app:showAsAction="ifRoom"
             app:icon="@drawable/ic_clip">
         </item>
         <item
             android:id="@+id/menu_sort_youtube"
             android:orderInCategory="5"
-            android:title="Youtube"
+            android:title="Video"
             app:showAsAction="ifRoom"
             android:icon="@drawable/ic_yt">
         </item>

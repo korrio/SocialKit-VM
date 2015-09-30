@@ -17,7 +17,6 @@ import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 import org.parceler.Parcels;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -28,7 +27,6 @@ import co.aquario.socialkit.fragment.FullScreenVideoFragment;
 import co.aquario.socialkit.fragment.YoutubeDetailFragment;
 import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.search.youtube.YouTubeData;
-import co.aquario.socialkit.search.youtube.YoutubeParse;
 import co.aquario.socialkit.search.youtube.parser.YoutubeParser;
 
 //import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -96,18 +94,7 @@ public class DragableActivity extends AppCompatActivity {
         if(video.getPostType().equals("youtube")) {
             try {
                 url = YouTubeData.calculateYouTubeUrl("22", true, VIDEO_KEY);
-                YoutubeParse test = new YoutubeParse();
-                HashMap<String,String> map = test.getVideoInfo(VIDEO_KEY);
 
-               YoutubeParse.YoutubeStream stream = test.processStream();
-               if(url == null)
-                   url =  stream.url;
-
-                if(url == null)
-                    url = stream.rawurl;
-
-                //Log.e("stream.url",stream.url);
-                //Log.e("stream.rawurl",stream.rawurl);
 
 
                 if(url != null && !url.equals("")) {

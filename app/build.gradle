@@ -19,8 +19,8 @@ android {
         applicationId "co.aquario.socialkit"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 111
-        versionName "1.1.1"
+        versionCode 112
+        versionName "1.1.2"
         multiDexEnabled true
         renderscriptSupportModeEnabled true
     }
