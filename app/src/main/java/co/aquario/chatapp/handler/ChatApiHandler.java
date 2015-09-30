@@ -29,6 +29,10 @@ import co.aquario.chatapp.model.SomeData;
 import co.aquario.chatapp.model.conversation.ConversationId;
 import co.aquario.chatapp.model.conversation.RecentChatResponse;
 import co.aquario.chatui.event_chat.request.InviteFriendToGroupChatEvent;
+import co.aquario.chatui.event_chat.request.ReadChatEvent;
+import co.aquario.chatui.event_chat.request.RemoveChatEvent;
+import co.aquario.chatui.event_chat.response.ReadChatSuccess;
+import co.aquario.chatui.event_chat.response.RemoveChatSuccess;
 import co.aquario.chatui.event_chat.response.SearchUserEventSuccess;
 import co.aquario.chatui.event_chat.response.SearchUserNotFoundEvent;
 import co.aquario.chatui.model.Block;
@@ -194,7 +198,12 @@ public class ChatApiHandler {
     }
 
     @Subscribe public void getRecentChat(GetRecentChatEvent event) {
-        api.getRecentChat(event.userId, new Callback<RecentChatResponse>() {
+        Map<String, String> options = new HashMap<String, String>();
+        options.put("size", "100");
+        //options.put("key2", Integer.toString(event.getVar2()));
+
+
+        api.getRecentChat(event.userId, options, new Callback<RecentChatResponse>() {
             @Override
             public void success(RecentChatResponse recentChatResponse, Response response) {
                 if (recentChatResponse.getContent().size() != 0)
@@ -204,6 +213,34 @@ public class ChatApiHandler {
             @Override
             public void failure(RetrofitError error) {
 
+            }
+        });
+    }
+
+    @Subscribe public void readChat(ReadChatEvent event) {
+        api.readRecent(event.cid, new Callback<ReadChatSuccess>() {
+            @Override
+            public void success(ReadChatSuccess readChatSuccess, Response response) {
+                Log.e("readsuccess",readChatSuccess.success + "");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("readsuccess",error.getLocalizedMessage());
+            }
+        });
+    }
+
+    @Subscribe public void removeChat(RemoveChatEvent event) {
+        api.removeRecent(event.cid, new Callback<RemoveChatSuccess>() {
+            @Override
+            public void success(RemoveChatSuccess removeChatSuccess, Response response) {
+                Log.e("removesuccess",removeChatSuccess.success + "");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("removesuccess",error.getLocalizedMessage());
             }
         });
     }

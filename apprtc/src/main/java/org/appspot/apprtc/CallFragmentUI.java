@@ -18,6 +18,8 @@ import com.squareup.picasso.Picasso;
 import org.appspot.apprtc.util.RoundedTransformation;
 import org.webrtc.VideoRendererGui;
 
+
+
 public class CallFragmentUI extends Fragment {
     private View controlView;
     private TextView contactView;
@@ -33,6 +35,16 @@ public class CallFragmentUI extends Fragment {
     String timerStop1;
     ImageView mAvatar;
     Bundle args;
+
+    public static CallFragmentUI newInstance(String avatarUrl) {
+        
+        Bundle args = new Bundle();
+        
+        CallFragmentUI fragment = new CallFragmentUI();
+        args.putString("avatar",avatarUrl);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     /**
      * Call control interface for container activity.
@@ -122,13 +134,27 @@ public class CallFragmentUI extends Fragment {
             mTimerLabel.setVisibility(View.VISIBLE);
             mAvatar.setVisibility(View.VISIBLE);
             String pAvatar = args.getString("avatar");
-            Log.e("6666", pAvatar);
-            Picasso.with(getActivity())
-                    .load(pAvatar)
-                    .centerCrop()
-                    .resize(200, 200)
-                    .transform(new RoundedTransformation(100, 4))
-                    .into(mAvatar);
+            if(pAvatar != null) {
+                Log.e("args",args.toString());
+
+                //Log.e("6666", pAvatar);
+                Picasso.with(getActivity())
+                        .load(pAvatar)
+                        .centerCrop()
+                        .resize(200, 200)
+                        .transform(new RoundedTransformation(100, 4))
+                        .into(mAvatar);
+            } else {
+                pAvatar = "https://www.vdomax.com/themes/vdomax1.1/images/default-male-avatar.png";
+                Log.e("args",pAvatar);
+                Picasso.with(getActivity())
+                        .load(pAvatar)
+                        .centerCrop()
+                        .resize(200, 200)
+                        .transform(new RoundedTransformation(100, 4))
+                        .into(mAvatar);
+            }
+
         }
     }
 

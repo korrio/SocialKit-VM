@@ -58,6 +58,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.setContentView(layoutResID);
         ButterKnife.inject(this);
 
+
+
         mPref = VMApp.get(getApplicationContext()).getPrefManager();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (getSupportActionBar() != null && toolbar != null) {
@@ -109,6 +111,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState, persistentState);
         mContext = this;
         mPref = VMApp.get(mContext).getPrefManager();
+
+
     }
 
     @Override

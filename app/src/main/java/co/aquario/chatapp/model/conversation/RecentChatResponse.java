@@ -63,7 +63,7 @@ public class RecentChatResponse {
         private int readed;
         private String readTime;
         private int conversationId;
-        private String data;
+        //private String data;
         private String memberType;
         private String avatar;
         private String type;
@@ -92,9 +92,9 @@ public class RecentChatResponse {
             this.conversationId = conversationId;
         }
 
-        public void setData(String data) {
-            this.data = data;
-        }
+//        public void setData(String data) {
+//            this.data = data;
+//        }
 
         public void setMemberType(String memberType) {
             this.memberType = memberType;
@@ -156,9 +156,9 @@ public class RecentChatResponse {
             return conversationId;
         }
 
-        public String getData() {
-            return data;
-        }
+//        public String getData() {
+//            return data;
+//        }
 
         public String getMemberType() {
             return memberType;

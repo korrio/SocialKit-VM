@@ -79,14 +79,14 @@ public class IncomingCallReceiver extends BroadcastReceiver  {
                             case 504:
                             case 505:
 
-                                final long[] pattern2 = {0, 1000, 1000, 1000, 1000};
+                                final long[] pattern2 = {0, 1000, 1000};
                                 new Thread(){
                                     @Override
                                     public void run() {
-                                        for(int i = 0; i < 5; i++){ //repeat the pattern 5 times
+                                        for(int i = 0; i < 3; i++){ //repeat the pattern 5 times
                                             vCtrl.vibratePattern(pattern2);
                                             try {
-                                                Thread.sleep(4000); //the time, the complete pattern needs
+                                                Thread.sleep(2000); //the time, the complete pattern needs
                                             } catch (InterruptedException e) {
                                                 e.printStackTrace();
                                             }
@@ -104,7 +104,9 @@ public class IncomingCallReceiver extends BroadcastReceiver  {
                                 pupInt.putExtra("session", json.optString("session"));
                                 pupInt.putExtra("type", json.optString("type"));
                                 pupInt.putExtra("customdata", json.optString("customdata"));
-                                context.getApplicationContext().startActivity(pupInt);
+
+                                if(!VMApp.currentActivity.getClass().getSimpleName().equals("CallActivity"))
+                                    context.getApplicationContext().startActivity(pupInt);
                                 break;
 
 //						pupInt = new Intent(context, ShowChatPopUp.class);

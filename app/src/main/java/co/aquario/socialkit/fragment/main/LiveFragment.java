@@ -1,7 +1,10 @@
 package co.aquario.socialkit.fragment.main;
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import co.aquario.chatapp.fragment.ChatWidgetFragmentClient;
+import co.aquario.socialkit.MainActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.fragment.SurfaceFragment;
 import co.aquario.socialkit.model.Channel;
@@ -32,6 +36,8 @@ public class LiveFragment extends BaseFragment {
     public final static String QUALITY = "quality";
 
     private static String VIDEO_PATH = "";
+    private float width;
+    private float height;
 
     @InjectView(R.id.iv_thumbnail)
     ImageView thumbnailImageView;
@@ -46,7 +52,8 @@ public class LiveFragment extends BaseFragment {
     String cover = "";
     String mQuality = "HQ";
     private String mLocation;
-
+    Toolbar toolbar;
+    int toolbarHeight = 0;
     private Channel channel;
     private Fragment fragment;
 
@@ -56,6 +63,12 @@ public class LiveFragment extends BaseFragment {
         mBundle.putParcelable("KEY_CHANNEL",Parcels.wrap(channel));
         mFragment.setArguments(mBundle);
         return mFragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -83,7 +96,10 @@ public class LiveFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_watch_dragable, container, false);
-
+        toolbar = ((MainActivity) getActivity()).getToolbar();
+        if (toolbar != null) {
+            toolbarHeight = toolbar.getHeight();
+        }
         ButterKnife.inject(this,rootView);
 
         initializeVideoPlayerFragment();
@@ -133,6 +149,12 @@ public class LiveFragment extends BaseFragment {
         ChatWidgetFragmentClient chatFragment = ChatWidgetFragmentClient.newInstance(Integer.parseInt(prefManager.userId().getOr("0")),Integer.parseInt(userId),1);
 
         draggablePanel.setBottomFragment(chatFragment);
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        int height = (size.y/2 - toolbarHeight);
+        draggablePanel.setTopViewHeight(height);
         draggablePanel.initializeView();
         Picasso.with(getActivity())
                 .load(cover)

@@ -2,15 +2,16 @@ package co.aquario.socialkit.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.StrictMode;
+import android.util.Log;
+import android.view.Display;
 import android.widget.ImageView;
 
 import com.github.pedrovgs.DraggableListener;
 import com.github.pedrovgs.DraggablePanel;
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.inthecheesefactory.lib.fblike.widget.FBLikeView;
 
 import org.parceler.Parcels;
@@ -23,7 +24,7 @@ import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
 import co.aquario.socialkit.fragment.ExoSurfaceFragment;
-import co.aquario.socialkit.fragment.YoutubeDetailFragment;
+import co.aquario.socialkit.fragment.FullScreenVideoFragment;
 import co.aquario.socialkit.model.Video;
 import co.aquario.socialkit.util.DensityUtil;
 
@@ -41,13 +42,15 @@ public class LiveDragableActivity extends BaseActivity {
     String title = "";
     String avatar = "";
     String description = "";
+    String url = "";
     String countView = "";
     int countLove;
     int countComment;
     int countShare;
     String userId;
-    private YouTubePlayer youtubePlayer;
-    private YouTubePlayerSupportFragment youtubeFragment;
+//    private YouTubePlayer youtubePlayer;
+//    private YouTubePlayerSupportFragment youtubeFragment;
+    private FullScreenVideoFragment fullScreenVideoFragment;
     private ExoSurfaceFragment surfaceFragment;
     //private VideoViewNativeFragment videoViewFragment;
     private Video video;
@@ -98,11 +101,11 @@ public class LiveDragableActivity extends BaseActivity {
         countShare = video.getnShare();
         VIDEO_KEY = video.getYoutubeId();
 
-        if(video.getPostType().equals("youtube")) {
-            initYoutubeFragment(VIDEO_KEY);
-        } else {
-            initClipFragment(VIDEO_KEY,name,username);
-        }
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        initClipFragment(VIDEO_KEY,name,username);
+
 
         initDraggablePanel();
         hookDraggablePanelListeners();
@@ -120,38 +123,19 @@ public class LiveDragableActivity extends BaseActivity {
     private void initClipFragment(String clipPath, String name, String username) {
         Bundle data2 = new Bundle();
         data2.putString("PATH", clipPath);
-        data2.putString("NAME", name);
-        data2.putString("USERNAME", username);
+        Log.e("000000", clipPath);
 
-        surfaceFragment = new ExoSurfaceFragment();
-        surfaceFragment.setArguments(data2);
+        fullScreenVideoFragment = FullScreenVideoFragment.newInstance(clipPath);
 
         //videoViewFragment = toolbar VideoViewNativeFragment();
         //videoViewFragment.setArguments(data2);
     }
 
-    /**
-     * Initialize the YouTubeSupportFrament attached as top fragment to the DraggablePanel widget and
-     * reproduce the YouTube video represented with a YouTube url.
-     */
-    private void initYoutubeFragment(final String youtubeId) {
-        youtubeFragment = new YouTubePlayerSupportFragment();
-        youtubeFragment.initialize(YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
 
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider,YouTubePlayer player, boolean wasRestored) {
-                if (!wasRestored) {
-                    youtubePlayer = player;
-                    youtubePlayer.loadVideo(youtubeId);
-                    youtubePlayer.setShowFullscreenButton(true);
-                }
-            }
-
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider,
-                                                YouTubeInitializationResult error) {
-            }
-        });
     }
 
     /**
@@ -160,24 +144,22 @@ public class LiveDragableActivity extends BaseActivity {
     private void initDraggablePanel() {
         draggablePanel.setFragmentManager(getSupportFragmentManager());
 
-        if(video.getPostType().equals("youtube")) {
-            draggablePanel.setTopFragment(youtubeFragment);
-        } else {
-            draggablePanel.setTopFragment(surfaceFragment);
-        }
-
-        YoutubeDetailFragment youtubeDetailFragment = new YoutubeDetailFragment();
-
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("obj", Parcels.wrap(video));
-//        youtubeDetailFragment.setArguments(bundle);
-
+        draggablePanel.setTopFragment(fullScreenVideoFragment);
 
         ChatWidgetFragmentClient chatFragment = ChatWidgetFragmentClient.newInstance(Integer.parseInt(VMApp.mPref.userId().getOr("0")),Integer.parseInt(userId),1);
-
-
-
         draggablePanel.setBottomFragment(chatFragment);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+        int height = (size.y/2) - 180;
+        draggablePanel.setTopViewHeight(height);
+
+        draggablePanel.setClickToMaximizeEnabled(true);
+        //draggablePanel.setClickToMinimizeEnabled(true);
+
+
         draggablePanel.initializeView();
 
     }
@@ -200,31 +182,15 @@ public class LiveDragableActivity extends BaseActivity {
 
             @Override
             public void onClosedToLeft() {
-                pauseVideo();
+                //pauseVideo();
             }
 
             @Override
             public void onClosedToRight() {
-                pauseVideo();
+               // pauseVideo();
             }
         });
     }
 
-    /**
-     * Pause the video reproduced in the YouTubePlayer.
-     */
-    private void pauseVideo() {
-        if (youtubePlayer.isPlaying()) {
-            youtubePlayer.pause();
-        }
-    }
 
-    /**
-     * Resume the video reproduced in the YouTubePlayer.
-     */
-    private void playVideo() {
-        if (!youtubePlayer.isPlaying()) {
-            youtubePlayer.play();
-        }
-    }
 }

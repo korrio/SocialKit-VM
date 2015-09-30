@@ -146,7 +146,7 @@ public class FriendRecyclerAdapter extends RecyclerView.Adapter<FriendRecyclerAd
                     public void onClick(View view) {
 
                         String roomName = "VM_" + mUserId + "_" + userId + "_" + System.currentTimeMillis();
-                        NotiUtils.notifyUser(mActivity,504,mUserId, Integer.parseInt(userId), roomName);
+                        NotiUtils.notifyUser(mActivity,505,mUserId, Integer.parseInt(userId), roomName);
                         ChatUIActivity.connectToRoom(mActivity, roomName, false);
                     }
                 });

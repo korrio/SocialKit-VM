@@ -50,7 +50,7 @@ public class FullScreenVideoCacheActivity extends Activity implements View.OnCli
 
     private ProgressBar progressBar;
    // private HttpProxyCache proxyCache;
-
+   ImageView fullscreen_btn;
     private FullScreenVideoView mVideo;
     private View mTopView;
     private View mBottomView;
@@ -97,6 +97,8 @@ public class FullScreenVideoCacheActivity extends Activity implements View.OnCli
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setMax(100);
 
+        fullscreen_btn = (ImageView) findViewById(R.id.fullscreen_btn);
+
         infoTv = (TextView) findViewById(R.id.info);
         infoTv.setText(mName);
 
@@ -121,6 +123,12 @@ public class FullScreenVideoCacheActivity extends Activity implements View.OnCli
         mSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
 
         //playVideo();
+        fullscreen_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
     }
 

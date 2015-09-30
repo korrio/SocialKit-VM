@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="co.aquario.socialkit">
 
     <uses-permission android:name="com.android.vending.BILLING" />
@@ -86,6 +88,7 @@
     <application
         android:name=".VMApp"
         android:allowBackup="true"
+        tools:replace="android:icon,android:theme"
         android:icon="@drawable/ic_vm"
         android:theme="@style/AppTheme.WithoutActionBar">
 

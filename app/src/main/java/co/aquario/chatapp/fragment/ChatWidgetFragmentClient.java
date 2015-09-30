@@ -94,7 +94,6 @@ import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.NewProfileActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
-import co.aquario.socialkit.activity.YoutubeActivity;
 import co.aquario.socialkit.event.toolbar.SubTitleEvent;
 import co.aquario.socialkit.event.toolbar.TitleEvent;
 import co.aquario.socialkit.fragment.VideoViewNativeFragment;
@@ -405,7 +404,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             Intent intent = new Intent(getActivity(), PhotoPagerActivity.class);
 
                             ArrayList<String> urls = new ArrayList<>();
-                            String imageUrl = dataObj.optString("url");
+                            String imageUrl = dataObj.optString("thumb");
                             urls.add(0, imageUrl);
 
                             // view all images in chat (not complete)
@@ -432,7 +431,7 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                             getActivity().startActivity(intent);
                         } else {
 
-                            String clipPath = dataObj.optString("url");
+                            String clipPath = dataObj.optString("full_path");
 
                             Bundle data2 = new Bundle();
                             data2.putString("PATH", clipPath);
@@ -458,9 +457,9 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
                         String yid = split[1];
                         //String yid = YouTubeData.getYouTubeVideoId(ytUrl);
                         //Intent lVideoIntent = new Intent(null, Uri.parse("ytv://" + yid), getActivity(), OpenYouTubePlayerActivity.class);
-                        Intent lVideoIntent = new Intent(getActivity(), YoutubeActivity.class);
-                        lVideoIntent.putExtra("id", yid);
-                        startActivity(lVideoIntent);
+                        //Intent lVideoIntent = new Intent(getActivity(), YoutubeActivity.class);
+                        //lVideoIntent.putExtra("id", yid);
+                        //startActivity(lVideoIntent);
                         break;
                     case 32:
                         // play soundcloud
@@ -495,6 +494,10 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
             public void onLoadMore(int page, int totalItemsCount) {
                 if (!loading) {
                     currentPage = page;
+                    Log.e("currentChatPage",currentPage + "");
+                    scrollToTop = true;
+                    //listView.scrollListBy(10);
+                    listView.setSelectionFromTop(1,5);
                     ApiBus.getInstance().post(new HistoryEvent(mCid, 20, page));
                 }
 
@@ -803,12 +806,14 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
     }
 
+    boolean scrollToTop = false;
+
     @Subscribe
     public void onGetHistory(HistoryEventSuccess event) {
         Log.e("HEY666", event.content.size() + "");
 
         if (event.content.size() > 0)
-            loadHistory(event.content);
+            loadHistory(event.content,scrollToTop);
 
     }
 
@@ -1448,7 +1453,17 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
         alert.show();
     }
 
-    private void loadHistory(List<ChatMessage> jsonMessages) {
+    int lastChatIndex = 0;
+
+    private void loadHistory(List<ChatMessage> jsonMessages,boolean scrollToTop) {
+        Log.e("mHistorySize",jsonMessages.size() + "");
+        Log.e("lastChatIndex",lastChatIndex + "");
+
+        Message itemPlaceHolder = null;
+        if(scrollToTop && listMessages.size() !=0)
+            itemPlaceHolder = listMessages.get(0);
+
+
         Collections.reverse(jsonMessages);
         for (int i = 0; i < jsonMessages.size(); i++) {
             ChatMessage m = jsonMessages.get(i);
@@ -1519,15 +1534,34 @@ public class ChatWidgetFragmentClient extends BaseFragment  {
 
             }
 
-            listMessages.add(message);
+
+               listMessages.add(i,message);
+            lastChatIndex++;
 
         }
 
 
+        //Collections.reverse(listMessages);
+
+        //adapter.setData(listMessages);
+
+
+
+
         adapter.notifyDataSetChanged();
+
+        int index = listMessages.indexOf(itemPlaceHolder);
+
+        listView.clearFocus();
+        listView.setFocusable(true);
+
+// Set position of the scroll
+
 
         if(currentPage <= 1)
             listView.setSelection(listView.getBottom());
+        else
+            listView.setSelection(index + 1);
 
         listView.setOnTouchListener(new View.OnTouchListener() {
             @Override

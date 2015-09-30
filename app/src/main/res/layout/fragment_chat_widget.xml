@@ -24,7 +24,9 @@
             android:cacheColorHint="#00000000"
             android:divider="@null"
             android:dividerHeight="3dp"
-            android:scrollbarStyle="outsideOverlay" />
+            android:scrollbarStyle="outsideOverlay"
+            android:transcriptMode="normal"
+            android:stackFromBottom="true"/>
 
         <include
             android:layout_width="wrap_content"

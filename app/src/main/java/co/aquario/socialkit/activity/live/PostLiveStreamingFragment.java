@@ -134,7 +134,8 @@ public class PostLiveStreamingFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_live_streamer, container, false);
         this.rootView = rootView;
 
-        String shareUrl = "https://www.vdomax.com/live/" + VMApp.mPref.username().getOr("test");
+        //https://www.vdomax.com/live/[username]?layout=button_count&appId=391414774312517
+        String shareUrl = "https://www.vdomax.com/live/" + VMApp.mPref.username().getOr("test") + "?layout=button_count&appId=391414774312517";
 
         fbLikeBtn = (FBLikeView) rootView.findViewById(R.id.fbLikeView1);
         fbLikeBtn.getLikeView().setObjectIdAndType(shareUrl, LikeView.ObjectType.OPEN_GRAPH);

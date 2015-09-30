@@ -8,6 +8,7 @@
 
     <ImageButton
         android:id="@+id/button_call_disconnect"
+        android:background="@drawable/endcall"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_above="@+id/textView"
@@ -31,13 +32,14 @@
         android:id="@+id/contact_name_call"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="กำลังโทร...."
+
         android:id="@+id/textView3"
         android:textSize="15dp"
         android:layout_below="@+id/contact_name_call"
@@ -45,28 +47,30 @@
         android:layout_alignEnd="@+id/contact_name_call" />
     <ImageButton
         android:background="@drawable/ic_action_return_from_full_screen"
-        android:layout_width="30dp"
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:id="@+id/button_call_scaling_mode"
-        android:layout_marginLeft="0dp" />
+        android:layout_marginLeft="0dp"
+        android:layout_gravity="center"/>
 
     <ImageButton
         android:background="@android:drawable/ic_menu_camera"
-        android:layout_width="30dp"
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:id="@+id/button_call_switch_camera"
-        android:layout_marginLeft="40dp" />
+        android:layout_marginLeft="40dp"
+        android:layout_gravity="center"/>
 
     <RelativeLayout
         android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-        <include layout="@layout/item_vdo_call"/>
+        <include layout="@layout/item_call_vdo"/>
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-        <include layout="@layout/item_audio_call"/>
+        <include layout="@layout/item_call_sound"/>
     </RelativeLayout>
 </RelativeLayout>

@@ -111,6 +111,12 @@ public class ChatActivity extends BaseActivity {
         super.onResume();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
     // FOR GROUP CLICK
     public static void startChatActivity(Activity mActivity, int cid,int chatType) {
         Intent i = new Intent(mActivity,ChatActivity.class);

@@ -76,7 +76,7 @@ public class YouTubeData {
      */
     public static String calculateYouTubeUrl(String quality, boolean fallback, String videoId) throws IOException {
 
-        String uriStr = null;
+        String uriStr = "";
         OkHttpClient client = VMApp.getHttpClient();
 
         Request.Builder request = new Request.Builder();
@@ -98,7 +98,13 @@ public class YouTubeData {
         //Find out the URI string from the parameters
 
         //Populate the listStory of formats for the video
-        String fmtList = URLDecoder.decode(argMap.get("fmt_list"), "utf-8");
+        String fmtList = "";
+        if(argMap.get("fmt_list") == null) {
+            return "";
+        }else {
+            fmtList = URLDecoder.decode(argMap.get("fmt_list"), "utf-8");
+        }
+
         ArrayList<co.aquario.socialkit.util.Format> formats = new ArrayList<co.aquario.socialkit.util.Format>();
         if (null != fmtList) {
             String formatStrs[] = fmtList.split(",");

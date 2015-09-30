@@ -60,6 +60,7 @@ import co.aquario.chatui.fragment.a.ConversationViewPagerFragment;
 import co.aquario.chatui.fragment.addfriend.AddFriendByIdFragment;
 import co.aquario.chatui.model.UserMe;
 import co.aquario.chatui.model.friendmodel.FriendsModel;
+import co.aquario.chatui.utils.EndpointManager;
 import co.aquario.socialkit.BaseActivity;
 import co.aquario.socialkit.R;
 import co.aquario.socialkit.VMApp;
@@ -158,11 +159,20 @@ public class ChatUIActivity extends BaseActivity {
                             transaction.addToBackStack(null);
                             transaction.commitAllowingStateLoss();
 
+//                            FragmentManager fm = getSupportFragmentManager();
+//                            AddFriendByIdFragment2 dialogOverview = new AddFriendByIdFragment2();
+//                            dialogOverview.show(fm, "dialog_overview");
+
                             break;
                         case R.id.action_add_friends_to_group:
 
                             Intent  i = new Intent(getApplication(),ListViewCheckboxesActivity.class);
                             startActivity(i);
+
+//                            FragmentManager fmm = getSupportFragmentManager();
+//                            ListViewCheckBoxesFragment dialogOvervieww = new ListViewCheckBoxesFragment();
+//                            dialogOvervieww.show(fmm, "dialog_overview");
+
 
                             //initGridFriendsDialog();
                             break;
@@ -372,9 +382,12 @@ public class ChatUIActivity extends BaseActivity {
                         FragmentTransaction transaction = manager.beginTransaction();
                         transaction.add(R.id.frameFragment, AddFriendByIdFragment.newInstance());
                         transaction.addToBackStack(null);
-                        transaction.commitAllowingStateLoss()
+                        transaction.commitAllowingStateLoss();
 
-                        ;
+//                        FragmentManager fm = getSupportFragmentManager();
+//                        AddFriendByIdFragment2 dialogOverview = new AddFriendByIdFragment2();
+//                        dialogOverview.show(fm, "dialog_overview");
+
                         break;
                 }
 
@@ -558,6 +571,7 @@ public class ChatUIActivity extends BaseActivity {
             intent.putExtra(CallActivity.EXTRA_DISPLAY_HUD, displayHud);
             intent.putExtra(CallActivity.EXTRA_CMDLINE, commandLineRun);
             intent.putExtra(CallActivity.EXTRA_RUNTIME, runTimeMs);
+            intent.putExtra(CallActivity.EXTRA_AVATAR_PATH, EndpointManager.defaultMaleAvatar);
 
             activity.startActivityForResult(intent, CONNECTION_REQUEST);
         }

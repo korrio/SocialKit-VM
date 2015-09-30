@@ -1,0 +1,170 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context="ohjoseph.com.urtuu.Shop.CartFragment">
+
+    <RelativeLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="QRcode"
+            android:textColor="@color/indigo_700"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/x_button"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/indicator_dot_grey"
+            android:clickable="true"
+            android:padding="6dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/x_icon" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/title_bar"
+        android:background="#bcbcbc" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/qr"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/tt0101"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="Username:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#252525" />
+
+                <TextView
+                    android:id="@+id/usernameTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:text="LuZee"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#666666" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/scanBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Scan QR" />
+
+                <Button
+                    android:id="@+id/showBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="My QR" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#eeeeee">
+
+        <EditText
+            android:background="@color/white"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchUsernameEt"
+            android:inputType="text"
+            android:layout_margin="6dp"
+            android:textColorHint="#acacac"
+            android:padding="6dp"
+            android:hint="Your friend username"
+            android:textColor="#252525"
+            android:imeOptions="actionSearch"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="6dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            android:id="@+id/user_detail_frame">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Large Text"
+                android:id="@+id/searchUsernameTv"
+                android:textColor="#252525"
+                android:layout_gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/avatar"
+                android:src="@drawable/default_avatar"
+                android:layout_gravity="center"
+                android:layout_above="@+id/searchUsernameTv"
+                android:layout_centerHorizontal="true"/>
+
+            <Button
+                android:id="@+id/btn_follow"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:layout_width="96dp"
+                android:layout_height="36dp"
+                android:background="@drawable/follow_button_selector"
+                android:text="Loading"
+                android:layout_below="@+id/searchUsernameTv"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

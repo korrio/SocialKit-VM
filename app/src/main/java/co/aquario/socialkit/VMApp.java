@@ -412,6 +412,8 @@ public class VMApp extends Application implements ActivityLifecycleCallbacks {
                 .create(PostUploadService.class);
     }
 
+
+
     public static boolean applicationOnPause = false;
     public static Activity currentActivity;
 

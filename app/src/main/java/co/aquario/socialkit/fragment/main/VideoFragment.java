@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
@@ -103,7 +102,6 @@ public class VideoFragment extends BaseFragment {
         adapterVideos.SetOnItemClickListener(new VideoRecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Toast.makeText(getActivity(),"click " + position,Toast.LENGTH_SHORT).show();
 
                 Video post = list.get(position);
                 Intent i2;

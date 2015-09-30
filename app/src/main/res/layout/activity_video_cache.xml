@@ -40,6 +40,18 @@
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:id="@+id/info"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="FULL"
+                android:layout_marginRight="5dp"
+                android:gravity="center_vertical"
+                android:id="@+id/fullscreen_btn"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_fullscreen_white_24dp"
+                />
         </RelativeLayout>
     </RelativeLayout>
 

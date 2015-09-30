@@ -100,6 +100,22 @@ public class MainActivity extends BaseActivity implements BaseFragment.SearchLis
     PrefManager mPref;
     //Crossfader crossFader;
 
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(result != null) {
+            result.setSelectionByIdentifier(0);
+
+        }
+        if(getToolbar() != null) {
+            getToolbar().setTitle("VDOMAX");
+            getToolbar().setTitle("@" + VMApp.get(mContext).getPrefManager().username());
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
